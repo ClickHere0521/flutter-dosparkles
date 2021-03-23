@@ -64,31 +64,36 @@ class _FirstPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        child: SafeArea(
-      child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-        SizedBox(height: Adapt.px(20)),
-        Expanded(child: SizedBox()),
-        GestureDetector(
-            onTap: continueTapped,
-            child: Container(
-              margin: EdgeInsets.symmetric(horizontal: Adapt.px(40)),
-              height: 60,
-              decoration: BoxDecoration(
-                  color: HexColor("#182465"),
-                  borderRadius: BorderRadius.circular(30)),
-              child: Center(
+      child: SafeArea(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            SizedBox(height: Adapt.px(20)),
+            Expanded(child: SizedBox()),
+            GestureDetector(
+              onTap: continueTapped,
+              child: Container(
+                margin: EdgeInsets.symmetric(horizontal: Adapt.px(40)),
+                height: 60,
+                decoration: BoxDecoration(
+                    color: HexColor("#182465"),
+                    borderRadius: BorderRadius.circular(30)),
+                child: Center(
                   child: Text(
-                AppLocalizations.of(context).continuebtn
-                ,
-                style: TextStyle(
-                    color: const Color(0xFFFFFFFF),
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600),
-              )),
-            )),
-        SizedBox(height: Adapt.px(20))
-      ]),
-    ));
+                    AppLocalizations.of(context).continuebtn,
+                    style: TextStyle(
+                        color: const Color(0xFFFFFFFF),
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: Adapt.px(20))
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -96,18 +101,31 @@ class _AppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: Center(child: Text(AppLocalizations.of(context).startPageTitle)),
+      title: Text(AppLocalizations.of(context).startPageTitle),
+      centerTitle: true,
+      actions: [
+        IconButton(
+          icon: Icon(Icons.login),
+          onPressed: () {
+            Navigator.of(context).pushNamed(
+              'registrationpage',
+              arguments: null,
+            );
+          },
+        ),
+      ],
       flexibleSpace: Container(
         decoration: new BoxDecoration(
           gradient: new LinearGradient(
-              colors: [
-                HexColor('#3D9FB0'),
-                HexColor('#557084'),
-              ],
-              begin: const FractionalOffset(0.5, 0.5),
-              end: const FractionalOffset(0.5, 1.0),
-              stops: [0.0, 1.0],
-              tileMode: TileMode.clamp),
+            colors: [
+              HexColor('#3D9FB0'),
+              HexColor('#557084'),
+            ],
+            begin: const FractionalOffset(0.5, 0.5),
+            end: const FractionalOffset(0.5, 1.0),
+            stops: [0.0, 1.0],
+            tileMode: TileMode.clamp,
+          ),
         ),
       ),
     );

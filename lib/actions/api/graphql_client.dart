@@ -168,6 +168,65 @@ class BaseGraphQLClient {
     return _service.query(_mutation);
   }
 
+  // Future<QueryResult> signUp(String identifier, String password) {
+  //   String _mutation = '''
+  //     mutation (\$identifier: String!, \$password: String!) {
+  //       register(input: {
+  //         username: \$identifier,
+  //         email: \$identifier,
+  //         password: \$password
+  //       })
+  //       {
+  //         user {
+  //           id
+  //           username
+  //           email
+  //           role {
+  //             name
+  //             type
+  //             description
+  //           }
+  //         }
+  //         jwt
+  //       }
+  //     }
+  //   ''';
+
+  //   // printWrapped('Debug _mutation: $_mutation');
+  //   return _service.mutate(
+  //     _mutation,
+  //     variables: {"identifier": identifier, "password": password},
+  //   );
+  // }
+
+  Future<QueryResult> signUp(String identifier, String password) {
+    String _mutation = '''
+      mutation SignIn {
+        register(input: {
+          username: "$identifier",
+          email: "$identifier",
+          password: "$password"
+        })
+        {
+          user {
+            id
+            username
+            email
+            role {
+              name
+              type
+              description
+            }
+          }
+          jwt
+        }
+      }
+    ''';
+
+    // printWrapped('Debug _mutation: $_mutation');
+    return _service.mutate(_mutation);
+  }
+
   // Stream<FetchResult> tvShowCommentSubscription(int id) {
   //   String _sub = '''
   //   subscription tvComment{

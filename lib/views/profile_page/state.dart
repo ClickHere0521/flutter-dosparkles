@@ -2,14 +2,33 @@ import 'package:fish_redux/fish_redux.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/state.dart';
 import 'package:flutter/material.dart';
 
-abstract class ProfilePageState
-    implements GlobalBaseState, Cloneable<ProfilePageState> {
-  // @override
-  // ProfilePageState clone() {
-  //   return ProfilePageState();
-  // }
+import '../../models/models.dart';
+
+class ProfilePageState implements GlobalBaseState, Cloneable<ProfilePageState> {
+  @override
+  ProfilePageState clone() {
+    return ProfilePageState();
+  }
+
+  @override
+  Locale locale;
+
+  @override
+  AppUser user;
+
+  @override
+  List<StoreItem> storesList;
+
+  @override
+  StoreItem selectedStore;
+
+  @override
+  ProductItem selectedProduct;
+
+  @override
+  List<CartItem> shoppingCart;
 }
 
 ProfilePageState initState(Map<String, dynamic> args) {
-  // return ProfilePageState();
+  return ProfilePageState();
 }
