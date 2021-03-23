@@ -1,3 +1,9 @@
+import 'package:com.floridainc.dosparkles/views/dashboard_page/state.dart';
+import 'package:com.floridainc.dosparkles/views/help_page/state.dart';
+import 'package:com.floridainc.dosparkles/views/invite_friend_page/state.dart';
+import 'package:com.floridainc.dosparkles/views/notifications_page/state.dart';
+import 'package:com.floridainc.dosparkles/views/profile_page/state.dart';
+import 'package:com.floridainc.dosparkles/views/settings_page/state.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/state.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
@@ -11,15 +17,21 @@ class Routes {
       'storeselectionpage': StoreSelectionPage(),
       'storepage': StorePage(),
       'productpage': ProductPage(),
-      'cartpage': CartPage()
+      'cartpagepage': CartPage(),
+      'registrationpage': RegistrationPage(),
+      'invite_friendpage': InviteFriendPage(),
+      'settingspage': SettingsPage(),
+      'notificationspage': NotificationsPage(),
+      'dashboardpage': DashboardPage(),
+      'profilepage': ProfilePage(),
+      'helppage': HelpPage(),
     },
     visitor: (String path, Page<Object, dynamic> page) {
       if (page.isTypeof<GlobalBaseState>()) {
         page.connectExtraStore<GlobalState>(GlobalStore.store,
             (Object pagestate, GlobalState appState) {
           final GlobalBaseState p = pagestate;
-          if (p.locale != appState.locale ||
-              p.user != appState.user) {
+          if (p.locale != appState.locale || p.user != appState.user) {
             if (pagestate is Cloneable) {
               final Object copy = pagestate.clone();
               final GlobalBaseState newState = copy;
