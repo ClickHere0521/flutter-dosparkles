@@ -22,6 +22,7 @@ class Routes {
       'helppage': HelpPage(),
       'forgot_passwordpage': ForgotPasswordPage(),
       'reset_passwordpage': ResetPasswordPage(),
+      'customize_linkpage': CustomizeLinkPage(),
     },
     visitor: (String path, Page<Object, dynamic> page) {
       if (page.isTypeof<GlobalBaseState>()) {

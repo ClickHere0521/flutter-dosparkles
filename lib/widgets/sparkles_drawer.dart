@@ -42,6 +42,22 @@ class SparklesDrawer extends StatelessWidget {
                   .pushNamed('registrationpage', arguments: null);
             },
           ),
+          ListTile(
+            leading: const Icon(Icons.person),
+            title: Text('Invite Friends'),
+            onTap: () {
+              Navigator.of(context)
+                  .pushNamed('invite_friendpage', arguments: null);
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.person),
+            title: Text('Customize Link'),
+            onTap: () {
+              Navigator.of(context)
+                  .pushNamed('customize_linkpage', arguments: null);
+            },
+          ),
 
           //
 
