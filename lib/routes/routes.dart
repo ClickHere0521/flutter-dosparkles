@@ -1,9 +1,4 @@
-import 'package:com.floridainc.dosparkles/views/dashboard_page/state.dart';
-import 'package:com.floridainc.dosparkles/views/help_page/state.dart';
-import 'package:com.floridainc.dosparkles/views/invite_friend_page/state.dart';
-import 'package:com.floridainc.dosparkles/views/notifications_page/state.dart';
-import 'package:com.floridainc.dosparkles/views/profile_page/state.dart';
-import 'package:com.floridainc.dosparkles/views/settings_page/state.dart';
+import 'package:com.floridainc.dosparkles/views/forgot_password_page/page.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/state.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
@@ -25,6 +20,8 @@ class Routes {
       'dashboardpage': DashboardPage(),
       'profilepage': ProfilePage(),
       'helppage': HelpPage(),
+      'forgot_passwordpage': ForgotPasswordPage(),
+      'reset_passwordpage': ResetPasswordPage(),
     },
     visitor: (String path, Page<Object, dynamic> page) {
       if (page.isTypeof<GlobalBaseState>()) {

@@ -16,7 +16,6 @@ Widget buildView(
     StoreSelectionPageState state, Dispatch dispatch, ViewService viewService) {
   Adapt.initContext(viewService.context);
   return Scaffold(
-    
     body: Stack(
       children: <Widget>[
         _BackGround(controller: state.animationController),
@@ -49,19 +48,26 @@ class _AppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: Center(
-          child: Text(AppLocalizations.of(context).storeSelectionPageTitle)),
+      centerTitle: true,
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Text(AppLocalizations.of(context).storeSelectionPageTitle),
+        ],
+      ),
       flexibleSpace: Container(
         decoration: new BoxDecoration(
           gradient: new LinearGradient(
-              colors: [
-                HexColor('#3D9FB0'),
-                HexColor('#557084'),
-              ],
-              begin: const FractionalOffset(0.5, 0.5),
-              end: const FractionalOffset(0.5, 1.0),
-              stops: [0.0, 1.0],
-              tileMode: TileMode.clamp),
+            colors: [
+              HexColor('#3D9FB0'),
+              HexColor('#557084'),
+            ],
+            begin: const FractionalOffset(0.5, 0.5),
+            end: const FractionalOffset(0.5, 1.0),
+            stops: [0.0, 1.0],
+            tileMode: TileMode.clamp,
+          ),
         ),
       ),
     );
@@ -121,8 +127,10 @@ class _MainBody extends StatelessWidget {
                                     child: Text('Store: ${stores[index].name}'),
                                   ),
                                   onTap: () => {
-                                    dispatch(StoreSelectionPageActionCreator
-                                        .onStoreSelected(stores[index])),
+                                    dispatch(
+                                      StoreSelectionPageActionCreator
+                                          .onStoreSelected(stores[index]),
+                                    ),
                                   },
                                 ),
                               );

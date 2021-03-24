@@ -11,3 +11,5 @@ export 'notifications_page/page.dart';
 export 'dashboard_page/page.dart';
 export 'profile_page/page.dart';
 export 'help_page/page.dart';
+export 'forgot_password_page/page.dart';
+export 'reset_password_page/page.dart';

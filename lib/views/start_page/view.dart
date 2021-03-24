@@ -6,6 +6,7 @@ import 'package:com.floridainc.dosparkles/utils/colors.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../widgets/sparkles_drawer.dart';
 import 'action.dart';
 import 'state.dart';
 
@@ -44,6 +45,7 @@ Widget buildView(
           }
           return Container();
         }),
+    drawer: SparklesDrawer(),
     appBar: PreferredSize(
         preferredSize: const Size.fromHeight(60), child: _AppBar()),
   );
@@ -103,17 +105,6 @@ class _AppBar extends StatelessWidget {
     return AppBar(
       title: Text(AppLocalizations.of(context).startPageTitle),
       centerTitle: true,
-      actions: [
-        IconButton(
-          icon: Icon(Icons.login),
-          onPressed: () {
-            Navigator.of(context).pushNamed(
-              'registrationpage',
-              arguments: null,
-            );
-          },
-        ),
-      ],
       flexibleSpace: Container(
         decoration: new BoxDecoration(
           gradient: new LinearGradient(

@@ -20,6 +20,33 @@ class SparklesDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.money),
+            title: Text('Forgot Password'),
+            onTap: () {
+              Navigator.of(context)
+                  .pushNamed('forgot_passwordpage', arguments: null);
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.money),
+            title: Text('Reset Password'),
+            onTap: () {
+              Navigator.of(context)
+                  .pushNamed('reset_passwordpage', arguments: null);
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.money),
+            title: Text('Sign Up'),
+            onTap: () {
+              Navigator.of(context)
+                  .pushNamed('registrationpage', arguments: null);
+            },
+          ),
+
+          //
+
+          ListTile(
+            leading: const Icon(Icons.money),
             title: Text('Home'),
             onTap: () {
               Navigator.of(context).pushReplacementNamed('storeselectionpage');
@@ -53,7 +80,7 @@ class SparklesDrawer extends StatelessWidget {
               Navigator.of(context).pushReplacementNamed('storeselectionpage');
             },
           ),
-           ListTile(
+          ListTile(
             leading: const Icon(Icons.money),
             title: Text('Help and Support'),
             onTap: () {

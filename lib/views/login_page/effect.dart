@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart' hide Action;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
+import '../../utils/general.dart';
 import 'action.dart';
 import 'state.dart';
 import 'package:toast/toast.dart';
@@ -74,7 +75,6 @@ Future _onLoginClicked(Action action, Context<LoginPageState> ctx) async {
 }
 
 void _goToMain(Context<LoginPageState> ctx) async {
-
   await FirebaseMessaging.instance.getToken().then((String token) async {
     if (token != null) {
       print("_goToMain Push Messaging token: $token");

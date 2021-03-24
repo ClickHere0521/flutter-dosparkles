@@ -29,34 +29,36 @@ class BaseGraphQLClient {
   Future<QueryResult> loginWithEmail(String email, String password) {
     removeToken();
 
-    String _query = '''
-    mutation {
-      login(input: {
-        identifier: "$email",
-        password: "$password"
-      }){
-        user{
-          id
-          username
-          email
-          role {
-            name
-            type
-            description
+    String _mutation = '''
+      mutation {
+        login (input: {
+            identifier: "$email",
+            password: "$password"
+        })
+        {
+          user {
+            id
+            username
+            email
+            role {
+              name
+              type
+              description
+            }
           }
+          jwt
         }
-        jwt
       }
-    }
     ''';
 
-    return _service.mutate(_query);
+    printWrapped('Debug _mutation: $_mutation');
+    return _service.mutate(_mutation);
   }
 
   Future<QueryResult> me() {
     String _query = '''
-    query {
-      me {
+      query {
+        me {
           id
           user {
             email
@@ -81,8 +83,8 @@ class BaseGraphQLClient {
 
   Future<QueryResult> storesWithProductsList() {
     String _query = '''
-    query {
-      stores {
+      query {
+        stores {
           id
           name
           address
@@ -135,78 +137,52 @@ class BaseGraphQLClient {
   }
 
   Future<QueryResult> createOrder(
-      String orderDetailsJson, double totalPrice, String productsIdsJson) {
+    String orderDetailsJson,
+    double totalPrice,
+    String productsIdsJson,
+  ) {
     String _mutation = '''
-    mutation CreateCustomer {
-      createOrder(
-        input: {
-          data:{
-          orderDetails: $orderDetailsJson,
-          totalPrice: $totalPrice,
-          products: $productsIdsJson
+      mutation CreateCustomer {
+        createOrder(
+          input: {
+            data:{
+              orderDetails: $orderDetailsJson,
+              totalPrice: $totalPrice,
+              products: $productsIdsJson
+            }
           }
-        }
-      ) 
-      {
-        order {
-          id
-          orderDetails
-          status
-          refunded
-          totalPrice
-          products {
+        ) 
+        {
+          order {
             id
+            orderDetails
+            status
+            refunded
+            totalPrice
+            products {
+              id
+            }
+            shipmentDetails
+            shineonId
+            cancelReason
           }
-          shipmentDetails
-          shineonId
-          cancelReason
         }
       }
-    }
     ''';
     // printWrapped('Debug _mutation: $_mutation');
     return _service.query(_mutation);
   }
 
-  // Future<QueryResult> signUp(String identifier, String password) {
-  //   String _mutation = '''
-  //     mutation (\$identifier: String!, \$password: String!) {
-  //       register(input: {
-  //         username: \$identifier,
-  //         email: \$identifier,
-  //         password: \$password
-  //       })
-  //       {
-  //         user {
-  //           id
-  //           username
-  //           email
-  //           role {
-  //             name
-  //             type
-  //             description
-  //           }
-  //         }
-  //         jwt
-  //       }
-  //     }
-  //   ''';
-
-  //   // printWrapped('Debug _mutation: $_mutation');
-  //   return _service.mutate(
-  //     _mutation,
-  //     variables: {"identifier": identifier, "password": password},
-  //   );
-  // }
-
   Future<QueryResult> signUp(String identifier, String password) {
     String _mutation = '''
-      mutation SignIn {
-        register(input: {
-          username: "$identifier",
-          email: "$identifier",
-          password: "$password"
-        })
+      mutation {
+        register (
+          input: {
+            username: "$identifier",
+            email: "$identifier",
+            password: "$password"
+          }
+        )
         {
           user {
             id
@@ -224,6 +200,44 @@ class BaseGraphQLClient {
     ''';
 
     // printWrapped('Debug _mutation: $_mutation');
+    return _service.mutate(_mutation);
+  }
+
+  Future<QueryResult> forgotPassword(String email) {
+    String _mutation = '''
+      mutation {
+        forgotPassword (
+          email: "$email"
+        ) {
+          ok
+        }
+      }
+    ''';
+
+    // printWrapped('Debug _mutation: $_mutation');
+    return _service.mutate(_mutation);
+  }
+
+  Future<QueryResult> resetPassword(
+    String passwordValue,
+    String repeatPassValue,
+    String userId,
+  ) {
+    String _mutation = '''
+      mutation {
+        resetPassword (
+          code: "",
+          password: "$passwordValue",
+          passwordConfirmation: "$repeatPassValue"
+        ) {
+          user {
+            id
+          }
+        }
+      }
+    ''';
+
+    printWrapped('Debug _mutation: $_mutation');
     return _service.mutate(_mutation);
   }
 
