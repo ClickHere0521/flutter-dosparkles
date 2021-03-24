@@ -23,6 +23,7 @@ class Routes {
       'forgot_passwordpage': ForgotPasswordPage(),
       'reset_passwordpage': ResetPasswordPage(),
       'customize_linkpage': CustomizeLinkPage(),
+      'settings_page': SettingsPage(),
     },
     visitor: (String path, Page<Object, dynamic> page) {
       if (page.isTypeof<GlobalBaseState>()) {

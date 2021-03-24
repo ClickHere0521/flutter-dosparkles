@@ -58,6 +58,13 @@ class SparklesDrawer extends StatelessWidget {
                   .pushNamed('customize_linkpage', arguments: null);
             },
           ),
+          ListTile(
+            leading: const Icon(Icons.person),
+            title: Text('Settings'),
+            onTap: () {
+              Navigator.of(context).pushNamed('settings_page', arguments: null);
+            },
+          ),
 
           //
 
