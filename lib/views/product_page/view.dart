@@ -25,7 +25,6 @@ Widget buildView(
   Adapt.initContext(viewService.context);
   // print('state.optionalMaterialSelected: $r{state.optionalMaterialSelected}');
   return Scaffold(
-    
     body: Container(
       alignment: Alignment.center,
       width: double.infinity,
@@ -94,6 +93,7 @@ class _AppBar extends StatelessWidget {
                         Icons.shopping_cart,
                         color: Colors.white,
                       ),
+                      onPressed: () => null,
                     ),
                     shoppingCart.length == 0
                         ? new Container()
@@ -483,418 +483,427 @@ class _ProductCustomizationState extends State<_ProductCustomization> {
         clipBehavior: Clip.none,
         children: <Widget>[
           Container(
-    alignment: Alignment.center,
-    width: double.infinity,
-    height: double.infinity,
-    child: SingleChildScrollView(child:
-          Column(
-            children: [
-              SizedBox(
-                height: 20,
-              ),
-              Center(
-                child: Text(
-                  selectedProduct.name,
-                  style: TextStyle(color: Colors.black, fontSize: 20),
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Center(
-                child: Text(
-                  'Made in USA',
-                  style: TextStyle(color: Colors.grey, fontSize: 14),
-                ),
-              ),
-              SizedBox(
-                height: 5,
-              ),
-              //
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    (selectedProduct.showOldPrice
-                        ? Padding(
-                            padding: const EdgeInsets.only(left: 0.0),
-                            child: Text(
-                              '\$${selectedProduct.oldPrice}',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 25,
-                                  fontStyle: FontStyle.italic,
-                                  decoration: TextDecoration.lineThrough,
-                                  shadows: <Shadow>[
-                                    Shadow(
-                                        offset: Offset(1, 1),
-                                        blurRadius: 0,
-                                        color: Colors.red),
-                                    Shadow(
-                                        offset: Offset(-1, -1),
-                                        blurRadius: 0,
-                                        color: Colors.red),
-                                    Shadow(
-                                        offset: Offset(1, -1),
-                                        blurRadius: 0,
-                                        color: Colors.red),
-                                    Shadow(
-                                        offset: Offset(-1, 1),
-                                        blurRadius: 0,
-                                        color: Colors.red),
-                                  ]),
-                            ),
-                          )
-                        : Container()),
-                    //
-                    Padding(
-                      padding: const EdgeInsets.only(left: 15.0),
-                      child: Text(
-                        '\$${selectedProduct.price}',
-                        style: TextStyle(color: Colors.black, fontSize: 35),
-                      ),
+            alignment: Alignment.center,
+            width: double.infinity,
+            height: double.infinity,
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Center(
+                    child: Text(
+                      selectedProduct.name,
+                      style: TextStyle(color: Colors.black, fontSize: 20),
                     ),
-                  ],
-                ),
-              ),
-              //
-              selectedProduct.engraveAvailable ||
-                      selectedProduct.optionalFinishMaterialEnabled
-                  ? RichText(
-                      textAlign: TextAlign.center,
-                      text: TextSpan(
-                          text: 'Add a ',
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 18,
-                              fontWeight: FontWeight.normal),
-                          children: <TextSpan>[
-                            selectedProduct.engraveAvailable
-                                ? TextSpan(
-                                    text: 'personal message'.toUpperCase(),
-                                    style: TextStyle(
-                                      color: Colors.red,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  )
-                                : TextSpan(),
-                            selectedProduct.engraveAvailable &&
-                                    selectedProduct
-                                        .optionalFinishMaterialEnabled
-                                ? TextSpan(
-                                    text: ' and ',
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.normal))
-                                : TextSpan(),
-                            selectedProduct.optionalFinishMaterialEnabled
-                                ? TextSpan(
-                                    text: 'gold finish'.toUpperCase(),
-                                    style: TextStyle(
-                                      color: Colors.red,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  )
-                                : TextSpan(),
-                          ]),
-                    )
-                  : Container(),
-              //
-              selectedProduct.engraveAvailable && engravingsCount > 0
-                  ? Column(
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Center(
+                    child: Text(
+                      'Made in USA',
+                      style: TextStyle(color: Colors.grey, fontSize: 14),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  //
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        SizedBox(
-                          height: 30,
+                        (selectedProduct.showOldPrice
+                            ? Padding(
+                                padding: const EdgeInsets.only(left: 0.0),
+                                child: Text(
+                                  '\$${selectedProduct.oldPrice}',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 25,
+                                      fontStyle: FontStyle.italic,
+                                      decoration: TextDecoration.lineThrough,
+                                      shadows: <Shadow>[
+                                        Shadow(
+                                            offset: Offset(1, 1),
+                                            blurRadius: 0,
+                                            color: Colors.red),
+                                        Shadow(
+                                            offset: Offset(-1, -1),
+                                            blurRadius: 0,
+                                            color: Colors.red),
+                                        Shadow(
+                                            offset: Offset(1, -1),
+                                            blurRadius: 0,
+                                            color: Colors.red),
+                                        Shadow(
+                                            offset: Offset(-1, 1),
+                                            blurRadius: 0,
+                                            color: Colors.red),
+                                      ]),
+                                ),
+                              )
+                            : Container()),
+                        //
+                        Padding(
+                          padding: const EdgeInsets.only(left: 15.0),
+                          child: Text(
+                            '\$${selectedProduct.price}',
+                            style: TextStyle(color: Colors.black, fontSize: 35),
+                          ),
                         ),
-
-                        Text(
-                          '1. Engrave  Personal Message',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 18,
-                              fontWeight: FontWeight.normal),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-
-                        RichText(
+                      ],
+                    ),
+                  ),
+                  //
+                  selectedProduct.engraveAvailable ||
+                          selectedProduct.optionalFinishMaterialEnabled
+                      ? RichText(
                           textAlign: TextAlign.center,
                           text: TextSpan(
-                              text: '50% Off - One-time Offer ! ',
+                              text: 'Add a ',
                               style: TextStyle(
-                                  color: Colors.red,
+                                  color: Colors.black,
                                   fontSize: 18,
                                   fontWeight: FontWeight.normal),
                               children: <TextSpan>[
-                                TextSpan(
-                                  text: '\n( ',
+                                selectedProduct.engraveAvailable
+                                    ? TextSpan(
+                                        text: 'personal message'.toUpperCase(),
+                                        style: TextStyle(
+                                          color: Colors.red,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      )
+                                    : TextSpan(),
+                                selectedProduct.engraveAvailable &&
+                                        selectedProduct
+                                            .optionalFinishMaterialEnabled
+                                    ? TextSpan(
+                                        text: ' and ',
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.normal))
+                                    : TextSpan(),
+                                selectedProduct.optionalFinishMaterialEnabled
+                                    ? TextSpan(
+                                        text: 'gold finish'.toUpperCase(),
+                                        style: TextStyle(
+                                          color: Colors.red,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      )
+                                    : TextSpan(),
+                              ]),
+                        )
+                      : Container(),
+                  //
+                  selectedProduct.engraveAvailable && engravingsCount > 0
+                      ? Column(
+                          children: [
+                            SizedBox(
+                              height: 30,
+                            ),
+
+                            Text(
+                              '1. Engrave  Personal Message',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.normal),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+
+                            RichText(
+                              textAlign: TextAlign.center,
+                              text: TextSpan(
+                                  text: '50% Off - One-time Offer ! ',
                                   style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.normal,
-                                  ),
-                                ),
-                                TextSpan(
-                                    text: selectedProduct.showOldEngravePrice
-                                        ? '\$${selectedProduct.engraveOldPrice} '
-                                        : '',
-                                    style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.normal),
+                                  children: <TextSpan>[
+                                    TextSpan(
+                                      text: '\n( ',
+                                      style: TextStyle(
                                         color: Colors.black,
                                         fontSize: 18,
                                         fontWeight: FontWeight.normal,
-                                        decoration:
-                                            TextDecoration.lineThrough)),
-                                TextSpan(
-                                  text: ' \$${selectedProduct.price} ',
-                                  style: TextStyle(
-                                    color: Colors.red,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.normal,
-                                  ),
-                                ),
-                                TextSpan(
-                                  text: ')',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.normal,
-                                  ),
-                                ),
-                              ]),
-                        ),
-                        //
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          children: [
-                            selectedProduct.engraveExampleUrl != null
-                                ? ClipRRect(
-                                    borderRadius: BorderRadius.circular(8.0),
-                                    child: new CachedNetworkImage(
-                                      imageUrl:
-                                          selectedProduct.engraveExampleUrl,
-                                      width: 100,
-                                      height: 100,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  )
-                                : Container(),
-                            Container(
-                              margin: EdgeInsets.symmetric(vertical: 8.0),
-                              width: Adapt.screenW() - 200,
-                              height: 60.0 * engravingsCount,
-                              child: ListView.builder(
-                                itemCount: engravingsCount,
-                                itemBuilder: (context, index) {
-                                  return Padding(
-                                    padding: EdgeInsets.all(5),
-                                    child: TextField(
-                                      maxLength: 16,
-                                      controller: engravingControllers[index],
-                                      onChanged: (content) {
-                                        var engravingListActual =
-                                            List<String>.empty(growable: true);
-                                        for (var i = 0;
-                                            i < engravingControllers.length;
-                                            i++) {
-                                          engravingListActual.add(
-                                              engravingControllers[i].text);
-                                        }
-                                        dispatch(ProductPageActionCreator
-                                            .onSetEngravingInputs(
-                                                engravingListActual));
-                                      },
-                                      textAlign: TextAlign.center,
-                                      keyboardType: TextInputType.text,
-                                      decoration: InputDecoration(
-                                        counterText: '',
-                                        hintText: 'Your Words Here',
-                                        hintStyle: TextStyle(fontSize: 16),
-                                        border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          borderSide: BorderSide(
-                                              width: 1.0, color: Colors.black),
-                                        ),
-                                        filled: true,
-                                        contentPadding: EdgeInsets.all(16),
-                                        fillColor: Colors.white,
                                       ),
                                     ),
-                                  );
-                                },
-                              ),
+                                    TextSpan(
+                                        text: selectedProduct
+                                                .showOldEngravePrice
+                                            ? '\$${selectedProduct.engraveOldPrice} '
+                                            : '',
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.normal,
+                                            decoration:
+                                                TextDecoration.lineThrough)),
+                                    TextSpan(
+                                      text: ' \$${selectedProduct.price} ',
+                                      style: TextStyle(
+                                        color: Colors.red,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.normal,
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: ')',
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.normal,
+                                      ),
+                                    ),
+                                  ]),
+                            ),
+                            //
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              children: [
+                                selectedProduct.engraveExampleUrl != null
+                                    ? ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                        child: new CachedNetworkImage(
+                                          imageUrl:
+                                              selectedProduct.engraveExampleUrl,
+                                          width: 100,
+                                          height: 100,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      )
+                                    : Container(),
+                                Container(
+                                  margin: EdgeInsets.symmetric(vertical: 8.0),
+                                  width: Adapt.screenW() - 200,
+                                  height: 60.0 * engravingsCount,
+                                  child: ListView.builder(
+                                    itemCount: engravingsCount,
+                                    itemBuilder: (context, index) {
+                                      return Padding(
+                                        padding: EdgeInsets.all(5),
+                                        child: TextField(
+                                          maxLength: 16,
+                                          controller:
+                                              engravingControllers[index],
+                                          onChanged: (content) {
+                                            var engravingListActual =
+                                                List<String>.empty(
+                                                    growable: true);
+                                            for (var i = 0;
+                                                i < engravingControllers.length;
+                                                i++) {
+                                              engravingListActual.add(
+                                                  engravingControllers[i].text);
+                                            }
+                                            dispatch(ProductPageActionCreator
+                                                .onSetEngravingInputs(
+                                                    engravingListActual));
+                                          },
+                                          textAlign: TextAlign.center,
+                                          keyboardType: TextInputType.text,
+                                          decoration: InputDecoration(
+                                            counterText: '',
+                                            hintText: 'Your Words Here',
+                                            hintStyle: TextStyle(fontSize: 16),
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              borderSide: BorderSide(
+                                                  width: 1.0,
+                                                  color: Colors.black),
+                                            ),
+                                            filled: true,
+                                            contentPadding: EdgeInsets.all(16),
+                                            fillColor: Colors.white,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
-                        ),
-                      ],
-                    )
-                  : Container(),
+                        )
+                      : Container(),
 
-              //
-              selectedProduct.optionalFinishMaterialEnabled
-                  ? Column(
-                      children: [
-                        SizedBox(
-                          height: 30,
-                        ),
+                  //
+                  selectedProduct.optionalFinishMaterialEnabled
+                      ? Column(
+                          children: [
+                            SizedBox(
+                              height: 30,
+                            ),
 
-                        Text(
-                          '2. ${selectedProduct.optionalFinishMaterial}',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 18,
-                              fontWeight: FontWeight.normal),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-
-                        RichText(
-                          textAlign: TextAlign.center,
-                          text: TextSpan(
-                              text: '50% Off - One-time Offer ! ',
+                            Text(
+                              '2. ${selectedProduct.optionalFinishMaterial}',
+                              textAlign: TextAlign.center,
                               style: TextStyle(
-                                  color: Colors.red,
+                                  color: Colors.black,
                                   fontSize: 18,
                                   fontWeight: FontWeight.normal),
-                              children: <TextSpan>[
-                                TextSpan(
-                                  text: '\n( ',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.normal,
-                                  ),
-                                ),
-                                TextSpan(
-                                    text: selectedProduct.showOldEngravePrice
-                                        ? '\$${selectedProduct.optionalFinishMaterialPrice} '
-                                        : '',
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.normal,
-                                    )),
-                                TextSpan(
-                                  text: ')',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.normal,
-                                  ),
-                                ),
-                              ]),
-                        ),
-                        //
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          children: [
-                            selectedProduct.engraveExampleUrl != null
-                                ? ClipRRect(
-                                    borderRadius: BorderRadius.circular(8.0),
-                                    child: new CachedNetworkImage(
-                                      imageUrl: selectedProduct
-                                          .optionalMaterialExampleUrl,
-                                      width: 100,
-                                      height: 100,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  )
-                                : Container(),
-                            InkWell(
-                              onTap: () {
-                                print(
-                                    'optionalMaterialSelected: $optionalMaterialSelected !optionalMaterialSelected: ${!optionalMaterialSelected}');
-                                dispatch(ProductPageActionCreator
-                                    .onSetOptionMaterialSelected(
-                                        !optionalMaterialSelected));
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
 
-                                var engravingListActual =
-                                    List<String>.empty(growable: true);
-                                for (var i = 0;
-                                    i < engravingControllers.length;
-                                    i++) {
-                                  engravingListActual
-                                      .add(engravingControllers[i].text);
-                                }
-                                setState(() {
-                                  optionalMaterialSelected =
-                                      !optionalMaterialSelected;
-                                  engraveInputs = engravingListActual;
-                                });
-                              },
-                              child: Column(
-                                children: [
-                                  Text(
-                                    'Add ${selectedProduct.optionalFinishMaterial}',
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
+                            RichText(
+                              textAlign: TextAlign.center,
+                              text: TextSpan(
+                                  text: '50% Off - One-time Offer ! ',
+                                  style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.normal),
+                                  children: <TextSpan>[
+                                    TextSpan(
+                                      text: '\n( ',
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.normal,
+                                      ),
                                     ),
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Container(
-                                    width: 30,
-                                    height: 30,
-                                    decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                          image: AssetImage(
-                                              optionalMaterialSelected == true
-                                                  ? "images/checkblue.png"
-                                                  : "images/checkgrey.png"),
-                                          fit: BoxFit.contain),
+                                    TextSpan(
+                                        text: selectedProduct
+                                                .showOldEngravePrice
+                                            ? '\$${selectedProduct.optionalFinishMaterialPrice} '
+                                            : '',
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.normal,
+                                        )),
+                                    TextSpan(
+                                      text: ')',
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.normal,
+                                      ),
                                     ),
+                                  ]),
+                            ),
+                            //
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              children: [
+                                selectedProduct.engraveExampleUrl != null
+                                    ? ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                        child: new CachedNetworkImage(
+                                          imageUrl: selectedProduct
+                                              .optionalMaterialExampleUrl,
+                                          width: 100,
+                                          height: 100,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      )
+                                    : Container(),
+                                InkWell(
+                                  onTap: () {
+                                    print(
+                                        'optionalMaterialSelected: $optionalMaterialSelected !optionalMaterialSelected: ${!optionalMaterialSelected}');
+                                    dispatch(ProductPageActionCreator
+                                        .onSetOptionMaterialSelected(
+                                            !optionalMaterialSelected));
+
+                                    var engravingListActual =
+                                        List<String>.empty(growable: true);
+                                    for (var i = 0;
+                                        i < engravingControllers.length;
+                                        i++) {
+                                      engravingListActual
+                                          .add(engravingControllers[i].text);
+                                    }
+                                    setState(() {
+                                      optionalMaterialSelected =
+                                          !optionalMaterialSelected;
+                                      engraveInputs = engravingListActual;
+                                    });
+                                  },
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        'Add ${selectedProduct.optionalFinishMaterial}',
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Container(
+                                        width: 30,
+                                        height: 30,
+                                        decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                              image: AssetImage(
+                                                  optionalMaterialSelected ==
+                                                          true
+                                                      ? "images/checkblue.png"
+                                                      : "images/checkgrey.png"),
+                                              fit: BoxFit.contain),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ],
-                        ),
-                      ],
-                    )
-                  : Container(),
-              SizedBox(
-                height: 20,
+                        )
+                      : Container(),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  FlatButton(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25.0),
+                        side: BorderSide(color: Colors.grey)),
+                    color: Colors.transparent,
+                    textColor: Colors.red,
+                    padding: EdgeInsets.only(
+                        top: 12.0, bottom: 12.0, left: 50, right: 50),
+                    onPressed: () async {
+                      await dispatch(ProductPageActionCreator.onAddToCart(
+                          selectedProduct, productQuantity));
+                      dispatch(ProductPageActionCreator.onGoToCart());
+                    },
+                    child: Text(
+                      'Customize and Proceed',
+                      style: TextStyle(
+                          fontSize: 16.0, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  //
+                ],
               ),
-              FlatButton(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25.0),
-                    side: BorderSide(color: Colors.grey)),
-                color: Colors.transparent,
-                textColor: Colors.red,
-                padding: EdgeInsets.only(
-                    top: 12.0, bottom: 12.0, left: 50, right: 50),
-                onPressed: () async {
-                  await dispatch(ProductPageActionCreator.onAddToCart(
-                      selectedProduct, productQuantity));
-                  dispatch(ProductPageActionCreator.onGoToCart());
-                },
-                child: Text(
-                  'Customize and Proceed',
-                  style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
-                ),
-              ),
-               SizedBox(
-                height: 20,
-              ),
-              //
-            ],
-          ),
-    ),
+            ),
           ),
           Positioned(
             right: -20.0,
@@ -912,6 +921,7 @@ class _ProductCustomizationState extends State<_ProductCustomization> {
                 ),
                 padding: EdgeInsets.all(0.0),
                 shape: CircleBorder(),
+                onPressed: () => null,
               ),
             ),
           ),

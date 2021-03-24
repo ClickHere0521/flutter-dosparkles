@@ -22,7 +22,6 @@ Widget buildView(
     CartPageState state, Dispatch dispatch, ViewService viewService) {
   Adapt.initContext(viewService.context);
   return Scaffold(
-    
     body: Container(
       alignment: Alignment.center,
       width: double.infinity,
@@ -85,6 +84,7 @@ class _AppBar extends StatelessWidget {
                         Icons.shopping_cart,
                         color: Colors.white,
                       ),
+                      onPressed: () => null,
                     ),
                     shoppingCart.length == 0
                         ? new Container()
