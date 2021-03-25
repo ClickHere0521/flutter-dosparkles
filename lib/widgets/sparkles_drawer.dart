@@ -65,6 +65,7 @@ class SparklesDrawer extends StatelessWidget {
               Navigator.of(context).pushNamed('settings_page', arguments: null);
             },
           ),
+          Divider(color: Colors.black),
 
           //
 
@@ -79,7 +80,7 @@ class SparklesDrawer extends StatelessWidget {
             leading: const Icon(Icons.money),
             title: Text('My Profile'),
             onTap: () {
-              Navigator.of(context).pushReplacementNamed('storeselectionpage');
+              Navigator.of(context).pushReplacementNamed('profilepage');
             },
           ),
           ListTile(
@@ -107,7 +108,7 @@ class SparklesDrawer extends StatelessWidget {
             leading: const Icon(Icons.money),
             title: Text('Help and Support'),
             onTap: () {
-              Navigator.of(context).pushReplacementNamed('storeselectionpage');
+              Navigator.of(context).pushReplacementNamed('helppage');
             },
           ),
           ListTile(

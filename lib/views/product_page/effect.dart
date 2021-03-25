@@ -64,8 +64,12 @@ void _onAddToCart(Action action, Context<ProductPageState> ctx) async {
   }
   amount *= count;
 
-  GlobalStore.store.dispatch(
-      GlobalActionCreator.addProductToShoppingCart(product, count, amount, ctx.state.engraveInputs, ctx.state.optionalMaterialSelected));
+  GlobalStore.store.dispatch(GlobalActionCreator.addProductToShoppingCart(
+      product,
+      count,
+      amount,
+      ctx.state.engraveInputs,
+      ctx.state.optionalMaterialSelected));
 
   Navigator.of(ctx.context).pushReplacementNamed('cartpage');
 }

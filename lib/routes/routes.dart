@@ -12,7 +12,7 @@ class Routes {
       'storeselectionpage': StoreSelectionPage(),
       'storepage': StorePage(),
       'productpage': ProductPage(),
-      'cartpagepage': CartPage(),
+      'cartpage': CartPage(),
       'registrationpage': RegistrationPage(),
       'invite_friendpage': InviteFriendPage(),
       'settingspage': SettingsPage(),
