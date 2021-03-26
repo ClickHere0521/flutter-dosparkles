@@ -99,8 +99,10 @@ class _MainBody extends StatelessWidget {
     );
     const Key centerKey = ValueKey('bottom-sliver-list');
 
-    stores.sort((StoreItem a, StoreItem b) =>
-        a.storeDistance.compareTo(b.storeDistance));
+    if (stores != null) {
+      stores.sort((StoreItem a, StoreItem b) =>
+          a.storeDistance.compareTo(b.storeDistance));
+    }
 
     return Center(
       child: SlideTransition(
@@ -141,7 +143,7 @@ class _MainBody extends StatelessWidget {
                                 ),
                               );
                             },
-                            childCount: stores.length,
+                            childCount: stores != null ? stores.length : 0,
                           ),
                         ),
                       ],
