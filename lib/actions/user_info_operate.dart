@@ -37,4 +37,8 @@ class UserInfoOperate {
     //   whenLogin(savedToken);
     // }
   }
+
+  static Future savePushToken(id, token) async {
+    return BaseGraphQLClient.instance.updateUser(id, {'pushToken': token});
+  }
 }

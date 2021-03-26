@@ -13,6 +13,8 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.WRITE_CONTACTS" />  
+    <uses-permission android:name="android.permission.READ_CONTACTS" />  
         <!-- android:name=".App"  -->
    <application
         android:name="io.flutter.app.FlutterApplication"

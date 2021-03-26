@@ -80,9 +80,11 @@ class DemoAppState extends State<DemoApp> {
     // has its position and size after it's built.
     final RenderBox box = context.findRenderObject() as RenderBox;
 
-    await Share.share(text,
-        subject: subject,
-        sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+    await Share.share(
+      text,
+      subject: subject,
+      sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size,
+    );
   }
 
   _onShareWithEmptyOrigin(BuildContext context) async {

@@ -243,6 +243,39 @@ class BaseGraphQLClient {
     return _service.mutate(_mutation);
   }
 
+  Future<QueryResult> updateUser(id, Map<String, dynamic> data) {
+    String _mutation = '''
+    mutation UserUpdate(\$input: updateUserInput!) {
+      updateUser(input: \$input) {
+        user {
+          id
+          email
+          username
+          role {
+            id
+            name
+          }
+          firstName
+          lastName
+          showPrice
+          customer {
+            id
+          }
+          chats {
+            id
+          }
+          profile
+          phone
+          color
+          pushToken
+        }
+      }
+    }
+    ''';
+
+    return _service.mutate(_mutation, variables: data);
+  }
+
   // Stream<FetchResult> tvShowCommentSubscription(int id) {
   //   String _sub = '''
   //   subscription tvComment{

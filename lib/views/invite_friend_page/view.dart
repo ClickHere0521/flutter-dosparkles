@@ -1,10 +1,11 @@
+import 'package:contacts_service/contacts_service.dart';
 import 'package:fish_redux/fish_redux.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
-import '../../actions/api/graphql_client.dart';
+import 'package:flutter/services.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../../utils/colors.dart';
-import '../../utils/general.dart';
 import 'state.dart';
 
 Widget buildView(
@@ -16,8 +17,9 @@ Widget buildView(
       centerTitle: true,
       actions: [
         TextButton(
-            child: Text("Invite all", style: TextStyle(color: Colors.white)),
-            onPressed: () => null),
+          child: Text("Invite all", style: TextStyle(color: Colors.white)),
+          onPressed: () => null,
+        ),
       ],
       flexibleSpace: Container(
         decoration: new BoxDecoration(
@@ -45,7 +47,39 @@ Widget buildView(
   );
 }
 
-class MainPage extends StatelessWidget {
+class MainPage extends StatefulWidget {
+  @override
+  _MainPageState createState() => _MainPageState();
+}
+
+class _MainPageState extends State<MainPage> {
+  List<Map<String, dynamic>> contactsList = [];
+
+  @override
+  void initState() {
+    _askPermissions().then((value) {
+      if (value) {
+        ContactsService.getContacts().then((Iterable<Contact> contacts) {
+          for (var contact in contacts) {
+            if (contact.phones.isEmpty && contact.emails.isEmpty) continue;
+
+            contactsList.add({
+              "phone": contact.phones.isNotEmpty
+                  ? contact.phones.elementAt(0).value
+                  : '',
+              "email": contact.emails.isNotEmpty
+                  ? contact.emails.elementAt(0).value
+                  : '',
+            });
+            setState(() {});
+          }
+        });
+      }
+    });
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Align(
@@ -72,13 +106,19 @@ class MainPage extends StatelessWidget {
             ),
             SizedBox(height: 30),
             ListView.builder(
-              itemCount: 6,
+              itemCount: contactsList.length,
               shrinkWrap: true,
-              itemBuilder: (BuildContext context, int i) {
+              physics: BouncingScrollPhysics(),
+              itemBuilder: (BuildContext context, int index) {
+                Map contact = contactsList[index];
                 return ListTile(
                   title: Text(
-                    "Example text $i",
-                    style: TextStyle(fontSize: 22),
+                    "${contact['phone']}",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  subtitle: Text(
+                    "${contact['email']}",
+                    style: TextStyle(fontSize: 13),
                   ),
                   leading: Icon(Icons.person),
                   trailing: TextButton(
@@ -95,5 +135,31 @@ class MainPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<PermissionStatus> _getContactPermission() async {
+    PermissionStatus permission = await Permission.contacts.status;
+
+    if (permission != PermissionStatus.granted &&
+        permission != PermissionStatus.permanentlyDenied) {
+      Future<Map<Permission, PermissionStatus>> permissionStatus =
+          [Permission.contacts].request();
+      var mapStatus = await permissionStatus;
+      return mapStatus[Permission.contacts] ?? PermissionStatus.undetermined;
+    } else {
+      return permission;
+    }
+  }
+
+  Future<bool> _askPermissions() async {
+    PermissionStatus permissionStatus = await _getContactPermission();
+    bool isAccepted = false;
+
+    if (permissionStatus == PermissionStatus.granted)
+      isAccepted = true;
+    else
+      isAccepted = false;
+
+    return isAccepted;
   }
 }

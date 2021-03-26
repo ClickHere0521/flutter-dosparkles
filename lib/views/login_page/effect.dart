@@ -1,4 +1,5 @@
 import 'package:com.floridainc.dosparkles/actions/api/graphql_client.dart';
+import 'package:com.floridainc.dosparkles/routes/routes.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/widgets.dart' hide Action;
 // import 'package:google_sign_in/google_sign_in.dart';
@@ -35,9 +36,13 @@ void _onInit(Action action, Context<LoginPageState> ctx) async {
   ctx.state.accountTextController = TextEditingController();
   ctx.state.passWordTextController = TextEditingController();
 
-  if (ctx.state.user != null) {
-    _goToMain(ctx);
-  }
+  SharedPreferences.getInstance().then((_p) async {
+    final savedToken = _p.getString('jwt') ?? '';
+    if (savedToken.isNotEmpty) {
+      await BaseGraphQLClient.instance.me();
+      _goToMain(ctx);
+    }
+  });
 }
 
 void _onBuild(Action action, Context<LoginPageState> ctx) {
@@ -81,7 +86,7 @@ void _goToMain(Context<LoginPageState> ctx) async {
 
       await SharedPreferences.getInstance().then((_p) async {
         var userId = _p.getString("userId");
-        // TODO: save push token
+        await UserInfoOperate.savePushToken(userId, token);
       });
     }
   });
