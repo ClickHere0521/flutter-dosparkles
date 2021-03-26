@@ -89,6 +89,8 @@ class BaseGraphQLClient {
           name
           address
           phone
+          lat
+          lng
           thumbnail {
             url
           }

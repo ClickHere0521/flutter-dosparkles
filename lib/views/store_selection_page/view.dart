@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:com.floridainc.dosparkles/utils/general.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_image_picker.dart';
 import 'package:fish_redux/fish_redux.dart';
@@ -9,6 +11,8 @@ import 'package:com.floridainc.dosparkles/models/models.dart';
 import 'package:com.floridainc.dosparkles/widgets/sparkles_drawer.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'action.dart';
 import 'state.dart';
@@ -91,13 +95,12 @@ class _MainBody extends StatelessWidget {
   Widget build(BuildContext context) {
     final cardCurve = CurvedAnimation(
       parent: animationController,
-      curve: Interval(
-        0,
-        0.4,
-        curve: Curves.ease,
-      ),
+      curve: Interval(0, 0.4, curve: Curves.ease),
     );
     const Key centerKey = ValueKey('bottom-sliver-list');
+
+    stores.sort((StoreItem a, StoreItem b) =>
+        a.storeDistance.compareTo(b.storeDistance));
 
     return Center(
       child: SlideTransition(

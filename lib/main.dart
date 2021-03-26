@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/services.dart';
 
 import 'dart:async';
@@ -6,6 +8,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'message.dart';
 
@@ -100,6 +104,8 @@ class _AppState extends State<App> {
     //   await PermissionHandler().requestPermissions([PermissionGroup.storage]);
 
     // await AppConfig.instance.init(context);
+
+    _getCurrentGeoPosition();
   }
 
   @override
@@ -176,4 +182,23 @@ class _AppState extends State<App> {
       },
     );
   }
+}
+
+void _getCurrentGeoPosition() async {
+  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  final SharedPreferences prefs = await _prefs;
+
+  Position position = await Geolocator.getCurrentPosition(
+    desiredAccuracy: LocationAccuracy.high,
+  );
+
+  prefs.setString(
+    "geoPosition",
+    json.encode(
+      {
+        'latitude': position.latitude,
+        'longitude': position.longitude,
+      },
+    ),
+  );
 }

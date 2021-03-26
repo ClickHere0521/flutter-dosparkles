@@ -1,5 +1,7 @@
 import 'dart:convert' show json;
 import 'package:com.floridainc.dosparkles/utils/general.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'product_item.dart';
 import 'model_factory.dart';
@@ -18,13 +20,23 @@ class StoreItem {
 
   String thumbnail;
 
-  StoreItem.fromParams(
-      {this.id,
-      this.name,
-      this.products,
-      this.address,
-      this.phone,
-      this.thumbnail});
+  double lat;
+
+  double lng;
+
+  double storeDistance;
+
+  StoreItem.fromParams({
+    this.id,
+    this.name,
+    this.products,
+    this.address,
+    this.phone,
+    this.thumbnail,
+    this.lat,
+    this.lng,
+    this.storeDistance,
+  });
 
   factory StoreItem(jsonStr) => jsonStr == null
       ? null
@@ -37,6 +49,8 @@ class StoreItem {
     name = jsonRes['name'];
     address = jsonRes['address'];
     phone = jsonRes['phone'];
+    lat = jsonRes['lat'];
+    lng = jsonRes['lng'];
     thumbnail = jsonRes['thumbnail'] != null
         ? AppConfig.instance.baseApiHost + jsonRes['thumbnail']['url']
         : null;
@@ -57,9 +71,26 @@ class StoreItem {
     } else {
       products = List.empty();
     }
+
+    SharedPreferences.getInstance().then((prefs) {
+      Map<String, dynamic> position =
+          json.decode(prefs.getString("geoPosition"));
+      double _distanceInMeters() {
+        return Geolocator.distanceBetween(
+          position['latitude'],
+          position['longitude'],
+          lat,
+          lng,
+        );
+      }
+
+      String formatDistance = (_distanceInMeters() / 1000).toStringAsFixed(3);
+      storeDistance = double.parse(formatDistance);
+    });
   }
+
   @override
   String toString() {
-    return '{"id": "$id", "name": "$name"}';
+    return '{"id": "$id", "name": "$name", "lat": "$lat", "lng": "$lng", "storeDistance": "$storeDistance"}';
   }
 }

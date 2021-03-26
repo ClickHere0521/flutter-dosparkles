@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:share/share.dart';
-
-// import 'image_previews.dart';
 
 class DemoApp extends StatefulWidget {
   @override
@@ -12,7 +9,6 @@ class DemoApp extends StatefulWidget {
 class DemoAppState extends State<DemoApp> {
   String text = '';
   String subject = '';
-  List<String> imagePaths = [];
 
   @override
   Widget build(BuildContext context) {
@@ -49,30 +45,12 @@ class DemoAppState extends State<DemoApp> {
                     }),
                   ),
                   const Padding(padding: EdgeInsets.only(top: 12.0)),
-                  // ImagePreviews(imagePaths, onDelete: _onDeleteImage),
-                  ListTile(
-                    leading: Icon(Icons.add),
-                    title: Text("Add image"),
-                    onTap: () async {
-                      final imagePicker = ImagePicker();
-                      final pickedFile = await imagePicker.getImage(
-                        source: ImageSource.gallery,
-                      );
-                      if (pickedFile != null) {
-                        setState(() {
-                          imagePaths.add(pickedFile.path);
-                        });
-                      }
-                    },
-                  ),
-                  const Padding(padding: EdgeInsets.only(top: 12.0)),
                   Builder(
                     builder: (BuildContext context) {
                       return ElevatedButton(
                         child: const Text('Share'),
-                        onPressed: text.isEmpty && imagePaths.isEmpty
-                            ? null
-                            : () => _onShare(context),
+                        onPressed:
+                            text.isEmpty ? null : () => _onShare(context),
                       );
                     },
                   ),
@@ -92,12 +70,6 @@ class DemoAppState extends State<DemoApp> {
     );
   }
 
-  _onDeleteImage(int position) {
-    setState(() {
-      imagePaths.removeAt(position);
-    });
-  }
-
   _onShare(BuildContext context) async {
     // A builder is used to retrieve the context immediately
     // surrounding the ElevatedButton.
@@ -108,16 +80,9 @@ class DemoAppState extends State<DemoApp> {
     // has its position and size after it's built.
     final RenderBox box = context.findRenderObject() as RenderBox;
 
-    if (imagePaths.isNotEmpty) {
-      await Share.shareFiles(imagePaths,
-          text: text,
-          subject: subject,
-          sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
-    } else {
-      await Share.share(text,
-          subject: subject,
-          sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
-    }
+    await Share.share(text,
+        subject: subject,
+        sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
   }
 
   _onShareWithEmptyOrigin(BuildContext context) async {
