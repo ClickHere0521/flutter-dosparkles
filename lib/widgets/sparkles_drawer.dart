@@ -1,3 +1,5 @@
+import 'package:com.floridainc.dosparkles/widgets/test_geolocation_module.dart';
+import 'package:com.floridainc.dosparkles/widgets/test_share_module.dart';
 import 'package:flutter/material.dart';
 import 'package:com.floridainc.dosparkles/actions/user_info_operate.dart';
 import 'package:com.floridainc.dosparkles/utils/colors.dart';
@@ -63,6 +65,26 @@ class SparklesDrawer extends StatelessWidget {
             title: Text('Settings'),
             onTap: () {
               Navigator.of(context).pushNamed('settings_page', arguments: null);
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.share),
+            title: Text('Share'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => DemoApp()),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.location_on),
+            title: Text('Location'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => GeolocatorWidget()),
+              );
             },
           ),
           Divider(color: Colors.black),
