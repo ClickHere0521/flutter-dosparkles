@@ -1,4 +1,6 @@
+import 'package:com.floridainc.dosparkles/widgets/test_facebook_signin.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_geolocation_module.dart';
+import 'package:com.floridainc.dosparkles/widgets/test_google_signin.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_share_module.dart';
 import 'package:flutter/material.dart';
 import 'package:com.floridainc.dosparkles/actions/user_info_operate.dart';
@@ -84,6 +86,26 @@ class SparklesDrawer extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => GeolocatorWidget()),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.app_registration),
+            title: Text('Google Sign In'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SignInDemo()),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.app_registration),
+            title: Text('Facebook Sign In'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MyApp()),
               );
             },
           ),

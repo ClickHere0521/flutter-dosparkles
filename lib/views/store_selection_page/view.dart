@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/utils/general.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_image_picker.dart';
 import 'package:fish_redux/fish_redux.dart';
@@ -11,8 +12,7 @@ import 'package:com.floridainc.dosparkles/models/models.dart';
 import 'package:com.floridainc.dosparkles/widgets/sparkles_drawer.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import 'action.dart';
 import 'state.dart';
@@ -81,7 +81,7 @@ class _AppBar extends StatelessWidget {
   }
 }
 
-class _MainBody extends StatelessWidget {
+class _MainBody extends StatefulWidget {
   final Dispatch dispatch;
   final AnimationController animationController;
   final List<StoreItem> stores;
@@ -91,10 +91,24 @@ class _MainBody extends StatelessWidget {
     this.dispatch,
     this.stores,
   });
+
+  @override
+  __MainBodyState createState() => __MainBodyState();
+}
+
+class __MainBodyState extends State<_MainBody> {
+  List<StoreItem> stores;
+
+  @override
+  void initState() {
+    stores = GlobalStore.store.getState().storesList;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final cardCurve = CurvedAnimation(
-      parent: animationController,
+      parent: widget.animationController,
       curve: Interval(0, 0.4, curve: Curves.ease),
     );
     const Key centerKey = ValueKey('bottom-sliver-list');
@@ -135,7 +149,7 @@ class _MainBody extends StatelessWidget {
                                     child: Text('Store: ${stores[index].name}'),
                                   ),
                                   onTap: () => {
-                                    dispatch(
+                                    widget.dispatch(
                                       StoreSelectionPageActionCreator
                                           .onStoreSelected(stores[index]),
                                     ),
