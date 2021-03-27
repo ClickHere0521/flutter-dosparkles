@@ -1,153 +1,176 @@
-// Copyright 2019 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-// ignore_for_file: public_member_api_docs
-
-import 'dart:async';
-import 'dart:convert' show json;
-
-import "package:http/http.dart" as http;
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-GoogleSignIn _googleSignIn = GoogleSignIn(
-  // Optional clientId
-  // clientId: '479882132969-9i9aqik3jfjd7qhci1nqf0bm2g71rm1u.apps.googleusercontent.com',
-  scopes: <String>[
-    'email',
-    'https://www.googleapis.com/auth/contacts.readonly',
-  ],
-);
+void main() => runApp(
+    MaterialApp(debugShowCheckedModeBanner: false, home: LoginPageWidget()));
 
-class SignInDemo extends StatefulWidget {
+class LoginPageWidget extends StatefulWidget {
   @override
-  State createState() => SignInDemoState();
+  LoginPageWidgetState createState() => LoginPageWidgetState();
 }
 
-class SignInDemoState extends State<SignInDemo> {
-  GoogleSignInAccount _currentUser;
-  String _contactText = '';
+class LoginPageWidgetState extends State<LoginPageWidget> {
+  GoogleSignIn _googleSignIn = GoogleSignIn();
+  FirebaseAuth _auth;
+
+  bool isUserSignedIn = false;
 
   @override
   void initState() {
     super.initState();
-    _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount account) {
-      setState(() {
-        _currentUser = account;
-      });
-      if (_currentUser != null) {
-        _handleGetContact(_currentUser);
-      }
-    });
-    _googleSignIn.signInSilently();
+
+    initApp();
   }
 
-  Future<void> _handleGetContact(GoogleSignInAccount user) async {
-    print("_______DATA_________$user");
+  void initApp() async {
+    FirebaseApp defaultApp = await Firebase.initializeApp();
+    _auth = FirebaseAuth.instanceFor(app: defaultApp);
+    checkIfUserIsSignedIn();
+  }
+
+  void checkIfUserIsSignedIn() async {
+    var userSignedIn = await _googleSignIn.isSignedIn();
+
     setState(() {
-      _contactText = "Loading contact info...";
+      isUserSignedIn = userSignedIn;
     });
-    final http.Response response = await http.get(
-      Uri.parse('https://people.googleapis.com/v1/people/me/connections'
-          '?requestMask.includeField=person.names'),
-      headers: await user.authHeaders,
-    );
-    if (response.statusCode != 200) {
-      setState(() {
-        _contactText = "People API gave a ${response.statusCode} "
-            "response. Check logs for details.";
-      });
-      print('People API ${response.statusCode} response: ${response.body}');
-      return;
-    }
-    final Map<String, dynamic> data = json.decode(response.body);
-    final String namedContact = _pickFirstNamedContact(data);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        body: Container(
+            padding: EdgeInsets.all(50),
+            child: Align(
+                alignment: Alignment.center,
+                child: FlatButton(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    onPressed: () {
+                      onGoogleSignIn(context);
+                    },
+                    color: isUserSignedIn ? Colors.green : Colors.blueAccent,
+                    child: Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Icon(Icons.account_circle, color: Colors.white),
+                            SizedBox(width: 10),
+                            Text(
+                                isUserSignedIn
+                                    ? 'You\'re logged in with Google'
+                                    : 'Login with Google',
+                                style: TextStyle(color: Colors.white))
+                          ],
+                        ))))));
+  }
+
+  Future<User> _handleSignIn() async {
+    User user;
+    bool userSignedIn = await _googleSignIn.isSignedIn();
+
     setState(() {
-      if (namedContact != null) {
-        _contactText = "I see you know $namedContact!";
-      } else {
-        _contactText = "No contacts to display.";
-      }
+      isUserSignedIn = userSignedIn;
     });
-  }
 
-  String _pickFirstNamedContact(Map<String, dynamic> data) {
-    final List<dynamic> connections = data['connections'];
-    final Map<String, dynamic> contact = connections.firstWhere(
-      (dynamic contact) => contact['names'] != null,
-      orElse: () => null,
-    );
-    if (contact != null) {
-      final Map<String, dynamic> name = contact['names'].firstWhere(
-        (dynamic name) => name['displayName'] != null,
-        orElse: () => null,
-      );
-      if (name != null) {
-        return name['displayName'];
-      }
-    }
-    return null;
-  }
-
-  Future<void> _handleSignIn() async {
-    try {
-      await _googleSignIn.signIn();
-    } catch (error) {
-      print(error);
-    }
-  }
-
-  Future<void> _handleSignOut() => _googleSignIn.disconnect();
-
-  Widget _buildBody() {
-    GoogleSignInAccount user = _currentUser;
-    if (user != null) {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: <Widget>[
-          ListTile(
-            leading: GoogleUserCircleAvatar(
-              identity: user,
-            ),
-            title: Text(user.displayName ?? ''),
-            subtitle: Text(user.email),
-          ),
-          const Text("Signed in successfully."),
-          Text(_contactText),
-          ElevatedButton(
-            child: const Text('SIGN OUT'),
-            onPressed: _handleSignOut,
-          ),
-          ElevatedButton(
-            child: const Text('REFRESH'),
-            onPressed: () => _handleGetContact(user),
-          ),
-        ],
-      );
+    if (isUserSignedIn) {
+      user = _auth.currentUser;
     } else {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: <Widget>[
-          const Text("You are not currently signed in."),
-          ElevatedButton(
-            child: const Text('SIGN IN'),
-            onPressed: _handleSignIn,
-          ),
-        ],
+      final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
       );
+
+      user = (await _auth.signInWithCredential(credential)).user;
+      userSignedIn = await _googleSignIn.isSignedIn();
+      setState(() {
+        isUserSignedIn = userSignedIn;
+      });
     }
+
+    return user;
+  }
+
+  void onGoogleSignIn(BuildContext context) async {
+    User user = await _handleSignIn();
+    var userSignedIn = await Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => WelcomeUserWidget(user, _googleSignIn)),
+    );
+
+    setState(() {
+      isUserSignedIn = userSignedIn == null ? true : false;
+    });
+  }
+}
+
+class WelcomeUserWidget extends StatelessWidget {
+  GoogleSignIn _googleSignIn;
+  User _user;
+
+  WelcomeUserWidget(User user, GoogleSignIn signIn) {
+    _user = user;
+    _googleSignIn = signIn;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Google Sign In'),
+          backgroundColor: Colors.white,
+          iconTheme: IconThemeData(color: Colors.black),
+          elevation: 0,
         ),
-        body: ConstrainedBox(
-          constraints: const BoxConstraints.expand(),
-          child: _buildBody(),
-        ));
+        body: Container(
+            color: Colors.white,
+            padding: EdgeInsets.all(50),
+            child: Align(
+                alignment: Alignment.center,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    ClipOval(
+                        child: Image.network(_user.photoURL,
+                            width: 100, height: 100, fit: BoxFit.cover)),
+                    SizedBox(height: 20),
+                    Text('Welcome,', textAlign: TextAlign.center),
+                    Text(_user.displayName,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 25)),
+                    SizedBox(height: 20),
+                    FlatButton(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        onPressed: () {
+                          _googleSignIn.signOut();
+                          Navigator.pop(context, false);
+                        },
+                        color: Colors.redAccent,
+                        child: Padding(
+                            padding: EdgeInsets.all(10),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Icon(Icons.exit_to_app, color: Colors.white),
+                                SizedBox(width: 10),
+                                Text('Log out of Google',
+                                    style: TextStyle(color: Colors.white))
+                              ],
+                            )))
+                  ],
+                ))));
   }
 }

@@ -101,7 +101,7 @@ class __MainBodyState extends State<_MainBody> {
 
   @override
   void initState() {
-    stores = GlobalStore.store.getState().storesList;
+    setState(() => stores = GlobalStore.store.getState().storesList);
     super.initState();
   }
 
@@ -146,7 +146,8 @@ class __MainBodyState extends State<_MainBody> {
                                     alignment: Alignment.center,
                                     color: Colors.grey,
                                     height: 100,
-                                    child: Text('Store: ${stores[index].name}'),
+                                    child: Text(
+                                        'Store: ${stores[index] != null && stores[index].name != null ? stores[index].name : ''}'),
                                   ),
                                   onTap: () => {
                                     widget.dispatch(

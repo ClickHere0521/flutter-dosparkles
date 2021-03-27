@@ -1,3 +1,4 @@
+import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/models/models.dart';
 import 'package:com.floridainc.dosparkles/utils/general.dart';
 import 'package:fish_redux/fish_redux.dart';
@@ -19,6 +20,7 @@ import 'state.dart';
 Widget buildView(
     StorePageState state, Dispatch dispatch, ViewService viewService) {
   Adapt.initContext(viewService.context);
+  StoreItem store = GlobalStore.store.getState().selectedStore;
   return Scaffold(
     resizeToAvoidBottomPadding: false,
     body: Stack(
@@ -30,12 +32,12 @@ Widget buildView(
                 ? _ListView(
                     animationController: state.animationController,
                     dispatch: dispatch,
-                    store: state.selectedStore,
+                    store: store,
                   )
                 : _ProductView(
                     animationController: state.animationController,
                     dispatch: dispatch,
-                    store: state.selectedStore,
+                    store: store,
                     productIndex: state.productIndex,
                   )),
       ],
@@ -43,7 +45,9 @@ Widget buildView(
     appBar: state.listView
         ? PreferredSize(
             preferredSize: const Size.fromHeight(60),
-            child: _AppBar(title: state.selectedStore.name))
+            child: _AppBar(
+                title: store != null && store.name != null ? store.name : ''),
+          )
         : null,
     drawer: state.listView ? SparklesDrawer() : null,
   );
@@ -280,14 +284,15 @@ class _VideoPlayerItemState extends State<VideoPlayerItem> {
     super.initState();
     // printWrapped(widget.videoUrl);
 
-    _videoController = VideoPlayerController.network(widget.videoUrl, useCache: true)
-      ..initialize().then((value) {
-        _videoController.setLooping(true);
-        _videoController.play();
-        setState(() {
-          isShowPlaying = false;
-        });
-      });
+    _videoController =
+        VideoPlayerController.network(widget.videoUrl, useCache: true)
+          ..initialize().then((value) {
+            _videoController.setLooping(true);
+            _videoController.play();
+            setState(() {
+              isShowPlaying = false;
+            });
+          });
   }
 
   @override
