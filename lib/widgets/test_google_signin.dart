@@ -1,118 +1,149 @@
-// Copyright 2017 The Chromium Authors. All rights reserved.
+// Copyright 2019 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:async';
-import 'dart:io';
+// ignore_for_file: public_member_api_docs
 
+import 'dart:async';
+import 'dart:convert' show json;
+
+import "package:http/http.dart" as http;
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-final GoogleSignIn _googleSignIn = GoogleSignIn();
+GoogleSignIn _googleSignIn = GoogleSignIn(
+  scopes: <String>[
+    'email',
+    'https://www.googleapis.com/auth/contacts.readonly',
+  ],
+);
 
-class MyAppGoogle extends StatelessWidget {
+class SignInDemo extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Firebase Auth Demo',
-      home: MyHomePage(title: 'Firebase Auth Demo'),
+  State createState() => SignInDemoState();
+}
+
+class SignInDemoState extends State<SignInDemo> {
+  GoogleSignInAccount _currentUser;
+  String _contactText;
+
+  @override
+  void initState() {
+    super.initState();
+    _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount account) {
+      setState(() {
+        _currentUser = account;
+      });
+      if (_currentUser != null) {
+        _handleGetContact();
+      }
+    });
+    _googleSignIn.signInSilently();
+  }
+
+  Future<void> _handleGetContact() async {
+    setState(() {
+      _contactText = "Loading contact info...";
+    });
+    final http.Response response = await http.get(
+      'https://people.googleapis.com/v1/people/me/connections'
+      '?requestMask.includeField=person.names',
+      headers: await _currentUser.authHeaders,
     );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  final String title;
-
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  Future<String> _message = Future<String>.value('');
-  TextEditingController _smsCodeController = TextEditingController();
-  String verificationId;
-  final String testSmsCode = '888888';
-  final String testPhoneNumber = '+1 408-555-6969';
-
-  Future<String> _testSignInAnonymously() async {
-    return 'signInAnonymously succeeded';
+    if (response.statusCode != 200) {
+      setState(() {
+        _contactText = "People API gave a ${response.statusCode} "
+            "response. Check logs for details.";
+      });
+      print('People API ${response.statusCode} response: ${response.body}');
+      return;
+    }
+    final Map<String, dynamic> data = json.decode(response.body);
+    final String namedContact = _pickFirstNamedContact(data);
+    setState(() {
+      if (namedContact != null) {
+        _contactText = "I see you know $namedContact!";
+      } else {
+        _contactText = "No contacts to display.";
+      }
+    });
   }
 
-  Future<String> _testSignInWithGoogle() async {
-    final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
-
-    return 'signInWithGoogle succeeded: ';
+  String _pickFirstNamedContact(Map<String, dynamic> data) {
+    final List<dynamic> connections = data['connections'];
+    final Map<String, dynamic> contact = connections?.firstWhere(
+      (dynamic contact) => contact['names'] != null,
+      orElse: () => null,
+    );
+    if (contact != null) {
+      final Map<String, dynamic> name = contact['names'].firstWhere(
+        (dynamic name) => name['displayName'] != null,
+        orElse: () => null,
+      );
+      if (name != null) {
+        return name['displayName'];
+      }
+    }
+    return null;
   }
 
-  Future<void> _testVerifyPhoneNumber() async {}
+  Future<void> _handleSignIn() async {
+    try {
+      await _googleSignIn.signIn();
+    } catch (error) {
+      print(error);
+    }
+  }
 
-  Future<String> _testSignInWithPhoneNumber(String smsCode) async {}
+  Future<void> _handleSignOut() => _googleSignIn.disconnect();
+
+  Widget _buildBody() {
+    if (_currentUser != null) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: <Widget>[
+          ListTile(
+            leading: GoogleUserCircleAvatar(
+              identity: _currentUser,
+            ),
+            title: Text(_currentUser.displayName ?? ''),
+            subtitle: Text(_currentUser.email ?? ''),
+          ),
+          const Text("Signed in successfully."),
+          Text(_contactText ?? ''),
+          ElevatedButton(
+            child: const Text('SIGN OUT'),
+            onPressed: _handleSignOut,
+          ),
+          ElevatedButton(
+            child: const Text('REFRESH'),
+            onPressed: _handleGetContact,
+          ),
+        ],
+      );
+    } else {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: <Widget>[
+          const Text("You are not currently signed in."),
+          ElevatedButton(
+            child: const Text('SIGN IN'),
+            onPressed: _handleSignIn,
+          ),
+        ],
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          MaterialButton(
-              child: const Text('Test signInAnonymously'),
-              onPressed: () {
-                setState(() {
-                  _message = _testSignInAnonymously();
-                });
-              }),
-          MaterialButton(
-              child: const Text('Test signInWithGoogle'),
-              onPressed: () {
-                setState(() {
-                  _message = _testSignInWithGoogle();
-                });
-              }),
-          MaterialButton(
-              child: const Text('Test verifyPhoneNumber'),
-              onPressed: () {
-                _testVerifyPhoneNumber();
-              }),
-          Container(
-            margin: const EdgeInsets.only(
-              top: 8.0,
-              bottom: 8.0,
-              left: 16.0,
-              right: 16.0,
-            ),
-            child: TextField(
-              controller: _smsCodeController,
-              decoration: const InputDecoration(
-                hintText: 'SMS Code',
-              ),
-            ),
-          ),
-          MaterialButton(
-              child: const Text('Test signInWithPhoneNumber'),
-              onPressed: () {
-                if (_smsCodeController.text != null) {
-                  setState(() {
-                    _message =
-                        _testSignInWithPhoneNumber(_smsCodeController.text);
-                  });
-                }
-              }),
-          FutureBuilder<String>(
-              future: _message,
-              builder: (_, AsyncSnapshot<String> snapshot) {
-                return Text(snapshot.data ?? '',
-                    style:
-                        const TextStyle(color: Color.fromARGB(255, 0, 155, 0)));
-              }),
-        ],
-      ),
-    );
+        appBar: AppBar(
+          title: const Text('Google Sign In'),
+        ),
+        body: ConstrainedBox(
+          constraints: const BoxConstraints.expand(),
+          child: _buildBody(),
+        ));
   }
 }
