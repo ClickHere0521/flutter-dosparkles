@@ -4,6 +4,7 @@ import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/utils/general.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_image_picker.dart';
 import 'package:fish_redux/fish_redux.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';

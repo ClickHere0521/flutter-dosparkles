@@ -31,6 +31,12 @@ if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
 
+def debugKeyStoreProperties = new Properties()
+def debugKeyStorePropertiesFile = rootProject.file('debugKey.properties')
+if (debugKeyStorePropertiesFile.exists()) {
+    debugKeyStoreProperties.load(new FileInputStream(debugKeyStorePropertiesFile))
+}
+
 android {
     compileSdkVersion 29
 
@@ -53,6 +59,12 @@ android {
     }
 
     signingConfigs {
+        debug {
+            storeFile debugKeyStoreProperties['storeFile'] ? file(debugKeyStoreProperties['storeFile']) : null
+            storePassword debugKeyStoreProperties['storePassword']
+            keyAlias debugKeyStoreProperties['keyAlias']
+            keyPassword debugKeyStoreProperties['keyPassword']
+        }
        release {
            keyAlias keystoreProperties['keyAlias']
            keyPassword keystoreProperties['keyPassword']
@@ -62,6 +74,9 @@ android {
     }
 
     buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
+        }
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
@@ -83,6 +98,7 @@ dependencies {
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'io.card:android-sdk:5.+'
     implementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
+    implementation 'com.google.android.gms:play-services-auth:19.0.0'
 }
 
 apply plugin: 'com.google.gms.google-services'
