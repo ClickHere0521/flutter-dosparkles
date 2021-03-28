@@ -95,7 +95,7 @@ class SparklesDrawer extends StatelessWidget {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => SignInDemo()),
+                MaterialPageRoute(builder: (context) => MyAppGoogle()),
               );
             },
           ),
