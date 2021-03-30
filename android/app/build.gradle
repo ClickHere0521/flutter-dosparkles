@@ -31,11 +31,11 @@ if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
 
-def debugKeyStoreProperties = new Properties()
-def debugKeyStorePropertiesFile = rootProject.file('debugKey.properties')
-if (debugKeyStorePropertiesFile.exists()) {
-    debugKeyStoreProperties.load(new FileInputStream(debugKeyStorePropertiesFile))
-}
+// def debugKeyStoreProperties = new Properties()
+// def debugKeyStorePropertiesFile = rootProject.file('debugKey.properties')
+// if (debugKeyStorePropertiesFile.exists()) {
+//     debugKeyStoreProperties.load(new FileInputStream(debugKeyStorePropertiesFile))
+// }
 
 android {
     compileSdkVersion 29
@@ -48,9 +48,11 @@ android {
         disable 'InvalidPackage'
     }
 
+    // keytool -genkey -v -keystore C:\Users\User\key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias androiddebugkey
+
     defaultConfig {
         applicationId 'com.floridainc.dosparkles'
-        minSdkVersion 16
+        minSdkVersion 19
         targetSdkVersion 29
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
@@ -59,12 +61,12 @@ android {
     }
 
     signingConfigs {
-        debug {
-            storeFile debugKeyStoreProperties['storeFile'] ? file(debugKeyStoreProperties['storeFile']) : null
-            storePassword debugKeyStoreProperties['storePassword']
-            keyAlias debugKeyStoreProperties['keyAlias']
-            keyPassword debugKeyStoreProperties['keyPassword']
-        }
+        // debug {
+        //     storeFile debugKeyStoreProperties['storeFile'] ? file(debugKeyStoreProperties['storeFile']) : null
+        //     storePassword debugKeyStoreProperties['storePassword']
+        //     keyAlias debugKeyStoreProperties['keyAlias']
+        //     keyPassword debugKeyStoreProperties['keyPassword']
+        // }
        release {
            keyAlias keystoreProperties['keyAlias']
            keyPassword keystoreProperties['keyPassword']

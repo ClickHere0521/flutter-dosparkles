@@ -2,6 +2,8 @@ import 'package:com.floridainc.dosparkles/widgets/test_facebook_signin.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_geolocation_module.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_google_signin.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_share_module.dart';
+import 'package:com.floridainc.dosparkles/widgets/test_dynamic_link.dart';
+import 'package:com.floridainc.dosparkles/widgets/test_stripe_payment.dart';
 import 'package:flutter/material.dart';
 import 'package:com.floridainc.dosparkles/actions/user_info_operate.dart';
 import 'package:com.floridainc.dosparkles/utils/colors.dart';
@@ -106,6 +108,36 @@ class SparklesDrawer extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => MyApp()),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.arrow_back_ios),
+            title: Text('Dynamic route one'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MainScreen()),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.arrow_back_ios),
+            title: Text('Dynamic route two'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => DynamicLinkScreen()),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.money_off),
+            title: Text('Stripe'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MyStripeApp()),
               );
             },
           ),
