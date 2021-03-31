@@ -64,8 +64,16 @@ class BottomPart extends StatelessWidget {
               Icon(Icons.g_translate, size: 40),
             ],
           ),
-          SizedBox(height: 20),
-          SignInAppleWidget(),
+          Platform.isIOS || Platform.isMacOS
+              ? Container(
+                  child: Column(
+                    children: [
+                      SizedBox(height: 20),
+                      SignInAppleWidget(),
+                    ],
+                  ),
+                )
+              : SizedBox.shrink(child: null),
           SizedBox(height: 20),
           Text(
             "Already Have an Account ?",
