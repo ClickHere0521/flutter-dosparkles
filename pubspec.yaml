@@ -64,6 +64,7 @@ dependencies:
   google_sign_in:
   flutter_facebook_login: ^3.0.0
   stripe_payment: ^1.0.6
+  sign_in_with_apple: ^2.5.4
   flutter_svg:
   cupertino_icons: ^1.0.0
   video_player:

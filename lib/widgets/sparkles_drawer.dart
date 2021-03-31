@@ -1,3 +1,4 @@
+import 'package:com.floridainc.dosparkles/widgets/test_apple_signin.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_facebook_signin.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_geolocation_module.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_google_signin.dart';
@@ -138,6 +139,16 @@ class SparklesDrawer extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => MyStripeApp()),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.phone_iphone),
+            title: Text('Apple sign-in'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MyAppleApp()),
               );
             },
           ),
