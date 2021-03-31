@@ -16,8 +16,6 @@ import 'package:intl/intl.dart';
 
 import 'package:cached_network_image/cached_network_image.dart';
 
-import 'package:com.floridainc.dosparkles/utils/ensure_visible_when_focused.dart';
-
 import 'action.dart';
 import 'state.dart';
 

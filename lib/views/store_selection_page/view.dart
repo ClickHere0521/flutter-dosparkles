@@ -98,14 +98,6 @@ class _MainBody extends StatefulWidget {
 }
 
 class __MainBodyState extends State<_MainBody> {
-  List<StoreItem> stores;
-
-  @override
-  void initState() {
-    setState(() => stores = GlobalStore.store.getState().storesList);
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     final cardCurve = CurvedAnimation(
@@ -114,8 +106,8 @@ class __MainBodyState extends State<_MainBody> {
     );
     const Key centerKey = ValueKey('bottom-sliver-list');
 
-    if (stores != null) {
-      stores.sort((StoreItem a, StoreItem b) =>
+    if (widget.stores != null) {
+      widget.stores.sort((StoreItem a, StoreItem b) =>
           a.storeDistance.compareTo(b.storeDistance));
     }
 
@@ -148,18 +140,21 @@ class __MainBodyState extends State<_MainBody> {
                                     color: Colors.grey,
                                     height: 100,
                                     child: Text(
-                                        'Store: ${stores[index] != null && stores[index].name != null ? stores[index].name : ''}'),
+                                        'Store: ${widget.stores[index] != null && widget.stores[index].name != null ? widget.stores[index].name : ''}'),
                                   ),
                                   onTap: () => {
                                     widget.dispatch(
                                       StoreSelectionPageActionCreator
-                                          .onStoreSelected(stores[index]),
+                                          .onStoreSelected(
+                                              widget.stores[index]),
                                     ),
                                   },
                                 ),
                               );
                             },
-                            childCount: stores != null ? stores.length : 0,
+                            childCount: widget.stores != null
+                                ? widget.stores.length
+                                : 0,
                           ),
                         ),
                       ],

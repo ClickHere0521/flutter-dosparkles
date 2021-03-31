@@ -20,7 +20,7 @@ import 'state.dart';
 Widget buildView(
     StorePageState state, Dispatch dispatch, ViewService viewService) {
   Adapt.initContext(viewService.context);
-  StoreItem store = GlobalStore.store.getState().selectedStore;
+
   return Scaffold(
     resizeToAvoidBottomPadding: false,
     body: Stack(
@@ -32,12 +32,12 @@ Widget buildView(
                 ? _ListView(
                     animationController: state.animationController,
                     dispatch: dispatch,
-                    store: store,
+                    store: state.selectedStore,
                   )
                 : _ProductView(
                     animationController: state.animationController,
                     dispatch: dispatch,
-                    store: store,
+                    store: state.selectedStore,
                     productIndex: state.productIndex,
                   )),
       ],
@@ -45,8 +45,7 @@ Widget buildView(
     appBar: state.listView
         ? PreferredSize(
             preferredSize: const Size.fromHeight(60),
-            child: _AppBar(
-                title: store != null && store.name != null ? store.name : ''),
+            child: _AppBar(title: state.selectedStore.name),
           )
         : null,
     drawer: state.listView ? SparklesDrawer() : null,
@@ -69,9 +68,7 @@ class _BackGround extends StatelessWidget {
 class _AppBar extends StatelessWidget {
   final String title;
 
-  const _AppBar({
-    this.title,
-  });
+  const _AppBar({this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -104,11 +101,7 @@ class _ListView extends StatelessWidget {
   Widget build(BuildContext context) {
     final cardCurve = CurvedAnimation(
       parent: animationController,
-      curve: Interval(
-        0,
-        0.4,
-        curve: Curves.ease,
-      ),
+      curve: Interval(0, 0.4, curve: Curves.ease),
     );
     // printWrapped('store.products: ${store.products}');
     return Center(

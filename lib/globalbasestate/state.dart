@@ -18,8 +18,8 @@ abstract class GlobalBaseState {
   ProductItem get selectedProduct;
   set selectedProduct(ProductItem s);
 
-   List<CartItem> get shoppingCart;
-  set shoppingCart( List<CartItem> s);
+  List<CartItem> get shoppingCart;
+  set shoppingCart(List<CartItem> s);
 }
 
 class GlobalState implements GlobalBaseState, Cloneable<GlobalState> {

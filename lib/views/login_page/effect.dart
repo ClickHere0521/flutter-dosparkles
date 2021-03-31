@@ -1,4 +1,5 @@
 import 'package:com.floridainc.dosparkles/actions/api/graphql_client.dart';
+import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/routes/routes.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/widgets.dart' hide Action;
@@ -35,6 +36,13 @@ void _onInit(Action action, Context<LoginPageState> ctx) async {
       vsync: ticker, duration: Duration(milliseconds: 1000));
   ctx.state.accountTextController = TextEditingController();
   ctx.state.passWordTextController = TextEditingController();
+
+  ctx.state.user = GlobalStore.store.getState().user;
+  ctx.state.locale = GlobalStore.store.getState().locale;
+  ctx.state.storesList = GlobalStore.store.getState().storesList;
+  ctx.state.selectedProduct = GlobalStore.store.getState().selectedProduct;
+  ctx.state.selectedStore = GlobalStore.store.getState().selectedStore;
+  ctx.state.shoppingCart = GlobalStore.store.getState().shoppingCart;
 
   SharedPreferences.getInstance().then((_p) async {
     final savedToken = _p.getString('jwt') ?? '';

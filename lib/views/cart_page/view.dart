@@ -14,6 +14,7 @@ import 'package:com.floridainc.dosparkles/widgets/touch_spin.dart';
 import 'package:intl/intl.dart';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:stripe_payment/stripe_payment.dart';
 
 import 'action.dart';
 import 'state.dart';
@@ -117,31 +118,47 @@ class _AppBar extends StatelessWidget {
   }
 }
 
-class _MainBody extends StatelessWidget {
+class _MainBody extends StatefulWidget {
   final Dispatch dispatch;
   final AnimationController animationController;
   final List<CartItem> shoppingCart;
 
   const _MainBody({this.animationController, this.dispatch, this.shoppingCart});
+
+  @override
+  __MainBodyState createState() => __MainBodyState();
+}
+
+class __MainBodyState extends State<_MainBody> {
   @override
   Widget build(BuildContext context) {
     final cardCurve = CurvedAnimation(
-      parent: animationController,
+      parent: widget.animationController,
       curve: Interval(
         0,
         0.4,
         curve: Curves.ease,
       ),
     );
+    PaymentMethod _paymentMethod;
+    String _error;
 
     const Key centerKey = ValueKey('bottom-sliver-list');
 
     double totalAmount = 0;
-    for (var i = 0; i < shoppingCart.length; i++) {
-      totalAmount += shoppingCart[i].amount;
+    for (var i = 0; i < widget.shoppingCart.length; i++) {
+      totalAmount += widget.shoppingCart[i].amount;
     }
 
-    print('cart inside widget: ${shoppingCart.toString()}');
+    // print('cart inside widget: ${shoppingCart.toString()}');
+
+    void setError(dynamic error) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(error.toString())));
+      setState(() {
+        _error = error.toString();
+      });
+    }
 
     return Center(
       child: SlideTransition(
@@ -159,7 +176,7 @@ class _MainBody extends StatelessWidget {
           // },
           child: RefreshIndicator(
             onRefresh: () {
-              return dispatch(CartPageActionCreator.onBackToProduct());
+              return widget.dispatch(CartPageActionCreator.onBackToProduct());
             },
             child: SingleChildScrollView(
               child: Padding(
@@ -183,9 +200,9 @@ class _MainBody extends StatelessWidget {
                     ),
                     Container(
                       margin: EdgeInsets.symmetric(vertical: 5.0),
-                      height: 200.0 * shoppingCart.length,
+                      height: 200.0 * widget.shoppingCart.length,
                       child: Column(
-                          children: shoppingCart
+                          children: widget.shoppingCart
                               .asMap()
                               .map(
                                 (index, value) => MapEntry(
@@ -208,9 +225,12 @@ class _MainBody extends StatelessWidget {
                                         children: [
                                           Row(
                                             children: [
-                                              shoppingCart[index].product !=
+                                              widget.shoppingCart[index]
+                                                              .product !=
                                                           null &&
-                                                      shoppingCart[index]
+                                                      widget
+                                                              .shoppingCart[
+                                                                  index]
                                                               .product
                                                               .thumbnailUrl !=
                                                           null
@@ -220,10 +240,10 @@ class _MainBody extends StatelessWidget {
                                                               8.0),
                                                       child:
                                                           new CachedNetworkImage(
-                                                        imageUrl:
-                                                            shoppingCart[index]
-                                                                .product
-                                                                .thumbnailUrl,
+                                                        imageUrl: widget
+                                                            .shoppingCart[index]
+                                                            .product
+                                                            .thumbnailUrl,
                                                         width: 100,
                                                         height: 100,
                                                         fit: BoxFit.cover,
@@ -236,9 +256,8 @@ class _MainBody extends StatelessWidget {
                                                       CrossAxisAlignment.center,
                                                   children: <Widget>[
                                                     Text(
-                                                      shoppingCart[index]
-                                                          .product
-                                                          .name,
+                                                      widget.shoppingCart[index]
+                                                          .product.name,
                                                       textAlign:
                                                           TextAlign.center,
                                                       style: TextStyle(
@@ -248,7 +267,7 @@ class _MainBody extends StatelessWidget {
                                                               .normal),
                                                     ),
                                                     Text(
-                                                      '\$${shoppingCart[index].amount}',
+                                                      '\$${widget.shoppingCart[index].amount}',
                                                       textAlign:
                                                           TextAlign.center,
                                                       style: TextStyle(
@@ -268,15 +287,17 @@ class _MainBody extends StatelessWidget {
                                           Row(children: [
                                             Spacer(),
                                             TouchSpin(
-                                                value:
-                                                    shoppingCart[index].count,
+                                                value: widget
+                                                    .shoppingCart[index].count,
                                                 onChanged: (val) {
                                                   print('TouchSpin val: $val');
 
-                                                  dispatch(CartPageActionCreator
-                                                      .onSetProductCount(
-                                                          shoppingCart[index],
-                                                          val.toInt()));
+                                                  widget.dispatch(
+                                                      CartPageActionCreator
+                                                          .onSetProductCount(
+                                                              widget.shoppingCart[
+                                                                  index],
+                                                              val.toInt()));
                                                 },
                                                 min: 1,
                                                 max: 100,
@@ -305,9 +326,11 @@ class _MainBody extends StatelessWidget {
                                                 ),
                                               ),
                                               onTap: () {
-                                                dispatch(CartPageActionCreator
-                                                    .onRemoveCartItem(
-                                                        shoppingCart[index]));
+                                                widget.dispatch(
+                                                    CartPageActionCreator
+                                                        .onRemoveCartItem(
+                                                            widget.shoppingCart[
+                                                                index]));
                                               },
                                             ),
                                           ])
@@ -446,9 +469,19 @@ class _MainBody extends StatelessWidget {
                             padding: EdgeInsets.only(
                                 top: 12.0, bottom: 12.0, left: 30, right: 30),
                             onPressed: () async {
-                              dispatch(
-                                CartPageActionCreator.onProceedToCheckout(),
-                              );
+                              widget.dispatch(
+                                  CartPageActionCreator.onProceedToCheckout());
+                              StripePayment.paymentRequestWithCardForm(
+                                      CardFormPaymentRequest())
+                                  .then((paymentMethod) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content: Text(
+                                            'Received ${paymentMethod.id}')));
+                                setState(() {
+                                  _paymentMethod = paymentMethod;
+                                });
+                              }).catchError(setError);
                             },
                             child: Row(
                               children: [

@@ -20,7 +20,14 @@ Effect<NotificationsPageState> buildEffect() {
   });
 }
 
-void _onInit(Action action, Context<NotificationsPageState> ctx) async {}
+void _onInit(Action action, Context<NotificationsPageState> ctx) async {
+  ctx.state.user = GlobalStore.store.getState().user;
+  ctx.state.locale = GlobalStore.store.getState().locale;
+  ctx.state.storesList = GlobalStore.store.getState().storesList;
+  ctx.state.selectedProduct = GlobalStore.store.getState().selectedProduct;
+  ctx.state.selectedStore = GlobalStore.store.getState().selectedStore;
+  ctx.state.shoppingCart = GlobalStore.store.getState().shoppingCart;
+}
 
 void _onBuild(Action action, Context<NotificationsPageState> ctx) {}
 
