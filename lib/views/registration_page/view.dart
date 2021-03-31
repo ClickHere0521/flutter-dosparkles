@@ -1,14 +1,16 @@
-import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../../actions/api/graphql_client.dart';
 import '../../utils/colors.dart';
 import '../../utils/general.dart';
 import 'state.dart';
+import 'dart:io';
 
 Widget buildView(
     RegistrationPageState state, Dispatch dispatch, ViewService viewService) {
@@ -63,6 +65,8 @@ class BottomPart extends StatelessWidget {
             ],
           ),
           SizedBox(height: 20),
+          SignInAppleWidget(),
+          SizedBox(height: 20),
           Text(
             "Already Have an Account ?",
             style: TextStyle(fontSize: 20.0),
@@ -76,6 +80,66 @@ class BottomPart extends StatelessWidget {
             onPressed: () => null,
           )
         ],
+      ),
+    );
+  }
+}
+
+class SignInAppleWidget extends StatefulWidget {
+  @override
+  _SignInAppleWidgetState createState() => _SignInAppleWidgetState();
+}
+
+class _SignInAppleWidgetState extends State<SignInAppleWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: MediaQuery.of(context).size.width / 2,
+      child: SignInWithAppleButton(
+        text: "Sign in",
+        onPressed: () async {
+          final credential = await SignInWithApple.getAppleIDCredential(
+            scopes: [
+              AppleIDAuthorizationScopes.email,
+              AppleIDAuthorizationScopes.fullName,
+            ],
+            webAuthenticationOptions: WebAuthenticationOptions(
+              // TODO: Set the `clientId` and `redirectUri` arguments to the values you entered in the Apple Developer portal during the setup
+              clientId: 'com.aboutyou.dart_packages.sign_in_with_apple.example',
+              redirectUri: Uri.parse(
+                'https://flutter-sign-in-with-apple-example.glitch.me/callbacks/sign_in_with_apple',
+              ),
+            ),
+          );
+
+          print("______credential:$credential");
+
+          // This is the endpoint that will convert an authorization code obtained
+          // via Sign in with Apple into a session in your system
+          final signInWithAppleEndpoint = Uri(
+            scheme: 'https',
+            host: 'flutter-sign-in-with-apple-example.glitch.me',
+            path: '/sign_in_with_apple',
+            queryParameters: <String, String>{
+              'code': credential.authorizationCode,
+              if (credential.givenName != null)
+                'firstName': credential.givenName,
+              if (credential.familyName != null)
+                'lastName': credential.familyName,
+              'useBundleId':
+                  Platform.isIOS || Platform.isMacOS ? 'true' : 'false',
+              if (credential.state != null) 'state': credential.state,
+            },
+          );
+
+          final session = await http.Client().post(
+            signInWithAppleEndpoint,
+          );
+
+          // If we got this far, a session based on the Apple ID credential has been created in your system,
+          // and you can now set this as the app's session
+          print("______session:$session");
+        },
       ),
     );
   }
