@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:com.floridainc.dosparkles/globalbasestate/action.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/utils/general.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_image_picker.dart';
@@ -98,6 +99,11 @@ class _MainBody extends StatefulWidget {
 }
 
 class __MainBodyState extends State<_MainBody> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final cardCurve = CurvedAnimation(

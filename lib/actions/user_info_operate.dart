@@ -12,6 +12,7 @@ class UserInfoOperate {
 
     final meRequest = await BaseGraphQLClient.instance.me();
     final user = ModelFactory.generate<AppUser>(meRequest.data['me']['user']);
+
     GlobalStore.store.dispatch(GlobalActionCreator.setUser(user));
   }
 

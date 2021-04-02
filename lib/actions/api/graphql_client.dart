@@ -64,6 +64,10 @@ class BaseGraphQLClient {
             email
             username
             shippingAddress
+            storeFavorite {
+              id
+              name
+            }
             role {
               id
               name
@@ -245,35 +249,61 @@ class BaseGraphQLClient {
 
   Future<QueryResult> updateUser(id, Map<String, dynamic> data) {
     String _mutation = '''
-    mutation UserUpdate(\$input: updateUserInput!) {
-      updateUser(input: \$input) {
-        user {
-          id
-          email
-          username
-          role {
+      mutation UserUpdate(\$input: updateUserInput!) {
+        updateUser(input: \$input) {
+          user {
             id
+            email
             name
+            role {
+              id
+              name
+            }
+            storeFavorite {
+              id
+            }
+            pushToken
           }
-          firstName
-          lastName
-          showPrice
-          customer {
-            id
-          }
-          chats {
-            id
-          }
-          profile
-          phone
-          color
-          pushToken
         }
       }
-    }
     ''';
 
+    print("$data");
     return _service.mutate(_mutation, variables: data);
+  }
+
+  Future<QueryResult> setUsersFavoriteStore(String id, String storeFavorite) {
+    String _mutation = '''
+      mutation {
+        updateUser (
+          input: {
+            where: {
+              id: "$id"
+            }
+            data: {
+              storeFavorite: "$storeFavorite"
+            }
+          }
+        )
+        {
+          user {
+            id
+            email
+            username
+            role {
+              id
+              name
+            }
+            storeFavorite {
+              id
+            }
+            pushToken
+          }
+        }
+      }
+    ''';
+
+    return _service.mutate(_mutation);
   }
 
   // Stream<FetchResult> tvShowCommentSubscription(int id) {

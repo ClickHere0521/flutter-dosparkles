@@ -1,3 +1,5 @@
+import 'package:com.floridainc.dosparkles/actions/api/graphql_client.dart';
+import 'package:com.floridainc.dosparkles/utils/general.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/widgets.dart' hide Action;
 import 'package:com.floridainc.dosparkles/models/models.dart';
@@ -46,6 +48,10 @@ void _onStoreSelected(
     Action action, Context<StoreSelectionPageState> ctx) async {
   StoreItem store = action.payload;
   GlobalStore.store.dispatch(GlobalActionCreator.setSelectedStore(store));
+
+  var result = await BaseGraphQLClient.instance.me();
+  await BaseGraphQLClient.instance
+      .setUsersFavoriteStore(result.data['me']['id'], store.id);
 
   await Navigator.of(ctx.context).pushReplacementNamed('storepage');
 }

@@ -12,12 +12,16 @@ class AppUser {
 
   dynamic shippingAddress;
 
-  AppUser.fromParams(
-      {this.name,
-      this.email,
-      this.country,
-      this.avatarUrl,
-      this.shippingAddress});
+  dynamic storeFavorite;
+
+  AppUser.fromParams({
+    this.name,
+    this.email,
+    this.country,
+    this.avatarUrl,
+    this.shippingAddress,
+    this.storeFavorite,
+  });
 
   factory AppUser(jsonStr) => jsonStr == null
       ? null
@@ -30,6 +34,7 @@ class AppUser {
     email = jsonRes['email'];
     country = jsonRes['country'];
     shippingAddress = jsonRes['shippingAddress'];
+    storeFavorite = jsonRes['storeFavorite'];
 
     avatarUrl = jsonRes['avatar'] != null
         ? AppConfig.instance.baseApiHost + jsonRes['avatar']['url']
@@ -37,6 +42,6 @@ class AppUser {
   }
   @override
   String toString() {
-    return '{"name": "$name","email": ${email != null ? '${json.encode(email)}' : 'null'}, "shippingAddress": $shippingAddress}';
+    return '{"name": "$name","email": ${email != null ? '${json.encode(email)}' : 'null'}, "shippingAddress": $shippingAddress, "storeFavorite": ${storeFavorite['id']}}';
   }
 }
