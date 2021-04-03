@@ -64,6 +64,8 @@
                     <category android:name="android.intent.category.BROWSABLE" />
                     <data android:scheme="https" android:host="ku5t1.test-app.link" />
                     <data android:scheme="https" android:host="ku5t1-alternate.test-app.link" />
+                    <data android:scheme="https" android:host="ku5t1.app.link" />
+                    <data android:scheme="https" android:host="ku5t1-alternate.app.link" />
                </intent-filter>
           </activity>
           <meta-data android:name="io.branch.sdk.BranchKey" android:value="key_live_gj9nHuwAaxCNWMtQyhUmzkibrqnt8R1B" />

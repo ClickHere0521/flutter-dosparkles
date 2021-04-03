@@ -1,4 +1,4 @@
-import 'package:com.floridainc.dosparkles/widgets/branch/test_branch_dynamic.dart';
+import 'package:com.floridainc.dosparkles/widgets/branch/branch_two.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_apple_signin.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_facebook_signin.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_geolocation_module.dart';
@@ -114,26 +114,6 @@ class SparklesDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.arrow_back_ios),
-            title: Text('Dynamic route one'),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => MainScreen()),
-              );
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.arrow_back_ios),
-            title: Text('Dynamic route two'),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => DynamicLinkScreen()),
-              );
-            },
-          ),
-          ListTile(
             leading: const Icon(Icons.money_off),
             title: Text('Stripe'),
             onTap: () {
@@ -159,7 +139,7 @@ class SparklesDrawer extends StatelessWidget {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => FlutterDeepLink()),
+                MaterialPageRoute(builder: (context) => BranchApp()),
               );
             },
           ),
