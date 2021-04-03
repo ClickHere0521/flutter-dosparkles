@@ -1,3 +1,4 @@
+import 'package:com.floridainc.dosparkles/widgets/branch/test_branch_dynamic.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_apple_signin.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_facebook_signin.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_geolocation_module.dart';
@@ -149,6 +150,16 @@ class SparklesDrawer extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => MyAppleApp()),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.phone_iphone),
+            title: Text('Branch Routing'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => FlutterDeepLink()),
               );
             },
           ),
