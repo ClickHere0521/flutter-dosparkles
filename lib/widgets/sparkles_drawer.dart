@@ -143,6 +143,13 @@ class SparklesDrawer extends StatelessWidget {
               );
             },
           ),
+          ListTile(
+            leading: const Icon(Icons.chat),
+            title: Text('Chat'),
+            onTap: () {
+              Navigator.of(context).pushReplacementNamed('chatpage');
+            },
+          ),
           Divider(color: Colors.black),
 
           //

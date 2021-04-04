@@ -1,3 +1,5 @@
+import 'package:com.floridainc.dosparkles/views/chat_messages_page/page.dart';
+import 'package:com.floridainc.dosparkles/views/chat_page/page.dart';
 import 'package:com.floridainc.dosparkles/views/forgot_password_page/page.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/state.dart';
@@ -24,6 +26,8 @@ class Routes {
       'reset_passwordpage': ResetPasswordPage(),
       'customize_linkpage': CustomizeLinkPage(),
       'settings_page': SettingsPage(),
+      'chatpage': ChatPage(),
+      'chatmessagespage': ChatMessagesPage(),
     },
     visitor: (String path, Page<Object, dynamic> page) {
       if (page.isTypeof<GlobalBaseState>()) {

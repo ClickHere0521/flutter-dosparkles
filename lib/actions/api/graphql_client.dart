@@ -313,27 +313,84 @@ class BaseGraphQLClient {
           id
           users {
             id
-            firstName
-            lastName
             email
+            name
           }
           chat_messages {
             id
-            created_at
             text
+            createdAt
             user {
               id
-                firstName
-                lastName
+              name
             }
           }
         }
-        
+      }
+    ''';
+
+    return _service.query(_query);
+  }
+
+  Future<QueryResult> fetchChat(String chatId) {
+    String _query = '''
+      query {
+        chats(where: { id: "$chatId" }) {
+          id
+          users {
+            id
+            email
+            name
+          }
+          chat_messages {
+            id
+            text
+            createdAt
+            user {
+              id
+              name
+            }
+          }
+        }
       }
       
     ''';
 
+    // print("DEBUG________$_query");
     return _service.query(_query);
+  }
+
+  Future<QueryResult> addMessage(Map<String, dynamic> data) {
+    String _mutation = '''
+      mutation {
+        createChatmessage (
+          input: {
+            data: {
+              text: "${data['text']}"
+              chat: "${data['chat']}"
+              user: "${data['user']}"
+            }
+          }
+        )
+        {
+          chatmessage {
+            id
+            text
+            createdAt
+            chat {
+              id
+            }
+            user {
+              id
+              name
+            }
+          }
+        }
+      }
+    ''';
+
+    // print("DEBUG________$_mutation");
+    return _service.mutate(_mutation);
   }
 
   // Stream<FetchResult> tvShowCommentSubscription(int id) {

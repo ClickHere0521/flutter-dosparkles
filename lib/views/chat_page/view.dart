@@ -241,7 +241,7 @@ Future<String> getConversationName(chat, userId) async {
   var users = chat['users'];
   for (int i = 0; i < users.length; i++) {
     if (users[i]['id'] != userId) {
-      chatNames.add('${users[i]['firstName']} ${users[i]['lastName']}');
+      chatNames.add('${users[i]['name']}');
     }
   }
 
