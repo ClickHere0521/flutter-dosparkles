@@ -141,7 +141,8 @@ class _BranchAppState extends State<BranchApp> {
         stage: 'new share',
         campaign: 'xxxxx',
         tags: ['one', 'two', 'three']);
-    lp.addControlParam('\$uri_redirect_mode', '1');
+    lp.addControlParam('url', 'http://www.google.com');
+    lp.addControlParam('url2', 'http://flutter.dev');
 
     //parameter alias
     //Instead of our standard encoded short url, you can specify the vanity alias.

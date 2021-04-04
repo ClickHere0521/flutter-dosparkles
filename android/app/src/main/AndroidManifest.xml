@@ -62,15 +62,15 @@
                     <action android:name="android.intent.action.VIEW" />
                     <category android:name="android.intent.category.DEFAULT" />
                     <category android:name="android.intent.category.BROWSABLE" />
-                    <data android:scheme="https" android:host="ku5t1.test-app.link" />
-                    <data android:scheme="https" android:host="ku5t1-alternate.test-app.link" />
                     <data android:scheme="https" android:host="ku5t1.app.link" />
                     <data android:scheme="https" android:host="ku5t1-alternate.app.link" />
+                    <data android:scheme="https" android:host="ku5t1.test-app.link" />
+                    <data android:scheme="https" android:host="ku5t1-alternate.test-app.link" />
                </intent-filter>
           </activity>
           <meta-data android:name="io.branch.sdk.BranchKey" android:value="key_live_gj9nHuwAaxCNWMtQyhUmzkibrqnt8R1B" />
           <meta-data android:name="io.branch.sdk.BranchKey.test" android:value="key_test_ai6kSBwyfFCU5PEVxmJEZbppDygE0O7Q" />
-          <meta-data android:name="io.branch.sdk.TestMode" android:value="true" />
+          <meta-data android:name="io.branch.sdk.TestMode" android:value="false" />
 
           <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->

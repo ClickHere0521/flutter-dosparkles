@@ -171,7 +171,7 @@
 		</array>
 
 		<key>branch_key</key>
-		<string>key_test_ai6kSBwyfFCU5PEVxmJEZbppDygE0O7Q</string> <!-- key_live_gj9nHuwAaxCNWMtQyhUmzkibrqnt8R1B-->
+		<string>key_live_gj9nHuwAaxCNWMtQyhUmzkibrqnt8R1B</string> <!-- key_test_ai6kSBwyfFCU5PEVxmJEZbppDygE0O7Q-->
 		<key>branch_universal_link_domains</key>
 		<array>
 			<string>ku5t1.test-app.link</string>
