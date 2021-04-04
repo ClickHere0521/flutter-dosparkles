@@ -306,6 +306,36 @@ class BaseGraphQLClient {
     return _service.mutate(_mutation);
   }
 
+  Future<QueryResult> fetchChats() {
+    String _query = '''
+      query {
+        chats {
+          id
+          users {
+            id
+            firstName
+            lastName
+            email
+          }
+          chat_messages {
+            id
+            created_at
+            text
+            user {
+              id
+                firstName
+                lastName
+            }
+          }
+        }
+        
+      }
+      
+    ''';
+
+    return _service.query(_query);
+  }
+
   // Stream<FetchResult> tvShowCommentSubscription(int id) {
   //   String _sub = '''
   //   subscription tvComment{
