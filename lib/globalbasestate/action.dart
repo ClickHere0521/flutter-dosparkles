@@ -39,8 +39,19 @@ class GlobalActionCreator {
   }
 
   static Action addProductToShoppingCart(
-      ProductItem product, int count, double amount, List<String> engraveInputs, bool optionalMaterialSelected) {
-    return Action(GlobalAction.addProductToShoppingCart,
-        payload: [product, count, amount, engraveInputs, optionalMaterialSelected]);
+      ProductItem product,
+      int count,
+      double amount,
+      List<String> engraveInputs,
+      bool optionalMaterialSelected,
+      ordersImages) {
+    return Action(GlobalAction.addProductToShoppingCart, payload: [
+      product,
+      count,
+      amount,
+      engraveInputs,
+      optionalMaterialSelected,
+      ordersImages
+    ]);
   }
 }

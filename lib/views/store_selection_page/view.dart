@@ -1,20 +1,12 @@
-import 'dart:convert';
-
-import 'package:com.floridainc.dosparkles/globalbasestate/action.dart';
-import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
-import 'package:com.floridainc.dosparkles/utils/general.dart';
-import 'package:com.floridainc.dosparkles/widgets/test_image_picker.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
 import 'package:com.floridainc.dosparkles/utils/colors.dart';
 import 'package:com.floridainc.dosparkles/models/models.dart';
 import 'package:com.floridainc.dosparkles/widgets/sparkles_drawer.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 import 'action.dart';
 import 'state.dart';

@@ -157,8 +157,18 @@ void _onProceedToCheckout(Action action, Context<CartPageState> ctx) async {
   // printWrapped('orderDetailsJson: $orderDetailsJson');
   // printWrapped('productsIdsJson: $productsIdsJson');
 
-  var result = await BaseGraphQLClient.instance
-      .createOrder(orderDetailsJson, totalPrice, productsIdsJson);
+  var ordersImages;
+  for (var i = 0; i < cart.length; i++) {
+    CartItem card = cart[i];
+    ordersImages = card.ordersImages;
+  }
+
+  var result = await BaseGraphQLClient.instance.createOrder(
+    orderDetailsJson,
+    totalPrice,
+    productsIdsJson,
+    ordersImages,
+  );
   if (result.hasException) {
     printWrapped('Exception: ${result.exception}');
   }

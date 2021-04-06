@@ -3,6 +3,7 @@ import 'package:com.floridainc.dosparkles/widgets/test_apple_signin.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_facebook_signin.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_geolocation_module.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_google_signin.dart';
+import 'package:com.floridainc.dosparkles/widgets/test_image_picker.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_share_module.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_dynamic_link.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_stripe_payment.dart';
@@ -148,6 +149,16 @@ class SparklesDrawer extends StatelessWidget {
             title: Text('Chat'),
             onTap: () {
               Navigator.of(context).pushReplacementNamed('chatpage');
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.image),
+            title: Text('Image Picker'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MyImagePickerPage()),
+              );
             },
           ),
           Divider(color: Colors.black),

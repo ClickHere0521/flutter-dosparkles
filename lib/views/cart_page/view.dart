@@ -467,17 +467,24 @@ class __MainBodyState extends State<_MainBody> {
                             color: Colors.transparent,
                             textColor: Colors.white,
                             padding: EdgeInsets.only(
-                                top: 12.0, bottom: 12.0, left: 30, right: 30),
+                              top: 12.0,
+                              bottom: 12.0,
+                              left: 30,
+                              right: 30,
+                            ),
                             onPressed: () async {
                               widget.dispatch(
-                                  CartPageActionCreator.onProceedToCheckout());
+                                CartPageActionCreator.onProceedToCheckout(),
+                              );
                               StripePayment.paymentRequestWithCardForm(
-                                      CardFormPaymentRequest())
-                                  .then((paymentMethod) {
+                                CardFormPaymentRequest(),
+                              ).then((paymentMethod) {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                        content: Text(
-                                            'Received ${paymentMethod.id}')));
+                                  SnackBar(
+                                    content:
+                                        Text('Received ${paymentMethod.id}'),
+                                  ),
+                                );
                                 setState(() {
                                   _paymentMethod = paymentMethod;
                                 });

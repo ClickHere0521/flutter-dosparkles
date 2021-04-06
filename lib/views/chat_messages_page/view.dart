@@ -76,7 +76,6 @@ class BubblePage extends StatefulWidget {
 
 Future fetchData(String chatId) async {
   QueryResult chat = await BaseGraphQLClient.instance.fetchChat(chatId);
-  // print("____DATA_____${chat.data['chats'][0]}");
   return chat.data['chats'][0];
 }
 

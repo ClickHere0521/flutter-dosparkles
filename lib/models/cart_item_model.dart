@@ -10,9 +10,16 @@ class CartItem {
   List<String> engraveInputs;
   double amount;
   bool optionalMaterialSelected;
+  List ordersImages;
 
-  CartItem.fromParams(
-      {this.product, this.count, this.engraveInputs, this.amount, this.optionalMaterialSelected});
+  CartItem.fromParams({
+    this.product,
+    this.count,
+    this.engraveInputs,
+    this.amount,
+    this.optionalMaterialSelected,
+    this.ordersImages,
+  });
 
   @override
   String toString() {

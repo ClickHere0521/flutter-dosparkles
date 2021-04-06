@@ -1,3 +1,7 @@
+import 'dart:convert';
+import 'dart:ffi';
+
+import 'package:com.floridainc.dosparkles/actions/api/graphql_client.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,9 +16,13 @@ import 'package:com.floridainc.dosparkles/models/models.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:com.floridainc.dosparkles/widgets/touch_spin.dart';
 import 'package:flutter/gestures.dart';
+import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'package:intl/intl.dart';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
 
 import 'action.dart';
 import 'state.dart';
@@ -23,6 +31,7 @@ Widget buildView(
     ProductPageState state, Dispatch dispatch, ViewService viewService) {
   Adapt.initContext(viewService.context);
   // print('state.optionalMaterialSelected: $r{state.optionalMaterialSelected}');
+
   return Scaffold(
     body: Container(
       alignment: Alignment.center,
@@ -307,12 +316,13 @@ class _MainBodyState extends State<MainBody> {
                               return StatefulBuilder(
                                 builder: (context, setState) {
                                   return _ProductCustomization(
-                                      dispatch: widget.dispatch,
-                                      selectedProduct: widget.selectedProduct,
-                                      productQuantity: widget.productQuantity,
-                                      engraveInputs: widget.engraveInputs,
-                                      optionalMaterialSelected:
-                                          widget.optionalMaterialSelected);
+                                    dispatch: widget.dispatch,
+                                    selectedProduct: widget.selectedProduct,
+                                    productQuantity: widget.productQuantity,
+                                    engraveInputs: widget.engraveInputs,
+                                    optionalMaterialSelected:
+                                        widget.optionalMaterialSelected,
+                                  );
                                 },
                               );
                             });
@@ -450,15 +460,58 @@ class _ProductCustomizationState extends State<_ProductCustomization> {
   int productQuantity;
   bool optionalMaterialSelected;
   List<String> engraveInputs;
+  List<Asset> pickedImages = <Asset>[];
+  List orderImagesIds = [];
 
   List<TextEditingController> engravingControllers;
 
-  _ProductCustomizationState(
-      {this.dispatch,
-      this.selectedProduct,
-      this.productQuantity,
-      this.engraveInputs,
-      this.optionalMaterialSelected});
+  void setOrderImagesIds(images) {
+    setState(() {
+      orderImagesIds = images;
+    });
+  }
+
+  _ProductCustomizationState({
+    this.dispatch,
+    this.selectedProduct,
+    this.productQuantity,
+    this.engraveInputs,
+    this.optionalMaterialSelected,
+  });
+
+  Future<void> loadAssets() async {
+    List<Asset> resultList = <Asset>[];
+
+    try {
+      resultList = await MultiImagePicker.pickImages(
+        maxImages: selectedProduct.properties['buyer_uploads'],
+        enableCamera: true,
+        selectedAssets: pickedImages,
+        cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
+        materialOptions: MaterialOptions(
+          actionBarColor: "#abcdef",
+          actionBarTitle: "Gallery",
+          allViewTitle: "All Photos",
+          useDetailsView: false,
+          selectCircleStrokeColor: "#000000",
+        ),
+      );
+    } on Exception catch (e) {
+      print(e);
+    }
+
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
+    if (!mounted) return;
+
+    if (resultList.length == selectedProduct.properties['buyer_uploads'])
+      _sendRequest(resultList, setOrderImagesIds);
+
+    setState(() {
+      pickedImages = resultList;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -891,9 +944,17 @@ class _ProductCustomizationState extends State<_ProductCustomization> {
                           ],
                         )
                       : Container(),
-                  SizedBox(
-                    height: 20,
-                  ),
+                  SizedBox(height: 20),
+                  widget.selectedProduct.uploadsAvailable == false
+                      ? SizedBox.shrink(child: null)
+                      : Container(
+                          height: 160.0,
+                          child: buildGridView(
+                            pickedImages,
+                            widget.selectedProduct.properties['buyer_uploads'],
+                          ),
+                        ),
+                  SizedBox(height: 20),
                   FlatButton(
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(25.0),
@@ -901,16 +962,26 @@ class _ProductCustomizationState extends State<_ProductCustomization> {
                     color: Colors.transparent,
                     textColor: Colors.red,
                     padding: EdgeInsets.only(
-                        top: 12.0, bottom: 12.0, left: 50, right: 50),
-                    onPressed: () async {
-                      await dispatch(
-                        ProductPageActionCreator.onAddToCart(
-                          selectedProduct,
-                          productQuantity,
-                        ),
-                      );
-                      dispatch(ProductPageActionCreator.onGoToCart());
-                    },
+                      top: 12.0,
+                      bottom: 12.0,
+                      left: 50,
+                      right: 50,
+                    ),
+                    onPressed: orderImagesIds.length <
+                                widget.selectedProduct
+                                    .properties['buyer_uploads'] &&
+                            widget.selectedProduct.uploadsAvailable == true
+                        ? null
+                        : () async {
+                            await dispatch(
+                              ProductPageActionCreator.onAddToCart(
+                                selectedProduct,
+                                productQuantity,
+                                orderImagesIds,
+                              ),
+                            );
+                            dispatch(ProductPageActionCreator.onGoToCart());
+                          },
                     child: Text(
                       'Customize and Proceed',
                       style: TextStyle(
@@ -949,4 +1020,58 @@ class _ProductCustomizationState extends State<_ProductCustomization> {
       ),
     );
   }
+
+  Widget buildGridView(List<Asset> images, int buyUploads) {
+    int diff = buyUploads - images.length;
+
+    return GridView.count(
+        shrinkWrap: true,
+        crossAxisCount: 2,
+        childAspectRatio: 1,
+        children: <Widget>[
+          for (var asset in images)
+            Card(
+              clipBehavior: Clip.antiAlias,
+              child: Stack(
+                children: <Widget>[
+                  AssetThumb(asset: asset, width: 300, height: 300),
+                ],
+              ),
+            ),
+          for (int i = 0; i < diff; i++)
+            Card(
+              color: Colors.grey[300],
+              child: IconButton(
+                icon: Icon(Icons.add),
+                onPressed: () => loadAssets(),
+              ),
+            ),
+        ]);
+  }
+}
+
+void _sendRequest(imagesList, Function setOrderImagesIds) async {
+  Uri uri = Uri.parse('https://backend.dosparkles.com/upload');
+
+  MultipartRequest request = http.MultipartRequest("POST", uri);
+
+  for (var i = 0; i < imagesList.length; i++) {
+    var asset = imagesList[i];
+
+    ByteData byteData = await asset.getByteData();
+    List<int> imageData = byteData.buffer.asUint8List();
+
+    MultipartFile multipartFile = MultipartFile.fromBytes(
+      'files',
+      imageData,
+      filename: '${asset.name}',
+      contentType: MediaType("image", "jpg"),
+    );
+    request.files.add(multipartFile);
+  }
+
+  http.Response response = await http.Response.fromStream(await request.send());
+  List imagesResponse = json.decode(response.body);
+  var listOfIds = imagesResponse.map((image) => "\"${image['id']}\"");
+  setOrderImagesIds(listOfIds.toList());
 }

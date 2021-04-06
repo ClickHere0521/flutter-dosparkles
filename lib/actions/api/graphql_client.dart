@@ -113,6 +113,9 @@ class BaseGraphQLClient {
             optionalMaterialExample {
               url
             }
+            orders {
+              id
+            }
             oldPrice
             price
             showOldPrice
@@ -146,15 +149,17 @@ class BaseGraphQLClient {
     String orderDetailsJson,
     double totalPrice,
     String productsIdsJson,
+    List ordersImages,
   ) {
     String _mutation = '''
-      mutation CreateCustomer {
+      mutation CreateOrder {
         createOrder(
           input: {
             data:{
               orderDetails: $orderDetailsJson,
               totalPrice: $totalPrice,
-              products: $productsIdsJson
+              products: $productsIdsJson,
+              media: $ordersImages
             }
           }
         ) 
@@ -168,6 +173,9 @@ class BaseGraphQLClient {
             products {
               id
             }
+            media {
+              id
+            }
             shipmentDetails
             shineonId
             cancelReason
@@ -175,6 +183,7 @@ class BaseGraphQLClient {
         }
       }
     ''';
+
     // printWrapped('Debug _mutation: $_mutation');
     return _service.query(_mutation);
   }
