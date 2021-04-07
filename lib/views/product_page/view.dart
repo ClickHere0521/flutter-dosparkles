@@ -447,11 +447,12 @@ class _ProductCustomization extends StatefulWidget {
 
   @override
   _ProductCustomizationState createState() => new _ProductCustomizationState(
-      dispatch: dispatch,
-      selectedProduct: selectedProduct,
-      productQuantity: productQuantity,
-      engraveInputs: engraveInputs,
-      optionalMaterialSelected: optionalMaterialSelected);
+        dispatch: dispatch,
+        selectedProduct: selectedProduct,
+        productQuantity: productQuantity,
+        engraveInputs: engraveInputs,
+        optionalMaterialSelected: optionalMaterialSelected,
+      );
 }
 
 class _ProductCustomizationState extends State<_ProductCustomization> {
@@ -461,13 +462,13 @@ class _ProductCustomizationState extends State<_ProductCustomization> {
   bool optionalMaterialSelected;
   List<String> engraveInputs;
   List<Asset> pickedImages = <Asset>[];
-  List orderImagesIds = [];
+  List orderImageData = [];
 
   List<TextEditingController> engravingControllers;
 
-  void setOrderImagesIds(images) {
+  void setOrderImageData(images) {
     setState(() {
-      orderImagesIds = images;
+      orderImageData = images;
     });
   }
 
@@ -506,7 +507,7 @@ class _ProductCustomizationState extends State<_ProductCustomization> {
     if (!mounted) return;
 
     if (resultList.length == selectedProduct.properties['buyer_uploads'])
-      _sendRequest(resultList, setOrderImagesIds);
+      _sendRequest(resultList, setOrderImageData);
 
     setState(() {
       pickedImages = resultList;
@@ -967,7 +968,7 @@ class _ProductCustomizationState extends State<_ProductCustomization> {
                       left: 50,
                       right: 50,
                     ),
-                    onPressed: orderImagesIds.length <
+                    onPressed: orderImageData.length <
                                 widget.selectedProduct
                                     .properties['buyer_uploads'] &&
                             widget.selectedProduct.uploadsAvailable == true
@@ -977,7 +978,7 @@ class _ProductCustomizationState extends State<_ProductCustomization> {
                               ProductPageActionCreator.onAddToCart(
                                 selectedProduct,
                                 productQuantity,
-                                orderImagesIds,
+                                orderImageData,
                               ),
                             );
                             dispatch(ProductPageActionCreator.onGoToCart());
@@ -985,12 +986,12 @@ class _ProductCustomizationState extends State<_ProductCustomization> {
                     child: Text(
                       'Customize and Proceed',
                       style: TextStyle(
-                          fontSize: 16.0, fontWeight: FontWeight.bold),
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                  SizedBox(
-                    height: 20,
-                  ),
+                  SizedBox(height: 20),
                   //
                 ],
               ),
@@ -1050,7 +1051,7 @@ class _ProductCustomizationState extends State<_ProductCustomization> {
   }
 }
 
-void _sendRequest(imagesList, Function setOrderImagesIds) async {
+void _sendRequest(imagesList, Function setOrderImageData) async {
   Uri uri = Uri.parse('https://backend.dosparkles.com/upload');
 
   MultipartRequest request = http.MultipartRequest("POST", uri);
@@ -1072,6 +1073,11 @@ void _sendRequest(imagesList, Function setOrderImagesIds) async {
 
   http.Response response = await http.Response.fromStream(await request.send());
   List imagesResponse = json.decode(response.body);
-  var listOfIds = imagesResponse.map((image) => "\"${image['id']}\"");
-  setOrderImagesIds(listOfIds.toList());
+  // var listOfIds = imagesResponse.map((image) => "\"${image['id']}\"");
+
+  List<Map<String, String>> orderImageData = imagesResponse
+      .map((image) => {'url': "${image['url']}", 'id': "${image['id']}"})
+      .toList();
+
+  setOrderImageData(orderImageData);
 }

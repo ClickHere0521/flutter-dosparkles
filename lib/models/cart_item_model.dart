@@ -10,7 +10,7 @@ class CartItem {
   List<String> engraveInputs;
   double amount;
   bool optionalMaterialSelected;
-  List ordersImages;
+  List orderImageData;
 
   CartItem.fromParams({
     this.product,
@@ -18,7 +18,7 @@ class CartItem {
     this.engraveInputs,
     this.amount,
     this.optionalMaterialSelected,
-    this.ordersImages,
+    this.orderImageData,
   });
 
   @override

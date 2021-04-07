@@ -149,7 +149,7 @@ class BaseGraphQLClient {
     String orderDetailsJson,
     double totalPrice,
     String productsIdsJson,
-    List ordersImages,
+    List orderImageIds,
   ) {
     String _mutation = '''
       mutation CreateOrder {
@@ -159,7 +159,7 @@ class BaseGraphQLClient {
               orderDetails: $orderDetailsJson,
               totalPrice: $totalPrice,
               products: $productsIdsJson,
-              media: $ordersImages
+              media: $orderImageIds
             }
           }
         ) 
@@ -184,7 +184,7 @@ class BaseGraphQLClient {
       }
     ''';
 
-    // printWrapped('Debug _mutation: $_mutation');
+    printWrapped('Debug _mutation: $_mutation');
     return _service.query(_mutation);
   }
 

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:com.floridainc.dosparkles/models/cart_item_model.dart';
 import 'package:com.floridainc.dosparkles/utils/general.dart';
 import 'package:fish_redux/fish_redux.dart';
@@ -91,6 +93,7 @@ void _onRemoveCartItem(Action action, Context<CartPageState> ctx) {
 String processCartItemForOrder(CartItem item) {
   String sku;
   String properties;
+  String url = "https://backend.dosparkles.com";
 
   // TODO: "print_url": "http://lorempixel.com/100/100/",
 
@@ -128,6 +131,13 @@ String processCartItemForOrder(CartItem item) {
     }
   }
 
+  if (item.orderImageData != null) {
+    for (var i = 0; i < item.orderImageData.length; i++) {
+      properties +=
+          ', print_url_${i + 1}: "${url + item.orderImageData[i]['url']}"';
+    }
+  }
+
   properties += ' }';
 
   var result =
@@ -157,18 +167,23 @@ void _onProceedToCheckout(Action action, Context<CartPageState> ctx) async {
   // printWrapped('orderDetailsJson: $orderDetailsJson');
   // printWrapped('productsIdsJson: $productsIdsJson');
 
-  var ordersImages;
+  List orderImageIds = [];
   for (var i = 0; i < cart.length; i++) {
-    CartItem card = cart[i];
-    ordersImages = card.ordersImages;
+    List orderImageData = cart[i].orderImageData;
+    for (var j = 0; j < orderImageData.length; j++) {
+      orderImageIds.add("\"${orderImageData[j]['id']}\"");
+    }
   }
 
   var result = await BaseGraphQLClient.instance.createOrder(
     orderDetailsJson,
     totalPrice,
     productsIdsJson,
-    ordersImages,
+    orderImageIds,
   );
+  print("result.data");
+  print("${result.data}");
+
   if (result.hasException) {
     printWrapped('Exception: ${result.exception}');
   }
