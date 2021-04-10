@@ -1,3 +1,4 @@
+import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/utils/general.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:com.floridainc.dosparkles/actions/app_config.dart';
@@ -61,6 +62,7 @@ class BaseGraphQLClient {
         me {
           id
           user {
+            id
             email
             username
             shippingAddress
@@ -153,7 +155,7 @@ class BaseGraphQLClient {
   ) {
     String _mutation = '''
       mutation CreateOrder {
-        createOrder(
+        createOrder (
           input: {
             data:{
               orderDetails: $orderDetailsJson,
@@ -184,8 +186,34 @@ class BaseGraphQLClient {
       }
     ''';
 
-    printWrapped('Debug _mutation: $_mutation');
+    // printWrapped('Debug _mutation: $_mutation');
     return _service.query(_mutation);
+  }
+
+  Future<QueryResult> fetchOrder(String orderId) {
+    String _query = '''
+      query {
+        orders (where: { id: "$orderId" }) {
+          id
+          orderDetails
+          status
+          refunded
+          totalPrice
+          products {
+            id
+          }
+          media {
+            id
+          }
+          shipmentDetails
+          shineonId
+          cancelReason
+        }
+      }
+    ''';
+
+    // printWrapped('Debug _mutation: $_mutation');
+    return _service.query(_query);
   }
 
   Future<QueryResult> signUp(String identifier, String password) {
@@ -329,6 +357,13 @@ class BaseGraphQLClient {
             id
             text
             createdAt
+            messageType
+            order {
+              id
+            }
+            chat {
+              id
+            }
             user {
               id
               name
@@ -355,6 +390,13 @@ class BaseGraphQLClient {
             id
             text
             createdAt
+            messageType
+            order {
+              id
+            }
+            chat {
+              id
+            }
             user {
               id
               name
@@ -369,7 +411,92 @@ class BaseGraphQLClient {
     return _service.query(_query);
   }
 
-  Future<QueryResult> addMessage(Map<String, dynamic> data) {
+  Future<QueryResult> createOrderChat(List<String> ids) {
+    String _mutation = '''
+      mutation {
+        createChat (
+          input: {
+            data: {
+              users: $ids
+            }
+          }
+        ) 
+        {
+          chat {
+            id
+            store {
+              id
+            }
+            users {
+              id
+              email
+              name
+            }
+            chat_messages {
+              id
+              text
+              createdAt
+              order {
+                id
+              }
+              messageType
+              user {
+                id
+                name
+              }
+            }
+          }
+        }
+      }
+    ''';
+
+    // print("DEBUG________$_mutation");
+    return _service.mutate(_mutation);
+  }
+
+  Future<QueryResult> createOrderMessage(
+    String userId,
+    String chatId,
+    String orderId,
+  ) {
+    String _mutation = '''
+      mutation {
+        createChatmessage (
+          input: {
+            data: {
+              chat: "$chatId"
+              user: "$userId"
+              order: "$orderId"
+              messageType: order
+            }
+          }
+        )
+        {
+          chatmessage {
+            id
+            text
+            createdAt
+            messageType
+            order {
+              id
+            }
+            chat {
+              id
+            }
+            user {
+              id
+              name
+            }
+          }
+        }
+      }
+    ''';
+
+    // print("DEBUG________$_mutation");
+    return _service.mutate(_mutation);
+  }
+
+  Future<QueryResult> createMessage(Map<String, dynamic> data) {
     String _mutation = '''
       mutation {
         createChatmessage (
@@ -386,6 +513,10 @@ class BaseGraphQLClient {
             id
             text
             createdAt
+            messageType
+            order {
+              id
+            }
             chat {
               id
             }

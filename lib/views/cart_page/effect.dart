@@ -9,6 +9,7 @@ import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/action.dart';
 
 import 'package:com.floridainc.dosparkles/actions/api/graphql_client.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 
 import 'action.dart';
 import 'state.dart';
@@ -175,20 +176,35 @@ void _onProceedToCheckout(Action action, Context<CartPageState> ctx) async {
     }
   }
 
-  var result = await BaseGraphQLClient.instance.createOrder(
+  String testUserId = "605a941d5f4807234c9f192d";
+
+  QueryResult resultOrder = await BaseGraphQLClient.instance.createOrder(
     orderDetailsJson,
     totalPrice,
     productsIdsJson,
     orderImageIds,
   );
-  print("result.data");
-  print("${result.data}");
-
-  if (result.hasException) {
-    printWrapped('Exception: ${result.exception}');
+  if (resultOrder.hasException) {
+    printWrapped('Exception: ${resultOrder.exception}');
   }
 
-  // return;
+  QueryResult me = await BaseGraphQLClient.instance.me();
+  QueryResult resultChat = await BaseGraphQLClient.instance.createOrderChat(
+      ["\"${me.data['me']['user']['id']}\"", "\"$testUserId\""]);
+
+  if (resultChat.hasException) {
+    printWrapped('Exception: ${resultChat.exception}');
+  }
+
+  QueryResult resultMessage =
+      await BaseGraphQLClient.instance.createOrderMessage(
+    testUserId,
+    resultChat.data['createChat']['chat']['id'],
+    resultOrder.data['createOrder']['order']['id'],
+  );
+  if (resultMessage.hasException) {
+    printWrapped('Exception: ${resultMessage.exception}');
+  }
 
   GlobalStore.store.dispatch(GlobalActionCreator.setShoppingCart(
       List<CartItem>.empty(growable: true)));

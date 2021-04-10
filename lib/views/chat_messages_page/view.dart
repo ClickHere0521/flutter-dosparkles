@@ -164,18 +164,34 @@ class _BubblePageState extends State<BubblePage> {
                                               // snapshot.data['users']
                                             )),
                                             insetH,
-                                            FLBubble(
-                                                from: FLBubbleFrom.left,
-                                                backgroundColor: Colors.white,
-                                                child: Container(
-                                                  width: tWidth,
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 5,
-                                                      vertical: 8),
-                                                  child: Text('${item['text']}',
-                                                      style: textStyle,
-                                                      softWrap: true),
-                                                )),
+                                            item['messageType'] == 'text'
+                                                ? FLBubble(
+                                                    from: FLBubbleFrom.left,
+                                                    backgroundColor:
+                                                        Colors.white,
+                                                    child: Container(
+                                                      width: tWidth,
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 5,
+                                                              vertical: 8),
+                                                      child: Text(
+                                                        '${item['text']}',
+                                                        style: textStyle,
+                                                        softWrap: true,
+                                                      ),
+                                                    ),
+                                                  )
+                                                : ElevatedButton(
+                                                    child: Text("Show order"),
+                                                    onPressed: () =>
+                                                        _showOrderDetails(
+                                                            item['order'] !=
+                                                                    null
+                                                                ? item['order']
+                                                                    ['id']
+                                                                : ''),
+                                                  ),
                                           ],
                                         ),
                                         insetVSmall,
@@ -205,6 +221,36 @@ class _BubblePageState extends State<BubblePage> {
     );
   }
 
+  Future<void> _showOrderDetails(String orderId) async {
+    QueryResult result = await BaseGraphQLClient.instance.fetchOrder(orderId);
+    if (result.hasException) print(result.exception);
+
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('AlertDialog Title $orderId'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('${result.data}'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Approve'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Widget _buildRoundedAvatar(String alpha) {
     return FLAvatar(
       text: alpha,
@@ -228,13 +274,7 @@ class _BubblePageState extends State<BubblePage> {
 
   addMessage(text, chatId, userId) async {
     await BaseGraphQLClient.instance
-        .addMessage({'text': text, 'chat': chatId, 'user': userId});
-
-    // await StrapiSDK.instance.strapiClient.create(
-    //   StrapiSDK.instance.messageType(
-    //     {'text': text, 'chat': chatId, 'user': userId},
-    //   ),
-    // );
+        .createMessage({'text': text, 'chat': chatId, 'user': userId});
   }
 
   @override
