@@ -102,7 +102,7 @@ class _BubblePageState extends State<BubblePage> {
     //         allUsers[i]['lastName'].toString()[0];
     //   }
     // }
-    return item['name'].toString()[0];
+    return item != null ? item['name'].toString()[0] : "";
   }
 
   Widget _buildBubbleContent(double maxWidth, context) {
@@ -125,7 +125,8 @@ class _BubblePageState extends State<BubblePage> {
                           .map<Widget>(
                             (item) =>
                                 //
-                                widget.userId == item['user']['id']
+                                item['user'] != null &&
+                                        widget.userId == item['user']['id']
                                     ? Column(children: <Widget>[
                                         Row(
                                           mainAxisAlignment:
@@ -184,13 +185,22 @@ class _BubblePageState extends State<BubblePage> {
                                                   )
                                                 : ElevatedButton(
                                                     child: Text("Show order"),
-                                                    onPressed: () =>
-                                                        _showOrderDetails(
-                                                            item['order'] !=
-                                                                    null
-                                                                ? item['order']
-                                                                    ['id']
-                                                                : ''),
+                                                    onPressed: () {
+                                                      Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              OrderDetails(
+                                                            orderId:
+                                                                item['order'] !=
+                                                                        null
+                                                                    ? item['order']
+                                                                        ['id']
+                                                                    : '',
+                                                          ),
+                                                        ),
+                                                      );
+                                                    },
                                                   ),
                                           ],
                                         ),
@@ -204,50 +214,21 @@ class _BubblePageState extends State<BubblePage> {
                     );
             } else {
               return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(height: Adapt.screenH() / 4),
-                    SizedBox(
-                        width: Adapt.screenW(),
-                        height: Adapt.screenH() / 4,
-                        child: Container(
-                          child: CircularProgressIndicator(),
-                          alignment: Alignment.center,
-                        ))
-                  ]);
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(height: Adapt.screenH() / 4),
+                  SizedBox(
+                      width: Adapt.screenW(),
+                      height: Adapt.screenH() / 4,
+                      child: Container(
+                        child: CircularProgressIndicator(),
+                        alignment: Alignment.center,
+                      ))
+                ],
+              );
             }
           }),
-    );
-  }
-
-  Future<void> _showOrderDetails(String orderId) async {
-    QueryResult result = await BaseGraphQLClient.instance.fetchOrder(orderId);
-    if (result.hasException) print(result.exception);
-
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('AlertDialog Title $orderId'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text('${result.data}'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text('Approve'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
     );
   }
 
@@ -265,7 +246,7 @@ class _BubblePageState extends State<BubblePage> {
     var chatNames = [];
     var users = conversation['users'];
     for (int i = 0; i < users.length; i++) {
-      if (users[i]['id'] != userId) {
+      if (users[i] != null && users[i]['id'] != userId) {
         chatNames.add('${users[i]['name']}');
       }
     }
@@ -283,76 +264,141 @@ class _BubblePageState extends State<BubblePage> {
     final double width = queryData.size.width;
 
     return Scaffold(
-        appBar: AppBar(
-          title: Text('${widget.conversationName}'),
-          backgroundColor: HexColor("#182465"),
+      appBar: AppBar(
+        title: Text('${widget.conversationName}'),
+        backgroundColor: HexColor("#182465"),
+      ),
+      body: Container(
+        color: Color(0xFFDEEEEEE),
+        width: double.infinity,
+        height: queryData.size.height, //double.infinity,
+        child: ListView(
+          // Start scrolled to the bottom by default and stay there.
+          reverse: true,
+          shrinkWrap: true,
+          children: <Widget>[
+            _buildBubbleContent(width, context),
+          ],
         ),
-        body: Container(
-          color: Color(0xFFDEEEEEE),
-          width: double.infinity,
-          height: queryData.size.height, //double.infinity,
-          child: ListView(
-            // Start scrolled to the bottom by default and stay there.
-            reverse: true,
-            shrinkWrap: true,
-            children: <Widget>[
-              _buildBubbleContent(width, context),
-            ],
-          ),
-        ),
-        bottomNavigationBar: Container(
-            height: 80,
-            color: HexColor("#182465"),
-            child: Column(
+      ),
+      bottomNavigationBar: Container(
+        height: 80,
+        color: HexColor("#182465"),
+        child: Column(
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Container(
-                      child: TextField(
-                        controller: _controller,
-                        onChanged: (text) {
-                          this.inputData = text;
-                        },
-                        style: TextStyle(color: Colors.white),
-                        decoration: InputDecoration(
-                          hintText: 'Enter message',
-                          fillColor: Colors.white,
-                          hintStyle: new TextStyle(color: Colors.grey),
-                          labelStyle: new TextStyle(color: Colors.white),
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white),
-                          ),
-                          focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white),
-                          ),
-                          border: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white),
-                          ),
-                        ),
+                Container(
+                  child: TextField(
+                    controller: _controller,
+                    onChanged: (text) {
+                      this.inputData = text;
+                    },
+                    style: TextStyle(color: Colors.white),
+                    decoration: InputDecoration(
+                      hintText: 'Enter message',
+                      fillColor: Colors.white,
+                      hintStyle: new TextStyle(color: Colors.grey),
+                      labelStyle: new TextStyle(color: Colors.white),
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
                       ),
-                      width: MediaQuery.of(context).size.width * 0.5,
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
+                      border: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
                     ),
-                    Container(
-                        width: 60,
-                        height: 40,
-                        child: InkWell(
-                          onTap: () {
-                            if (this.inputData != "") {
-                              addMessage(
-                                  this.inputData, widget.chatId, widget.userId);
-                              this.inputData = "";
-                              _controller.clear();
-                            }
-                          },
-                          child: Icon(
-                            Icons.send,
-                            color: Colors.white,
-                          ),
-                        ))
-                  ],
+                  ),
+                  width: MediaQuery.of(context).size.width * 0.5,
                 ),
+                Container(
+                    width: 60,
+                    height: 40,
+                    child: InkWell(
+                      onTap: () {
+                        if (this.inputData != "") {
+                          addMessage(
+                            this.inputData,
+                            widget.chatId,
+                            widget.userId,
+                          );
+                          this.inputData = "";
+                          _controller.clear();
+                        }
+                      },
+                      child: Icon(
+                        Icons.send,
+                        color: Colors.white,
+                      ),
+                    ))
               ],
-            )));
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class OrderDetails extends StatefulWidget {
+  OrderDetails({Key key, this.orderId}) : super(key: key);
+
+  final orderId;
+
+  @override
+  _OrderDetailsState createState() => _OrderDetailsState();
+}
+
+class _OrderDetailsState extends State<OrderDetails> {
+  Future getInitialData() async {
+    QueryResult result =
+        await BaseGraphQLClient.instance.fetchOrder(widget.orderId);
+    return result.data['orders'][0];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: getInitialData(),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.hasData && !snapshot.hasError) {
+          return Scaffold(
+            appBar: AppBar(
+              title: Text('Order details'),
+              backgroundColor: HexColor("#182465"),
+            ),
+            body: Container(
+              color: Color(0xFFDEEEEEE),
+              width: double.infinity,
+              height: double.infinity,
+              child: ListView(
+                // Start scrolled to the bottom by default and stay there.
+                reverse: true,
+                shrinkWrap: true,
+                children: <Widget>[],
+              ),
+            ),
+          );
+        }
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(height: Adapt.screenH() / 4),
+            SizedBox(
+              width: Adapt.screenW(),
+              height: Adapt.screenH() / 4,
+              child: Container(
+                child: CircularProgressIndicator(),
+                alignment: Alignment.center,
+              ),
+            )
+          ],
+        );
+      },
+    );
   }
 }

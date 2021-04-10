@@ -353,6 +353,10 @@ class BaseGraphQLClient {
             email
             name
           }
+          store {
+            id
+            name
+          }
           chat_messages {
             id
             text
@@ -386,6 +390,10 @@ class BaseGraphQLClient {
             email
             name
           }
+          store {
+            id
+            name
+          }
           chat_messages {
             id
             text
@@ -411,13 +419,14 @@ class BaseGraphQLClient {
     return _service.query(_query);
   }
 
-  Future<QueryResult> createOrderChat(List<String> ids) {
+  Future<QueryResult> createOrderChat(List<String> ids, String storeId) {
     String _mutation = '''
       mutation {
         createChat (
           input: {
             data: {
               users: $ids
+              store: "$storeId"
             }
           }
         ) 
@@ -426,6 +435,7 @@ class BaseGraphQLClient {
             id
             store {
               id
+              name
             }
             users {
               id
@@ -455,7 +465,6 @@ class BaseGraphQLClient {
   }
 
   Future<QueryResult> createOrderMessage(
-    String userId,
     String chatId,
     String orderId,
   ) {
@@ -465,7 +474,6 @@ class BaseGraphQLClient {
           input: {
             data: {
               chat: "$chatId"
-              user: "$userId"
               order: "$orderId"
               messageType: order
             }

@@ -77,6 +77,7 @@ class __FirstPageState extends State<_FirstPage> {
         chatsMapLocal["$chatId"]['checked'] != null) {
       chatsMapLocal["$chatId"]['checked'] = true;
       prefs.setString('chatsMap', json.encode(chatsMapLocal));
+      setState(() {});
 
       List<bool> allValues = [];
       chatsMapLocal.forEach((key, value) {
@@ -85,20 +86,15 @@ class __FirstPageState extends State<_FirstPage> {
 
       bool result = allValues.every((item) => item == true);
       if (result == true) {
-        setState(() => shouldStopFetchingChats = false);
+        setState(() {
+          shouldStopFetchingChats = false;
+        });
       }
     }
   }
 
   Future processChat(dynamic chat) async {
-    // Future fetchChat(String id) async {
     print('processChat');
-    // print(chat['id'].toString());
-    // final chatRequest = await BaseGraphQLClient.instance.fetchChat(id);
-    // if (chatRequest.data != null &&
-    //     chatRequest.data['chats'] != null &&
-    //     chatRequest.data['chats'].length > 0) {
-    //   var chat = chatRequest.data['chats'][0];
 
     if (chat != null) {
       final SharedPreferences prefs = await _prefs;
@@ -190,11 +186,11 @@ class __FirstPageState extends State<_FirstPage> {
                           processChat(chat);
                           return InkWell(
                             child: _buildCard(
-                                chat,
-                                // snapshot.data['id'],
-                                context,
-                                chat['id'],
-                                meId),
+                              chat,
+                              context,
+                              chat['id'],
+                              meId,
+                            ),
                             onTap: () async {
                               checking(chat['id']);
                               Navigator.of(context).pushNamed(
@@ -245,7 +241,7 @@ Future<String> getConversationName(chat, userId) async {
     }
   }
 
-  return chatNames.join(', ');
+  return chat['store'] == null ? chatNames.join(', ') : chat['store']['name'];
 }
 
 Widget _buildCard(item, context, String chatId, userId) {

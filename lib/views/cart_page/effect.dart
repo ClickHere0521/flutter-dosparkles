@@ -176,8 +176,6 @@ void _onProceedToCheckout(Action action, Context<CartPageState> ctx) async {
     }
   }
 
-  String testUserId = "605a941d5f4807234c9f192d";
-
   QueryResult resultOrder = await BaseGraphQLClient.instance.createOrder(
     orderDetailsJson,
     totalPrice,
@@ -190,7 +188,9 @@ void _onProceedToCheckout(Action action, Context<CartPageState> ctx) async {
 
   QueryResult me = await BaseGraphQLClient.instance.me();
   QueryResult resultChat = await BaseGraphQLClient.instance.createOrderChat(
-      ["\"${me.data['me']['user']['id']}\"", "\"$testUserId\""]);
+    ["\"${me.data['me']['user']['id']}\""],
+    ctx.state.selectedStore.id,
+  );
 
   if (resultChat.hasException) {
     printWrapped('Exception: ${resultChat.exception}');
@@ -198,7 +198,6 @@ void _onProceedToCheckout(Action action, Context<CartPageState> ctx) async {
 
   QueryResult resultMessage =
       await BaseGraphQLClient.instance.createOrderMessage(
-    testUserId,
     resultChat.data['createChat']['chat']['id'],
     resultOrder.data['createOrder']['order']['id'],
   );
@@ -209,8 +208,17 @@ void _onProceedToCheckout(Action action, Context<CartPageState> ctx) async {
   GlobalStore.store.dispatch(GlobalActionCreator.setShoppingCart(
       List<CartItem>.empty(growable: true)));
 
-  Navigator.of(ctx.context)
-      .pushReplacementNamed('storepage', arguments: {'listView': true});
+  Navigator.of(ctx.context).pushReplacementNamed(
+    'chatmessagespage',
+    arguments: {
+      'chatId': resultChat.data['createChat']['chat']['id'],
+      'userId': me.data['me']['user']['id'],
+      'conversationName': resultChat.data['createChat']['chat']['store']['name']
+    },
+  );
+
+  // Navigator.of(ctx.context)
+  //     .pushReplacementNamed('storepage', arguments: {'listView': true});
 }
 
 void _onBackToProduct(Action action, Context<CartPageState> ctx) async {
