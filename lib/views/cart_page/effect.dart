@@ -211,6 +211,7 @@ void _onProceedToCheckout(Action action, Context<CartPageState> ctx) async {
   Navigator.of(ctx.context).pushReplacementNamed(
     'chatmessagespage',
     arguments: {
+      'cartItem': cart,
       'chatId': resultChat.data['createChat']['chat']['id'],
       'userId': me.data['me']['user']['id'],
       'conversationName': resultChat.data['createChat']['chat']['store']['name']

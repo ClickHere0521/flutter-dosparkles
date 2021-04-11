@@ -111,6 +111,7 @@ class BaseGraphQLClient {
             }
             engraveExample {
               url
+              name
             }
             optionalMaterialExample {
               url
@@ -174,6 +175,44 @@ class BaseGraphQLClient {
             totalPrice
             products {
               id
+              shineonImportId
+              thumbnail {
+                url
+              }
+              video {
+                url
+              }
+              engraveExample {
+                url
+                name
+              }
+              optionalMaterialExample {
+                url
+              }
+              orders {
+                id
+              }
+              oldPrice
+              price
+              showOldPrice
+              engraveAvailable
+              properties
+              shineonIds
+              engraveOldPrice
+              engravePrice
+              showOldEngravePrice
+              defaultFinishMaterial
+              optionalFinishMaterial
+              optionalFinishMaterialPrice
+              optionalFinishMaterialEnabled
+              media {
+                url
+              }
+              deliveryInformation
+              name
+              uploadsAvailable
+              sizeOptionsAvailable
+              isActive
             }
             media {
               id
@@ -201,6 +240,43 @@ class BaseGraphQLClient {
           totalPrice
           products {
             id
+            shineonImportId
+            thumbnail {
+              url
+            }
+            video {
+              url
+            }
+            engraveExample {
+              url
+            }
+            optionalMaterialExample {
+              url
+            }
+            orders {
+              id
+            }
+            oldPrice
+            price
+            showOldPrice
+            engraveAvailable
+            properties
+            shineonIds
+            engraveOldPrice
+            engravePrice
+            showOldEngravePrice
+            defaultFinishMaterial
+            optionalFinishMaterial
+            optionalFinishMaterialPrice
+            optionalFinishMaterialEnabled
+            media {
+              url
+            }
+            deliveryInformation
+            name
+            uploadsAvailable
+            sizeOptionsAvailable
+            isActive
           }
           media {
             id

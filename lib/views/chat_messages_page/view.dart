@@ -1,11 +1,19 @@
+import 'dart:convert';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
 import 'package:com.floridainc.dosparkles/actions/api/graphql_client.dart';
+import 'package:com.floridainc.dosparkles/actions/app_config.dart';
+import 'package:com.floridainc.dosparkles/models/cart_item_model.dart';
+import 'package:com.floridainc.dosparkles/models/models.dart';
 import 'package:com.floridainc.dosparkles/utils/colors.dart';
+import 'package:com.floridainc.dosparkles/widgets/touch_spin.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:flui/flui.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
 
 import 'dart:async';
 import 'state.dart';
@@ -17,6 +25,7 @@ Widget buildView(
       chatId: state.chatId,
       userId: state.userId,
       conversationName: state.conversationName,
+      cartItem: state.cartItem,
     )
   ];
 
@@ -62,12 +71,14 @@ class BubblePage extends StatefulWidget {
   final String chatId;
   final String userId;
   final String conversationName;
+  final List<CartItem> cartItem;
 
   const BubblePage({
     Key key,
     this.chatId = '',
     this.userId = '',
     this.conversationName = 'MedDrive',
+    this.cartItem,
   }) : super(key: key);
 
   @override
@@ -190,13 +201,15 @@ class _BubblePageState extends State<BubblePage> {
                                                         context,
                                                         MaterialPageRoute(
                                                           builder: (context) =>
-                                                              OrderDetails(
+                                                              OrderWidget(
                                                             orderId:
                                                                 item['order'] !=
                                                                         null
                                                                     ? item['order']
                                                                         ['id']
                                                                     : '',
+                                                            cartItem:
+                                                                widget.cartItem,
                                                           ),
                                                         ),
                                                       );
@@ -315,25 +328,26 @@ class _BubblePageState extends State<BubblePage> {
                   width: MediaQuery.of(context).size.width * 0.5,
                 ),
                 Container(
-                    width: 60,
-                    height: 40,
-                    child: InkWell(
-                      onTap: () {
-                        if (this.inputData != "") {
-                          addMessage(
-                            this.inputData,
-                            widget.chatId,
-                            widget.userId,
-                          );
-                          this.inputData = "";
-                          _controller.clear();
-                        }
-                      },
-                      child: Icon(
-                        Icons.send,
-                        color: Colors.white,
-                      ),
-                    ))
+                  width: 60,
+                  height: 40,
+                  child: InkWell(
+                    onTap: () {
+                      if (this.inputData != "") {
+                        addMessage(
+                          this.inputData,
+                          widget.chatId,
+                          widget.userId,
+                        );
+                        this.inputData = "";
+                        _controller.clear();
+                      }
+                    },
+                    child: Icon(
+                      Icons.send,
+                      color: Colors.white,
+                    ),
+                  ),
+                )
               ],
             ),
           ],
@@ -343,16 +357,17 @@ class _BubblePageState extends State<BubblePage> {
   }
 }
 
-class OrderDetails extends StatefulWidget {
-  OrderDetails({Key key, this.orderId}) : super(key: key);
-
+class OrderWidget extends StatefulWidget {
   final orderId;
+  final List<CartItem> cartItem;
+
+  const OrderWidget({Key key, this.orderId, this.cartItem}) : super(key: key);
 
   @override
-  _OrderDetailsState createState() => _OrderDetailsState();
+  _OrderWidgetState createState() => _OrderWidgetState();
 }
 
-class _OrderDetailsState extends State<OrderDetails> {
+class _OrderWidgetState extends State<OrderWidget> {
   Future getInitialData() async {
     QueryResult result =
         await BaseGraphQLClient.instance.fetchOrder(widget.orderId);
@@ -361,44 +376,345 @@ class _OrderDetailsState extends State<OrderDetails> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: getInitialData(),
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if (snapshot.hasData && !snapshot.hasError) {
-          return Scaffold(
-            appBar: AppBar(
-              title: Text('Order details'),
-              backgroundColor: HexColor("#182465"),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Order"),
+        centerTitle: true,
+        flexibleSpace: Container(
+          decoration: new BoxDecoration(
+            gradient: new LinearGradient(
+              colors: [HexColor('#3D9FB0'), HexColor('#557084')],
+              begin: const FractionalOffset(0.5, 0.5),
+              end: const FractionalOffset(0.5, 1.0),
+              stops: [0.0, 1.0],
+              tileMode: TileMode.clamp,
             ),
-            body: Container(
-              color: Color(0xFFDEEEEEE),
-              width: double.infinity,
-              height: double.infinity,
-              child: ListView(
-                // Start scrolled to the bottom by default and stay there.
-                reverse: true,
-                shrinkWrap: true,
-                children: <Widget>[],
-              ),
+          ),
+        ),
+      ),
+      body: Container(
+        color: HexColor('#3D9FB0'),
+        width: double.infinity,
+        height: double.infinity,
+        child: FutureBuilder(
+          future: getInitialData(),
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            if (snapshot.hasData && !snapshot.hasError) {
+              List<dynamic> products = snapshot.data['products'];
+
+              return SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.all(8),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                          margin: EdgeInsets.symmetric(vertical: 5.0),
+                          height: 200.0 * products.length,
+                          child: ListView.builder(
+                            itemCount: products.length,
+                            itemBuilder: (_, index) {
+                              // for (int i = 0;
+                              //     i < widget.cartItem.length;
+                              //     i++) {
+                              //   if (widget.cartItem[i].product.id ==
+                              //       products[index]['id']) {}
+                              // }
+
+                              List<CartItem> productCountItem = widget.cartItem
+                                  .where((CartItem item) => item.product.id
+                                      .contains(products[index]['id']))
+                                  .toList();
+
+                              return Container(
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 10.0, vertical: 10.0),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          products[index] != null &&
+                                                  AppConfig.instance
+                                                              .baseApiHost +
+                                                          products[index]
+                                                                  ['thumbnail']
+                                                              ['url'] !=
+                                                      null
+                                              ? ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          8.0),
+                                                  child: new CachedNetworkImage(
+                                                    imageUrl: products[index]
+                                                                ['thumbnail'] !=
+                                                            null
+                                                        ? AppConfig.instance
+                                                                .baseApiHost +
+                                                            products[index][
+                                                                    'thumbnail']
+                                                                ['url']
+                                                        : null,
+                                                    width: 100,
+                                                    height: 100,
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                )
+                                              : Container(),
+                                          Expanded(
+                                            child: new Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: <Widget>[
+                                                Text(
+                                                  products[index]['name'],
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 24,
+                                                      fontWeight:
+                                                          FontWeight.normal),
+                                                ),
+                                                Text(
+                                                  '\$${products[index]['price']}',
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 30,
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: 20,
+                                      ),
+                                      Row(children: [
+                                        RichText(
+                                          text: TextSpan(
+                                            style: DefaultTextStyle.of(
+                                              context,
+                                            ).style,
+                                            children: [
+                                              TextSpan(
+                                                text: 'Count: ',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 23,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                              TextSpan(
+                                                text:
+                                                    '${productCountItem[0].count}',
+                                                style: TextStyle(
+                                                  fontSize: 23,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Spacer(),
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    OrderDetailsWidget(
+                                                        product:
+                                                            products[index]),
+                                              ),
+                                            );
+                                          },
+                                          style: ButtonStyle(
+                                            backgroundColor:
+                                                MaterialStateProperty.all<
+                                                    Color>(
+                                              HexColor('#3D9FB0'),
+                                            ),
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              Text("details"),
+                                              Icon(Icons.arrow_right),
+                                            ],
+                                          ),
+                                        ),
+                                      ])
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          )),
+                    ],
+                  ),
+                ),
+              );
+            }
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(height: Adapt.screenH() / 4),
+                SizedBox(
+                  width: Adapt.screenW(),
+                  height: Adapt.screenH() / 4,
+                  child: Container(
+                    child: CircularProgressIndicator(),
+                    alignment: Alignment.center,
+                  ),
+                )
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class OrderDetailsWidget extends StatefulWidget {
+  final product;
+
+  const OrderDetailsWidget({Key key, this.product}) : super(key: key);
+
+  @override
+  _OrderDetailsWidgetState createState() => _OrderDetailsWidgetState();
+}
+
+class _OrderDetailsWidgetState extends State<OrderDetailsWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Order details"),
+        centerTitle: true,
+        flexibleSpace: Container(
+          decoration: new BoxDecoration(
+            gradient: new LinearGradient(
+              colors: [HexColor('#3D9FB0'), HexColor('#557084')],
+              begin: const FractionalOffset(0.5, 0.5),
+              end: const FractionalOffset(0.5, 1.0),
+              stops: [0.0, 1.0],
+              tileMode: TileMode.clamp,
             ),
-          );
-        }
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(height: Adapt.screenH() / 4),
-            SizedBox(
-              width: Adapt.screenW(),
-              height: Adapt.screenH() / 4,
-              child: Container(
-                child: CircularProgressIndicator(),
-                alignment: Alignment.center,
+          ),
+        ),
+      ),
+      body: Container(
+        color: HexColor('#3D9FB0'),
+        width: double.infinity,
+        height: double.infinity,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Container(
+                child: Padding(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      ListTile(
+                        leading: Text(
+                          "Metal:",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                        horizontalTitleGap: 40,
+                        title: Text(
+                          widget.product['properties'] != null &&
+                                  widget.product['properties']['metal'] != null
+                              ? widget.product['properties']['metal']
+                              : "",
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 24,
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                      ),
+                      ListTile(
+                        leading: Text(
+                          "Type:",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                        horizontalTitleGap: 40,
+                        title: Text(
+                          widget.product['properties'] != null &&
+                                  widget.product['properties']['type'] != null
+                              ? widget.product['properties']['type']
+                              : "",
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 24,
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                      ),
+                      ListTile(
+                        leading: Text(
+                          "Shape:",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                        horizontalTitleGap: 40,
+                        title: Text(
+                          widget.product['properties'] != null &&
+                                  widget.product['properties']['shape'] != null
+                              ? widget.product['properties']['shape']
+                              : "",
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 24,
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                      ),
+                      GridView.count(
+                          physics: NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          crossAxisCount: 2,
+                          childAspectRatio: 1,
+                          children: <Widget>[
+                            for (var asset in widget.product['media'])
+                              Card(
+                                clipBehavior: Clip.antiAlias,
+                                child: Stack(
+                                  children: <Widget>[
+                                    Image.network(
+                                        '${AppConfig.instance.baseApiHost + asset['url']}'),
+                                  ],
+                                ),
+                              ),
+                          ]),
+                    ],
+                  ),
+                ),
               ),
-            )
-          ],
-        );
-      },
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

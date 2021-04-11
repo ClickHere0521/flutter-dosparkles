@@ -1,3 +1,4 @@
+import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart' hide Action;
 import 'action.dart';
@@ -22,7 +23,5 @@ void _onDispose(Action action, Context<ChatMessagesPageState> ctx) {
   ctx.state.pageController.dispose();
 }
 
-void _onBuild(Action action, Context<ChatMessagesPageState> ctx) {
-}
-void _onStart(Action action, Context<ChatMessagesPageState> ctx) async {
-}
+void _onBuild(Action action, Context<ChatMessagesPageState> ctx) {}
+void _onStart(Action action, Context<ChatMessagesPageState> ctx) async {}
