@@ -14,6 +14,10 @@ class AppUser {
 
   dynamic storeFavorite;
 
+  Map store;
+
+  String role;
+
   AppUser.fromParams({
     this.name,
     this.email,
@@ -21,6 +25,8 @@ class AppUser {
     this.avatarUrl,
     this.shippingAddress,
     this.storeFavorite,
+    this.store,
+    this.role,
   });
 
   factory AppUser(jsonStr) => jsonStr == null
@@ -35,10 +41,13 @@ class AppUser {
     country = jsonRes['country'];
     shippingAddress = jsonRes['shippingAddress'];
     storeFavorite = jsonRes['storeFavorite'];
+    store = jsonRes['store'];
 
     avatarUrl = jsonRes['avatar'] != null
         ? AppConfig.instance.baseApiHost + jsonRes['avatar']['url']
         : null;
+
+    role = jsonRes['role'] != null ? jsonRes['role']['name'] : null;
   }
   @override
   String toString() {

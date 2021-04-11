@@ -70,6 +70,9 @@ class BaseGraphQLClient {
               id
               name
             }
+            store {
+              id
+            }
             role {
               id
               name
@@ -99,6 +102,95 @@ class BaseGraphQLClient {
           lng
           thumbnail {
             url
+          }
+          products {
+            id
+            shineonImportId
+            thumbnail {
+              url
+            }
+            video {
+              url
+            }
+            engraveExample {
+              url
+              name
+            }
+            optionalMaterialExample {
+              url
+            }
+            orders {
+              id
+            }
+            oldPrice
+            price
+            showOldPrice
+            engraveAvailable
+            properties
+            shineonIds
+            engraveOldPrice
+            engravePrice
+            showOldEngravePrice
+            defaultFinishMaterial
+            optionalFinishMaterial
+            optionalFinishMaterialPrice
+            optionalFinishMaterialEnabled
+            media {
+              url
+            }
+            deliveryInformation
+            name
+            uploadsAvailable
+            sizeOptionsAvailable
+            isActive
+          }
+        }
+      }
+    ''';
+
+    return _service.query(_query);
+  }
+
+  Future<QueryResult> fetchStoreById(String id) {
+    String _query = '''
+      query {
+        stores ( where: { id: "$id" } ) {
+          id
+          name
+          address
+          phone
+          lat
+          lng
+          thumbnail {
+            url
+          }
+          chats {
+            id
+            users {
+              id
+              email
+              name
+            }
+            store {
+              id
+              name
+            }
+            chat_messages {
+              id
+              text
+              createdAt
+              messageType
+              order {
+                id
+              }
+              chat {
+                id
+              }
+              user {
+                id
+                name
+              }
+            }
           }
           products {
             id

@@ -415,13 +415,6 @@ class _OrderWidgetState extends State<OrderWidget> {
                           child: ListView.builder(
                             itemCount: products.length,
                             itemBuilder: (_, index) {
-                              // for (int i = 0;
-                              //     i < widget.cartItem.length;
-                              //     i++) {
-                              //   if (widget.cartItem[i].product.id ==
-                              //       products[index]['id']) {}
-                              // }
-
                               List<CartItem> productCountItem = widget.cartItem
                                   .where((CartItem item) => item.product.id
                                       .contains(products[index]['id']))
