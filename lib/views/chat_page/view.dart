@@ -85,64 +85,53 @@ class __FirstPageState extends State<_FirstPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: _widgetOptions.elementAt(_selectedIndex),
-        bottomNavigationBar: BottomNavigationBar(
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.chat),
-              label: 'Chat',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.store),
-              label: 'Store',
-            ),
-          ],
-          currentIndex: _selectedIndex,
-          selectedItemColor: HexColor("#182465"),
-          onTap: _onItemTapped,
-        ));
+      body: _widgetOptions.elementAt(_selectedIndex),
+      bottomNavigationBar:
+          GlobalStore.store.getState().user.role == "Store Manager"
+              ? BottomNavigationBar(
+                  items: const <BottomNavigationBarItem>[
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.chat),
+                      label: 'Chat',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.store),
+                      label: 'Store',
+                    ),
+                  ],
+                  currentIndex: _selectedIndex,
+                  selectedItemColor: HexColor("#182465"),
+                  onTap: _onItemTapped,
+                )
+              : null,
+    );
   }
-
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     body: _widgetOptions.elementAt(_selectedIndex),
-  //     bottomNavigationBar:
-  //         GlobalStore.store.getState().user.role == "Store Manager"
-  //             ? BottomNavigationBar(
-  //                 items: const <BottomNavigationBarItem>[
-  //                   BottomNavigationBarItem(
-  //                     icon: Icon(Icons.chat),
-  //                     label: 'Chat',
-  //                   ),
-  //                   BottomNavigationBarItem(
-  //                     icon: Icon(Icons.store),
-  //                     label: 'Store',
-  //                   ),
-  //                 ],
-  //                 currentIndex: _selectedIndex,
-  //                 selectedItemColor: HexColor("#182465"),
-  //                 onTap: _onItemTapped,
-  //               )
-  //             : null,
-  //   );
-  // }
 }
 
 Future<String> getConversationName(tabIndex, chat, userId) async {
+  String userName = GlobalStore.store.getState().user.name;
   List chatNames = [];
 
   var users = chat['users'];
   for (int i = 0; i < users.length; i++) {
-    if (users[i]['id'] != userId) {
+    if (tabIndex == 0 && users[i]['id'] != userId) {
       chatNames.add('${users[i]['name']}');
+      continue;
     }
+    chatNames.add('${users[i]['name']}');
   }
 
+  List notMeList = chatNames.where((name) => name != userName).toList();
+
+  String others = chatNames.length > 1 ? " and ${chatNames.length - 1}+" : "";
+  String nameAndOtherNames =
+      notMeList.length != 0 ? "${notMeList[0]}$others" : userName;
+
   if (tabIndex == 0) {
-    return chat['store'] == null ? chatNames.join(', ') : chat['store']['name'];
+    return chat['store'] == null ? nameAndOtherNames : chat['store']['name'];
   }
-  return chatNames.join(', ');
+
+  return nameAndOtherNames;
 }
 
 Widget _buildCard(tabIndex, item, context, String chatId, userId) {
