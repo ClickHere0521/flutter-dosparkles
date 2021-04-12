@@ -179,7 +179,7 @@ class ChatPageWidget extends StatefulWidget {
 }
 
 class _ChatPageWidgetState extends State<ChatPageWidget> {
-  String meId;
+  String meId = GlobalStore.store.getState().user.id;
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   bool shouldStopFetchingChats = false;
 
@@ -273,15 +273,6 @@ class _ChatPageWidgetState extends State<ChatPageWidget> {
         yield await fetchData();
         await Future<void>.delayed(Duration(seconds: 60));
       }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-
-    BaseGraphQLClient.instance.me().then((result) {
-      meId = result.data['me']['id'];
-    });
   }
 
   @override

@@ -2,6 +2,8 @@ import 'dart:convert' show json;
 import 'package:com.floridainc.dosparkles/actions/app_config.dart';
 
 class AppUser {
+  String id;
+
   String name;
 
   String email;
@@ -19,6 +21,7 @@ class AppUser {
   String role;
 
   AppUser.fromParams({
+    this.id,
     this.name,
     this.email,
     this.country,
@@ -36,6 +39,7 @@ class AppUser {
           : new AppUser.fromJson(jsonStr);
 
   AppUser.fromJson(jsonRes) {
+    id = jsonRes['id'];
     name = jsonRes['name'];
     email = jsonRes['email'];
     country = jsonRes['country'];

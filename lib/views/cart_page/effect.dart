@@ -168,6 +168,9 @@ void _onProceedToCheckout(Action action, Context<CartPageState> ctx) async {
   // printWrapped('orderDetailsJson: $orderDetailsJson');
   // printWrapped('productsIdsJson: $productsIdsJson');
 
+  GlobalStore.store.dispatch(GlobalActionCreator.setShoppingCart(
+      List<CartItem>.empty(growable: true)));
+
   List orderImageIds = [];
   for (var i = 0; i < cart.length; i++) {
     List orderImageData = cart[i].orderImageData;
@@ -186,37 +189,79 @@ void _onProceedToCheckout(Action action, Context<CartPageState> ctx) async {
     printWrapped('Exception: ${resultOrder.exception}');
   }
 
-  QueryResult me = await BaseGraphQLClient.instance.me();
-  QueryResult resultChat = await BaseGraphQLClient.instance.createOrderChat(
-    ["\"${me.data['me']['user']['id']}\""],
-    ctx.state.selectedStore.id,
-  );
-
-  if (resultChat.hasException) {
-    printWrapped('Exception: ${resultChat.exception}');
+  QueryResult storeResult = await BaseGraphQLClient.instance
+      .fetchStoreById(ctx.state.selectedStore.id);
+  if (storeResult.hasException) {
+    printWrapped('Exception: ${storeResult.exception}');
   }
 
-  QueryResult resultMessage =
-      await BaseGraphQLClient.instance.createOrderMessage(
-    resultChat.data['createChat']['chat']['id'],
-    resultOrder.data['createOrder']['order']['id'],
-  );
-  if (resultMessage.hasException) {
-    printWrapped('Exception: ${resultMessage.exception}');
+  List storeChats = storeResult.data['stores'][0]['chats'];
+
+  String myId = GlobalStore.store.getState().user.id;
+  bool isExistUser;
+
+  for (var i = 0; i < storeChats.length; i++) {
+    var chatUsers = storeChats[i]['users'];
+    for (var j = 0; j < chatUsers.length; j++) {
+      var chatId = chatUsers[j]['id'];
+
+      if (chatId == myId) {
+        isExistUser = true;
+      } else {
+        isExistUser = false;
+      }
+    }
   }
 
-  GlobalStore.store.dispatch(GlobalActionCreator.setShoppingCart(
-      List<CartItem>.empty(growable: true)));
+  if (isExistUser == false || storeChats == null || storeChats.length == 0) {
+    QueryResult resultChat = await BaseGraphQLClient.instance
+        .createOrderChat(["\"$myId\""], ctx.state.selectedStore.id);
 
-  Navigator.of(ctx.context).pushReplacementNamed(
-    'chatmessagespage',
-    arguments: {
-      'cartItem': cart,
-      'chatId': resultChat.data['createChat']['chat']['id'],
-      'userId': me.data['me']['user']['id'],
-      'conversationName': resultChat.data['createChat']['chat']['store']['name']
-    },
-  );
+    if (resultChat.hasException) {
+      printWrapped('Exception: ${resultChat.exception}');
+    }
+
+    QueryResult resultMessage =
+        await BaseGraphQLClient.instance.createOrderMessage(
+      resultChat.data['createChat']['chat']['id'],
+      resultOrder.data['createOrder']['order']['id'],
+    );
+    if (resultMessage.hasException) {
+      printWrapped('Exception: ${resultMessage.exception}');
+    }
+
+    Navigator.of(ctx.context).pushReplacementNamed(
+      'chatmessagespage',
+      arguments: {
+        'cartItem': cart,
+        'chatId': resultChat.data['createChat']['chat']['id'],
+        'userId': myId,
+        'conversationName': resultChat.data['createChat']['chat']['store']
+            ['name']
+      },
+    );
+  }
+
+  if (isExistUser == true) {
+    QueryResult resultMessage =
+        await BaseGraphQLClient.instance.createOrderMessage(
+      storeChats[0]['id'],
+      resultOrder.data['createOrder']['order']['id'],
+    );
+    if (resultMessage.hasException) {
+      printWrapped('Exception: ${resultMessage.exception}');
+    }
+
+    Navigator.of(ctx.context).pushReplacementNamed(
+      'chatmessagespage',
+      arguments: {
+        'cartItem': cart,
+        'chatId': storeChats[0]['id'],
+        'userId': myId,
+        'conversationName': storeChats[0]['store']['name'],
+      },
+    );
+  }
 
   // Navigator.of(ctx.context)
   //     .pushReplacementNamed('storepage', arguments: {'listView': true});

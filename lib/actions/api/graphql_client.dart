@@ -103,6 +103,13 @@ class BaseGraphQLClient {
           thumbnail {
             url
           }
+          chats {
+            id
+            store {
+              id 
+              name
+            }
+          }
           products {
             id
             shineonImportId
