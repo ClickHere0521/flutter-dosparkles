@@ -25,7 +25,6 @@ Widget buildView(
       chatId: state.chatId,
       userId: state.userId,
       conversationName: state.conversationName,
-      cartItem: state.cartItem,
     )
   ];
 
@@ -71,14 +70,12 @@ class BubblePage extends StatefulWidget {
   final String chatId;
   final String userId;
   final String conversationName;
-  final List<CartItem> cartItem;
 
   const BubblePage({
     Key key,
     this.chatId = '',
     this.userId = '',
     this.conversationName = 'MedDrive',
-    this.cartItem,
   }) : super(key: key);
 
   @override
@@ -202,15 +199,12 @@ class _BubblePageState extends State<BubblePage> {
                                                         MaterialPageRoute(
                                                           builder: (context) =>
                                                               OrderWidget(
-                                                            orderId:
-                                                                item['order'] !=
-                                                                        null
-                                                                    ? item['order']
-                                                                        ['id']
-                                                                    : '',
-                                                            cartItem:
-                                                                widget.cartItem,
-                                                          ),
+                                                                  orderId: item[
+                                                                              'order'] !=
+                                                                          null
+                                                                      ? item['order']
+                                                                          ['id']
+                                                                      : ''),
                                                         ),
                                                       );
                                                     },
@@ -359,9 +353,8 @@ class _BubblePageState extends State<BubblePage> {
 
 class OrderWidget extends StatefulWidget {
   final orderId;
-  final List<CartItem> cartItem;
 
-  const OrderWidget({Key key, this.orderId, this.cartItem}) : super(key: key);
+  const OrderWidget({Key key, this.orderId}) : super(key: key);
 
   @override
   _OrderWidgetState createState() => _OrderWidgetState();
@@ -410,144 +403,135 @@ class _OrderWidgetState extends State<OrderWidget> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Container(
-                          margin: EdgeInsets.symmetric(vertical: 5.0),
-                          height: 200.0 * products.length,
-                          child: ListView.builder(
-                            itemCount: products.length,
-                            itemBuilder: (_, index) {
-                              List<CartItem> productCountItem = widget.cartItem
-                                  .where((CartItem item) => item.product.id
-                                      .contains(products[index]['id']))
-                                  .toList();
-
-                              return Container(
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 10.0, vertical: 10.0),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          products[index] != null &&
-                                                  AppConfig.instance
+                        margin: EdgeInsets.symmetric(vertical: 5.0),
+                        height: 200.0 * products.length,
+                        child: ListView.builder(
+                          itemCount: products.length,
+                          itemBuilder: (_, index) {
+                            return Container(
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 10.0, vertical: 10.0),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        products[index] != null &&
+                                                AppConfig.instance.baseApiHost +
+                                                        products[index]
+                                                                ['thumbnail']
+                                                            ['url'] !=
+                                                    null
+                                            ? ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                                child: new CachedNetworkImage(
+                                                  imageUrl: products[index]
+                                                              ['thumbnail'] !=
+                                                          null
+                                                      ? AppConfig.instance
                                                               .baseApiHost +
                                                           products[index]
                                                                   ['thumbnail']
-                                                              ['url'] !=
-                                                      null
-                                              ? ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          8.0),
-                                                  child: new CachedNetworkImage(
-                                                    imageUrl: products[index]
-                                                                ['thumbnail'] !=
-                                                            null
-                                                        ? AppConfig.instance
-                                                                .baseApiHost +
-                                                            products[index][
-                                                                    'thumbnail']
-                                                                ['url']
-                                                        : null,
-                                                    width: 100,
-                                                    height: 100,
-                                                    fit: BoxFit.cover,
-                                                  ),
-                                                )
-                                              : Container(),
-                                          Expanded(
-                                            child: new Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: <Widget>[
-                                                Text(
-                                                  products[index]['name'],
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 24,
-                                                      fontWeight:
-                                                          FontWeight.normal),
+                                                              ['url']
+                                                      : null,
+                                                  width: 100,
+                                                  height: 100,
+                                                  fit: BoxFit.cover,
                                                 ),
-                                                Text(
-                                                  '\$${products[index]['price']}',
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
+                                              )
+                                            : Container(),
+                                        Expanded(
+                                          child: new Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: <Widget>[
+                                              Text(
+                                                products[index]['name'],
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
                                                     color: Colors.white,
-                                                    fontSize: 30,
+                                                    fontSize: 24,
                                                     fontWeight:
-                                                        FontWeight.normal,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        height: 20,
-                                      ),
-                                      Row(children: [
-                                        RichText(
-                                          text: TextSpan(
-                                            style: DefaultTextStyle.of(
-                                              context,
-                                            ).style,
-                                            children: [
-                                              TextSpan(
-                                                text: 'Count: ',
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 23,
-                                                  color: Colors.white,
-                                                ),
+                                                        FontWeight.normal),
                                               ),
-                                              TextSpan(
-                                                text:
-                                                    '${productCountItem[0].count}',
+                                              Text(
+                                                '\$${products[index]['price']}',
+                                                textAlign: TextAlign.center,
                                                 style: TextStyle(
-                                                  fontSize: 23,
                                                   color: Colors.white,
+                                                  fontSize: 30,
+                                                  fontWeight: FontWeight.normal,
                                                 ),
                                               ),
                                             ],
                                           ),
                                         ),
-                                        Spacer(),
-                                        ElevatedButton(
-                                          onPressed: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    OrderDetailsWidget(
-                                                        product:
-                                                            products[index]),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                    Row(children: [
+                                      RichText(
+                                        text: TextSpan(
+                                          style: DefaultTextStyle.of(
+                                            context,
+                                          ).style,
+                                          children: [
+                                            TextSpan(
+                                              text: 'Count: ',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 23,
+                                                color: Colors.white,
                                               ),
-                                            );
-                                          },
-                                          style: ButtonStyle(
-                                            backgroundColor:
-                                                MaterialStateProperty.all<
-                                                    Color>(
-                                              HexColor('#3D9FB0'),
                                             ),
-                                          ),
-                                          child: Row(
-                                            children: [
-                                              Text("details"),
-                                              Icon(Icons.arrow_right),
-                                            ],
+                                            TextSpan(
+                                              text:
+                                                  '${snapshot.data['orderDetails'][0]['quantity']}',
+                                              style: TextStyle(
+                                                fontSize: 23,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Spacer(),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  OrderDetailsWidget(
+                                                      product: products[index]),
+                                            ),
+                                          );
+                                        },
+                                        style: ButtonStyle(
+                                          backgroundColor:
+                                              MaterialStateProperty.all<Color>(
+                                            HexColor('#3D9FB0'),
                                           ),
                                         ),
-                                      ])
-                                    ],
-                                  ),
+                                        child: Row(
+                                          children: [
+                                            Text("details"),
+                                            Icon(Icons.arrow_right),
+                                          ],
+                                        ),
+                                      ),
+                                    ])
+                                  ],
                                 ),
-                              );
-                            },
-                          )),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
                     ],
                   ),
                 ),

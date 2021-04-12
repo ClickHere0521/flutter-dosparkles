@@ -85,27 +85,48 @@ class __FirstPageState extends State<_FirstPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _widgetOptions.elementAt(_selectedIndex),
-      bottomNavigationBar:
-          GlobalStore.store.getState().user.role == "Store Manager"
-              ? BottomNavigationBar(
-                  items: const <BottomNavigationBarItem>[
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.chat),
-                      label: 'Chat',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.store),
-                      label: 'Store',
-                    ),
-                  ],
-                  currentIndex: _selectedIndex,
-                  selectedItemColor: HexColor("#182465"),
-                  onTap: _onItemTapped,
-                )
-              : null,
-    );
+        body: _widgetOptions.elementAt(_selectedIndex),
+        bottomNavigationBar: BottomNavigationBar(
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.chat),
+              label: 'Chat',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.store),
+              label: 'Store',
+            ),
+          ],
+          currentIndex: _selectedIndex,
+          selectedItemColor: HexColor("#182465"),
+          onTap: _onItemTapped,
+        ));
   }
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   return Scaffold(
+  //     body: _widgetOptions.elementAt(_selectedIndex),
+  //     bottomNavigationBar:
+  //         GlobalStore.store.getState().user.role == "Store Manager"
+  //             ? BottomNavigationBar(
+  //                 items: const <BottomNavigationBarItem>[
+  //                   BottomNavigationBarItem(
+  //                     icon: Icon(Icons.chat),
+  //                     label: 'Chat',
+  //                   ),
+  //                   BottomNavigationBarItem(
+  //                     icon: Icon(Icons.store),
+  //                     label: 'Store',
+  //                   ),
+  //                 ],
+  //                 currentIndex: _selectedIndex,
+  //                 selectedItemColor: HexColor("#182465"),
+  //                 onTap: _onItemTapped,
+  //               )
+  //             : null,
+  //   );
+  // }
 }
 
 Future<String> getConversationName(tabIndex, chat, userId) async {
@@ -471,11 +492,8 @@ class _StorePageWidgetState extends State<StorePageWidget> {
                         arguments: {
                           'chatId': chat['id'],
                           'userId': meId,
-                          'conversationName': await getConversationName(
-                            1,
-                            chat,
-                            meId,
-                          )
+                          'conversationName':
+                              await getConversationName(1, chat, meId)
                         },
                       );
                     },
