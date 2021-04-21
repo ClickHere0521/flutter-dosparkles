@@ -23,6 +23,13 @@ void _onInit(Action action, Context<StorePageState> ctx) async {
   ctx.state.animationController = AnimationController(
       vsync: ticker, duration: Duration(milliseconds: 2000));
 
+  ctx.state.user = GlobalStore.store.getState().user;
+  ctx.state.locale = GlobalStore.store.getState().locale;
+  ctx.state.storesList = GlobalStore.store.getState().storesList;
+  ctx.state.selectedProduct = GlobalStore.store.getState().selectedProduct;
+  ctx.state.selectedStore = GlobalStore.store.getState().selectedStore;
+  ctx.state.shoppingCart = GlobalStore.store.getState().shoppingCart;
+
   if (ctx.state.productIndex == null) {
     if (ctx.state.selectedStore != null && ctx.state.selectedProduct != null) {
       for (var i = 0; i < ctx.state.selectedStore.products.length; i++) {

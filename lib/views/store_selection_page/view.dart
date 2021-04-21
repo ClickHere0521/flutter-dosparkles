@@ -1,19 +1,12 @@
-import 'dart:convert';
-
-import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
-import 'package:com.floridainc.dosparkles/utils/general.dart';
-import 'package:com.floridainc.dosparkles/widgets/test_image_picker.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
 import 'package:com.floridainc.dosparkles/utils/colors.dart';
 import 'package:com.floridainc.dosparkles/models/models.dart';
 import 'package:com.floridainc.dosparkles/widgets/sparkles_drawer.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 import 'action.dart';
 import 'state.dart';
@@ -98,11 +91,8 @@ class _MainBody extends StatefulWidget {
 }
 
 class __MainBodyState extends State<_MainBody> {
-  List<StoreItem> stores;
-
   @override
   void initState() {
-    setState(() => stores = GlobalStore.store.getState().storesList);
     super.initState();
   }
 
@@ -114,8 +104,8 @@ class __MainBodyState extends State<_MainBody> {
     );
     const Key centerKey = ValueKey('bottom-sliver-list');
 
-    if (stores != null) {
-      stores.sort((StoreItem a, StoreItem b) =>
+    if (widget.stores != null) {
+      widget.stores.sort((StoreItem a, StoreItem b) =>
           a.storeDistance.compareTo(b.storeDistance));
     }
 
@@ -148,18 +138,21 @@ class __MainBodyState extends State<_MainBody> {
                                     color: Colors.grey,
                                     height: 100,
                                     child: Text(
-                                        'Store: ${stores[index] != null && stores[index].name != null ? stores[index].name : ''}'),
+                                        'Store: ${widget.stores[index] != null && widget.stores[index].name != null ? widget.stores[index].name : ''}'),
                                   ),
                                   onTap: () => {
                                     widget.dispatch(
                                       StoreSelectionPageActionCreator
-                                          .onStoreSelected(stores[index]),
+                                          .onStoreSelected(
+                                              widget.stores[index]),
                                     ),
                                   },
                                 ),
                               );
                             },
-                            childCount: stores != null ? stores.length : 0,
+                            childCount: widget.stores != null
+                                ? widget.stores.length
+                                : 0,
                           ),
                         ),
                       ],

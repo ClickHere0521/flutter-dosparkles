@@ -14,3 +14,6 @@ export 'help_page/page.dart';
 export 'forgot_password_page/page.dart';
 export 'reset_password_page/page.dart';
 export 'customize_link_page/page.dart';
+export 'authorization_page/page.dart';
+export 'register_page/page.dart';
+export 'add_phone_page/page.dart';

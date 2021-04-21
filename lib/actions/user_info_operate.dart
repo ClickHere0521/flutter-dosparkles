@@ -11,7 +11,12 @@ class UserInfoOperate {
     BaseGraphQLClient.instance.setToken(token);
 
     final meRequest = await BaseGraphQLClient.instance.me();
+    if (meRequest.hasException) {
+      print("exception: ${meRequest.exception}");
+    }
+
     final user = ModelFactory.generate<AppUser>(meRequest.data['me']['user']);
+
     GlobalStore.store.dispatch(GlobalActionCreator.setUser(user));
   }
 

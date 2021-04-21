@@ -7,11 +7,11 @@ class GraphQLService {
   InMemoryCache cache = InMemoryCache();
   GraphQLClient _httpClient;
   GraphQLClient _websocketClient;
-  void setupClient(
-      {@required String httpLink,
-      @required String webSocketLink,
-      String token = ''}) {
-
+  void setupClient({
+    @required String httpLink,
+    @required String webSocketLink,
+    String token = '',
+  }) {
     _httpLink = HttpLink(
       uri: httpLink,
     );
@@ -23,34 +23,33 @@ class GraphQLService {
         ));
 
     if (token == '') {
-      _httpClient = GraphQLClient(
-          link: _httpLink, cache: cache);
-      _websocketClient = GraphQLClient(
-          link:_webSocketLink,
-          cache: cache);
+      _httpClient = GraphQLClient(link: _httpLink, cache: cache);
+      _websocketClient = GraphQLClient(link: _webSocketLink, cache: cache);
     } else {
-        final AuthLink authLink = AuthLink(getToken: () => 'Bearer $token');
+      final AuthLink authLink = AuthLink(getToken: () => 'Bearer $token');
 
-        Link httpLinkWithAuth = authLink.concat(_httpLink);
-        Link webSocketLinkWithAuth = authLink.concat(_webSocketLink);
+      Link httpLinkWithAuth = authLink.concat(_httpLink);
+      Link webSocketLinkWithAuth = authLink.concat(_webSocketLink);
 
-        _httpClient = GraphQLClient(
-            link: httpLinkWithAuth, cache: cache);
-        _websocketClient = GraphQLClient(
-            link: webSocketLinkWithAuth, 
-            cache: cache);
+      _httpClient = GraphQLClient(link: httpLinkWithAuth, cache: cache);
+      _websocketClient =
+          GraphQLClient(link: webSocketLinkWithAuth, cache: cache);
     }
   }
 
   Future<QueryResult> query(String query, {Map<String, dynamic> variables}) {
-    return _httpClient
-        .query(QueryOptions(documentNode: gql(query), variables: variables));
+    return _httpClient.query(QueryOptions(
+        documentNode: gql(query),
+        variables: variables,
+        fetchPolicy: FetchPolicy.networkOnly));
   }
 
   Future<QueryResult> mutate(String mutation,
       {Map<String, dynamic> variables}) {
-    return _httpClient.mutate(
-        MutationOptions(documentNode: gql(mutation), variables: variables));
+    return _httpClient.mutate(MutationOptions(
+        documentNode: gql(mutation),
+        variables: variables,
+        fetchPolicy: FetchPolicy.networkOnly));
   }
 
   Stream<FetchResult> subscribe(String subscription,

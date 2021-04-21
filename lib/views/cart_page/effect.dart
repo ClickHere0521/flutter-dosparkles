@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:com.floridainc.dosparkles/models/cart_item_model.dart';
 import 'package:com.floridainc.dosparkles/utils/general.dart';
 import 'package:fish_redux/fish_redux.dart';
@@ -7,6 +9,7 @@ import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/action.dart';
 
 import 'package:com.floridainc.dosparkles/actions/api/graphql_client.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 
 import 'action.dart';
 import 'state.dart';
@@ -28,6 +31,13 @@ void _onInit(Action action, Context<CartPageState> ctx) async {
   final Object ticker = ctx.stfState;
   ctx.state.animationController = AnimationController(
       vsync: ticker, duration: Duration(milliseconds: 2000));
+
+  ctx.state.user = GlobalStore.store.getState().user;
+  ctx.state.locale = GlobalStore.store.getState().locale;
+  ctx.state.storesList = GlobalStore.store.getState().storesList;
+  ctx.state.selectedProduct = GlobalStore.store.getState().selectedProduct;
+  ctx.state.selectedStore = GlobalStore.store.getState().selectedStore;
+  ctx.state.shoppingCart = GlobalStore.store.getState().shoppingCart;
 }
 
 void _onBuild(Action action, Context<CartPageState> ctx) {
@@ -84,6 +94,7 @@ void _onRemoveCartItem(Action action, Context<CartPageState> ctx) {
 String processCartItemForOrder(CartItem item) {
   String sku;
   String properties;
+  String url = "https://backend.dosparkles.com";
 
   // TODO: "print_url": "http://lorempixel.com/100/100/",
 
@@ -121,6 +132,13 @@ String processCartItemForOrder(CartItem item) {
     }
   }
 
+  if (item.orderImageData != null) {
+    for (var i = 0; i < item.orderImageData.length; i++) {
+      properties +=
+          ', print_url_${i + 1}: "${url + item.orderImageData[i]['url']}"';
+    }
+  }
+
   properties += ' }';
 
   var result =
@@ -150,19 +168,101 @@ void _onProceedToCheckout(Action action, Context<CartPageState> ctx) async {
   // printWrapped('orderDetailsJson: $orderDetailsJson');
   // printWrapped('productsIdsJson: $productsIdsJson');
 
-  var result = await BaseGraphQLClient.instance
-      .createOrder(orderDetailsJson, totalPrice, productsIdsJson);
-  if (result.hasException) {
-    printWrapped('Exception: ${result.exception}');
-  }
-
-  // return;
-
   GlobalStore.store.dispatch(GlobalActionCreator.setShoppingCart(
       List<CartItem>.empty(growable: true)));
 
-  Navigator.of(ctx.context)
-      .pushReplacementNamed('storepage', arguments: {'listView': true});
+  List orderImageIds = [];
+  for (var i = 0; i < cart.length; i++) {
+    List orderImageData = cart[i].orderImageData;
+    for (var j = 0; j < orderImageData.length; j++) {
+      orderImageIds.add("\"${orderImageData[j]['id']}\"");
+    }
+  }
+
+  QueryResult resultOrder = await BaseGraphQLClient.instance.createOrder(
+    orderDetailsJson,
+    totalPrice,
+    productsIdsJson,
+    orderImageIds,
+  );
+  if (resultOrder.hasException) {
+    printWrapped('Exception: ${resultOrder.exception}');
+  }
+
+  QueryResult storeResult = await BaseGraphQLClient.instance
+      .fetchStoreById(ctx.state.selectedStore.id);
+  if (storeResult.hasException) {
+    printWrapped('Exception: ${storeResult.exception}');
+  }
+
+  List storeChats = storeResult.data['stores'][0]['chats'];
+
+  String myId = GlobalStore.store.getState().user.id;
+  bool isExistUser;
+
+  for (var i = 0; i < storeChats.length; i++) {
+    var chatUsers = storeChats[i]['users'];
+    for (var j = 0; j < chatUsers.length; j++) {
+      var chatId = chatUsers[j]['id'];
+
+      if (chatId == myId) {
+        isExistUser = true;
+      } else {
+        isExistUser = false;
+      }
+    }
+  }
+
+  if (isExistUser == false || storeChats == null || storeChats.length == 0) {
+    QueryResult resultChat = await BaseGraphQLClient.instance
+        .createOrderChat(["\"$myId\""], ctx.state.selectedStore.id);
+
+    if (resultChat.hasException) {
+      printWrapped('Exception: ${resultChat.exception}');
+    }
+
+    QueryResult resultMessage =
+        await BaseGraphQLClient.instance.createOrderMessage(
+      resultChat.data['createChat']['chat']['id'],
+      resultOrder.data['createOrder']['order']['id'],
+    );
+    if (resultMessage.hasException) {
+      printWrapped('Exception: ${resultMessage.exception}');
+    }
+
+    Navigator.of(ctx.context).pushReplacementNamed(
+      'chatmessagespage',
+      arguments: {
+        'chatId': resultChat.data['createChat']['chat']['id'],
+        'userId': myId,
+        'conversationName': resultChat.data['createChat']['chat']['store']
+            ['name']
+      },
+    );
+  }
+
+  if (isExistUser == true) {
+    QueryResult resultMessage =
+        await BaseGraphQLClient.instance.createOrderMessage(
+      storeChats[0]['id'],
+      resultOrder.data['createOrder']['order']['id'],
+    );
+    if (resultMessage.hasException) {
+      printWrapped('Exception: ${resultMessage.exception}');
+    }
+
+    Navigator.of(ctx.context).pushReplacementNamed(
+      'chatmessagespage',
+      arguments: {
+        'chatId': storeChats[0]['id'],
+        'userId': myId,
+        'conversationName': storeChats[0]['store']['name'],
+      },
+    );
+  }
+
+  // Navigator.of(ctx.context)
+  //     .pushReplacementNamed('storepage', arguments: {'listView': true});
 }
 
 void _onBackToProduct(Action action, Context<CartPageState> ctx) async {

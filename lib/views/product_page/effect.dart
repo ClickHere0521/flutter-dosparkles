@@ -24,6 +24,13 @@ void _onInit(Action action, Context<ProductPageState> ctx) async {
   final Object ticker = ctx.stfState;
   ctx.state.animationController = AnimationController(
       vsync: ticker, duration: Duration(milliseconds: 2000));
+
+  ctx.state.user = GlobalStore.store.getState().user;
+  ctx.state.locale = GlobalStore.store.getState().locale;
+  ctx.state.storesList = GlobalStore.store.getState().storesList;
+  ctx.state.selectedProduct = GlobalStore.store.getState().selectedProduct;
+  ctx.state.selectedStore = GlobalStore.store.getState().selectedStore;
+  ctx.state.shoppingCart = GlobalStore.store.getState().shoppingCart;
 }
 
 void _onBuild(Action action, Context<ProductPageState> ctx) {
@@ -43,6 +50,7 @@ void _onGoToCart(Action action, Context<ProductPageState> ctx) async {
 void _onAddToCart(Action action, Context<ProductPageState> ctx) async {
   ProductItem product = action.payload[0];
   int count = action.payload[1];
+  List orderImageData = action.payload[2];
 
   double amount = product.price;
   if (ctx.state.optionalMaterialSelected) {
@@ -64,12 +72,16 @@ void _onAddToCart(Action action, Context<ProductPageState> ctx) async {
   }
   amount *= count;
 
-  GlobalStore.store.dispatch(GlobalActionCreator.addProductToShoppingCart(
+  GlobalStore.store.dispatch(
+    GlobalActionCreator.addProductToShoppingCart(
       product,
       count,
       amount,
       ctx.state.engraveInputs,
-      ctx.state.optionalMaterialSelected));
+      ctx.state.optionalMaterialSelected,
+      orderImageData,
+    ),
+  );
 
   Navigator.of(ctx.context).pushReplacementNamed('cartpage');
 }

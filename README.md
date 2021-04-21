@@ -16,3 +16,9 @@ cd ..
 flutter clean
 flutter build ios
 grep -r IUWebView ios/Pods
+
+
+android emulator with local backend
+
+ipconfig
+// 192.168.43.136

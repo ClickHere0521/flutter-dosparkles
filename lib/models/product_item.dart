@@ -54,31 +54,35 @@ class ProductItem {
 
   String optionalMaterialExampleUrl;
 
-  ProductItem.fromParams(
-      {this.id,
-      this.name,
-      this.shineonImportId,
-      this.thumbnailUrl,
-      this.videoUrl,
-      this.oldPrice,
-      this.price,
-      this.showOldPrice,
-      this.engraveAvailable,
-      this.properties,
-      this.engraveOldPrice,
-      this.engravePrice,
-      this.showOldEngravePrice,
-      this.defaultFinishMaterial,
-      this.optionalFinishMaterial,
-      this.optionalFinishMaterialPrice,
-      this.optionalFinishMaterialEnabled,
-      this.mediaUrls,
-      this.deliveryInformation,
-      this.uploadsAvailable,
-      this.sizeOptionsAvailable,
-      this.isActive,
-      this.engraveExampleUrl,
-      this.optionalMaterialExampleUrl});
+  List orders;
+
+  ProductItem.fromParams({
+    this.id,
+    this.name,
+    this.shineonImportId,
+    this.thumbnailUrl,
+    this.videoUrl,
+    this.oldPrice,
+    this.price,
+    this.showOldPrice,
+    this.engraveAvailable,
+    this.properties,
+    this.engraveOldPrice,
+    this.engravePrice,
+    this.showOldEngravePrice,
+    this.defaultFinishMaterial,
+    this.optionalFinishMaterial,
+    this.optionalFinishMaterialPrice,
+    this.optionalFinishMaterialEnabled,
+    this.mediaUrls,
+    this.deliveryInformation,
+    this.uploadsAvailable,
+    this.sizeOptionsAvailable,
+    this.isActive,
+    this.engraveExampleUrl,
+    this.optionalMaterialExampleUrl,
+    this.orders,
+  });
 
   factory ProductItem(jsonStr) => jsonStr == null
       ? null
@@ -139,6 +143,7 @@ class ProductItem {
     uploadsAvailable = jsonRes['uploadsAvailable'];
     sizeOptionsAvailable = jsonRes['sizeOptionsAvailable'];
     isActive = jsonRes['isActive'];
+    orders = jsonRes['orders'];
   }
   @override
   String toString() {

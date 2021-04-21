@@ -26,6 +26,8 @@ class StoreItem {
 
   double storeDistance;
 
+  List chats;
+
   StoreItem.fromParams({
     this.id,
     this.name,
@@ -36,6 +38,7 @@ class StoreItem {
     this.lat,
     this.lng,
     this.storeDistance,
+    this.chats,
   });
 
   factory StoreItem(jsonStr) => jsonStr == null
@@ -51,6 +54,7 @@ class StoreItem {
     phone = jsonRes['phone'];
     lat = jsonRes['lat'];
     lng = jsonRes['lng'];
+    chats = jsonRes['chats'];
     thumbnail = jsonRes['thumbnail'] != null
         ? AppConfig.instance.baseApiHost + jsonRes['thumbnail']['url']
         : null;

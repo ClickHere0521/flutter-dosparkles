@@ -12,8 +12,6 @@ class StoresInfoOperate {
 
     List<StoreItem> storesList = List.empty(growable: true);
 
-    printWrapped('stores data raw: $storesRequest');
-
     if (storesRequest.data['stores'] != null) {
       for (var i = 0; i < storesRequest.data['stores'].length; i++) {
         // printWrapped('store: ${storesRequest.data['stores'][i]}');

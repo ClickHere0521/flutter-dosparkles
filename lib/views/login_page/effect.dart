@@ -1,7 +1,10 @@
 import 'package:com.floridainc.dosparkles/actions/api/graphql_client.dart';
+import 'package:com.floridainc.dosparkles/globalbasestate/action.dart';
+import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/routes/routes.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/widgets.dart' hide Action;
+import 'package:graphql_flutter/graphql_flutter.dart';
 // import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -39,6 +42,7 @@ void _onInit(Action action, Context<LoginPageState> ctx) async {
   SharedPreferences.getInstance().then((_p) async {
     final savedToken = _p.getString('jwt') ?? '';
     if (savedToken.isNotEmpty) {
+      await UserInfoOperate.whenLogin(savedToken.toString());
       await BaseGraphQLClient.instance.me();
       _goToMain(ctx);
     }
@@ -73,7 +77,6 @@ Future _onLoginClicked(Action action, Context<LoginPageState> ctx) async {
       print('jwt: ${_result['jwt'].toString()}');
 
       await UserInfoOperate.whenLogin(_result['jwt'].toString());
-
       _goToMain(ctx);
     });
   }
@@ -90,6 +93,19 @@ void _goToMain(Context<LoginPageState> ctx) async {
       });
     }
   });
+
+  var globalState = GlobalStore.store.getState();
+
+  for (var i = 0; i < globalState.storesList.length; i++) {
+    var store = globalState.storesList[i];
+    if (globalState.user.storeFavorite['id'] == store.id) {
+      GlobalStore.store.dispatch(
+        GlobalActionCreator.setSelectedStore(store),
+      );
+      Navigator.of(ctx.context).pushReplacementNamed('storepage');
+      return null;
+    }
+  }
 
   Navigator.of(ctx.context).pushReplacementNamed('storeselectionpage');
 
