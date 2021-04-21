@@ -22,33 +22,45 @@ Widget buildView(
   }
 
   return Scaffold(
-    body: FutureBuilder(
-        future: _checkContextInit(
-          Stream<double>.periodic(Duration(milliseconds: 50),
-              (x) => MediaQuery.of(viewService.context).size.height),
+    body: Container(
+      width: double.infinity,
+      child: SingleChildScrollView(
+        child: Image.asset(
+          "images/screenshot.png",
+          fit: BoxFit.cover,
         ),
-        builder: (_, snapshot) {
-          if (snapshot.hasData) if (snapshot.data > 0) {
-            Adapt.initContext(viewService.context);
-            if (state.isFirstTime != true)
-              return Container();
-            else
-              return PageView.builder(
-                physics: NeverScrollableScrollPhysics(),
-                controller: state.pageController,
-                allowImplicitScrolling: false,
-                itemCount: pages.length,
-                itemBuilder: (context, index) {
-                  return _buildPage(pages[index]);
-                },
-              );
-          }
-          return Container();
-        }),
-    drawer: SparklesDrawer(),
-    appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(60), child: _AppBar()),
+      ),
+    ),
   );
+
+  // return Scaffold(
+  //   body: FutureBuilder(
+  //       future: _checkContextInit(
+  //         Stream<double>.periodic(Duration(milliseconds: 50),
+  //             (x) => MediaQuery.of(viewService.context).size.height),
+  //       ),
+  //       builder: (_, snapshot) {
+  //         if (snapshot.hasData) if (snapshot.data > 0) {
+  //           Adapt.initContext(viewService.context);
+  //           if (state.isFirstTime != true)
+  //             return Container();
+  //           else
+  //             return PageView.builder(
+  //               physics: NeverScrollableScrollPhysics(),
+  //               controller: state.pageController,
+  //               allowImplicitScrolling: false,
+  //               itemCount: pages.length,
+  //               itemBuilder: (context, index) {
+  //                 return _buildPage(pages[index]);
+  //               },
+  //             );
+  //         }
+  //         return Container();
+  //       }),
+  //   drawer: SparklesDrawer(),
+  //   appBar: PreferredSize(
+  //       preferredSize: const Size.fromHeight(60), child: _AppBar()),
+  // );
 }
 
 Future<double> _checkContextInit(Stream<double> source) async {

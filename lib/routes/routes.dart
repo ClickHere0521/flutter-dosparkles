@@ -28,7 +28,6 @@ class Routes {
       'settings_page': SettingsPage(),
       'chatpage': ChatPage(),
       'chatmessagespage': ChatMessagesPage(),
-      'authorizationpage': AuthorizationPage(),
       'registerpage': RegisterPage(),
       'addphonepage': AddPhonePage(),
     },
