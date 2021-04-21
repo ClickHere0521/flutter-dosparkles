@@ -527,6 +527,9 @@ class BaseGraphQLClient {
             id
             email
             name
+            avatar {
+              url
+            }
           }
           store {
             id
@@ -564,6 +567,9 @@ class BaseGraphQLClient {
             id
             email
             name
+            avatar {
+              url
+            }
           }
           store {
             id
@@ -583,6 +589,9 @@ class BaseGraphQLClient {
             user {
               id
               name
+              avatar {
+                url
+              }
             }
           }
         }
@@ -616,6 +625,9 @@ class BaseGraphQLClient {
               id
               email
               name
+              avatar {
+              url
+            }
             }
             chat_messages {
               id
@@ -669,6 +681,9 @@ class BaseGraphQLClient {
             user {
               id
               name
+              avatar {
+                url
+              }
             }
           }
         }

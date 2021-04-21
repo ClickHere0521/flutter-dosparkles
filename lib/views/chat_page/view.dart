@@ -3,13 +3,15 @@ import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
+import 'package:com.floridainc.dosparkles/widgets/sparkles_drawer.dart';
 import 'package:com.floridainc.dosparkles/views/chat_page/action.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/actions/api/graphql_client.dart';
 import 'package:com.floridainc.dosparkles/utils/colors.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:com.floridainc.dosparkles/actions/app_config.dart';
 import 'dart:convert';
 import 'state.dart';
+import 'package:flui/flui.dart';
 
 Widget buildView(
     ChatPageState state, Dispatch dispatch, ViewService viewService) {
@@ -21,7 +23,6 @@ Widget buildView(
   ];
 
   Widget _buildPage(Widget page) {
-    // return keepAliveWrapper(page);
     return page;
   }
 
@@ -74,6 +75,7 @@ class __FirstPageState extends State<_FirstPage> {
   List<Widget> _widgetOptions = <Widget>[
     ChatPageWidget(),
     StorePageWidget(),
+    Container(child: Text("Example")),
   ];
 
   void _onItemTapped(int index) {
@@ -84,26 +86,105 @@ class __FirstPageState extends State<_FirstPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _widgetOptions.elementAt(_selectedIndex),
-      bottomNavigationBar:
-          GlobalStore.store.getState().user.role == "Store Manager"
-              ? BottomNavigationBar(
-                  items: const <BottomNavigationBarItem>[
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.chat),
-                      label: 'Chat',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.store),
-                      label: 'Store',
-                    ),
-                  ],
-                  currentIndex: _selectedIndex,
-                  selectedItemColor: HexColor("#182465"),
-                  onTap: _onItemTapped,
-                )
-              : null,
+    return Stack(
+      children: [
+        Positioned(
+          top: 0,
+          left: 0,
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            height: 181.0,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [HexColor('#8FADEB'), HexColor('#7397E2')],
+                begin: const FractionalOffset(0.0, 0.0),
+                end: const FractionalOffset(1.0, 0.0),
+                stops: [0.0, 1.0],
+                tileMode: TileMode.clamp,
+              ),
+            ),
+          ),
+        ),
+        Scaffold(
+          body: Container(
+            padding: EdgeInsets.only(top: 30.0, left: 8.0, right: 8.0),
+            decoration: BoxDecoration(
+              color: HexColor("#FAFCFF"),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(32.0),
+                topRight: Radius.circular(32.0),
+              ),
+            ),
+            child: _widgetOptions.elementAt(_selectedIndex),
+          ),
+          backgroundColor: Colors.transparent,
+          resizeToAvoidBottomPadding: false,
+          resizeToAvoidBottomInset: true,
+          appBar: AppBar(
+            title: Text("Inbox"),
+            centerTitle: true,
+            backgroundColor: Colors.transparent,
+            elevation: 0.0,
+            leadingWidth: 70.0,
+            automaticallyImplyLeading: false,
+            leading: InkWell(
+              highlightColor: Colors.transparent,
+              splashColor: Colors.transparent,
+              child: Image.asset("images/offcanvas_icon.png"),
+              onTap: () {
+                Scaffold.of(context).openDrawer();
+              },
+            ),
+          ),
+          drawer: SparklesDrawer(),
+          bottomNavigationBar:
+              GlobalStore.store.getState().user.role != "Store Manager"
+                  ? BottomNavigationBar(
+                      backgroundColor: Colors.white,
+                      elevation: 0.0,
+                      showSelectedLabels: false,
+                      showUnselectedLabels: false,
+                      items: <BottomNavigationBarItem>[
+                        BottomNavigationBarItem(
+                          label: "",
+                          icon: ImageIcon(
+                            AssetImage("images/home_icon.png"),
+                            color: HexColor("#C4C6D2"),
+                          ),
+                          activeIcon: ImageIcon(
+                            AssetImage("images/home_icon.png"),
+                            color: Colors.black87,
+                          ),
+                        ),
+                        BottomNavigationBarItem(
+                          label: "",
+                          icon: ImageIcon(
+                            AssetImage("images/Group.png"),
+                            color: HexColor("#C4C6D2"),
+                          ),
+                          activeIcon: ImageIcon(
+                            AssetImage("images/Group.png"),
+                            color: Colors.black87,
+                          ),
+                        ),
+                        BottomNavigationBarItem(
+                          label: "",
+                          icon: ImageIcon(
+                            AssetImage("images/person_plus.png"),
+                            color: HexColor("#C4C6D2"),
+                          ),
+                          activeIcon: ImageIcon(
+                            AssetImage("images/person_plus.png"),
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ],
+                      currentIndex: _selectedIndex,
+                      onTap: _onItemTapped,
+                    )
+                  : null,
+        ),
+      ],
     );
   }
 }
@@ -134,6 +215,97 @@ Future<String> getConversationName(tabIndex, chat, userId) async {
   return nameAndOtherNames;
 }
 
+// Widget _buildCard(tabIndex, item, context, String chatId, userId) {
+//   Future<SharedPreferences> getSharedPreferance() async {
+//     Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+//     return await _prefs;
+//   }
+
+//   return FutureBuilder(
+//       future: getSharedPreferance(),
+//       builder: (context, prefs) {
+//         if (prefs.hasData) {
+//           String chatsRaw = prefs.data.getString('chatsMap') ?? '{}';
+//           Map mapLocal = json.decode(chatsRaw);
+//           return SizedBox(
+//             height: 85.0,
+//             child: Card(
+//               child: InkWell(
+//                 child: Column(
+//                   mainAxisAlignment: MainAxisAlignment.center,
+//                   children: [
+//                     item['users'] != null &&
+//                             item['users'].length > 0 &&
+//                             item['users'][0]['avatar'] != null
+//                         ? ListTile(
+//                             title: FutureBuilder<String>(
+//                               future:
+//                                   getConversationName(tabIndex, item, userId),
+//                               builder: (BuildContext context,
+//                                   AsyncSnapshot<String> snapshot) {
+//                                 if (snapshot.hasData) {
+//                                   return Text(
+//                                     "${snapshot.data}",
+//                                     style: TextStyle(fontSize: 16.0),
+//                                   );
+//                                 }
+//                                 return SizedBox.shrink(child: null);
+//                               },
+//                             ),
+//                             subtitle: Text("Example text"),
+//                             isThreeLine: true,
+//                             dense: true,
+//                             leading: FLAvatar(
+//                               image: Image.network(
+//                                 AppConfig.instance.baseApiHost +
+//                                     item['users'][0]['avatar']['url'],
+//                                 fit: BoxFit.cover,
+//                               ),
+//                               width: 57,
+//                               height: 57,
+//                               radius: 50,
+//                             ),
+//                             trailing: mapLocal[chatId] != null &&
+//                                     mapLocal[chatId]['checked'] == false
+//                                 ? Icon(Icons.mark_as_unread)
+//                                 : null,
+//                           )
+//                         : ListTile(
+//                             title: FutureBuilder<String>(
+//                               future:
+//                                   getConversationName(tabIndex, item, userId),
+//                               builder: (BuildContext context,
+//                                   AsyncSnapshot<String> snapshot) {
+//                                 if (snapshot.hasData) {
+//                                   return Text("${snapshot.data}");
+//                                 }
+//                                 return SizedBox.shrink(child: null);
+//                               },
+//                             ),
+//                             subtitle: Text(""),
+//                             isThreeLine: true,
+//                             leading: FLAvatar(
+//                               text: item['users'][0]['name'][0],
+//                               width: 57,
+//                               height: 57,
+//                               radius: 50,
+//                               color: Colors.grey,
+//                             ),
+//                             trailing: mapLocal[chatId] != null &&
+//                                     mapLocal[chatId]['checked'] == false
+//                                 ? Icon(Icons.mark_as_unread)
+//                                 : null,
+//                           ),
+//                   ],
+//                 ),
+//               ),
+//             ),
+//           );
+//         }
+//         return Container();
+//       });
+// }
+
 Widget _buildCard(tabIndex, item, context, String chatId, userId) {
   Future<SharedPreferences> getSharedPreferance() async {
     Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
@@ -146,35 +318,118 @@ Widget _buildCard(tabIndex, item, context, String chatId, userId) {
         if (prefs.hasData) {
           String chatsRaw = prefs.data.getString('chatsMap') ?? '{}';
           Map mapLocal = json.decode(chatsRaw);
-          return SizedBox(
-            height: 100,
-            child: Card(
-              child: InkWell(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ListTile(
-                      title: FutureBuilder<String>(
-                        future: getConversationName(tabIndex, item, userId),
-                        builder: (BuildContext context,
-                            AsyncSnapshot<String> snapshot) {
-                          if (snapshot.hasData) {
-                            return Text("${snapshot.data}");
-                          }
-                          return SizedBox.shrink(child: null);
-                        },
-                      ),
-                      leading: Icon(
-                        Icons.chat,
-                        color: HexColor("#182465"),
-                      ),
-                      trailing: mapLocal[chatId] != null &&
-                              mapLocal[chatId]['checked'] == false
-                          ? Icon(Icons.mark_as_unread)
-                          : null,
-                    ),
-                  ],
+          return Container(
+            decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(.08),
+                  blurRadius: 7.0,
+                  spreadRadius: 0.0,
+                  offset: Offset(1.0, 1.5),
                 ),
+              ],
+            ),
+            child: Card(
+              elevation: 0.0,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  item['users'] != null &&
+                          item['users'].length > 0 &&
+                          item['users'][0]['avatar'] != null
+                      ? InkWell(
+                          borderRadius: BorderRadius.circular(10.0),
+                          child: Ink(
+                            width: MediaQuery.of(context).size.width,
+                            height: 77.0,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.rectangle,
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            child: Stack(
+                              alignment: Alignment.centerLeft,
+                              children: [
+                                Positioned(
+                                  left: 16.0,
+                                  child: ClipOval(
+                                    child: Image.network(
+                                      AppConfig.instance.baseApiHost +
+                                          item['users'][0]['avatar']['url'],
+                                      width: 57,
+                                      height: 57,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  left: 85.0,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          SizedBox(
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                            child: FutureBuilder<String>(
+                                              future: getConversationName(
+                                                  tabIndex, item, userId),
+                                              builder: (BuildContext context,
+                                                  AsyncSnapshot<String>
+                                                      snapshot) {
+                                                if (snapshot.hasData) {
+                                                  return Text(
+                                                    "${snapshot.data}",
+                                                    style: TextStyle(
+                                                        fontSize: 16.0),
+                                                  );
+                                                }
+                                                return SizedBox.shrink(
+                                                    child: null);
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 7),
+                                      Text("Lorem ipsum dolor amet"),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          onTap: () => null,
+                        )
+                      : ListTile(
+                          title: FutureBuilder<String>(
+                            future: getConversationName(tabIndex, item, userId),
+                            builder: (BuildContext context,
+                                AsyncSnapshot<String> snapshot) {
+                              if (snapshot.hasData) {
+                                return Text("${snapshot.data}");
+                              }
+                              return SizedBox.shrink(child: null);
+                            },
+                          ),
+                          subtitle: Text(""),
+                          isThreeLine: true,
+                          leading: FLAvatar(
+                            text: item['users'][0]['name'][0],
+                            width: 57,
+                            height: 57,
+                            radius: 50,
+                            color: Colors.grey,
+                          ),
+                          trailing: mapLocal[chatId] != null &&
+                                  mapLocal[chatId]['checked'] == false
+                              ? Icon(Icons.mark_as_unread)
+                              : null,
+                        ),
+                ],
               ),
             ),
           );

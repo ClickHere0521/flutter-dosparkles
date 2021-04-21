@@ -69,6 +69,7 @@ class __MainBodyState extends State<_MainBody> {
             ),
             body: Container(
               width: MediaQuery.of(context).size.width,
+              padding: EdgeInsets.symmetric(horizontal: 8.0),
               child: SingleChildScrollView(
                 child: Column(
                   children: [
@@ -111,7 +112,6 @@ class __InnerPartState extends State<_InnerPart> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: MediaQuery.of(context).size.width / 1.1,
       child: Form(
         key: _formKey,
         child: Column(
