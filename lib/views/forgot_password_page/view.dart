@@ -71,12 +71,12 @@ class __MainBodyState extends State<_MainBody> {
                     SizedBox(height: 10),
                     Text(
                       "Forgot Password?",
-                      style: TextStyle(fontSize: 33),
+                      style: TextStyle(fontSize: 32),
                     ),
                     SizedBox(height: 5),
                     Text(
                       "Enter your email to reset your password",
-                      style: TextStyle(fontSize: 18),
+                      style: TextStyle(fontSize: 16),
                     ),
                     SizedBox(height: 40),
                     _InnerPart(),

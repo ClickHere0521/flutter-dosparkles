@@ -67,6 +67,7 @@ dependencies:
   stripe_payment: ^1.0.6
   sign_in_with_apple: ^2.5.4
   flutter_branch_sdk: ^1.4.0
+  country_pickers: ^1.3.0
   flutter_svg:
   cupertino_icons: ^1.0.0
   video_player:

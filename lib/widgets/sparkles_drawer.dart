@@ -1,15 +1,15 @@
+import 'package:com.floridainc.dosparkles/actions/user_info_operate.dart';
+import 'package:com.floridainc.dosparkles/utils/colors.dart';
 import 'package:com.floridainc.dosparkles/widgets/branch/branch_two.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_apple_signin.dart';
+import 'package:com.floridainc.dosparkles/widgets/test_country_code_picker.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_facebook_signin.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_geolocation_module.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_google_signin.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_image_picker.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_share_module.dart';
-import 'package:com.floridainc.dosparkles/widgets/test_dynamic_link.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_stripe_payment.dart';
 import 'package:flutter/material.dart';
-import 'package:com.floridainc.dosparkles/actions/user_info_operate.dart';
-import 'package:com.floridainc.dosparkles/utils/colors.dart';
 
 class SparklesDrawer extends StatelessWidget {
   @override
@@ -180,6 +180,16 @@ class SparklesDrawer extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => MyImagePickerPage()),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.flag),
+            title: Text('Country Code Picker'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => CountryPicker()),
               );
             },
           ),

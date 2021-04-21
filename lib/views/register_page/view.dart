@@ -64,12 +64,12 @@ class __MainBodyState extends State<_MainBody> {
                     SizedBox(height: 10),
                     Text(
                       "Register",
-                      style: TextStyle(fontSize: 33),
+                      style: TextStyle(fontSize: 32),
                     ),
                     SizedBox(height: 5),
                     Text(
                       "Choose a way to register",
-                      style: TextStyle(fontSize: 18),
+                      style: TextStyle(fontSize: 16),
                     ),
                     SizedBox(height: 75),
                     _InnerPart(),

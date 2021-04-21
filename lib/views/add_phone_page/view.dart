@@ -1,11 +1,15 @@
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
+import 'package:flutter/services.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import '../../actions/api/graphql_client.dart';
 import '../../utils/colors.dart';
 import '../../utils/general.dart';
 import 'state.dart';
+
+import 'package:country_pickers/country.dart';
+import 'package:country_pickers/country_pickers.dart';
 
 Widget buildView(
   AddPhonePageState state,
@@ -70,15 +74,19 @@ class __MainBodyState extends State<_MainBody> {
                   children: [
                     SizedBox(height: 10),
                     Text(
-                      "Forgot Password?",
-                      style: TextStyle(fontSize: 33),
+                      "Add Phone",
+                      style: TextStyle(fontSize: 32),
                     ),
                     SizedBox(height: 5),
                     Text(
-                      "Enter your email to reset your password",
-                      style: TextStyle(fontSize: 18),
+                      "1.Prizes are sent via SMS.",
+                      style: TextStyle(fontSize: 16),
                     ),
-                    SizedBox(height: 40),
+                    Text(
+                      "2.We don't share or you. Ever.",
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    SizedBox(height: 50),
                     _InnerPart(),
                   ],
                 ),
@@ -109,35 +117,7 @@ class __InnerPartState extends State<_InnerPart> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(height: 15),
-            TextFormField(
-              textAlign: TextAlign.left,
-              keyboardType: TextInputType.emailAddress,
-              onChanged: (value) {
-                setState(() => emailValue = value);
-              },
-              decoration: InputDecoration(
-                hintText: 'yourname@example.com',
-                hintStyle: TextStyle(
-                  fontSize: 16,
-                  color: Colors.black26,
-                ),
-                contentPadding: EdgeInsets.symmetric(vertical: 5),
-                floatingLabelBehavior: FloatingLabelBehavior.always,
-                labelText: 'Email',
-                labelStyle: TextStyle(
-                  color: Colors.black,
-                  height: 0.7,
-                  fontSize: 22,
-                ),
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter some text';
-                }
-                return null;
-              },
-            ),
+            _CountryPickerDropdown(context: context),
             SizedBox(height: 180),
             ButtonTheme(
               minWidth: 300.0,
@@ -147,7 +127,7 @@ class __InnerPartState extends State<_InnerPart> {
                 elevation: 0,
                 color: HexColor("#6092DC"),
                 child: Text(
-                  'Reset Password',
+                  'Next',
                   style: TextStyle(
                     fontSize: 17.0,
                     fontWeight: FontWeight.normal,
@@ -156,28 +136,9 @@ class __InnerPartState extends State<_InnerPart> {
                 onPressed: () {
                   _onSubmit(_formKey, emailValue);
                 },
-                shape: new RoundedRectangleBorder(
-                  borderRadius: new BorderRadius.circular(31.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(31.0),
                 ),
-              ),
-            ),
-            SizedBox(height: 10),
-            RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: "Back to ",
-                    style: TextStyle(color: Colors.black54, fontSize: 16),
-                  ),
-                  TextSpan(
-                    text: "Sign in",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
               ),
             ),
           ],
@@ -197,4 +158,119 @@ void _onSubmit(formKey, emailValue) async {
       print(e);
     }
   }
+}
+
+class _CountryPickerDropdown extends StatefulWidget {
+  final BuildContext context;
+
+  _CountryPickerDropdown({Key key, this.context}) : super(key: key);
+
+  @override
+  __CountryPickerDropdownState createState() => __CountryPickerDropdownState();
+}
+
+class __CountryPickerDropdownState extends State<_CountryPickerDropdown> {
+  double dropdownButtonWidth;
+  double dropdownItemWidth;
+  String phoneValue = "";
+
+  @override
+  void initState() {
+    super.initState();
+    dropdownButtonWidth = MediaQuery.of(widget.context).size.width * 0.34;
+    dropdownItemWidth = MediaQuery.of(widget.context).size.width / 2;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          width: dropdownButtonWidth,
+          child: CountryPickerDropdown(
+            onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+            itemHeight: null,
+            isDense: false,
+            icon: Container(
+              padding: EdgeInsets.only(left: 0, top: 8, right: 5, bottom: 8),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  bottomRight: Radius.circular(10),
+                  topRight: Radius.circular(10),
+                ),
+              ),
+              child: Icon(Icons.keyboard_arrow_down),
+            ),
+            selectedItemBuilder: (Country country) =>
+                _buildDropdownSelectedItemBuilder(country),
+            itemBuilder: (Country country) =>
+                _buildDropdownItem(country, dropdownItemWidth),
+            initialValue: 'US',
+            onValuePicked: (Country country) {
+              print("${country.name}");
+            },
+          ),
+        ),
+        Expanded(
+          child: TextFormField(
+            keyboardType: TextInputType.numberWithOptions(decimal: true),
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            onChanged: (String value) {
+              setState(() {
+                phoneValue = value;
+              });
+            },
+            decoration: InputDecoration(
+              hintText: "Add Phone",
+              hintStyle: TextStyle(
+                fontSize: 16,
+                color: Colors.black26,
+              ),
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.black26),
+              ),
+              isDense: true,
+              contentPadding: EdgeInsets.symmetric(vertical: 10),
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter some text';
+              }
+              return null;
+            },
+          ),
+        )
+      ],
+    );
+  }
+}
+
+Widget _buildDropdownSelectedItemBuilder(Country country) {
+  return Container(
+    padding: EdgeInsets.only(left: 10, top: 10, right: 0, bottom: 10),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.only(
+        bottomLeft: Radius.circular(10),
+        topLeft: Radius.circular(10),
+      ),
+    ),
+    child: CountryPickerUtils.getDefaultFlagImage(country),
+  );
+}
+
+Widget _buildDropdownItem(Country country, double dropdownItemWidth) {
+  return SizedBox(
+    width: dropdownItemWidth,
+    child: Row(
+      children: [
+        CountryPickerUtils.getDefaultFlagImage(country),
+        SizedBox(
+          width: 8.0,
+        ),
+        Expanded(child: Text("+${country.phoneCode}(${country.isoCode})")),
+      ],
+    ),
+  );
 }

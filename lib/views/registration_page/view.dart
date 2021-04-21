@@ -67,12 +67,12 @@ class __MainBodyState extends State<_MainBody> {
                     SizedBox(height: 10),
                     Text(
                       "Create Account",
-                      style: TextStyle(fontSize: 33),
+                      style: TextStyle(fontSize: 32),
                     ),
                     SizedBox(height: 5),
                     Text(
                       "Follow 2 easy steps to create an account",
-                      style: TextStyle(fontSize: 18),
+                      style: TextStyle(fontSize: 16),
                     ),
                     SizedBox(height: 50),
                     _InnerPart(),
