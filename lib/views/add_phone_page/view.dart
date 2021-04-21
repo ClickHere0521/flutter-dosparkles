@@ -4,10 +4,11 @@ import 'package:com.floridainc.dosparkles/actions/adapt.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import '../../actions/api/graphql_client.dart';
 import '../../utils/colors.dart';
+import '../../utils/general.dart';
 import 'state.dart';
 
 Widget buildView(
-  AuthorizationPageState state,
+  AddPhonePageState state,
   Dispatch dispatch,
   ViewService viewService,
 ) {
@@ -24,7 +25,7 @@ class __MainBodyState extends State<_MainBody> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
+      color: HexColor("#F2F6FA"),
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
       child: Stack(
@@ -50,24 +51,31 @@ class __MainBodyState extends State<_MainBody> {
           Scaffold(
             backgroundColor: Colors.transparent,
             resizeToAvoidBottomPadding: false,
+            resizeToAvoidBottomInset: true,
             appBar: AppBar(
+              centerTitle: true,
               elevation: 0.0,
+              leadingWidth: 70.0,
+              automaticallyImplyLeading: false,
+              leading: InkWell(
+                child: Image.asset("images/back_button.png"),
+                onTap: () => Navigator.of(context).pop(),
+              ),
               backgroundColor: Colors.transparent,
             ),
             body: Container(
               width: MediaQuery.of(context).size.width,
-              height: 470.0,
               child: SingleChildScrollView(
                 child: Column(
                   children: [
                     SizedBox(height: 10),
                     Text(
-                      "Welcome!",
+                      "Forgot Password?",
                       style: TextStyle(fontSize: 33),
                     ),
                     SizedBox(height: 5),
                     Text(
-                      "Please sign in to continue",
+                      "Enter your email to reset your password",
                       style: TextStyle(fontSize: 18),
                     ),
                     SizedBox(height: 40),
@@ -91,8 +99,6 @@ class _InnerPart extends StatefulWidget {
 class __InnerPartState extends State<_InnerPart> {
   final _formKey = GlobalKey<FormState>();
   String emailValue = '';
-  String passwordValue = '';
-  bool _hidePassword = false;
 
   @override
   Widget build(BuildContext context) {
@@ -132,48 +138,6 @@ class __InnerPartState extends State<_InnerPart> {
                 return null;
               },
             ),
-            SizedBox(height: 25),
-            TextFormField(
-              textAlign: TextAlign.left,
-              onChanged: (value) {
-                setState(() => passwordValue = value);
-              },
-              obscureText: _hidePassword,
-              decoration: InputDecoration(
-                hintText: 'Your password',
-                hintStyle: TextStyle(fontSize: 16, color: Colors.black26),
-                contentPadding: EdgeInsets.symmetric(vertical: 5),
-                floatingLabelBehavior: FloatingLabelBehavior.always,
-                labelText: 'Password',
-                labelStyle: TextStyle(
-                  color: Colors.black,
-                  height: 0.7,
-                  fontSize: 22,
-                ),
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _hidePassword ? Icons.visibility : Icons.visibility_off,
-                    color: Colors.black26,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _hidePassword = !_hidePassword;
-                    });
-                  },
-                ),
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter some text';
-                }
-                return null;
-              },
-            ),
-            SizedBox(height: 15),
-            Align(
-              alignment: Alignment.centerRight,
-              child: Text("Forgot password?", style: TextStyle(fontSize: 15)),
-            ),
             SizedBox(height: 180),
             ButtonTheme(
               minWidth: 300.0,
@@ -183,7 +147,7 @@ class __InnerPartState extends State<_InnerPart> {
                 elevation: 0,
                 color: HexColor("#6092DC"),
                 child: Text(
-                  'Sign in',
+                  'Reset Password',
                   style: TextStyle(
                     fontSize: 17.0,
                     fontWeight: FontWeight.normal,
@@ -202,11 +166,11 @@ class __InnerPartState extends State<_InnerPart> {
               text: TextSpan(
                 children: [
                   TextSpan(
-                    text: "Don't have account yet? ",
+                    text: "Back to ",
                     style: TextStyle(color: Colors.black54, fontSize: 16),
                   ),
                   TextSpan(
-                    text: "Sign Up",
+                    text: "Sign in",
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 16,
@@ -215,30 +179,6 @@ class __InnerPartState extends State<_InnerPart> {
                   ),
                 ],
               ),
-            ),
-            SizedBox(height: 180),
-            Column(
-              children: [
-                Text(
-                  "Or sign in with",
-                  style: TextStyle(color: Colors.black54, fontSize: 16),
-                ),
-                SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset(
-                      "images/Google_icon.png",
-                      fit: BoxFit.contain,
-                    ),
-                    SizedBox(width: 20),
-                    Image.asset(
-                      "images/Snapchat_icon.png",
-                      fit: BoxFit.contain,
-                    ),
-                  ],
-                ),
-              ],
             ),
           ],
         ),
@@ -250,9 +190,9 @@ class __InnerPartState extends State<_InnerPart> {
 void _onSubmit(formKey, emailValue) async {
   if (formKey.currentState.validate()) {
     try {
-      // QueryResult result =
-      //     await BaseGraphQLClient.instance.forgotPassword(emailValue);
-      // if (result.hasException) print(result.exception);
+      QueryResult result =
+          await BaseGraphQLClient.instance.forgotPassword(emailValue);
+      if (result.hasException) print(result.exception);
     } catch (e) {
       print(e);
     }

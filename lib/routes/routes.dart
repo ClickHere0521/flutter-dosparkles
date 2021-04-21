@@ -29,6 +29,8 @@ class Routes {
       'chatpage': ChatPage(),
       'chatmessagespage': ChatMessagesPage(),
       'authorizationpage': AuthorizationPage(),
+      'registerpage': RegisterPage(),
+      'addphonepage': AddPhonePage(),
     },
     visitor: (String path, Page<Object, dynamic> page) {
       if (page.isTypeof<GlobalBaseState>()) {

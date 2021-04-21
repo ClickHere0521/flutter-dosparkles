@@ -4,7 +4,7 @@ import 'package:com.floridainc.dosparkles/models/models.dart';
 
 enum AuthorizationPageAction { action }
 
-class ForgotPasswordPageActionCreator {
+class AuthorizationPageActionCreator {
   static Action onAction() {
     return const Action(AuthorizationPageAction.action);
   }
