@@ -1,12 +1,7 @@
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:com.floridainc.dosparkles/actions/adapt.dart';
-import 'package:com.floridainc.dosparkles/style/themestyle.dart';
 import 'package:com.floridainc.dosparkles/utils/colors.dart';
-
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
 import 'action.dart';
 import 'state.dart';
 
@@ -54,32 +49,32 @@ class __MainBodyState extends State<_MainBody> {
           ),
           Scaffold(
             backgroundColor: Colors.transparent,
-            resizeToAvoidBottomInset: true,
+            resizeToAvoidBottomInset: false,
             appBar: AppBar(
               elevation: 0.0,
+              centerTitle: true,
               backgroundColor: Colors.transparent,
               automaticallyImplyLeading: false,
+              title: Text(
+                "Welcome!",
+                style: TextStyle(
+                  fontSize: 22,
+                  color: HexColor("#53586F"),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
             body: Container(
               width: MediaQuery.of(context).size.width,
-              padding: EdgeInsets.symmetric(horizontal: 8.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    SizedBox(height: 10),
-                    Text(
-                      "Welcome!",
-                      style: TextStyle(fontSize: 32),
-                    ),
-                    SizedBox(height: 5),
-                    Text(
-                      "Please sign in to continue",
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    SizedBox(height: 50),
-                    _InnerPart(state: widget.state, dispatch: widget.dispatch),
-                  ],
-                ),
+              height: MediaQuery.of(context).size.height,
+              padding: EdgeInsets.only(
+                left: 16.0,
+                right: 16.0,
+                bottom: MediaQuery.of(context).size.height * 0.03,
+              ),
+              child: _InnerPart(
+                state: widget.state,
+                dispatch: widget.dispatch,
               ),
             ),
           ),
@@ -108,151 +103,192 @@ class __InnerPartState extends State<_InnerPart> {
     return Container(
       child: Form(
         key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(height: 15),
-            TextFormField(
-              textAlign: TextAlign.left,
-              keyboardType: TextInputType.emailAddress,
-              controller: widget.state.accountTextController,
-              decoration: InputDecoration(
-                hintText: 'yourname@example.com',
-                hintStyle: TextStyle(
-                  fontSize: 16,
-                  color: Colors.black26,
-                ),
-                contentPadding: EdgeInsets.symmetric(vertical: 5),
-                floatingLabelBehavior: FloatingLabelBehavior.always,
-                labelText: 'Email',
-                labelStyle: TextStyle(
-                  color: Colors.black,
-                  height: 0.7,
-                  fontSize: 22,
-                ),
+        child: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Please sign in to continue",
+                style: TextStyle(fontSize: 16),
               ),
-              onFieldSubmitted: (value) {
-                widget.dispatch(LoginPageActionCreator.onLoginClicked());
-              },
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter some text';
-                }
-                return null;
-              },
-            ),
-            SizedBox(height: 25),
-            TextFormField(
-              textAlign: TextAlign.left,
-              obscureText: _hidePassword,
-              controller: widget.state.passWordTextController,
-              decoration: InputDecoration(
-                hintText: 'Your password',
-                hintStyle: TextStyle(fontSize: 16, color: Colors.black26),
-                contentPadding: EdgeInsets.symmetric(vertical: 5),
-                floatingLabelBehavior: FloatingLabelBehavior.always,
-                labelText: 'Password',
-                labelStyle: TextStyle(
-                  color: Colors.black,
-                  height: 0.7,
-                  fontSize: 22,
-                ),
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _hidePassword ? Icons.visibility : Icons.visibility_off,
-                    color: Colors.black26,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _hidePassword = !_hidePassword;
-                    });
-                  },
-                ),
-              ),
-              onFieldSubmitted: (value) {
-                widget.dispatch(LoginPageActionCreator.onLoginClicked());
-              },
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter some text';
-                }
-                return null;
-              },
-            ),
-            SizedBox(height: 15),
-            Align(
-              alignment: Alignment.centerRight,
-              child: Text("Forgot password?", style: TextStyle(fontSize: 15)),
-            ),
-            SizedBox(height: 180),
-            ButtonTheme(
-              minWidth: 300.0,
-              height: 48.0,
-              child: RaisedButton(
-                textColor: Colors.white,
-                elevation: 0,
-                color: HexColor("#6092DC"),
-                child: Text(
-                  'Sign in',
-                  style: TextStyle(
-                    fontSize: 17.0,
-                    fontWeight: FontWeight.normal,
-                  ),
-                ),
-                onPressed: () {
-                  if (_formKey.currentState.validate()) {
-                    widget.dispatch(LoginPageActionCreator.onLoginClicked());
-                  }
-                },
-                shape: new RoundedRectangleBorder(
-                  borderRadius: new BorderRadius.circular(31.0),
-                ),
-              ),
-            ),
-            SizedBox(height: 10),
-            RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: "Don't have account yet? ",
-                    style: TextStyle(color: Colors.black54, fontSize: 16),
-                  ),
-                  TextSpan(
-                    text: "Sign Up",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 180),
-            Column(
-              children: [
-                Text(
-                  "Or sign in with",
-                  style: TextStyle(color: Colors.black54, fontSize: 16),
-                ),
-                SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+              Padding(
+                padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).size.height * 0.01),
+                child: Column(
                   children: [
-                    Image.asset(
-                      "images/Google_icon.png",
-                      fit: BoxFit.contain,
+                    TextFormField(
+                      textAlign: TextAlign.left,
+                      keyboardType: TextInputType.emailAddress,
+                      controller: widget.state.accountTextController,
+                      decoration: InputDecoration(
+                        hintText: 'yourname@example.com',
+                        hintStyle: TextStyle(
+                          fontSize: 16,
+                          color: Colors.black26,
+                        ),
+                        contentPadding: EdgeInsets.symmetric(vertical: 5),
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                        labelText: 'Email',
+                        labelStyle: TextStyle(
+                          color: Colors.black,
+                          height: 0.7,
+                          fontSize: 22,
+                        ),
+                      ),
+                      onFieldSubmitted: (value) {
+                        widget
+                            .dispatch(LoginPageActionCreator.onLoginClicked());
+                      },
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter some text';
+                        }
+                        return null;
+                      },
                     ),
-                    SizedBox(width: 20),
-                    Image.asset(
-                      "images/Snapchat_icon.png",
-                      fit: BoxFit.contain,
+                    SizedBox(height: 21),
+                    TextFormField(
+                      textAlign: TextAlign.left,
+                      obscureText: _hidePassword,
+                      controller: widget.state.passWordTextController,
+                      decoration: InputDecoration(
+                        hintText: 'Your password',
+                        hintStyle:
+                            TextStyle(fontSize: 16, color: Colors.black26),
+                        contentPadding: EdgeInsets.symmetric(vertical: 5),
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                        labelText: 'Password',
+                        labelStyle: TextStyle(
+                          color: Colors.black,
+                          height: 0.7,
+                          fontSize: 22,
+                        ),
+                        suffixIcon: InkWell(
+                          child: Icon(
+                            _hidePassword
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                            color: Colors.black26,
+                          ),
+                          onTap: () {
+                            setState(() {
+                              _hidePassword = !_hidePassword;
+                            });
+                          },
+                        ),
+                      ),
+                      onFieldSubmitted: (value) {
+                        widget
+                            .dispatch(LoginPageActionCreator.onLoginClicked());
+                      },
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter some text';
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 16),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Text("Forgot password?",
+                          style: TextStyle(fontSize: 15)),
                     ),
                   ],
                 ),
-              ],
-            ),
-          ],
+              ),
+              Padding(
+                padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).size.height * 0.02),
+                child: Column(
+                  children: [
+                    Container(
+                      width: 300.0,
+                      height: 48.0,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(31.0),
+                      ),
+                      child: ElevatedButton(
+                        style: ButtonStyle(
+                          elevation: MaterialStateProperty.all(0),
+                          backgroundColor:
+                              MaterialStateProperty.all(HexColor("#6092DC")),
+                          shape: MaterialStateProperty.all(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(31.0),
+                            ),
+                          ),
+                        ),
+                        child: Text(
+                          'Sign in',
+                          style: TextStyle(
+                            fontSize: 17.0,
+                            fontWeight: FontWeight.normal,
+                            color: Colors.white,
+                          ),
+                        ),
+                        onPressed: () {
+                          if (_formKey.currentState.validate()) {
+                            widget.dispatch(
+                                LoginPageActionCreator.onLoginClicked());
+                          }
+                        },
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: "Don't have account yet? ",
+                            style:
+                                TextStyle(color: Colors.black54, fontSize: 16),
+                          ),
+                          TextSpan(
+                            text: "Sign Up",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Column(
+                children: [
+                  Text(
+                    "Or sign in with",
+                    style: TextStyle(color: Colors.black54, fontSize: 16),
+                  ),
+                  SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        "images/Google_icon.png",
+                        fit: BoxFit.contain,
+                      ),
+                      SizedBox(width: 20),
+                      Image.asset(
+                        "images/Snapchat_icon.png",
+                        fit: BoxFit.contain,
+                      ),
+                      SizedBox(width: 20),
+                      Image.asset(
+                        "images/Group 84.png",
+                        fit: BoxFit.contain,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

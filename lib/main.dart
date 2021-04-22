@@ -96,7 +96,17 @@ class _AppState extends State<App> {
       FlutterLocalNotificationsPlugin();
 
   final AbstractRoutes routes = Routes.routes;
-  final ThemeData _lightTheme = ThemeData.light();
+  final ThemeData _lightTheme = ThemeData.light().copyWith(
+    textTheme: ThemeData.light().textTheme.apply(
+          fontFamily: 'Montserrat',
+        ),
+    primaryTextTheme: ThemeData.light().textTheme.apply(
+          fontFamily: 'Montserrat',
+        ),
+    accentTextTheme: ThemeData.light().textTheme.apply(
+          fontFamily: 'Montserrat',
+        ),
+  );
   final ThemeData _darkTheme = ThemeData.dark();
   final FirebaseAnalytics analytics = FirebaseAnalytics();
 

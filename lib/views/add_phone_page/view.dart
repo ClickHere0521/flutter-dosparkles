@@ -54,7 +54,7 @@ class __MainBodyState extends State<_MainBody> {
           ),
           Scaffold(
             backgroundColor: Colors.transparent,
-            resizeToAvoidBottomInset: true,
+            resizeToAvoidBottomInset: false,
             appBar: AppBar(
               centerTitle: true,
               elevation: 0.0,
@@ -65,32 +65,23 @@ class __MainBodyState extends State<_MainBody> {
                 onTap: () => Navigator.of(context).pop(),
               ),
               backgroundColor: Colors.transparent,
+              title: Text(
+                "Add Phone",
+                style: TextStyle(
+                  fontSize: 22,
+                  color: HexColor("#53586F"),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
             body: Container(
               width: MediaQuery.of(context).size.width,
-              padding: EdgeInsets.symmetric(horizontal: 8.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    SizedBox(height: 10),
-                    Text(
-                      "Add Phone",
-                      style: TextStyle(fontSize: 32),
-                    ),
-                    SizedBox(height: 5),
-                    Text(
-                      "1.Prizes are sent via SMS.",
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    Text(
-                      "2.We don't share or you. Ever.",
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    SizedBox(height: 50),
-                    _InnerPart(),
-                  ],
-                ),
+              height: MediaQuery.of(context).size.height,
+              padding: EdgeInsets.only(
+                left: 16.0,
+                right: 16.0,
               ),
+              child: _InnerPart(),
             ),
           ),
         ],
@@ -115,28 +106,51 @@ class __InnerPartState extends State<_InnerPart> {
         key: _formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _CountryPickerDropdown(context: context),
-            SizedBox(height: 180),
-            ButtonTheme(
-              minWidth: 300.0,
-              height: 48.0,
-              child: RaisedButton(
-                textColor: Colors.white,
-                elevation: 0,
-                color: HexColor("#6092DC"),
-                child: Text(
-                  'Next',
-                  style: TextStyle(
-                    fontSize: 17.0,
-                    fontWeight: FontWeight.normal,
-                  ),
+            Column(
+              children: [
+                Text(
+                  "1.Prizes are sent via SMS.",
+                  style: TextStyle(fontSize: 16),
                 ),
-                onPressed: () {
-                  _onSubmit(_formKey, emailValue);
-                },
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(31.0),
+                SizedBox(height: 3.0),
+                Text(
+                  "2.We don't share or you. Ever.",
+                  style: TextStyle(fontSize: 16),
+                ),
+              ],
+            ),
+            Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).size.height * 0.10,
+              ),
+              child: _CountryPickerDropdown(context: context),
+            ),
+            Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).size.height * 0.30,
+              ),
+              child: ButtonTheme(
+                minWidth: 300.0,
+                height: 48.0,
+                child: RaisedButton(
+                  textColor: Colors.white,
+                  elevation: 0,
+                  color: HexColor("#6092DC"),
+                  child: Text(
+                    'Next',
+                    style: TextStyle(
+                      fontSize: 17.0,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                  onPressed: () {
+                    _onSubmit(_formKey, emailValue);
+                  },
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(31.0),
+                  ),
                 ),
               ),
             ),
@@ -150,9 +164,9 @@ class __InnerPartState extends State<_InnerPart> {
 void _onSubmit(formKey, emailValue) async {
   if (formKey.currentState.validate()) {
     try {
-      QueryResult result =
-          await BaseGraphQLClient.instance.forgotPassword(emailValue);
-      if (result.hasException) print(result.exception);
+      // QueryResult result =
+      //     await BaseGraphQLClient.instance.forgotPassword(emailValue);
+      // if (result.hasException) print(result.exception);
     } catch (e) {
       print(e);
     }

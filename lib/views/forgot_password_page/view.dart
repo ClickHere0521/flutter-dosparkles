@@ -50,8 +50,7 @@ class __MainBodyState extends State<_MainBody> {
           ),
           Scaffold(
             backgroundColor: Colors.transparent,
-            
-            resizeToAvoidBottomInset: true,
+            resizeToAvoidBottomInset: false,
             appBar: AppBar(
               centerTitle: true,
               elevation: 0.0,
@@ -62,28 +61,23 @@ class __MainBodyState extends State<_MainBody> {
                 onTap: () => Navigator.of(context).pop(),
               ),
               backgroundColor: Colors.transparent,
+              title: Text(
+                "Forgot Password?",
+                style: TextStyle(
+                  fontSize: 22,
+                  color: HexColor("#53586F"),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
             body: Container(
               width: MediaQuery.of(context).size.width,
-              padding: EdgeInsets.symmetric(horizontal: 8.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    SizedBox(height: 10),
-                    Text(
-                      "Forgot Password?",
-                      style: TextStyle(fontSize: 32),
-                    ),
-                    SizedBox(height: 5),
-                    Text(
-                      "Enter your email to reset your password",
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    SizedBox(height: 40),
-                    _InnerPart(),
-                  ],
-                ),
+              height: MediaQuery.of(context).size.height,
+              padding: EdgeInsets.only(
+                left: 16.0,
+                right: 16.0,
               ),
+              child: _InnerPart(),
             ),
           ),
         ],
@@ -108,73 +102,90 @@ class __InnerPartState extends State<_InnerPart> {
         key: _formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            SizedBox(height: 15),
-            TextFormField(
-              textAlign: TextAlign.left,
-              keyboardType: TextInputType.emailAddress,
-              onChanged: (value) {
-                setState(() => emailValue = value);
-              },
-              decoration: InputDecoration(
-                hintText: 'yourname@example.com',
-                hintStyle: TextStyle(
-                  fontSize: 16,
-                  color: Colors.black26,
-                ),
-                contentPadding: EdgeInsets.symmetric(vertical: 5),
-                floatingLabelBehavior: FloatingLabelBehavior.always,
-                labelText: 'Email',
-                labelStyle: TextStyle(
-                  color: Colors.black,
-                  height: 0.7,
-                  fontSize: 22,
-                ),
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter some text';
-                }
-                return null;
-              },
+            Text(
+              "Enter your email to reset your password",
+              style: TextStyle(fontSize: 16),
             ),
-            SizedBox(height: 180),
-            ButtonTheme(
-              minWidth: 300.0,
-              height: 48.0,
-              child: RaisedButton(
-                textColor: Colors.white,
-                elevation: 0,
-                color: HexColor("#6092DC"),
-                child: Text(
-                  'Reset Password',
-                  style: TextStyle(
-                    fontSize: 17.0,
-                    fontWeight: FontWeight.normal,
-                  ),
-                ),
-                onPressed: () {
-                  _onSubmit(_formKey, emailValue);
+            Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).size.height * 0.10,
+              ),
+              child: TextFormField(
+                textAlign: TextAlign.left,
+                keyboardType: TextInputType.emailAddress,
+                onChanged: (value) {
+                  setState(() => emailValue = value);
                 },
-                shape: new RoundedRectangleBorder(
-                  borderRadius: new BorderRadius.circular(31.0),
+                decoration: InputDecoration(
+                  hintText: 'yourname@example.com',
+                  hintStyle: TextStyle(
+                    fontSize: 16,
+                    color: Colors.black26,
+                  ),
+                  contentPadding: EdgeInsets.symmetric(vertical: 5),
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                  labelText: 'Email',
+                  labelStyle: TextStyle(
+                    color: Colors.black,
+                    height: 0.7,
+                    fontSize: 22,
+                  ),
                 ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter some text';
+                  }
+                  return null;
+                },
               ),
             ),
-            SizedBox(height: 10),
-            RichText(
-              text: TextSpan(
+            Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).size.height * 0.30,
+              ),
+              child: Column(
                 children: [
-                  TextSpan(
-                    text: "Back to ",
-                    style: TextStyle(color: Colors.black54, fontSize: 16),
+                  ButtonTheme(
+                    minWidth: 300.0,
+                    height: 48.0,
+                    child: RaisedButton(
+                      textColor: Colors.white,
+                      elevation: 0,
+                      color: HexColor("#6092DC"),
+                      child: Text(
+                        'Reset Password',
+                        style: TextStyle(
+                          fontSize: 17.0,
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                      onPressed: () {
+                        _onSubmit(_formKey, emailValue);
+                      },
+                      shape: new RoundedRectangleBorder(
+                        borderRadius: new BorderRadius.circular(31.0),
+                      ),
+                    ),
                   ),
-                  TextSpan(
-                    text: "Sign in",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
+                  SizedBox(height: 10),
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: "Back to ",
+                          style: TextStyle(color: Colors.black54, fontSize: 16),
+                        ),
+                        TextSpan(
+                          text: "Sign in",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],

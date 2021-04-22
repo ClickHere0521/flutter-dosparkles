@@ -126,7 +126,7 @@ class _BubblePageState extends State<BubblePage> {
                                         child: Bubble(
                                           margin: BubbleEdges.only(top: 10),
                                           stick: true,
-                                          color: Colors.red,
+                                          color: Colors.white,
                                           nip: BubbleNip.rightBottom,
                                           child: Padding(
                                             padding: EdgeInsets.symmetric(
@@ -175,7 +175,7 @@ class _BubblePageState extends State<BubblePage> {
                                                   margin:
                                                       BubbleEdges.only(top: 10),
                                                   stick: true,
-                                                  color: Colors.red,
+                                                  color: Colors.white,
                                                   nip: BubbleNip.leftBottom,
                                                   child: Padding(
                                                     padding:
