@@ -22,7 +22,7 @@ Widget buildView(
   Adapt.initContext(viewService.context);
 
   return Scaffold(
-    resizeToAvoidBottomPadding: false,
+    
     body: Stack(
       children: <Widget>[
         _BackGround(controller: state.animationController),

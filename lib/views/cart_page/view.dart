@@ -50,7 +50,10 @@ class _AppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: Center(child: Text(AppLocalizations.of(context).cartPageTitle)),
+      title: Center(
+          child: Text("Cart"
+              // AppLocalizations.of(context).cartPageTitle
+              )),
       flexibleSpace: Container(
         decoration: new BoxDecoration(
           gradient: new LinearGradient(

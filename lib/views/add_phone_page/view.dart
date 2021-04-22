@@ -54,7 +54,6 @@ class __MainBodyState extends State<_MainBody> {
           ),
           Scaffold(
             backgroundColor: Colors.transparent,
-            resizeToAvoidBottomPadding: false,
             resizeToAvoidBottomInset: true,
             appBar: AppBar(
               centerTitle: true,

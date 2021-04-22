@@ -118,7 +118,6 @@ class __FirstPageState extends State<_FirstPage> {
             child: _widgetOptions.elementAt(_selectedIndex),
           ),
           backgroundColor: Colors.transparent,
-          resizeToAvoidBottomPadding: false,
           resizeToAvoidBottomInset: true,
           appBar: AppBar(
             title: Text("Inbox"),
