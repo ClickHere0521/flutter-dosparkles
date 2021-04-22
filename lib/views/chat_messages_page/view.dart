@@ -1,3 +1,4 @@
+import 'package:bubble/bubble.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
 import 'package:com.floridainc.dosparkles/actions/api/graphql_client.dart';
@@ -23,7 +24,6 @@ Widget buildView(
   ];
 
   Widget _buildPage(Widget page) {
-    // return keepAliveWrapper(page);
     return page;
   }
 
@@ -94,16 +94,6 @@ class _BubblePageState extends State<BubblePage> {
   var _controller = TextEditingController();
 
   String getUserLetter(item) {
-    // printWrapped(item.toString());
-    // print('getUserLetter');
-    // print(userId['id'].toString());
-    // print(allUsers.toString());
-    // for (int i = 0; i < allUsers.length; i++) {
-    //   if (allUsers[i]['id'] == userId['id']) {
-    //     return allUsers[i]['firstName'].toString()[0] +
-    //         allUsers[i]['lastName'].toString()[0];
-    //   }
-    // }
     return item != null ? item['name'].toString()[0] : "";
   }
 
@@ -112,124 +102,154 @@ class _BubblePageState extends State<BubblePage> {
     Widget insetVSmall = SizedBox(height: 10);
     Widget insetH = SizedBox(width: 4);
     double tWidth = maxWidth - 160;
-    final TextStyle textStyle = TextStyle(fontSize: 15);
 
-    return Container(
-      padding: EdgeInsets.all(20),
-      child: StreamBuilder(
-          stream: fetchDataProcess(widget.chatId),
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (snapshot.hasData && !snapshot.hasError) {
-              return snapshot.data['chat_messages'] == null
-                  ? Text('No Data', textAlign: TextAlign.center)
-                  : Column(
-                      children: snapshot.data['chat_messages']
-                          .map<Widget>(
-                            (item) =>
-                                //
-                                item['user'] != null &&
-                                        widget.userId == item['user']['id']
-                                    ? Column(children: <Widget>[
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end, //
-                                          children: <Widget>[
-                                            insetH,
-                                            FLBubble(
-                                                from: FLBubbleFrom.right, //
-                                                backgroundColor: Colors.white,
-                                                child: Container(
-                                                  width: tWidth,
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 5,
-                                                      vertical: 8),
-                                                  child: Text('${item['text']}',
-                                                      style: textStyle,
-                                                      softWrap: true),
-                                                )),
-                                            _buildRoundedAvatar(getUserLetter(
-                                              item['user'],
-                                              // snapshot.data['users']
-                                            )),
-                                          ],
+    return StreamBuilder(
+      stream: fetchDataProcess(widget.chatId),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.hasData && !snapshot.hasError) {
+          return snapshot.data['chat_messages'] == null
+              ? Text('No Data', textAlign: TextAlign.center)
+              : Expanded(
+                  child: ListView(
+                    children: snapshot.data['chat_messages']
+                        .map<Widget>(
+                          (item) => item['user'] != null &&
+                                  widget.userId == item['user']['id']
+                              ? Column(
+                                  children: [
+                                    Align(
+                                      alignment: Alignment.centerRight,
+                                      child: Container(
+                                        width: 300.0,
+                                        constraints:
+                                            BoxConstraints(minHeight: 38.0),
+                                        child: Bubble(
+                                          margin: BubbleEdges.only(top: 10),
+                                          stick: true,
+                                          color: Colors.red,
+                                          nip: BubbleNip.rightBottom,
+                                          child: Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 10.0),
+                                            child: Text(
+                                              '${item['text']}',
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  color: Colors.white),
+                                              softWrap: true,
+                                              textAlign: TextAlign.right,
+                                            ),
+                                          ),
                                         ),
-                                        insetVSmall,
-                                        Text(
+                                      ),
+                                    ),
+                                    insetVSmall,
+                                    Padding(
+                                      padding: EdgeInsets.only(right: 145.0),
+                                      child: Align(
+                                        alignment: Alignment.centerRight,
+                                        child: Text(
                                           '${formatter.format(DateTime.parse(item['createdAt']))}',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.black38,
+                                          ),
                                         ),
-                                        insetV,
-                                      ])
-                                    : Column(children: <Widget>[
-                                        Row(
-                                          children: <Widget>[
-                                            _buildRoundedAvatar(getUserLetter(
-                                              item['user'],
-                                              // snapshot.data['users']
-                                            )),
-                                            insetH,
-                                            item['messageType'] == 'text'
-                                                ? FLBubble(
-                                                    from: FLBubbleFrom.left,
-                                                    backgroundColor:
-                                                        Colors.white,
-                                                    child: Container(
-                                                      width: tWidth,
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 5,
-                                                              vertical: 8),
-                                                      child: Text(
-                                                        '${item['text']}',
-                                                        style: textStyle,
-                                                        softWrap: true,
-                                                      ),
+                                      ),
+                                    ),
+                                    insetV,
+                                  ],
+                                )
+                              : Column(children: <Widget>[
+                                  Row(
+                                    children: <Widget>[
+                                      insetH,
+                                      item['messageType'] == 'text'
+                                          ? Align(
+                                              alignment: Alignment.centerLeft,
+                                              child: Container(
+                                                width: 300.0,
+                                                constraints: BoxConstraints(
+                                                    minHeight: 38.0),
+                                                child: Bubble(
+                                                  margin:
+                                                      BubbleEdges.only(top: 10),
+                                                  stick: true,
+                                                  color: Colors.red,
+                                                  nip: BubbleNip.leftBottom,
+                                                  child: Padding(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 10.0),
+                                                    child: Text(
+                                                      '${item['text']}',
+                                                      style: TextStyle(
+                                                          fontSize: 16,
+                                                          color: Colors.white),
+                                                      softWrap: true,
+                                                      textAlign: TextAlign.left,
                                                     ),
-                                                  )
-                                                : ElevatedButton(
-                                                    child: Text("Show order"),
-                                                    onPressed: () {
-                                                      Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              OrderWidget(
-                                                                  orderId: item[
-                                                                              'order'] !=
-                                                                          null
-                                                                      ? item['order']
-                                                                          ['id']
-                                                                      : ''),
-                                                        ),
-                                                      );
-                                                    },
                                                   ),
-                                          ],
+                                                ),
+                                              ),
+                                            )
+                                          : ElevatedButton(
+                                              child: Text("Show order"),
+                                              onPressed: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        OrderWidget(
+                                                            orderId:
+                                                                item['order'] !=
+                                                                        null
+                                                                    ? item['order']
+                                                                        ['id']
+                                                                    : ''),
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                    ],
+                                  ),
+                                  insetVSmall,
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 45.0),
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        '${formatter.format(DateTime.parse(item['createdAt']))}',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.black38,
                                         ),
-                                        insetVSmall,
-                                        Text(
-                                            '${formatter.format(DateTime.parse(item['createdAt']))}'),
-                                        insetV,
-                                      ]),
-                          )
-                          .toList(),
-                    );
-            } else {
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(height: Adapt.screenH() / 4),
-                  SizedBox(
-                      width: Adapt.screenW(),
-                      height: Adapt.screenH() / 4,
-                      child: Container(
-                        child: CircularProgressIndicator(),
-                        alignment: Alignment.center,
-                      ))
-                ],
-              );
-            }
-          }),
+                                      ),
+                                    ),
+                                  ),
+                                  insetV,
+                                ]),
+                        )
+                        .toList(),
+                  ),
+                );
+        } else {
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(height: Adapt.screenH() / 4),
+              SizedBox(
+                  width: Adapt.screenW(),
+                  height: Adapt.screenH() / 4,
+                  child: Container(
+                    child: CircularProgressIndicator(),
+                    alignment: Alignment.center,
+                  ))
+            ],
+          );
+        }
+      },
     );
   }
 
@@ -264,83 +284,134 @@ class _BubblePageState extends State<BubblePage> {
     final MediaQueryData queryData = MediaQuery.of(context);
     final double width = queryData.size.width;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('${widget.conversationName}'),
-        backgroundColor: HexColor("#182465"),
-      ),
-      body: Container(
-        color: Color(0xFFDEEEEEE),
-        width: double.infinity,
-        height: queryData.size.height, //double.infinity,
-        child: ListView(
-          // Start scrolled to the bottom by default and stay there.
-          reverse: true,
-          shrinkWrap: true,
-          children: <Widget>[
-            _buildBubbleContent(width, context),
-          ],
+    return Stack(
+      children: [
+        Positioned(
+          top: 0,
+          left: 0,
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            height: 181.0,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [HexColor('#8FADEB'), HexColor('#7397E2')],
+                begin: const FractionalOffset(0.0, 0.0),
+                end: const FractionalOffset(1.0, 0.0),
+                stops: [0.0, 1.0],
+                tileMode: TileMode.clamp,
+              ),
+            ),
+          ),
         ),
-      ),
-      bottomNavigationBar: Container(
-        height: 80,
-        color: HexColor("#182465"),
-        child: Column(
-          children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
+        Scaffold(
+          appBar: AppBar(
+            title: Text('${widget.conversationName}'),
+            centerTitle: true,
+            backgroundColor: Colors.transparent,
+            elevation: 0.0,
+            leadingWidth: 70.0,
+            automaticallyImplyLeading: false,
+            leading: InkWell(
+              child: Image.asset("images/back_button.png"),
+              onTap: () => Navigator.of(context).pop(),
+            ),
+          ),
+          backgroundColor: Colors.transparent,
+          resizeToAvoidBottomInset: true,
+          body: Container(
+            width: MediaQuery.of(context).size.width,
+            padding: EdgeInsets.only(top: 10, left: 8.0, right: 8.0),
+            decoration: BoxDecoration(
+              color: HexColor("#FAFCFF"),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(32.0),
+                topRight: Radius.circular(32.0),
+              ),
+            ),
+            child: Column(
+              children: [
                 Container(
-                  child: TextField(
-                    controller: _controller,
-                    onChanged: (text) {
-                      this.inputData = text;
-                    },
-                    style: TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      hintText: 'Enter message',
-                      fillColor: Colors.white,
-                      hintStyle: new TextStyle(color: Colors.grey),
-                      labelStyle: new TextStyle(color: Colors.white),
-                      enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
-                      ),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
-                      ),
-                      border: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
-                      ),
-                    ),
+                  width: 136.0,
+                  height: 28.0,
+                  decoration: BoxDecoration(
+                    color: HexColor("#EAECF2"),
+                    borderRadius: BorderRadius.circular(17.0),
                   ),
-                  width: MediaQuery.of(context).size.width * 0.5,
+                  child: Center(
+                      child: Text(
+                    "November 16",
+                    style: TextStyle(
+                      fontSize: 12.0,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  )),
                 ),
-                Container(
-                  width: 60,
-                  height: 40,
-                  child: InkWell(
-                    onTap: () {
-                      if (this.inputData != "") {
-                        addMessage(
-                          this.inputData,
-                          widget.chatId,
-                          widget.userId,
-                        );
-                        this.inputData = "";
-                        _controller.clear();
-                      }
-                    },
-                    child: Icon(
-                      Icons.send,
-                      color: Colors.white,
-                    ),
-                  ),
-                )
+                SizedBox(height: 18.0),
+                _buildBubbleContent(width, context),
               ],
             ),
-          ],
+          ),
+          bottomNavigationBar: Container(
+            height: 80,
+            color: HexColor("#182465"),
+            child: Column(
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Container(
+                      child: TextField(
+                        controller: _controller,
+                        onChanged: (text) {
+                          this.inputData = text;
+                        },
+                        style: TextStyle(color: Colors.white),
+                        decoration: InputDecoration(
+                          hintText: 'Enter message',
+                          fillColor: Colors.white,
+                          hintStyle: new TextStyle(color: Colors.grey),
+                          labelStyle: new TextStyle(color: Colors.white),
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                          ),
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                          ),
+                          border: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                          ),
+                        ),
+                      ),
+                      width: MediaQuery.of(context).size.width * 0.5,
+                    ),
+                    Container(
+                      width: 60,
+                      height: 40,
+                      child: InkWell(
+                        onTap: () {
+                          if (this.inputData != "") {
+                            addMessage(
+                              this.inputData,
+                              widget.chatId,
+                              widget.userId,
+                            );
+                            this.inputData = "";
+                            _controller.clear();
+                          }
+                        },
+                        child: Icon(
+                          Icons.send,
+                          color: Colors.white,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ],
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
 }

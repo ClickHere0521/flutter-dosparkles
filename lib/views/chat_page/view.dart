@@ -1,4 +1,5 @@
 import 'package:com.floridainc.dosparkles/models/cart_item_model.dart';
+import 'package:com.floridainc.dosparkles/utils/general.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -126,13 +127,13 @@ class __FirstPageState extends State<_FirstPage> {
             elevation: 0.0,
             leadingWidth: 70.0,
             automaticallyImplyLeading: false,
-            leading: InkWell(
-              highlightColor: Colors.transparent,
-              splashColor: Colors.transparent,
-              child: Image.asset("images/offcanvas_icon.png"),
-              onTap: () {
-                Scaffold.of(context).openDrawer();
-              },
+            leading: Builder(
+              builder: (context) => IconButton(
+                highlightColor: Colors.transparent,
+                splashColor: Colors.transparent,
+                icon: Image.asset("images/offcanvas_icon.png"),
+                onPressed: () => Scaffold.of(context).openDrawer(),
+              ),
             ),
           ),
           drawer: SparklesDrawer(),
@@ -214,98 +215,9 @@ Future<String> getConversationName(tabIndex, chat, userId) async {
   return nameAndOtherNames;
 }
 
-// Widget _buildCard(tabIndex, item, context, String chatId, userId) {
-//   Future<SharedPreferences> getSharedPreferance() async {
-//     Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-//     return await _prefs;
-//   }
-
-//   return FutureBuilder(
-//       future: getSharedPreferance(),
-//       builder: (context, prefs) {
-//         if (prefs.hasData) {
-//           String chatsRaw = prefs.data.getString('chatsMap') ?? '{}';
-//           Map mapLocal = json.decode(chatsRaw);
-//           return SizedBox(
-//             height: 85.0,
-//             child: Card(
-//               child: InkWell(
-//                 child: Column(
-//                   mainAxisAlignment: MainAxisAlignment.center,
-//                   children: [
-//                     item['users'] != null &&
-//                             item['users'].length > 0 &&
-//                             item['users'][0]['avatar'] != null
-//                         ? ListTile(
-//                             title: FutureBuilder<String>(
-//                               future:
-//                                   getConversationName(tabIndex, item, userId),
-//                               builder: (BuildContext context,
-//                                   AsyncSnapshot<String> snapshot) {
-//                                 if (snapshot.hasData) {
-//                                   return Text(
-//                                     "${snapshot.data}",
-//                                     style: TextStyle(fontSize: 16.0),
-//                                   );
-//                                 }
-//                                 return SizedBox.shrink(child: null);
-//                               },
-//                             ),
-//                             subtitle: Text("Example text"),
-//                             isThreeLine: true,
-//                             dense: true,
-//                             leading: FLAvatar(
-//                               image: Image.network(
-//                                 AppConfig.instance.baseApiHost +
-//                                     item['users'][0]['avatar']['url'],
-//                                 fit: BoxFit.cover,
-//                               ),
-//                               width: 57,
-//                               height: 57,
-//                               radius: 50,
-//                             ),
-//                             trailing: mapLocal[chatId] != null &&
-//                                     mapLocal[chatId]['checked'] == false
-//                                 ? Icon(Icons.mark_as_unread)
-//                                 : null,
-//                           )
-//                         : ListTile(
-//                             title: FutureBuilder<String>(
-//                               future:
-//                                   getConversationName(tabIndex, item, userId),
-//                               builder: (BuildContext context,
-//                                   AsyncSnapshot<String> snapshot) {
-//                                 if (snapshot.hasData) {
-//                                   return Text("${snapshot.data}");
-//                                 }
-//                                 return SizedBox.shrink(child: null);
-//                               },
-//                             ),
-//                             subtitle: Text(""),
-//                             isThreeLine: true,
-//                             leading: FLAvatar(
-//                               text: item['users'][0]['name'][0],
-//                               width: 57,
-//                               height: 57,
-//                               radius: 50,
-//                               color: Colors.grey,
-//                             ),
-//                             trailing: mapLocal[chatId] != null &&
-//                                     mapLocal[chatId]['checked'] == false
-//                                 ? Icon(Icons.mark_as_unread)
-//                                 : null,
-//                           ),
-//                   ],
-//                 ),
-//               ),
-//             ),
-//           );
-//         }
-//         return Container();
-//       });
-// }
-
 Widget _buildCard(tabIndex, item, context, String chatId, userId) {
+  MaterialLocalizations localizations = MaterialLocalizations.of(context);
+
   Future<SharedPreferences> getSharedPreferance() async {
     Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
     return await _prefs;
@@ -330,104 +242,298 @@ Widget _buildCard(tabIndex, item, context, String chatId, userId) {
             ),
             child: Card(
               elevation: 0.0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   item['users'] != null &&
                           item['users'].length > 0 &&
                           item['users'][0]['avatar'] != null
-                      ? InkWell(
-                          borderRadius: BorderRadius.circular(10.0),
-                          child: Ink(
-                            width: MediaQuery.of(context).size.width,
-                            height: 77.0,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.rectangle,
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                            child: Stack(
-                              alignment: Alignment.centerLeft,
-                              children: [
-                                Positioned(
-                                  left: 16.0,
-                                  child: ClipOval(
-                                    child: Image.network(
-                                      AppConfig.instance.baseApiHost +
-                                          item['users'][0]['avatar']['url'],
+                      ? Container(
+                          height: 77.0,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.rectangle,
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          child: Stack(
+                            alignment: Alignment.centerLeft,
+                            children: [
+                              Positioned(
+                                left: 16.0,
+                                child: Stack(
+                                  fit: StackFit.loose,
+                                  children: [
+                                    FLAvatar(
+                                      image: Image.network(
+                                        AppConfig.instance.baseApiHost +
+                                            item['users'][0]['avatar']['url'],
+                                        fit: BoxFit.cover,
+                                      ),
                                       width: 57,
                                       height: 57,
-                                      fit: BoxFit.cover,
                                     ),
-                                  ),
+                                    mapLocal[chatId] != null &&
+                                            mapLocal[chatId]['checked'] == false
+                                        ? Positioned(
+                                            bottom: 0,
+                                            right: 0,
+                                            child: Container(
+                                              width: 14.0,
+                                              height: 14.0,
+                                              decoration: BoxDecoration(
+                                                color: Colors.blue,
+                                                shape: BoxShape.circle,
+                                              ),
+                                            ),
+                                          )
+                                        : SizedBox.shrink(child: null),
+                                  ],
                                 ),
-                                Positioned(
-                                  left: 85.0,
+                              ),
+                              Positioned.fill(
+                                top: 15.0,
+                                left: 85.0,
+                                child: Container(
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Row(
-                                        children: [
-                                          SizedBox(
-                                            width: MediaQuery.of(context)
-                                                .size
-                                                .width,
-                                            child: FutureBuilder<String>(
-                                              future: getConversationName(
-                                                  tabIndex, item, userId),
-                                              builder: (BuildContext context,
-                                                  AsyncSnapshot<String>
-                                                      snapshot) {
-                                                if (snapshot.hasData) {
-                                                  return Text(
-                                                    "${snapshot.data}",
-                                                    style: TextStyle(
-                                                        fontSize: 16.0),
-                                                  );
-                                                }
-                                                return SizedBox.shrink(
-                                                    child: null);
-                                              },
+                                      Container(
+                                        width: double.infinity,
+                                        child: Wrap(
+                                          alignment: WrapAlignment.spaceBetween,
+                                          children: [
+                                            Container(
+                                              constraints: BoxConstraints(
+                                                  maxWidth: 180.0),
+                                              child: FutureBuilder<String>(
+                                                future: getConversationName(
+                                                    tabIndex, item, userId),
+                                                builder: (BuildContext context,
+                                                    AsyncSnapshot<String>
+                                                        snapshot) {
+                                                  if (snapshot.hasData) {
+                                                    return Text(
+                                                      "${snapshot.data}",
+                                                      style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontSize: 16.0,
+                                                      ),
+                                                      maxLines: 1,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      softWrap: false,
+                                                    );
+                                                  }
+                                                  return SizedBox.shrink(
+                                                      child: null);
+                                                },
+                                              ),
                                             ),
-                                          ),
-                                        ],
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                right: 16.0,
+                                                top: 5.0,
+                                              ),
+                                              child: Text(
+                                                // item != null &&
+                                                //         item['chat_messages'] !=
+                                                //             null &&
+                                                //         item['chat_messages']
+                                                //                 .length >
+                                                //             0 &&
+                                                //         item['chat_messages']
+                                                //                 [0] !=
+                                                //             null &&
+                                                //         item['chat_messages'][0]
+                                                //                 ['text'] !=
+                                                //             null
+                                                //     ? item['chat_messages'][0]
+                                                //         ['createdAt']
+                                                //     : '',
+                                                "Tue",
+                                                style:
+                                                    TextStyle(fontSize: 12.0),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                       SizedBox(height: 7),
-                                      Text("Lorem ipsum dolor amet"),
+                                      Container(
+                                        constraints:
+                                            BoxConstraints(maxWidth: 242.0),
+                                        child: Text(
+                                          item != null &&
+                                                  item['chat_messages'] !=
+                                                      null &&
+                                                  item['chat_messages'].length >
+                                                      0 &&
+                                                  item['chat_messages'][0] !=
+                                                      null &&
+                                                  item['chat_messages'][0]
+                                                          ['text'] !=
+                                                      null
+                                              ? item['chat_messages'][0]['text']
+                                              : '',
+                                          style: TextStyle(fontSize: 14.0),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          softWrap: false,
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                          onTap: () => null,
                         )
-                      : ListTile(
-                          title: FutureBuilder<String>(
-                            future: getConversationName(tabIndex, item, userId),
-                            builder: (BuildContext context,
-                                AsyncSnapshot<String> snapshot) {
-                              if (snapshot.hasData) {
-                                return Text("${snapshot.data}");
-                              }
-                              return SizedBox.shrink(child: null);
-                            },
+                      : Container(
+                          height: 77.0,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.rectangle,
+                            borderRadius: BorderRadius.circular(10.0),
                           ),
-                          subtitle: Text(""),
-                          isThreeLine: true,
-                          leading: FLAvatar(
-                            text: item['users'][0]['name'][0],
-                            width: 57,
-                            height: 57,
-                            radius: 50,
-                            color: Colors.grey,
+                          child: Stack(
+                            alignment: Alignment.centerLeft,
+                            children: [
+                              Positioned(
+                                left: 16.0,
+                                child: Stack(
+                                  children: [
+                                    FLAvatar(
+                                      text: item['users'][0]['name'][0],
+                                      width: 57,
+                                      height: 57,
+                                      textStyle: TextStyle(
+                                        fontSize: 22.0,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.white,
+                                      ),
+                                      color: HexColor("#CCD4FE"),
+                                    ),
+                                    mapLocal[chatId] != null &&
+                                            mapLocal[chatId]['checked'] == false
+                                        ? Positioned(
+                                            bottom: 0,
+                                            right: 0,
+                                            child: Container(
+                                              width: 14.0,
+                                              height: 14.0,
+                                              decoration: BoxDecoration(
+                                                color: Colors.blue,
+                                                shape: BoxShape.circle,
+                                              ),
+                                            ),
+                                          )
+                                        : SizedBox.shrink(child: null),
+                                  ],
+                                ),
+                              ),
+                              Positioned.fill(
+                                top: 15.0,
+                                left: 85.0,
+                                child: Container(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        width: double.infinity,
+                                        child: Wrap(
+                                          alignment: WrapAlignment.spaceBetween,
+                                          children: [
+                                            Container(
+                                              constraints: BoxConstraints(
+                                                  maxWidth: 180.0),
+                                              child: FutureBuilder<String>(
+                                                future: getConversationName(
+                                                    tabIndex, item, userId),
+                                                builder: (BuildContext context,
+                                                    AsyncSnapshot<String>
+                                                        snapshot) {
+                                                  if (snapshot.hasData) {
+                                                    return Text(
+                                                      "${snapshot.data}",
+                                                      style: TextStyle(
+                                                        fontSize: 16.0,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                      ),
+                                                      maxLines: 1,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      softWrap: false,
+                                                    );
+                                                  }
+                                                  return SizedBox.shrink(
+                                                      child: null);
+                                                },
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                right: 16.0,
+                                                top: 5.0,
+                                              ),
+                                              child: Text(
+                                                // item != null &&
+                                                //         item['chat_messages'] !=
+                                                //             null &&
+                                                //         item['chat_messages']
+                                                //                 .length >
+                                                //             0 &&
+                                                //         item['chat_messages']
+                                                //                 [0] !=
+                                                //             null &&
+                                                //         item['chat_messages'][0]
+                                                //                 ['text'] !=
+                                                //             null
+                                                //     ? item['chat_messages'][0]
+                                                //         ['createdAt']
+                                                //     : '',
+                                                "12 AM",
+                                                style:
+                                                    TextStyle(fontSize: 12.0),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      SizedBox(height: 7),
+                                      Container(
+                                        constraints:
+                                            BoxConstraints(maxWidth: 242.0),
+                                        child: Text(
+                                          item != null &&
+                                                  item['chat_messages'] !=
+                                                      null &&
+                                                  item['chat_messages'].length >
+                                                      0 &&
+                                                  item['chat_messages'][0] !=
+                                                      null &&
+                                                  item['chat_messages'][0]
+                                                          ['text'] !=
+                                                      null
+                                              ? item['chat_messages'][0]['text']
+                                              : '',
+                                          style: TextStyle(fontSize: 14.0),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          softWrap: false,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                          trailing: mapLocal[chatId] != null &&
-                                  mapLocal[chatId]['checked'] == false
-                              ? Icon(Icons.mark_as_unread)
-                              : null,
-                        ),
+                        )
                 ],
               ),
             ),

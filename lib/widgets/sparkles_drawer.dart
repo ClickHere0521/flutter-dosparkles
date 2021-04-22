@@ -37,14 +37,6 @@ class SparklesDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.login),
-            title: Text('Sign in'),
-            onTap: () {
-              Navigator.of(context)
-                  .pushNamed('authorizationpage', arguments: null);
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.login),
             title: Text('Register'),
             onTap: () {
               Navigator.of(context).pushNamed('registerpage', arguments: null);

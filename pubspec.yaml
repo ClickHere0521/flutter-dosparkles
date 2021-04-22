@@ -68,6 +68,7 @@ dependencies:
   sign_in_with_apple: ^2.5.4
   flutter_branch_sdk: ^1.4.0
   country_pickers: ^2.0.0
+  bubble: ^1.2.1
   flutter_svg:
   cupertino_icons: ^1.0.0
   video_player:
