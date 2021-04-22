@@ -66,7 +66,10 @@ class _AppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: Center(child: Text(AppLocalizations.of(context).productPageTitle)),
+      title: Center(
+          child: Text("Product"
+              // AppLocalizations.of(context).productPageTitle
+              )),
       flexibleSpace: Container(
         decoration: new BoxDecoration(
           gradient: new LinearGradient(

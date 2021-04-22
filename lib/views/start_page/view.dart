@@ -82,7 +82,8 @@ class _FirstPage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(30)),
                 child: Center(
                   child: Text(
-                    AppLocalizations.of(context).continuebtn,
+                    "Continue",
+                    // AppLocalizations.of(context).continuebtn,
                     style: TextStyle(
                         color: const Color(0xFFFFFFFF),
                         fontSize: 20,
@@ -103,7 +104,9 @@ class _AppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: Text(AppLocalizations.of(context).startPageTitle),
+      title: Text("Welcome"
+          // AppLocalizations.of(context).startPageTitle
+          ),
       centerTitle: true,
       flexibleSpace: Container(
         decoration: new BoxDecoration(

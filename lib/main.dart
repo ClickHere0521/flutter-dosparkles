@@ -168,7 +168,7 @@ class _AppState extends State<App> {
       title: 'DoSparkles',
       debugShowCheckedModeBanner: false,
       theme: _lightTheme,
-      darkTheme: _darkTheme,
+      // darkTheme: _darkTheme,
       supportedLocales: [
         const Locale.fromSubtags(languageCode: 'en'),
       ],

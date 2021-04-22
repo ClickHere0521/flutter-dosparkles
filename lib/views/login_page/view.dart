@@ -13,7 +13,6 @@ import 'state.dart';
 Widget buildView(
     LoginPageState state, Dispatch dispatch, ViewService viewService) {
   return Scaffold(
-    
     body: Stack(
       children: <Widget>[
         _BackGround(controller: state.animationController),
@@ -40,7 +39,6 @@ class _BackGround extends StatelessWidget {
   Widget build(BuildContext context) {
     Adapt.initContext(context);
 
-    
     return Column(children: [
       Expanded(child: SizedBox()),
     ]);
@@ -51,7 +49,10 @@ class _AppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: Center(child: Text(AppLocalizations.of(context).loginPageTitle)),
+      title: Center(
+          child: Text("Login"
+              // AppLocalizations.of(context).loginPageTitle
+              )),
       flexibleSpace: Container(
         decoration: new BoxDecoration(
           gradient: new LinearGradient(
@@ -286,8 +287,7 @@ class _LoginBody extends StatelessWidget {
               children: <Widget>[
                 AnimatedSwitcher(
                     duration: Duration(milliseconds: 300),
-                    child:
-                        _EmailEntry(
+                    child: _EmailEntry(
                       onSubmit: (s) =>
                           dispatch(LoginPageActionCreator.onLoginClicked()),
                       controller: animationController,
@@ -295,8 +295,7 @@ class _LoginBody extends StatelessWidget {
                       pwdFocusNode: pwdFocusNode,
                       accountTextController: accountTextController,
                       passWordTextController: passWordTextController,
-                    )
-                    ),
+                    )),
                 SlideTransition(
                     position: Tween(begin: Offset(0, 1), end: Offset.zero)
                         .animate(submitCurve),
@@ -308,7 +307,6 @@ class _LoginBody extends StatelessWidget {
                             dispatch(LoginPageActionCreator.onLoginClicked()),
                       ),
                     )),
-                
               ],
             ),
           ),

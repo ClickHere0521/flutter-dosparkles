@@ -54,7 +54,9 @@ class _AppBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Text(AppLocalizations.of(context).storeSelectionPageTitle),
+          Text("Choose Your Store"
+              // AppLocalizations.of(context).storeSelectionPageTitle
+              ),
         ],
       ),
       flexibleSpace: Container(
