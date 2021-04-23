@@ -47,10 +47,10 @@ class __MainBodyState extends State<_MainBody> {
           ),
           Scaffold(
             backgroundColor: Colors.transparent,
-            
             resizeToAvoidBottomInset: true,
             appBar: AppBar(
               elevation: 0.0,
+              centerTitle: true,
               leadingWidth: 70.0,
               automaticallyImplyLeading: false,
               leading: InkWell(
@@ -58,28 +58,23 @@ class __MainBodyState extends State<_MainBody> {
                 onTap: () => Navigator.of(context).pop(),
               ),
               backgroundColor: Colors.transparent,
+              title: Text(
+                "Create Account",
+                style: TextStyle(
+                  fontSize: 22,
+                  color: HexColor("#53586F"),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
             body: Container(
               width: MediaQuery.of(context).size.width,
-              padding: EdgeInsets.symmetric(horizontal: 8.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    SizedBox(height: 10),
-                    Text(
-                      "Create Account",
-                      style: TextStyle(fontSize: 32),
-                    ),
-                    SizedBox(height: 5),
-                    Text(
-                      "Follow 2 easy steps to create an account",
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    SizedBox(height: 50),
-                    _InnerPart(),
-                  ],
-                ),
+              height: MediaQuery.of(context).size.height,
+              padding: EdgeInsets.only(
+                left: 16.0,
+                right: 16.0,
               ),
+              child: _InnerPart(),
             ),
           ),
         ],
@@ -107,189 +102,200 @@ class __InnerPartState extends State<_InnerPart> {
     return Container(
       child: Form(
         key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Row(
-              children: [
-                Flexible(
-                  child: TextFormField(
-                    textAlign: TextAlign.left,
-                    keyboardType: TextInputType.text,
-                    onChanged: (value) {
-                      setState(() => firstNameValue = value);
-                    },
-                    decoration: InputDecoration(
-                      hintText: 'Enter here',
-                      hintStyle: TextStyle(
-                        fontSize: 16,
-                        color: Colors.black26,
-                      ),
-                      contentPadding: EdgeInsets.symmetric(vertical: 5),
-                      floatingLabelBehavior: FloatingLabelBehavior.always,
-                      labelText: 'First Name',
-                      labelStyle: TextStyle(
-                        color: Colors.black,
-                        height: 0.7,
-                        fontSize: 22,
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter some text';
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-                SizedBox(width: 23),
-                Flexible(
-                  child: TextFormField(
-                    textAlign: TextAlign.left,
-                    keyboardType: TextInputType.text,
-                    onChanged: (value) {
-                      setState(() => lastNameValue = value);
-                    },
-                    decoration: InputDecoration(
-                      hintText: 'Enter here',
-                      hintStyle: TextStyle(
-                        fontSize: 16,
-                        color: Colors.black26,
-                      ),
-                      contentPadding: EdgeInsets.symmetric(vertical: 5),
-                      floatingLabelBehavior: FloatingLabelBehavior.always,
-                      labelText: 'Last Name',
-                      labelStyle: TextStyle(
-                        color: Colors.black,
-                        height: 0.7,
-                        fontSize: 22,
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter some text';
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 25),
-            TextFormField(
-              textAlign: TextAlign.left,
-              keyboardType: TextInputType.emailAddress,
-              onChanged: (value) {
-                setState(() => emailValue = value);
-              },
-              decoration: InputDecoration(
-                hintText: 'yourname@example.com',
-                hintStyle: TextStyle(
-                  fontSize: 16,
-                  color: Colors.black26,
-                ),
-                contentPadding: EdgeInsets.symmetric(vertical: 5),
-                floatingLabelBehavior: FloatingLabelBehavior.always,
-                labelText: 'Email',
-                labelStyle: TextStyle(
-                  color: Colors.black,
-                  height: 0.7,
-                  fontSize: 22,
-                ),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text(
+                "Follow 2 easy steps to create an account",
+                style: TextStyle(fontSize: 16),
               ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter some text';
-                }
-                return null;
-              },
-            ),
-            SizedBox(height: 25),
-            TextFormField(
-              textAlign: TextAlign.left,
-              onChanged: (value) {
-                setState(() => passwordValue = value);
-              },
-              obscureText: _hidePassword,
-              decoration: InputDecoration(
-                hintText: 'Your password',
-                hintStyle: TextStyle(fontSize: 16, color: Colors.black26),
-                contentPadding: EdgeInsets.symmetric(vertical: 5),
-                floatingLabelBehavior: FloatingLabelBehavior.always,
-                labelText: 'Password',
-                labelStyle: TextStyle(
-                  color: Colors.black,
-                  height: 0.7,
-                  fontSize: 22,
-                ),
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _hidePassword ? Icons.visibility : Icons.visibility_off,
+              SizedBox(height: MediaQuery.of(context).size.height * 0.10),
+              Row(
+                children: [
+                  Flexible(
+                    child: TextFormField(
+                      textAlign: TextAlign.left,
+                      keyboardType: TextInputType.text,
+                      onChanged: (value) {
+                        setState(() => firstNameValue = value);
+                      },
+                      decoration: InputDecoration(
+                        hintText: 'Enter here',
+                        hintStyle: TextStyle(
+                          fontSize: 16,
+                          color: Colors.black26,
+                        ),
+                        contentPadding: EdgeInsets.symmetric(vertical: 5),
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                        labelText: 'First Name',
+                        labelStyle: TextStyle(
+                          color: Colors.black,
+                          height: 0.7,
+                          fontSize: 22,
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter some text';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  SizedBox(width: 23),
+                  Flexible(
+                    child: TextFormField(
+                      textAlign: TextAlign.left,
+                      keyboardType: TextInputType.text,
+                      onChanged: (value) {
+                        setState(() => lastNameValue = value);
+                      },
+                      decoration: InputDecoration(
+                        hintText: 'Enter here',
+                        hintStyle: TextStyle(
+                          fontSize: 16,
+                          color: Colors.black26,
+                        ),
+                        contentPadding: EdgeInsets.symmetric(vertical: 5),
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                        labelText: 'Last Name',
+                        labelStyle: TextStyle(
+                          color: Colors.black,
+                          height: 0.7,
+                          fontSize: 22,
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter some text';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 25),
+              TextFormField(
+                textAlign: TextAlign.left,
+                keyboardType: TextInputType.emailAddress,
+                onChanged: (value) {
+                  setState(() => emailValue = value);
+                },
+                decoration: InputDecoration(
+                  hintText: 'yourname@example.com',
+                  hintStyle: TextStyle(
+                    fontSize: 16,
                     color: Colors.black26,
                   ),
-                  onPressed: () {
-                    setState(() {
-                      _hidePassword = !_hidePassword;
-                    });
-                  },
-                ),
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter some text';
-                }
-                return null;
-              },
-            ),
-            SizedBox(height: 24),
-            Row(
-              children: <Widget>[
-                SizedBox(
-                  height: 16.0,
-                  width: 16.0,
-                  child: Checkbox(
-                    // checkColor: Colors.greenAccent,
-                    // activeColor: Colors.red,
-                    value: this.checkboxValue,
-                    materialTapTargetSize: MaterialTapTargetSize.padded,
-                    onChanged: (bool value) {
-                      setState(() {
-                        this.checkboxValue = value;
-                      });
-                    },
+                  contentPadding: EdgeInsets.symmetric(vertical: 5),
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                  labelText: 'Email',
+                  labelStyle: TextStyle(
+                    color: Colors.black,
+                    height: 0.7,
+                    fontSize: 22,
                   ),
                 ),
-                SizedBox(width: 13),
-                Text(
-                  'Agree with Terms & Conditions',
-                  style: TextStyle(fontSize: 13.0),
-                ),
-              ],
-            ),
-            SizedBox(height: 18),
-            ButtonTheme(
-              minWidth: 300.0,
-              height: 48.0,
-              child: RaisedButton(
-                textColor: Colors.white,
-                elevation: 0,
-                color: HexColor("#6092DC"),
-                child: Text(
-                  'Next',
-                  style: TextStyle(
-                    fontSize: 17.0,
-                    fontWeight: FontWeight.normal,
-                  ),
-                ),
-                onPressed: () {
-                  _onSubmit(_formKey, emailValue);
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter some text';
+                  }
+                  return null;
                 },
-                shape: new RoundedRectangleBorder(
-                  borderRadius: new BorderRadius.circular(31.0),
+              ),
+              SizedBox(height: 25),
+              TextFormField(
+                textAlign: TextAlign.left,
+                onChanged: (value) {
+                  setState(() => passwordValue = value);
+                },
+                obscureText: _hidePassword,
+                decoration: InputDecoration(
+                  hintText: 'Your password',
+                  hintStyle: TextStyle(fontSize: 16, color: Colors.black26),
+                  contentPadding: EdgeInsets.symmetric(vertical: 5),
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                  labelText: 'Password',
+                  labelStyle: TextStyle(
+                    color: Colors.black,
+                    height: 0.7,
+                    fontSize: 22,
+                  ),
+                  suffixIcon: Padding(
+                    padding: EdgeInsetsDirectional.only(start: 12.0, top: 12.0),
+                    child: InkWell(
+                      child: Icon(
+                        _hidePassword ? Icons.visibility : Icons.visibility_off,
+                        color: Colors.black26,
+                      ),
+                      onTap: () {
+                        setState(() {
+                          _hidePassword = !_hidePassword;
+                        });
+                      },
+                    ),
+                  ),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter some text';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 24),
+              Row(
+                children: <Widget>[
+                  SizedBox(
+                    height: 16.0,
+                    width: 16.0,
+                    child: Checkbox(
+                      // checkColor: Colors.greenAccent,
+                      // activeColor: Colors.red,
+                      value: this.checkboxValue,
+                      materialTapTargetSize: MaterialTapTargetSize.padded,
+                      onChanged: (bool value) {
+                        setState(() {
+                          this.checkboxValue = value;
+                        });
+                      },
+                    ),
+                  ),
+                  SizedBox(width: 13),
+                  Text(
+                    'Agree with Terms & Conditions',
+                    style: TextStyle(fontSize: 13.0),
+                  ),
+                ],
+              ),
+              SizedBox(height: 18),
+              ButtonTheme(
+                minWidth: 300.0,
+                height: 48.0,
+                child: RaisedButton(
+                  textColor: Colors.white,
+                  elevation: 0,
+                  color: HexColor("#6092DC"),
+                  child: Text(
+                    'Next',
+                    style: TextStyle(
+                      fontSize: 17.0,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                  onPressed: () {
+                    _onSubmit(_formKey, emailValue);
+                  },
+                  shape: new RoundedRectangleBorder(
+                    borderRadius: new BorderRadius.circular(31.0),
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

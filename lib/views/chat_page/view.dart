@@ -2,6 +2,8 @@ import 'package:com.floridainc.dosparkles/models/cart_item_model.dart';
 import 'package:com.floridainc.dosparkles/utils/general.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
 import 'package:com.floridainc.dosparkles/widgets/sparkles_drawer.dart';
@@ -121,7 +123,14 @@ class __FirstPageState extends State<_FirstPage> {
           backgroundColor: Colors.transparent,
           resizeToAvoidBottomInset: true,
           appBar: AppBar(
-            title: Text("Inbox"),
+            title: Text(
+              "Inbox",
+              style: TextStyle(
+                fontSize: 22,
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
             centerTitle: true,
             backgroundColor: Colors.transparent,
             elevation: 0.0,
@@ -147,34 +156,34 @@ class __FirstPageState extends State<_FirstPage> {
                       items: <BottomNavigationBarItem>[
                         BottomNavigationBarItem(
                           label: "",
-                          icon: ImageIcon(
-                            AssetImage("images/home_icon.png"),
+                          icon: SvgPicture.asset(
+                            'images/Vector.svg',
                             color: HexColor("#C4C6D2"),
                           ),
-                          activeIcon: ImageIcon(
-                            AssetImage("images/home_icon.png"),
+                          activeIcon: SvgPicture.asset(
+                            'images/Vector.svg',
                             color: Colors.black87,
                           ),
                         ),
                         BottomNavigationBarItem(
                           label: "",
-                          icon: ImageIcon(
-                            AssetImage("images/Group.png"),
+                          icon: SvgPicture.asset(
+                            'images/Group.svg',
                             color: HexColor("#C4C6D2"),
                           ),
-                          activeIcon: ImageIcon(
-                            AssetImage("images/Group.png"),
+                          activeIcon: SvgPicture.asset(
+                            'images/Group.svg',
                             color: Colors.black87,
                           ),
                         ),
                         BottomNavigationBarItem(
                           label: "",
-                          icon: ImageIcon(
-                            AssetImage("images/person_plus.png"),
+                          icon: SvgPicture.asset(
+                            'images/Group 41.svg',
                             color: HexColor("#C4C6D2"),
                           ),
-                          activeIcon: ImageIcon(
-                            AssetImage("images/person_plus.png"),
+                          activeIcon: SvgPicture.asset(
+                            'images/Group 41.svg',
                             color: Colors.black87,
                           ),
                         ),
@@ -215,8 +224,8 @@ Future<String> getConversationName(tabIndex, chat, userId) async {
   return nameAndOtherNames;
 }
 
-Widget _buildCard(tabIndex, item, context, String chatId, userId) {
-  MaterialLocalizations localizations = MaterialLocalizations.of(context);
+Widget _buildCard(tabIndex, item, context, userId) {
+  String chatId = item['id'];
 
   Future<SharedPreferences> getSharedPreferance() async {
     Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
@@ -229,6 +238,35 @@ Widget _buildCard(tabIndex, item, context, String chatId, userId) {
         if (prefs.hasData) {
           String chatsRaw = prefs.data.getString('chatsMap') ?? '{}';
           Map mapLocal = json.decode(chatsRaw);
+          String time = '';
+          String message = '';
+          String dateTimeRaw = '';
+          bool isMyMessage = false;
+
+          var msgs = item['chat_messages'];
+
+          if (item != null &&
+              msgs != null &&
+              msgs.length > 0 &&
+              msgs[0] != null) {
+            if (msgs[0]['createdAt'] != null) {
+              dateTimeRaw = msgs[0]['createdAt'];
+            }
+
+            if (msgs[0]['text'] != null) {
+              message = msgs[0]['text'];
+
+              if (msgs[0]['user'] != null && msgs[0]['user'] == userId) {
+                isMyMessage = true;
+              }
+            }
+          }
+
+          if (dateTimeRaw != null && dateTimeRaw != '') {
+            DateTime dateTimeFormatted = DateTime.parse(dateTimeRaw);
+            time = DateFormat.jm().format(dateTimeFormatted);
+          }
+
           return Container(
             decoration: BoxDecoration(
               boxShadow: [
@@ -339,22 +377,7 @@ Widget _buildCard(tabIndex, item, context, String chatId, userId) {
                                                 top: 5.0,
                                               ),
                                               child: Text(
-                                                // item != null &&
-                                                //         item['chat_messages'] !=
-                                                //             null &&
-                                                //         item['chat_messages']
-                                                //                 .length >
-                                                //             0 &&
-                                                //         item['chat_messages']
-                                                //                 [0] !=
-                                                //             null &&
-                                                //         item['chat_messages'][0]
-                                                //                 ['text'] !=
-                                                //             null
-                                                //     ? item['chat_messages'][0]
-                                                //         ['createdAt']
-                                                //     : '',
-                                                "Tue",
+                                                time,
                                                 style:
                                                     TextStyle(fontSize: 12.0),
                                               ),
@@ -366,23 +389,30 @@ Widget _buildCard(tabIndex, item, context, String chatId, userId) {
                                       Container(
                                         constraints:
                                             BoxConstraints(maxWidth: 242.0),
-                                        child: Text(
-                                          item != null &&
-                                                  item['chat_messages'] !=
-                                                      null &&
-                                                  item['chat_messages'].length >
-                                                      0 &&
-                                                  item['chat_messages'][0] !=
-                                                      null &&
-                                                  item['chat_messages'][0]
-                                                          ['text'] !=
-                                                      null
-                                              ? item['chat_messages'][0]['text']
-                                              : '',
-                                          style: TextStyle(fontSize: 14.0),
-                                          maxLines: 1,
+                                        child: RichText(
                                           overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
                                           softWrap: false,
+                                          text: TextSpan(
+                                            style: DefaultTextStyle.of(context)
+                                                .style,
+                                            children: [
+                                              isMyMessage == false
+                                                  ? TextSpan()
+                                                  : TextSpan(
+                                                      text: "You: ",
+                                                      style: TextStyle(
+                                                        fontSize: 14.0,
+                                                        color: Colors.blue,
+                                                      ),
+                                                    ),
+                                              TextSpan(
+                                                text: message,
+                                                style:
+                                                    TextStyle(fontSize: 14.0),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ],
@@ -481,22 +511,7 @@ Widget _buildCard(tabIndex, item, context, String chatId, userId) {
                                                 top: 5.0,
                                               ),
                                               child: Text(
-                                                // item != null &&
-                                                //         item['chat_messages'] !=
-                                                //             null &&
-                                                //         item['chat_messages']
-                                                //                 .length >
-                                                //             0 &&
-                                                //         item['chat_messages']
-                                                //                 [0] !=
-                                                //             null &&
-                                                //         item['chat_messages'][0]
-                                                //                 ['text'] !=
-                                                //             null
-                                                //     ? item['chat_messages'][0]
-                                                //         ['createdAt']
-                                                //     : '',
-                                                "12 AM",
+                                                time,
                                                 style:
                                                     TextStyle(fontSize: 12.0),
                                               ),
@@ -508,23 +523,30 @@ Widget _buildCard(tabIndex, item, context, String chatId, userId) {
                                       Container(
                                         constraints:
                                             BoxConstraints(maxWidth: 242.0),
-                                        child: Text(
-                                          item != null &&
-                                                  item['chat_messages'] !=
-                                                      null &&
-                                                  item['chat_messages'].length >
-                                                      0 &&
-                                                  item['chat_messages'][0] !=
-                                                      null &&
-                                                  item['chat_messages'][0]
-                                                          ['text'] !=
-                                                      null
-                                              ? item['chat_messages'][0]['text']
-                                              : '',
-                                          style: TextStyle(fontSize: 14.0),
-                                          maxLines: 1,
+                                        child: RichText(
                                           overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
                                           softWrap: false,
+                                          text: TextSpan(
+                                            style: DefaultTextStyle.of(context)
+                                                .style,
+                                            children: [
+                                              isMyMessage == false
+                                                  ? TextSpan()
+                                                  : TextSpan(
+                                                      text: "You: ",
+                                                      style: TextStyle(
+                                                        fontSize: 14.0,
+                                                        color: Colors.blue,
+                                                      ),
+                                                    ),
+                                              TextSpan(
+                                                text: message,
+                                                style:
+                                                    TextStyle(fontSize: 14.0),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ],
@@ -661,13 +683,7 @@ class _ChatPageWidgetState extends State<ChatPageWidget> {
                     : snapshot.data.map<Widget>((chat) {
                         processChat(chat);
                         return InkWell(
-                          child: _buildCard(
-                            0,
-                            chat,
-                            context,
-                            chat['id'],
-                            meId,
-                          ),
+                          child: _buildCard(0, chat, context, meId),
                           onTap: () async {
                             checking(chat['id']);
                             Navigator.of(context).pushNamed(
@@ -827,13 +843,7 @@ class _StorePageWidgetState extends State<StorePageWidget> {
                 children: snapshot.data.map<Widget>((chat) {
                   processChat(chat);
                   return InkWell(
-                    child: _buildCard(
-                      1,
-                      chat,
-                      context,
-                      chat['id'],
-                      meId,
-                    ),
+                    child: _buildCard(1, chat, context, meId),
                     onTap: () async {
                       checking(chat['id']);
                       Navigator.of(context).pushNamed(
