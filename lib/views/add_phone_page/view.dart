@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
@@ -71,6 +73,7 @@ class __MainBodyState extends State<_MainBody> {
                   fontSize: 22,
                   color: HexColor("#53586F"),
                   fontWeight: FontWeight.w600,
+                  fontFeatures: [FontFeature.enable('smcp')],
                 ),
               ),
             ),

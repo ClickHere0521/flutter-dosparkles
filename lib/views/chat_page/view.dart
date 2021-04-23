@@ -254,9 +254,9 @@ Widget _buildCard(tabIndex, item, context, userId) {
             }
 
             if (msgs[0]['text'] != null) {
-              message = msgs[0]['text'];
+              message = msgs[msgs.length - 1]['text'];
 
-              if (msgs[0]['user'] != null && msgs[0]['user'] == userId) {
+              if (msgs[0]['user'] != null && msgs[0]['user']['id'] == userId) {
                 isMyMessage = true;
               }
             }

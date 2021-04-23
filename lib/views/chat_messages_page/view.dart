@@ -134,8 +134,8 @@ class _BubblePageState extends State<BubblePage> {
                                             child: Text(
                                               '${item['text']}',
                                               style: TextStyle(
-                                                  fontSize: 16,
-                                                  color: Colors.white),
+                                                fontSize: 16,
+                                              ),
                                               softWrap: true,
                                               textAlign: TextAlign.right,
                                             ),
@@ -184,8 +184,8 @@ class _BubblePageState extends State<BubblePage> {
                                                     child: Text(
                                                       '${item['text']}',
                                                       style: TextStyle(
-                                                          fontSize: 16,
-                                                          color: Colors.white),
+                                                        fontSize: 16,
+                                                      ),
                                                       softWrap: true,
                                                       textAlign: TextAlign.left,
                                                     ),
