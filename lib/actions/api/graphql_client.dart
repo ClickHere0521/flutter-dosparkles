@@ -379,6 +379,7 @@ class BaseGraphQLClient {
           }
           media {
             id
+            url
           }
           shipmentDetails
           shineonId
@@ -534,6 +535,11 @@ class BaseGraphQLClient {
           store {
             id
             name
+            createdAt
+            thumbnail {
+              id
+              url
+            }
           }
           chat_messages {
             id
@@ -574,6 +580,11 @@ class BaseGraphQLClient {
           store {
             id
             name
+            createdAt
+            thumbnail {
+              id
+              url
+            }
           }
           chat_messages {
             id

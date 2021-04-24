@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -49,7 +51,7 @@ class __MainBodyState extends State<_MainBody> {
           ),
           Scaffold(
             backgroundColor: Colors.transparent,
-            resizeToAvoidBottomInset: false,
+            resizeToAvoidBottomInset: true,
             appBar: AppBar(
               elevation: 0.0,
               centerTitle: true,
@@ -61,6 +63,7 @@ class __MainBodyState extends State<_MainBody> {
                   fontSize: 22,
                   color: HexColor("#53586F"),
                   fontWeight: FontWeight.w600,
+                  fontFeatures: [FontFeature.enable('smcp')],
                 ),
               ),
             ),
@@ -70,7 +73,6 @@ class __MainBodyState extends State<_MainBody> {
               padding: EdgeInsets.only(
                 left: 16.0,
                 right: 16.0,
-                bottom: MediaQuery.of(context).size.height * 0.03,
               ),
               child: _InnerPart(
                 state: widget.state,
@@ -100,10 +102,15 @@ class __InnerPartState extends State<_InnerPart> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Form(
-        key: _formKey,
-        child: SafeArea(
+    return SingleChildScrollView(
+      child: Container(
+        height: MediaQuery.of(context).size.height -
+            Scaffold.of(context).appBarMaxHeight,
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).size.height * 0.03,
+        ),
+        child: Form(
+          key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -164,18 +171,22 @@ class __InnerPartState extends State<_InnerPart> {
                           height: 0.7,
                           fontSize: 22,
                         ),
-                        suffixIcon: InkWell(
-                          child: Icon(
-                            _hidePassword
-                                ? Icons.visibility
-                                : Icons.visibility_off,
-                            color: Colors.black26,
+                        suffixIcon: Padding(
+                          padding: EdgeInsetsDirectional.only(
+                              start: 12.0, top: 12.0),
+                          child: InkWell(
+                            child: Icon(
+                              _hidePassword
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: Colors.black26,
+                            ),
+                            onTap: () {
+                              setState(() {
+                                _hidePassword = !_hidePassword;
+                              });
+                            },
                           ),
-                          onTap: () {
-                            setState(() {
-                              _hidePassword = !_hidePassword;
-                            });
-                          },
                         ),
                       ),
                       onFieldSubmitted: (value) {

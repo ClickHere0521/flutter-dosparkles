@@ -2,6 +2,8 @@ import 'package:com.floridainc.dosparkles/models/cart_item_model.dart';
 import 'package:com.floridainc.dosparkles/utils/general.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
 import 'package:com.floridainc.dosparkles/widgets/sparkles_drawer.dart';
@@ -73,12 +75,6 @@ class _FirstPage extends StatefulWidget {
 class __FirstPageState extends State<_FirstPage> {
   int _selectedIndex = 0;
 
-  List<Widget> _widgetOptions = <Widget>[
-    ChatPageWidget(),
-    StorePageWidget(),
-    Container(child: Text("Example")),
-  ];
-
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -116,12 +112,21 @@ class __FirstPageState extends State<_FirstPage> {
                 topRight: Radius.circular(32.0),
               ),
             ),
-            child: _widgetOptions.elementAt(_selectedIndex),
+            child: GlobalStore.store.getState().user.role == "Store Manager"
+                ? StorePageWidget()
+                : ChatPageWidget(),
           ),
           backgroundColor: Colors.transparent,
           resizeToAvoidBottomInset: true,
           appBar: AppBar(
-            title: Text("Inbox"),
+            title: Text(
+              "Inbox",
+              style: TextStyle(
+                fontSize: 22,
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
             centerTitle: true,
             backgroundColor: Colors.transparent,
             elevation: 0.0,
@@ -137,52 +142,49 @@ class __FirstPageState extends State<_FirstPage> {
             ),
           ),
           drawer: SparklesDrawer(),
-          bottomNavigationBar:
-              GlobalStore.store.getState().user.role != "Store Manager"
-                  ? BottomNavigationBar(
-                      backgroundColor: Colors.white,
-                      elevation: 0.0,
-                      showSelectedLabels: false,
-                      showUnselectedLabels: false,
-                      items: <BottomNavigationBarItem>[
-                        BottomNavigationBarItem(
-                          label: "",
-                          icon: ImageIcon(
-                            AssetImage("images/home_icon.png"),
-                            color: HexColor("#C4C6D2"),
-                          ),
-                          activeIcon: ImageIcon(
-                            AssetImage("images/home_icon.png"),
-                            color: Colors.black87,
-                          ),
-                        ),
-                        BottomNavigationBarItem(
-                          label: "",
-                          icon: ImageIcon(
-                            AssetImage("images/Group.png"),
-                            color: HexColor("#C4C6D2"),
-                          ),
-                          activeIcon: ImageIcon(
-                            AssetImage("images/Group.png"),
-                            color: Colors.black87,
-                          ),
-                        ),
-                        BottomNavigationBarItem(
-                          label: "",
-                          icon: ImageIcon(
-                            AssetImage("images/person_plus.png"),
-                            color: HexColor("#C4C6D2"),
-                          ),
-                          activeIcon: ImageIcon(
-                            AssetImage("images/person_plus.png"),
-                            color: Colors.black87,
-                          ),
-                        ),
-                      ],
-                      currentIndex: _selectedIndex,
-                      onTap: _onItemTapped,
-                    )
-                  : null,
+          bottomNavigationBar: BottomNavigationBar(
+            backgroundColor: Colors.white,
+            elevation: 0.0,
+            showSelectedLabels: false,
+            showUnselectedLabels: false,
+            items: <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                label: "",
+                icon: SvgPicture.asset(
+                  'images/Vector.svg',
+                  color: HexColor("#C4C6D2"),
+                ),
+                activeIcon: SvgPicture.asset(
+                  'images/Vector.svg',
+                  color: HexColor("#6092DC"),
+                ),
+              ),
+              BottomNavigationBarItem(
+                label: "",
+                icon: SvgPicture.asset(
+                  'images/Group.svg',
+                  color: HexColor("#C4C6D2"),
+                ),
+                activeIcon: SvgPicture.asset(
+                  'images/Group.svg',
+                  color: HexColor("#6092DC"),
+                ),
+              ),
+              BottomNavigationBarItem(
+                label: "",
+                icon: SvgPicture.asset(
+                  'images/Group 41.svg',
+                  color: HexColor("#C4C6D2"),
+                ),
+                activeIcon: SvgPicture.asset(
+                  'images/Group 41.svg',
+                  color: HexColor("#6092DC"),
+                ),
+              ),
+            ],
+            currentIndex: _selectedIndex,
+            onTap: _onItemTapped,
+          ),
         ),
       ],
     );
@@ -190,33 +192,26 @@ class __FirstPageState extends State<_FirstPage> {
 }
 
 Future<String> getConversationName(tabIndex, chat, userId) async {
-  String userName = GlobalStore.store.getState().user.name;
-  List chatNames = [];
+  String chatName = '';
 
   var users = chat['users'];
   for (int i = 0; i < users.length; i++) {
     if (tabIndex == 0 && users[i]['id'] != userId) {
-      chatNames.add('${users[i]['name']}');
+      chatName = users[i]['name'];
       continue;
     }
-    chatNames.add('${users[i]['name']}');
+    chatName = users[i]['name'];
   }
-
-  List notMeList = chatNames.where((name) => name != userName).toList();
-
-  String others = chatNames.length > 1 ? " and ${chatNames.length - 1}+" : "";
-  String nameAndOtherNames =
-      notMeList.length != 0 ? "${notMeList[0]}$others" : userName;
 
   if (tabIndex == 0) {
-    return chat['store'] == null ? nameAndOtherNames : chat['store']['name'];
+    return chat['store']['name'];
   }
 
-  return nameAndOtherNames;
+  return chatName;
 }
 
-Widget _buildCard(tabIndex, item, context, String chatId, userId) {
-  MaterialLocalizations localizations = MaterialLocalizations.of(context);
+Widget _buildCardZero(tabIndex, chat, context, userId) {
+  String chatId = chat['id'];
 
   Future<SharedPreferences> getSharedPreferance() async {
     Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
@@ -229,6 +224,44 @@ Widget _buildCard(tabIndex, item, context, String chatId, userId) {
         if (prefs.hasData) {
           String chatsRaw = prefs.data.getString('chatsMap') ?? '{}';
           Map mapLocal = json.decode(chatsRaw);
+          String time = '';
+          String message = '';
+          String dateTimeRaw = '';
+          bool isMyMessage = false;
+          bool hasAvatar = false;
+
+          var msgs = chat['chat_messages'];
+
+          if (msgs != null &&
+              msgs.length > 0 &&
+              msgs[msgs.length - 1] != null) {
+            if (msgs[msgs.length - 1]['createdAt'] != null) {
+              dateTimeRaw = msgs[msgs.length - 1]['createdAt'];
+            }
+            var last = msgs[msgs.length - 1];
+
+            if (last['messageType'] == 'order') {
+              message = 'new order';
+            } else {
+              message = last['text'];
+            }
+
+            if (last['user'] != null && last['user']['id'] == userId) {
+              isMyMessage = true;
+            }
+          }
+
+          if (dateTimeRaw != null && dateTimeRaw != '') {
+            DateTime dateTimeFormatted = DateTime.parse(dateTimeRaw);
+            time = DateFormat.jm().format(dateTimeFormatted);
+          }
+
+          if (chat['store'] != null && chat['store']['thumbnail'] != null) {
+            hasAvatar = true;
+          } else {
+            hasAvatar = false;
+          }
+
           return Container(
             decoration: BoxDecoration(
               boxShadow: [
@@ -248,292 +281,629 @@ Widget _buildCard(tabIndex, item, context, String chatId, userId) {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  item['users'] != null &&
-                          item['users'].length > 0 &&
-                          item['users'][0]['avatar'] != null
-                      ? Container(
-                          height: 77.0,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.rectangle,
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          child: Stack(
-                            alignment: Alignment.centerLeft,
-                            children: [
-                              Positioned(
-                                left: 16.0,
-                                child: Stack(
-                                  fit: StackFit.loose,
-                                  children: [
-                                    FLAvatar(
-                                      image: Image.network(
-                                        AppConfig.instance.baseApiHost +
-                                            item['users'][0]['avatar']['url'],
-                                        fit: BoxFit.cover,
-                                      ),
-                                      width: 57,
-                                      height: 57,
-                                    ),
-                                    mapLocal[chatId] != null &&
-                                            mapLocal[chatId]['checked'] == false
-                                        ? Positioned(
-                                            bottom: 0,
-                                            right: 0,
-                                            child: Container(
-                                              width: 14.0,
-                                              height: 14.0,
-                                              decoration: BoxDecoration(
-                                                color: Colors.blue,
-                                                shape: BoxShape.circle,
-                                              ),
-                                            ),
-                                          )
-                                        : SizedBox.shrink(child: null),
-                                  ],
+                  if (hasAvatar == true)
+                    Container(
+                      height: 77.0,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      child: Stack(
+                        alignment: Alignment.centerLeft,
+                        children: [
+                          Positioned(
+                            left: 16.0,
+                            child: Stack(
+                              fit: StackFit.loose,
+                              children: [
+                                FLAvatar(
+                                  image: Image.network(
+                                    AppConfig.instance.baseApiHost +
+                                        chat['store']['thumbnail']['url'],
+                                    fit: BoxFit.cover,
+                                    height: double.infinity,
+                                  ),
+                                  width: 57,
+                                  height: 57,
+                                  color: HexColor("#CCD4FE"),
                                 ),
+                                mapLocal[chatId] != null &&
+                                        mapLocal[chatId]['checked'] == false
+                                    ? Positioned(
+                                        bottom: 0,
+                                        right: 0,
+                                        child: Container(
+                                          width: 14.0,
+                                          height: 14.0,
+                                          decoration: BoxDecoration(
+                                            color: Colors.blue,
+                                            shape: BoxShape.circle,
+                                          ),
+                                        ),
+                                      )
+                                    : SizedBox.shrink(child: null),
+                              ],
+                            ),
+                          ),
+                          Positioned.fill(
+                            top: 15.0,
+                            left: 85.0,
+                            child: Container(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    width: double.infinity,
+                                    child: Wrap(
+                                      alignment: WrapAlignment.spaceBetween,
+                                      children: [
+                                        Container(
+                                          constraints:
+                                              BoxConstraints(maxWidth: 180.0),
+                                          child: FutureBuilder<String>(
+                                            future: getConversationName(
+                                                tabIndex, chat, userId),
+                                            builder: (BuildContext context,
+                                                AsyncSnapshot<String>
+                                                    snapshot) {
+                                              if (snapshot.hasData) {
+                                                return Text(
+                                                  "${snapshot.data}",
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 16.0,
+                                                  ),
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  softWrap: false,
+                                                );
+                                              }
+                                              return SizedBox.shrink(
+                                                  child: null);
+                                            },
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                            right: 16.0,
+                                            top: 5.0,
+                                          ),
+                                          child: Text(
+                                            time,
+                                            style: TextStyle(fontSize: 12.0),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(height: 7),
+                                  Container(
+                                    constraints:
+                                        BoxConstraints(maxWidth: 242.0),
+                                    child: RichText(
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                      softWrap: false,
+                                      text: TextSpan(
+                                        style:
+                                            DefaultTextStyle.of(context).style,
+                                        children: [
+                                          isMyMessage == false
+                                              ? TextSpan()
+                                              : TextSpan(
+                                                  text: "You: ",
+                                                  style: TextStyle(
+                                                    fontSize: 14.0,
+                                                    color: Colors.blue,
+                                                  ),
+                                                ),
+                                          TextSpan(
+                                            text: message,
+                                            style: TextStyle(fontSize: 14.0),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                              Positioned.fill(
-                                top: 15.0,
-                                left: 85.0,
-                                child: Container(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        width: double.infinity,
-                                        child: Wrap(
-                                          alignment: WrapAlignment.spaceBetween,
-                                          children: [
-                                            Container(
-                                              constraints: BoxConstraints(
-                                                  maxWidth: 180.0),
-                                              child: FutureBuilder<String>(
-                                                future: getConversationName(
-                                                    tabIndex, item, userId),
-                                                builder: (BuildContext context,
-                                                    AsyncSnapshot<String>
-                                                        snapshot) {
-                                                  if (snapshot.hasData) {
-                                                    return Text(
-                                                      "${snapshot.data}",
-                                                      style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        fontSize: 16.0,
-                                                      ),
-                                                      maxLines: 1,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      softWrap: false,
-                                                    );
-                                                  }
-                                                  return SizedBox.shrink(
-                                                      child: null);
-                                                },
-                                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  else
+                    Container(
+                      height: 77.0,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      child: Stack(
+                        alignment: Alignment.centerLeft,
+                        children: [
+                          Positioned(
+                            left: 16.0,
+                            child: Stack(
+                              children: [
+                                FLAvatar(
+                                  image: Image.asset(
+                                    'images/image-not-found.png',
+                                    fit: BoxFit.cover,
+                                    height: double.infinity,
+                                  ),
+                                  width: 57,
+                                  height: 57,
+                                  textStyle: TextStyle(
+                                    fontSize: 22.0,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  color: HexColor("#CCD4FE"),
+                                ),
+                                mapLocal[chatId] != null &&
+                                        mapLocal[chatId]['checked'] == false
+                                    ? Positioned(
+                                        bottom: 0,
+                                        right: 0,
+                                        child: Container(
+                                          width: 14.0,
+                                          height: 14.0,
+                                          decoration: BoxDecoration(
+                                            color: Colors.blue,
+                                            shape: BoxShape.circle,
+                                          ),
+                                        ),
+                                      )
+                                    : SizedBox.shrink(child: null),
+                              ],
+                            ),
+                          ),
+                          Positioned.fill(
+                            top: 15.0,
+                            left: 85.0,
+                            child: Container(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    width: double.infinity,
+                                    child: Wrap(
+                                      alignment: WrapAlignment.spaceBetween,
+                                      children: [
+                                        Container(
+                                          constraints:
+                                              BoxConstraints(maxWidth: 180.0),
+                                          child: FutureBuilder<String>(
+                                            future: getConversationName(
+                                                tabIndex, chat, userId),
+                                            builder: (BuildContext context,
+                                                AsyncSnapshot<String>
+                                                    snapshot) {
+                                              if (snapshot.hasData) {
+                                                return Text(
+                                                  "${snapshot.data}",
+                                                  style: TextStyle(
+                                                    fontSize: 16.0,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  softWrap: false,
+                                                );
+                                              }
+                                              return SizedBox.shrink(
+                                                  child: null);
+                                            },
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                            right: 16.0,
+                                            top: 5.0,
+                                          ),
+                                          child: Text(
+                                            time,
+                                            style: TextStyle(fontSize: 12.0),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(height: 7),
+                                  Container(
+                                    constraints:
+                                        BoxConstraints(maxWidth: 242.0),
+                                    child: RichText(
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                      softWrap: false,
+                                      text: TextSpan(
+                                        style:
+                                            DefaultTextStyle.of(context).style,
+                                        children: [
+                                          isMyMessage == false
+                                              ? TextSpan()
+                                              : TextSpan(
+                                                  text: "You: ",
+                                                  style: TextStyle(
+                                                    fontSize: 14.0,
+                                                    color: Colors.blue,
+                                                  ),
+                                                ),
+                                          TextSpan(
+                                            text: message,
+                                            style: TextStyle(fontSize: 14.0),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          );
+        }
+        return Container();
+      });
+}
+
+Widget _buildCardOne(tabIndex, chat, context, userId) {
+  String chatId = chat['id'];
+
+  Future<SharedPreferences> getSharedPreferance() async {
+    Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+    return await _prefs;
+  }
+
+  return FutureBuilder(
+      future: getSharedPreferance(),
+      builder: (context, prefs) {
+        if (prefs.hasData) {
+          String chatsRaw = prefs.data.getString('chatsMap') ?? '{}';
+          Map mapLocal = json.decode(chatsRaw);
+          String time = '';
+          String message = '';
+          String dateTimeRaw = '';
+          bool isMyMessage = false;
+          var notMe;
+          bool notMeHasAvatar = false;
+
+          var msgs = chat['chat_messages'];
+
+          if (msgs != null &&
+              msgs.length > 0 &&
+              msgs[msgs.length - 1] != null) {
+            if (msgs[msgs.length - 1]['createdAt'] != null) {
+              dateTimeRaw = msgs[msgs.length - 1]['createdAt'];
+            }
+            var last = msgs[msgs.length - 1];
+
+            if (last['messageType'] == 'order') {
+              message = 'new order';
+            } else {
+              message = last['text'];
+            }
+
+            if (last['user'] != null && last['user']['id'] == userId) {
+              isMyMessage = true;
+            }
+          }
+
+          if (dateTimeRaw != null && dateTimeRaw != '') {
+            DateTime dateTimeFormatted = DateTime.parse(dateTimeRaw);
+            time = DateFormat.jm().format(dateTimeFormatted);
+          }
+
+          if (chat != null &&
+              chat['users'] != null &&
+              chat['users'].length > 0) {
+            for (var i = 0; i < chat['users'].length; i++) {
+              var user = chat['users'][i];
+
+              if (user['avatar'] != null) {
+                notMeHasAvatar = true;
+              } else {
+                notMeHasAvatar = false;
+              }
+
+              if (user['id'] != userId) {
+                notMe = user;
+              }
+            }
+          }
+
+          return Container(
+            decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(.08),
+                  blurRadius: 7.0,
+                  spreadRadius: 0.0,
+                  offset: Offset(1.0, 1.5),
+                ),
+              ],
+            ),
+            child: Card(
+              elevation: 0.0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (notMe != null)
+                    if (notMeHasAvatar == true)
+                      Container(
+                        height: 77.0,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        child: Stack(
+                          alignment: Alignment.centerLeft,
+                          children: [
+                            Positioned(
+                              left: 16.0,
+                              child: Stack(
+                                fit: StackFit.loose,
+                                children: [
+                                  FLAvatar(
+                                    image: Image.network(
+                                      AppConfig.instance.baseApiHost +
+                                          notMe['avatar']['url'],
+                                      fit: BoxFit.cover,
+                                      height: double.infinity,
+                                    ),
+                                    width: 57,
+                                    height: 57,
+                                  ),
+                                  mapLocal[chatId] != null &&
+                                          mapLocal[chatId]['checked'] == false
+                                      ? Positioned(
+                                          bottom: 0,
+                                          right: 0,
+                                          child: Container(
+                                            width: 14.0,
+                                            height: 14.0,
+                                            decoration: BoxDecoration(
+                                              color: Colors.blue,
+                                              shape: BoxShape.circle,
                                             ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                right: 16.0,
-                                                top: 5.0,
-                                              ),
-                                              child: Text(
-                                                // item != null &&
-                                                //         item['chat_messages'] !=
-                                                //             null &&
-                                                //         item['chat_messages']
-                                                //                 .length >
-                                                //             0 &&
-                                                //         item['chat_messages']
-                                                //                 [0] !=
-                                                //             null &&
-                                                //         item['chat_messages'][0]
-                                                //                 ['text'] !=
-                                                //             null
-                                                //     ? item['chat_messages'][0]
-                                                //         ['createdAt']
-                                                //     : '',
-                                                "Tue",
-                                                style:
-                                                    TextStyle(fontSize: 12.0),
-                                              ),
+                                          ),
+                                        )
+                                      : SizedBox.shrink(child: null),
+                                ],
+                              ),
+                            ),
+                            Positioned.fill(
+                              top: 15.0,
+                              left: 85.0,
+                              child: Container(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      width: double.infinity,
+                                      child: Wrap(
+                                        alignment: WrapAlignment.spaceBetween,
+                                        children: [
+                                          Container(
+                                            constraints:
+                                                BoxConstraints(maxWidth: 180.0),
+                                            child: FutureBuilder<String>(
+                                              future: getConversationName(
+                                                  tabIndex, chat, userId),
+                                              builder: (BuildContext context,
+                                                  AsyncSnapshot<String>
+                                                      snapshot) {
+                                                if (snapshot.hasData) {
+                                                  return Text(
+                                                    "${snapshot.data}",
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      fontSize: 16.0,
+                                                    ),
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    softWrap: false,
+                                                  );
+                                                }
+                                                return SizedBox.shrink(
+                                                    child: null);
+                                              },
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                              right: 16.0,
+                                              top: 5.0,
+                                            ),
+                                            child: Text(
+                                              time,
+                                              style: TextStyle(fontSize: 12.0),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(height: 7),
+                                    Container(
+                                      constraints:
+                                          BoxConstraints(maxWidth: 242.0),
+                                      child: RichText(
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                        softWrap: false,
+                                        text: TextSpan(
+                                          style: DefaultTextStyle.of(context)
+                                              .style,
+                                          children: [
+                                            isMyMessage == false
+                                                ? TextSpan()
+                                                : TextSpan(
+                                                    text: "You: ",
+                                                    style: TextStyle(
+                                                      fontSize: 14.0,
+                                                      color: Colors.blue,
+                                                    ),
+                                                  ),
+                                            TextSpan(
+                                              text: message,
+                                              style: TextStyle(fontSize: 14.0),
                                             ),
                                           ],
                                         ),
                                       ),
-                                      SizedBox(height: 7),
-                                      Container(
-                                        constraints:
-                                            BoxConstraints(maxWidth: 242.0),
-                                        child: Text(
-                                          item != null &&
-                                                  item['chat_messages'] !=
-                                                      null &&
-                                                  item['chat_messages'].length >
-                                                      0 &&
-                                                  item['chat_messages'][0] !=
-                                                      null &&
-                                                  item['chat_messages'][0]
-                                                          ['text'] !=
-                                                      null
-                                              ? item['chat_messages'][0]['text']
-                                              : '',
-                                          style: TextStyle(fontSize: 14.0),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          softWrap: false,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      : Container(
-                          height: 77.0,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.rectangle,
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          child: Stack(
-                            alignment: Alignment.centerLeft,
-                            children: [
-                              Positioned(
-                                left: 16.0,
-                                child: Stack(
-                                  children: [
-                                    FLAvatar(
-                                      text: item['users'][0]['name'][0],
-                                      width: 57,
-                                      height: 57,
-                                      textStyle: TextStyle(
-                                        fontSize: 22.0,
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.white,
-                                      ),
-                                      color: HexColor("#CCD4FE"),
                                     ),
-                                    mapLocal[chatId] != null &&
-                                            mapLocal[chatId]['checked'] == false
-                                        ? Positioned(
-                                            bottom: 0,
-                                            right: 0,
-                                            child: Container(
-                                              width: 14.0,
-                                              height: 14.0,
-                                              decoration: BoxDecoration(
-                                                color: Colors.blue,
-                                                shape: BoxShape.circle,
-                                              ),
-                                            ),
-                                          )
-                                        : SizedBox.shrink(child: null),
                                   ],
                                 ),
                               ),
-                              Positioned.fill(
-                                top: 15.0,
-                                left: 85.0,
-                                child: Container(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        width: double.infinity,
-                                        child: Wrap(
-                                          alignment: WrapAlignment.spaceBetween,
-                                          children: [
-                                            Container(
-                                              constraints: BoxConstraints(
-                                                  maxWidth: 180.0),
-                                              child: FutureBuilder<String>(
-                                                future: getConversationName(
-                                                    tabIndex, item, userId),
-                                                builder: (BuildContext context,
-                                                    AsyncSnapshot<String>
-                                                        snapshot) {
-                                                  if (snapshot.hasData) {
-                                                    return Text(
-                                                      "${snapshot.data}",
-                                                      style: TextStyle(
-                                                        fontSize: 16.0,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                      ),
-                                                      maxLines: 1,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      softWrap: false,
-                                                    );
-                                                  }
-                                                  return SizedBox.shrink(
-                                                      child: null);
-                                                },
-                                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    else
+                      Container(
+                        height: 77.0,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        child: Stack(
+                          alignment: Alignment.centerLeft,
+                          children: [
+                            Positioned(
+                              left: 16.0,
+                              child: Stack(
+                                children: [
+                                  FLAvatar(
+                                    text: notMe['name'][0],
+                                    width: 57,
+                                    height: 57,
+                                    textStyle: TextStyle(
+                                      fontSize: 22.0,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    color: HexColor("#CCD4FE"),
+                                  ),
+                                  mapLocal[chatId] != null &&
+                                          mapLocal[chatId]['checked'] == false
+                                      ? Positioned(
+                                          bottom: 0,
+                                          right: 0,
+                                          child: Container(
+                                            width: 14.0,
+                                            height: 14.0,
+                                            decoration: BoxDecoration(
+                                              color: Colors.blue,
+                                              shape: BoxShape.circle,
                                             ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                right: 16.0,
-                                                top: 5.0,
-                                              ),
-                                              child: Text(
-                                                // item != null &&
-                                                //         item['chat_messages'] !=
-                                                //             null &&
-                                                //         item['chat_messages']
-                                                //                 .length >
-                                                //             0 &&
-                                                //         item['chat_messages']
-                                                //                 [0] !=
-                                                //             null &&
-                                                //         item['chat_messages'][0]
-                                                //                 ['text'] !=
-                                                //             null
-                                                //     ? item['chat_messages'][0]
-                                                //         ['createdAt']
-                                                //     : '',
-                                                "12 AM",
-                                                style:
-                                                    TextStyle(fontSize: 12.0),
-                                              ),
+                                          ),
+                                        )
+                                      : SizedBox.shrink(child: null),
+                                ],
+                              ),
+                            ),
+                            Positioned.fill(
+                              top: 15.0,
+                              left: 85.0,
+                              child: Container(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      width: double.infinity,
+                                      child: Wrap(
+                                        alignment: WrapAlignment.spaceBetween,
+                                        children: [
+                                          Container(
+                                            constraints:
+                                                BoxConstraints(maxWidth: 180.0),
+                                            child: FutureBuilder<String>(
+                                              future: getConversationName(
+                                                  tabIndex, chat, userId),
+                                              builder: (BuildContext context,
+                                                  AsyncSnapshot<String>
+                                                      snapshot) {
+                                                if (snapshot.hasData) {
+                                                  return Text(
+                                                    "${snapshot.data}",
+                                                    style: TextStyle(
+                                                      fontSize: 16.0,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    softWrap: false,
+                                                  );
+                                                }
+                                                return SizedBox.shrink(
+                                                    child: null);
+                                              },
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                              right: 16.0,
+                                              top: 5.0,
+                                            ),
+                                            child: Text(
+                                              time,
+                                              style: TextStyle(fontSize: 12.0),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(height: 7),
+                                    Container(
+                                      constraints:
+                                          BoxConstraints(maxWidth: 242.0),
+                                      child: RichText(
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                        softWrap: false,
+                                        text: TextSpan(
+                                          style: DefaultTextStyle.of(context)
+                                              .style,
+                                          children: [
+                                            isMyMessage == false
+                                                ? TextSpan()
+                                                : TextSpan(
+                                                    text: "You: ",
+                                                    style: TextStyle(
+                                                      fontSize: 14.0,
+                                                      color: Colors.blue,
+                                                    ),
+                                                  ),
+                                            TextSpan(
+                                              text: message,
+                                              style: TextStyle(fontSize: 14.0),
                                             ),
                                           ],
                                         ),
                                       ),
-                                      SizedBox(height: 7),
-                                      Container(
-                                        constraints:
-                                            BoxConstraints(maxWidth: 242.0),
-                                        child: Text(
-                                          item != null &&
-                                                  item['chat_messages'] !=
-                                                      null &&
-                                                  item['chat_messages'].length >
-                                                      0 &&
-                                                  item['chat_messages'][0] !=
-                                                      null &&
-                                                  item['chat_messages'][0]
-                                                          ['text'] !=
-                                                      null
-                                              ? item['chat_messages'][0]['text']
-                                              : '',
-                                          style: TextStyle(fontSize: 14.0),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          softWrap: false,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ],
-                          ),
-                        )
+                            ),
+                          ],
+                        ),
+                      )
                 ],
               ),
             ),
@@ -661,13 +1031,7 @@ class _ChatPageWidgetState extends State<ChatPageWidget> {
                     : snapshot.data.map<Widget>((chat) {
                         processChat(chat);
                         return InkWell(
-                          child: _buildCard(
-                            0,
-                            chat,
-                            context,
-                            chat['id'],
-                            meId,
-                          ),
+                          child: _buildCardZero(0, chat, context, meId),
                           onTap: () async {
                             checking(chat['id']);
                             Navigator.of(context).pushNamed(
@@ -716,7 +1080,7 @@ class StorePageWidget extends StatefulWidget {
 }
 
 class _StorePageWidgetState extends State<StorePageWidget> {
-  String meId;
+  String meId = GlobalStore.store.getState().user.id;
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   bool shouldStopFetchingChats = false;
 
@@ -753,37 +1117,39 @@ class _StorePageWidgetState extends State<StorePageWidget> {
       final SharedPreferences prefs = await _prefs;
       String chatsRaw = prefs.getString('chatsMap') ?? '{}';
       Map chatsMapLocal = json.decode(chatsRaw);
+      var msgs = chat['chat_messages'];
+      var cmlId = chatsMapLocal["${chat['id']}"];
 
-      if (chatsMapLocal["${chat['id']}"] != null &&
-          chatsMapLocal["${chat['id']}"]['chatsAmount'] !=
-              chat['chat_messages'].length &&
-          chat['chat_messages'][chat['chat_messages'].length - 1]['user']
-                  ['id'] !=
-              meId) {
-        chatsMapLocal["${chat['id']}"]['checked'] = false;
-        prefs.setString('chatsMap', json.encode(chatsMapLocal));
+      if (cmlId != null && cmlId['chatsAmount'] != msgs.length) {
+        if (msgs[msgs.length - 1]['user'] != null) {
+          if (msgs[msgs.length - 1]['user']['id'] != meId) {
+            cmlId['checked'] = false;
+            prefs.setString('chatsMap', json.encode(chatsMapLocal));
+          }
+        } else {
+          cmlId['checked'] = false;
+          prefs.setString('chatsMap', json.encode(chatsMapLocal));
+        }
 
         setState(() => shouldStopFetchingChats = true);
       }
 
-      if (chat != null) {
-        if (chatsMapLocal['${chat['id']}'] == null) {
-          var obj = {
-            'chatsAmount': chat['chat_messages'].length,
-            'checked': false,
-          };
+      if (chatsMapLocal["${chat['id']}"] == null) {
+        var obj = {
+          'chatsAmount': msgs.length,
+          'checked': false,
+        };
 
-          chatsMapLocal['${chat['id']}'] = obj;
-          prefs.setString('chatsMap', json.encode(chatsMapLocal));
-        } else {
-          var obj = {
-            'chatsAmount': chat['chat_messages'].length,
-            'checked': chatsMapLocal['${chat['id']}']['checked'],
-          };
+        chatsMapLocal["${chat['id']}"] = obj;
+        prefs.setString('chatsMap', json.encode(chatsMapLocal));
+      } else {
+        var obj = {
+          'chatsAmount': msgs.length,
+          'checked': chatsMapLocal["${chat['id']}"]['checked'],
+        };
 
-          chatsMapLocal['${chat['id']}'] = obj;
-          prefs.setString('chatsMap', json.encode(chatsMapLocal));
-        }
+        chatsMapLocal["${chat['id']}"] = obj;
+        prefs.setString('chatsMap', json.encode(chatsMapLocal));
       }
     }
   }
@@ -805,15 +1171,6 @@ class _StorePageWidgetState extends State<StorePageWidget> {
   }
 
   @override
-  void initState() {
-    super.initState();
-
-    BaseGraphQLClient.instance.me().then((result) {
-      meId = result.data['me']['id'];
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.max,
@@ -827,13 +1184,7 @@ class _StorePageWidgetState extends State<StorePageWidget> {
                 children: snapshot.data.map<Widget>((chat) {
                   processChat(chat);
                   return InkWell(
-                    child: _buildCard(
-                      1,
-                      chat,
-                      context,
-                      chat['id'],
-                      meId,
-                    ),
+                    child: _buildCardOne(1, chat, context, meId),
                     onTap: () async {
                       checking(chat['id']);
                       Navigator.of(context).pushNamed(

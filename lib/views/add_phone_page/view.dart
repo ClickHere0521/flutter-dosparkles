@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
@@ -54,7 +56,7 @@ class __MainBodyState extends State<_MainBody> {
           ),
           Scaffold(
             backgroundColor: Colors.transparent,
-            resizeToAvoidBottomInset: false,
+            resizeToAvoidBottomInset: true,
             appBar: AppBar(
               centerTitle: true,
               elevation: 0.0,
@@ -71,6 +73,7 @@ class __MainBodyState extends State<_MainBody> {
                   fontSize: 22,
                   color: HexColor("#53586F"),
                   fontWeight: FontWeight.w600,
+                  fontFeatures: [FontFeature.enable('smcp')],
                 ),
               ),
             ),
@@ -101,60 +104,64 @@ class __InnerPartState extends State<_InnerPart> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Form(
-        key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              children: [
-                Text(
-                  "1.Prizes are sent via SMS.",
-                  style: TextStyle(fontSize: 16),
-                ),
-                SizedBox(height: 3.0),
-                Text(
-                  "2.We don't share or you. Ever.",
-                  style: TextStyle(fontSize: 16),
-                ),
-              ],
-            ),
-            Padding(
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).size.height * 0.10,
+    return SingleChildScrollView(
+      child: Container(
+        height: MediaQuery.of(context).size.height -
+            Scaffold.of(context).appBarMaxHeight,
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                children: [
+                  Text(
+                    "1.Prizes are sent via SMS.",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  SizedBox(height: 3.0),
+                  Text(
+                    "2.We don't share or you. Ever.",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ],
               ),
-              child: _CountryPickerDropdown(context: context),
-            ),
-            Padding(
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).size.height * 0.30,
+              Padding(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).size.height * 0.10,
+                ),
+                child: _CountryPickerDropdown(context: context),
               ),
-              child: ButtonTheme(
-                minWidth: 300.0,
-                height: 48.0,
-                child: RaisedButton(
-                  textColor: Colors.white,
-                  elevation: 0,
-                  color: HexColor("#6092DC"),
-                  child: Text(
-                    'Next',
-                    style: TextStyle(
-                      fontSize: 17.0,
-                      fontWeight: FontWeight.normal,
+              Padding(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).size.height * 0.30,
+                ),
+                child: ButtonTheme(
+                  minWidth: 300.0,
+                  height: 48.0,
+                  child: RaisedButton(
+                    textColor: Colors.white,
+                    elevation: 0,
+                    color: HexColor("#6092DC"),
+                    child: Text(
+                      'Next',
+                      style: TextStyle(
+                        fontSize: 17.0,
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                    onPressed: () {
+                      _onSubmit(_formKey, emailValue);
+                    },
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(31.0),
                     ),
                   ),
-                  onPressed: () {
-                    _onSubmit(_formKey, emailValue);
-                  },
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(31.0),
-                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

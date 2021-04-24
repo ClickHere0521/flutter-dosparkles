@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
@@ -50,7 +52,7 @@ class __MainBodyState extends State<_MainBody> {
           ),
           Scaffold(
             backgroundColor: Colors.transparent,
-            resizeToAvoidBottomInset: false,
+            resizeToAvoidBottomInset: true,
             appBar: AppBar(
               centerTitle: true,
               elevation: 0.0,
@@ -67,6 +69,7 @@ class __MainBodyState extends State<_MainBody> {
                   fontSize: 22,
                   color: HexColor("#53586F"),
                   fontWeight: FontWeight.w600,
+                  fontFeatures: [FontFeature.enable('smcp')],
                 ),
               ),
             ),
@@ -97,101 +100,106 @@ class __InnerPartState extends State<_InnerPart> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Form(
-        key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              "Enter your email to reset your password",
-              style: TextStyle(fontSize: 16),
-            ),
-            Padding(
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).size.height * 0.10,
+    return SingleChildScrollView(
+      child: Container(
+        height: MediaQuery.of(context).size.height -
+            Scaffold.of(context).appBarMaxHeight,
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Enter your email to reset your password",
+                style: TextStyle(fontSize: 16),
               ),
-              child: TextFormField(
-                textAlign: TextAlign.left,
-                keyboardType: TextInputType.emailAddress,
-                onChanged: (value) {
-                  setState(() => emailValue = value);
-                },
-                decoration: InputDecoration(
-                  hintText: 'yourname@example.com',
-                  hintStyle: TextStyle(
-                    fontSize: 16,
-                    color: Colors.black26,
-                  ),
-                  contentPadding: EdgeInsets.symmetric(vertical: 5),
-                  floatingLabelBehavior: FloatingLabelBehavior.always,
-                  labelText: 'Email',
-                  labelStyle: TextStyle(
-                    color: Colors.black,
-                    height: 0.7,
-                    fontSize: 22,
-                  ),
+              Padding(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).size.height * 0.10,
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter some text';
-                  }
-                  return null;
-                },
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).size.height * 0.30,
-              ),
-              child: Column(
-                children: [
-                  ButtonTheme(
-                    minWidth: 300.0,
-                    height: 48.0,
-                    child: RaisedButton(
-                      textColor: Colors.white,
-                      elevation: 0,
-                      color: HexColor("#6092DC"),
-                      child: Text(
-                        'Reset Password',
-                        style: TextStyle(
-                          fontSize: 17.0,
-                          fontWeight: FontWeight.normal,
-                        ),
-                      ),
-                      onPressed: () {
-                        _onSubmit(_formKey, emailValue);
-                      },
-                      shape: new RoundedRectangleBorder(
-                        borderRadius: new BorderRadius.circular(31.0),
-                      ),
+                child: TextFormField(
+                  textAlign: TextAlign.left,
+                  keyboardType: TextInputType.emailAddress,
+                  onChanged: (value) {
+                    setState(() => emailValue = value);
+                  },
+                  decoration: InputDecoration(
+                    hintText: 'yourname@example.com',
+                    hintStyle: TextStyle(
+                      fontSize: 16,
+                      color: Colors.black26,
+                    ),
+                    contentPadding: EdgeInsets.symmetric(vertical: 5),
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                    labelText: 'Email',
+                    labelStyle: TextStyle(
+                      color: Colors.black,
+                      height: 0.7,
+                      fontSize: 22,
                     ),
                   ),
-                  SizedBox(height: 10),
-                  RichText(
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: "Back to ",
-                          style: TextStyle(color: Colors.black54, fontSize: 16),
-                        ),
-                        TextSpan(
-                          text: "Sign in",
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter some text';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).size.height * 0.30,
+                ),
+                child: Column(
+                  children: [
+                    ButtonTheme(
+                      minWidth: 300.0,
+                      height: 48.0,
+                      child: RaisedButton(
+                        textColor: Colors.white,
+                        elevation: 0,
+                        color: HexColor("#6092DC"),
+                        child: Text(
+                          'Reset Password',
                           style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
+                            fontSize: 17.0,
+                            fontWeight: FontWeight.normal,
                           ),
                         ),
-                      ],
+                        onPressed: () {
+                          _onSubmit(_formKey, emailValue);
+                        },
+                        shape: new RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(31.0),
+                        ),
+                      ),
                     ),
-                  ),
-                ],
+                    SizedBox(height: 10),
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: "Back to ",
+                            style:
+                                TextStyle(color: Colors.black54, fontSize: 16),
+                          ),
+                          TextSpan(
+                            text: "Sign in",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
