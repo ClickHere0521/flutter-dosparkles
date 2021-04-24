@@ -379,6 +379,7 @@ class BaseGraphQLClient {
           }
           media {
             id
+            url
           }
           shipmentDetails
           shineonId

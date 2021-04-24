@@ -98,7 +98,8 @@ void _goToMain(Context<LoginPageState> ctx) async {
 
   for (var i = 0; i < globalState.storesList.length; i++) {
     var store = globalState.storesList[i];
-    if (globalState.user.storeFavorite['id'] == store.id) {
+    if (globalState.user.storeFavorite != null &&
+        globalState.user.storeFavorite['id'] == store.id) {
       GlobalStore.store.dispatch(
         GlobalActionCreator.setSelectedStore(store),
       );

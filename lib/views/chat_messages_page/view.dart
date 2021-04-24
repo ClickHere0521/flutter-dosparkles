@@ -60,6 +60,18 @@ Future<double> _checkContextInit(Stream<double> source) async {
   return 0.0;
 }
 
+Future fetchData(String chatId) async {
+  QueryResult chat = await BaseGraphQLClient.instance.fetchChat(chatId);
+  return chat.data['chats'][0];
+}
+
+Stream fetchDataProcess(String chatId) async* {
+  while (true) {
+    yield await fetchData(chatId);
+    await Future<void>.delayed(Duration(seconds: 30));
+  }
+}
+
 class BubblePage extends StatefulWidget {
   final String chatId;
   final String userId;
@@ -76,29 +88,13 @@ class BubblePage extends StatefulWidget {
   State<BubblePage> createState() => _BubblePageState();
 }
 
-Future fetchData(String chatId) async {
-  QueryResult chat = await BaseGraphQLClient.instance.fetchChat(chatId);
-  return chat.data['chats'][0];
-}
-
-Stream fetchDataProcess(String chatId) async* {
-  while (true) {
-    yield await fetchData(chatId);
-    await Future<void>.delayed(Duration(seconds: 30));
-  }
-}
-
 class _BubblePageState extends State<BubblePage> {
   var formatter = new DateFormat.yMMMMd().add_jm();
   String inputData = "";
   var _controller = TextEditingController();
 
-  String getUserLetter(item) {
-    return item != null ? item['name'].toString()[0] : "";
-  }
-
   Widget _buildBubbleContent(double maxWidth, context) {
-    Widget insetV = SizedBox(height: 20);
+    Widget insetV = SizedBox(height: 36);
     Widget insetVSmall = SizedBox(height: 10);
     Widget insetH = SizedBox(width: 4);
     double tWidth = maxWidth - 160;
@@ -112,125 +108,141 @@ class _BubblePageState extends State<BubblePage> {
               : Expanded(
                   child: ListView(
                     children: snapshot.data['chat_messages']
-                        .map<Widget>(
-                          (item) => item['user'] != null &&
-                                  widget.userId == item['user']['id']
-                              ? Column(
-                                  children: [
-                                    Align(
-                                      alignment: Alignment.centerRight,
-                                      child: Container(
-                                        width: 300.0,
-                                        constraints:
-                                            BoxConstraints(minHeight: 38.0),
-                                        child: Bubble(
-                                          margin: BubbleEdges.only(top: 10),
-                                          stick: true,
-                                          color: Colors.white,
-                                          nip: BubbleNip.rightBottom,
-                                          child: Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 10.0),
-                                            child: Text(
-                                              '${item['text']}',
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                              ),
-                                              softWrap: true,
-                                              textAlign: TextAlign.right,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    insetVSmall,
-                                    Padding(
-                                      padding: EdgeInsets.only(right: 145.0),
-                                      child: Align(
-                                        alignment: Alignment.centerRight,
+                        .map<Widget>((chatMessage) {
+                      var orderId = chatMessage['order'] != null
+                          ? chatMessage['order']['id']
+                          : '';
+
+                      return chatMessage['user'] != null &&
+                              widget.userId == chatMessage['user']['id']
+                          ? Column(
+                              children: [
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Stack(
+                                    clipBehavior: Clip.none,
+                                    children: [
+                                      Positioned(
+                                        bottom: -20.0,
+                                        left: 28.0,
                                         child: Text(
-                                          '${formatter.format(DateTime.parse(item['createdAt']))}',
+                                          '${formatter.format(DateTime.parse(chatMessage['createdAt']))}',
                                           style: TextStyle(
                                             fontSize: 12,
                                             color: Colors.black38,
                                           ),
                                         ),
                                       ),
-                                    ),
-                                    insetV,
-                                  ],
-                                )
-                              : Column(children: <Widget>[
-                                  Row(
-                                    children: <Widget>[
-                                      insetH,
-                                      item['messageType'] == 'text'
-                                          ? Align(
-                                              alignment: Alignment.centerLeft,
-                                              child: Container(
-                                                width: 300.0,
-                                                constraints: BoxConstraints(
-                                                    minHeight: 38.0),
-                                                child: Bubble(
-                                                  margin:
-                                                      BubbleEdges.only(top: 10),
-                                                  stick: true,
-                                                  color: Colors.white,
-                                                  nip: BubbleNip.leftBottom,
-                                                  child: Padding(
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal: 10.0),
-                                                    child: Text(
-                                                      '${item['text']}',
-                                                      style: TextStyle(
-                                                        fontSize: 16,
-                                                      ),
-                                                      softWrap: true,
-                                                      textAlign: TextAlign.left,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            )
-                                          : ElevatedButton(
-                                              child: Text("Show order"),
-                                              onPressed: () {
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        OrderWidget(
-                                                            orderId:
-                                                                item['order'] !=
-                                                                        null
-                                                                    ? item['order']
-                                                                        ['id']
-                                                                    : ''),
-                                                  ),
-                                                );
-                                              },
+                                      Container(
+                                        width: double.infinity,
+                                        constraints: BoxConstraints(
+                                            minHeight: 38.0, maxWidth: 300.0),
+                                        child: Bubble(
+                                          margin: BubbleEdges.only(top: 10),
+                                          elevation: 5.0,
+                                          shadowColor: Colors.black26,
+                                          padding: BubbleEdges.only(
+                                            top: 9.0,
+                                            bottom: 9.0,
+                                            right: 15.0,
+                                            left: 20.0,
+                                          ),
+                                          borderColor: Colors.grey[50],
+                                          stick: true,
+                                          color: Colors.white,
+                                          nip: BubbleNip.rightBottom,
+                                          child: Text(
+                                            chatMessage['text'],
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              color: HexColor("#53586F"),
                                             ),
-                                    ],
-                                  ),
-                                  insetVSmall,
-                                  Padding(
-                                    padding: EdgeInsets.only(left: 45.0),
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                        '${formatter.format(DateTime.parse(item['createdAt']))}',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.black38,
+                                            softWrap: true,
+                                            textAlign: TextAlign.right,
+                                          ),
                                         ),
                                       ),
-                                    ),
+                                    ],
                                   ),
-                                  insetV,
-                                ]),
-                        )
-                        .toList(),
+                                ),
+                                insetV,
+                              ],
+                            )
+                          : Column(
+                              children: [
+                                chatMessage['messageType'] == 'text'
+                                    ? Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Stack(
+                                          clipBehavior: Clip.none,
+                                          children: [
+                                            Positioned(
+                                              bottom: -20.0,
+                                              left: 28.0,
+                                              child: Text(
+                                                '${formatter.format(DateTime.parse(chatMessage['createdAt']))}',
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.black38,
+                                                ),
+                                              ),
+                                            ),
+                                            Container(
+                                              width: double.infinity,
+                                              constraints: BoxConstraints(
+                                                  minHeight: 38.0,
+                                                  maxWidth: 300.0),
+                                              child: Bubble(
+                                                margin:
+                                                    BubbleEdges.only(top: 10),
+                                                stick: true,
+                                                elevation: 5.0,
+                                                shadowColor: Colors.black26,
+                                                padding: BubbleEdges.only(
+                                                  top: 9.0,
+                                                  bottom: 9.0,
+                                                  left: 15.0,
+                                                  right: 20.0,
+                                                ),
+                                                borderColor: Colors.grey[50],
+                                                color: Colors.white,
+                                                nip: BubbleNip.leftBottom,
+                                                child: Text(
+                                                  chatMessage['text'],
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    color: HexColor("#53586F"),
+                                                  ),
+                                                  softWrap: true,
+                                                  textAlign: TextAlign.left,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                    : Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: GestureDetector(
+                                          child: _chatOrderBlock(orderId,
+                                              chatMessage['createdAt']),
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    OrderWidget(
+                                                  orderId: orderId,
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                insetV,
+                              ],
+                            );
+                    }).toList(),
                   ),
                 );
         } else {
@@ -250,16 +262,6 @@ class _BubblePageState extends State<BubblePage> {
           );
         }
       },
-    );
-  }
-
-  Widget _buildRoundedAvatar(String alpha) {
-    return FLAvatar(
-      text: alpha,
-      textStyle: TextStyle(color: Colors.white, fontSize: 18),
-      width: 50,
-      height: 50,
-      color: HexColor("#182465"),
     );
   }
 
@@ -305,14 +307,21 @@ class _BubblePageState extends State<BubblePage> {
         ),
         Scaffold(
           appBar: AppBar(
-            title: Text('${widget.conversationName}'),
+            title: Text(
+              widget.conversationName,
+              style: TextStyle(
+                fontSize: 22,
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
             centerTitle: true,
             backgroundColor: Colors.transparent,
             elevation: 0.0,
             leadingWidth: 70.0,
             automaticallyImplyLeading: false,
             leading: InkWell(
-              child: Image.asset("images/back_button.png"),
+              child: Image.asset("images/back_button_white.png"),
               onTap: () => Navigator.of(context).pop(),
             ),
           ),
@@ -352,22 +361,36 @@ class _BubblePageState extends State<BubblePage> {
             ),
           ),
           bottomNavigationBar: Container(
-            height: 80,
-            color: HexColor("#182465"),
+            height: 83.0,
+            padding: EdgeInsets.only(top: 10.0),
+            color: Colors.white,
             child: Column(
-              children: <Widget>[
+              children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
+                  children: [
                     Container(
+                      height: 40.0,
+                      decoration: BoxDecoration(
+                        color: HexColor("#EDEEF2"),
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(22),
+                          bottomLeft: Radius.circular(22),
+                        ),
+                      ),
                       child: TextField(
                         controller: _controller,
                         onChanged: (text) {
                           this.inputData = text;
                         },
-                        style: TextStyle(color: Colors.white),
+                        style: TextStyle(color: Colors.white, fontSize: 14),
                         decoration: InputDecoration(
+                          isDense: true,
                           hintText: 'Enter message',
+                          contentPadding: EdgeInsets.symmetric(
+                            vertical: 12,
+                            horizontal: 10,
+                          ),
                           fillColor: Colors.white,
                           hintStyle: new TextStyle(color: Colors.grey),
                           labelStyle: new TextStyle(color: Colors.white),
@@ -382,28 +405,36 @@ class _BubblePageState extends State<BubblePage> {
                           ),
                         ),
                       ),
-                      width: MediaQuery.of(context).size.width * 0.5,
+                      width: MediaQuery.of(context).size.width * 0.78,
                     ),
-                    Container(
-                      width: 60,
-                      height: 40,
-                      child: InkWell(
-                        onTap: () {
-                          if (this.inputData != "") {
-                            addMessage(
-                              this.inputData,
-                              widget.chatId,
-                              widget.userId,
-                            );
-                            this.inputData = "";
-                            _controller.clear();
-                          }
-                        },
+                    InkWell(
+                      child: Container(
+                        width: 45,
+                        height: 40.0,
+                        decoration: BoxDecoration(
+                          color: HexColor("#6092DC"),
+                          borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(22),
+                            bottomRight: Radius.circular(22),
+                          ),
+                        ),
                         child: Icon(
                           Icons.send,
                           color: Colors.white,
+                          size: 17.0,
                         ),
                       ),
+                      onTap: () {
+                        if (this.inputData != "") {
+                          addMessage(
+                            this.inputData,
+                            widget.chatId,
+                            widget.userId,
+                          );
+                          this.inputData = "";
+                          _controller.clear();
+                        }
+                      },
                     )
                   ],
                 ),
@@ -414,6 +445,175 @@ class _BubblePageState extends State<BubblePage> {
       ],
     );
   }
+}
+
+Widget _chatOrderBlock(orderId, createdAt) {
+  var formatter = new DateFormat.yMMMMd().add_jm();
+
+  Future getInitialData() async {
+    QueryResult result = await BaseGraphQLClient.instance.fetchOrder(orderId);
+    return result.data['orders'][0];
+  }
+
+  return FutureBuilder(
+      future: getInitialData(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData && !snapshot.hasError) {
+          var order = snapshot.data;
+
+          return Align(
+            alignment: Alignment.centerLeft,
+            child: Container(
+              width: 300.0,
+              height: 110.0,
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Positioned(
+                    bottom: -20.0,
+                    left: 17.0,
+                    child: Text(
+                      '${formatter.format(DateTime.parse(createdAt))}',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.black38,
+                      ),
+                    ),
+                  ),
+                  Bubble(
+                    margin: BubbleEdges.only(top: 10),
+                    elevation: 5.0,
+                    shadowColor: Colors.black26,
+                    padding:
+                        BubbleEdges.symmetric(vertical: 9.0, horizontal: 10.0),
+                    borderColor: Colors.grey[50],
+                    stick: true,
+                    color: Colors.white,
+                    nip: BubbleNip.leftBottom,
+                    child: Container(
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 85.0,
+                            height: double.infinity,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8.0),
+                              child: order['media'] != null &&
+                                      order['media'].length > 0
+                                  ? Image.network(
+                                      AppConfig.instance.baseApiHost +
+                                          order['media'][0]['url'],
+                                      fit: BoxFit.cover,
+                                      width: double.infinity,
+                                      height: double.infinity,
+                                    )
+                                  : Text(""),
+                            ),
+                          ),
+                          SizedBox(width: 10.0),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              order['orderDetails'] != null &&
+                                      order['orderDetails'].length > 0
+                                  ? Text(
+                                      order['orderDetails'][0]['sku'],
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.bold,
+                                        color: HexColor("#0F142B"),
+                                      ),
+                                    )
+                                  : Text(""),
+                              Text(
+                                order['status'],
+                                style: TextStyle(
+                                  fontSize: 12.0,
+                                  color: Colors.orange,
+                                ),
+                              ),
+                              SizedBox(height: 4),
+                              order['orderDetails'] != null &&
+                                      order['orderDetails'].length > 0
+                                  ? SizedBox(
+                                      width: 100.0,
+                                      height: 15.0,
+                                      child: Stack(
+                                        children: [
+                                          Positioned(
+                                            top: 0,
+                                            left: 0,
+                                            child: Text(
+                                              "Number:",
+                                              style: TextStyle(
+                                                fontSize: 12.0,
+                                                color: HexColor("#53586F"),
+                                              ),
+                                            ),
+                                          ),
+                                          Positioned(
+                                            top: 0,
+                                            left: 70.0,
+                                            child: Text(
+                                              "${order['orderDetails'][0]['quantity']}",
+                                              style: TextStyle(
+                                                fontSize: 12.0,
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  : Text(""),
+                              SizedBox(height: 4),
+                              SizedBox(
+                                width: 100.0,
+                                height: 15.0,
+                                child: Stack(
+                                  children: [
+                                    Positioned(
+                                      top: 0,
+                                      left: 0,
+                                      child: Text(
+                                        "Total price:",
+                                        style: TextStyle(
+                                          fontSize: 12.0,
+                                          color: HexColor("#53586F"),
+                                        ),
+                                      ),
+                                    ),
+                                    Positioned(
+                                      top: 0,
+                                      left: 70.0,
+                                      child: Text(
+                                        "\$${order['totalPrice']}",
+                                        style: TextStyle(
+                                          fontSize: 12.0,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        } else {
+          return Container();
+        }
+      });
 }
 
 class OrderWidget extends StatefulWidget {

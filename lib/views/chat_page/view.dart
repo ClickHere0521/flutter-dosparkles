@@ -75,12 +75,6 @@ class _FirstPage extends StatefulWidget {
 class __FirstPageState extends State<_FirstPage> {
   int _selectedIndex = 0;
 
-  List<Widget> _widgetOptions = <Widget>[
-    ChatPageWidget(),
-    StorePageWidget(),
-    Container(child: Text("Example")),
-  ];
-
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -118,7 +112,9 @@ class __FirstPageState extends State<_FirstPage> {
                 topRight: Radius.circular(32.0),
               ),
             ),
-            child: _widgetOptions.elementAt(_selectedIndex),
+            child: GlobalStore.store.getState().user.role == "Store Manager"
+                ? StorePageWidget()
+                : ChatPageWidget(),
           ),
           backgroundColor: Colors.transparent,
           resizeToAvoidBottomInset: true,
@@ -146,52 +142,49 @@ class __FirstPageState extends State<_FirstPage> {
             ),
           ),
           drawer: SparklesDrawer(),
-          bottomNavigationBar:
-              GlobalStore.store.getState().user.role != "Store Manager"
-                  ? BottomNavigationBar(
-                      backgroundColor: Colors.white,
-                      elevation: 0.0,
-                      showSelectedLabels: false,
-                      showUnselectedLabels: false,
-                      items: <BottomNavigationBarItem>[
-                        BottomNavigationBarItem(
-                          label: "",
-                          icon: SvgPicture.asset(
-                            'images/Vector.svg',
-                            color: HexColor("#C4C6D2"),
-                          ),
-                          activeIcon: SvgPicture.asset(
-                            'images/Vector.svg',
-                            color: Colors.black87,
-                          ),
-                        ),
-                        BottomNavigationBarItem(
-                          label: "",
-                          icon: SvgPicture.asset(
-                            'images/Group.svg',
-                            color: HexColor("#C4C6D2"),
-                          ),
-                          activeIcon: SvgPicture.asset(
-                            'images/Group.svg',
-                            color: Colors.black87,
-                          ),
-                        ),
-                        BottomNavigationBarItem(
-                          label: "",
-                          icon: SvgPicture.asset(
-                            'images/Group 41.svg',
-                            color: HexColor("#C4C6D2"),
-                          ),
-                          activeIcon: SvgPicture.asset(
-                            'images/Group 41.svg',
-                            color: Colors.black87,
-                          ),
-                        ),
-                      ],
-                      currentIndex: _selectedIndex,
-                      onTap: _onItemTapped,
-                    )
-                  : null,
+          bottomNavigationBar: BottomNavigationBar(
+            backgroundColor: Colors.white,
+            elevation: 0.0,
+            showSelectedLabels: false,
+            showUnselectedLabels: false,
+            items: <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                label: "",
+                icon: SvgPicture.asset(
+                  'images/Vector.svg',
+                  color: HexColor("#C4C6D2"),
+                ),
+                activeIcon: SvgPicture.asset(
+                  'images/Vector.svg',
+                  color: HexColor("#6092DC"),
+                ),
+              ),
+              BottomNavigationBarItem(
+                label: "",
+                icon: SvgPicture.asset(
+                  'images/Group.svg',
+                  color: HexColor("#C4C6D2"),
+                ),
+                activeIcon: SvgPicture.asset(
+                  'images/Group.svg',
+                  color: HexColor("#6092DC"),
+                ),
+              ),
+              BottomNavigationBarItem(
+                label: "",
+                icon: SvgPicture.asset(
+                  'images/Group 41.svg',
+                  color: HexColor("#C4C6D2"),
+                ),
+                activeIcon: SvgPicture.asset(
+                  'images/Group 41.svg',
+                  color: HexColor("#6092DC"),
+                ),
+              ),
+            ],
+            currentIndex: _selectedIndex,
+            onTap: _onItemTapped,
+          ),
         ),
       ],
     );
@@ -586,8 +579,7 @@ Widget _buildCardOne(tabIndex, chat, context, userId) {
 
           var msgs = chat['chat_messages'];
 
-          if (chat != null &&
-              msgs != null &&
+          if (msgs != null &&
               msgs.length > 0 &&
               msgs[msgs.length - 1] != null) {
             if (msgs[msgs.length - 1]['createdAt'] != null) {
@@ -595,12 +587,14 @@ Widget _buildCardOne(tabIndex, chat, context, userId) {
             }
             var last = msgs[msgs.length - 1];
 
-            if (last['text'] != null) {
+            if (last['messageType'] == 'order') {
+              message = 'new order';
+            } else {
               message = last['text'];
+            }
 
-              if (last['user'] != null && last['user']['id'] == userId) {
-                isMyMessage = true;
-              }
+            if (last['user'] != null && last['user']['id'] == userId) {
+              isMyMessage = true;
             }
           }
 
@@ -1123,37 +1117,39 @@ class _StorePageWidgetState extends State<StorePageWidget> {
       final SharedPreferences prefs = await _prefs;
       String chatsRaw = prefs.getString('chatsMap') ?? '{}';
       Map chatsMapLocal = json.decode(chatsRaw);
+      var msgs = chat['chat_messages'];
+      var cmlId = chatsMapLocal["${chat['id']}"];
 
-      if (chatsMapLocal["${chat['id']}"] != null &&
-          chatsMapLocal["${chat['id']}"]['chatsAmount'] !=
-              chat['chat_messages'].length &&
-          chat['chat_messages'][chat['chat_messages'].length - 1]['user']
-                  ['id'] !=
-              meId) {
-        chatsMapLocal["${chat['id']}"]['checked'] = false;
-        prefs.setString('chatsMap', json.encode(chatsMapLocal));
+      if (cmlId != null && cmlId['chatsAmount'] != msgs.length) {
+        if (msgs[msgs.length - 1]['user'] != null) {
+          if (msgs[msgs.length - 1]['user']['id'] != meId) {
+            cmlId['checked'] = false;
+            prefs.setString('chatsMap', json.encode(chatsMapLocal));
+          }
+        } else {
+          cmlId['checked'] = false;
+          prefs.setString('chatsMap', json.encode(chatsMapLocal));
+        }
 
         setState(() => shouldStopFetchingChats = true);
       }
 
-      if (chat != null) {
-        if (chatsMapLocal['${chat['id']}'] == null) {
-          var obj = {
-            'chatsAmount': chat['chat_messages'].length,
-            'checked': false,
-          };
+      if (chatsMapLocal["${chat['id']}"] == null) {
+        var obj = {
+          'chatsAmount': msgs.length,
+          'checked': false,
+        };
 
-          chatsMapLocal['${chat['id']}'] = obj;
-          prefs.setString('chatsMap', json.encode(chatsMapLocal));
-        } else {
-          var obj = {
-            'chatsAmount': chat['chat_messages'].length,
-            'checked': chatsMapLocal['${chat['id']}']['checked'],
-          };
+        chatsMapLocal["${chat['id']}"] = obj;
+        prefs.setString('chatsMap', json.encode(chatsMapLocal));
+      } else {
+        var obj = {
+          'chatsAmount': msgs.length,
+          'checked': chatsMapLocal["${chat['id']}"]['checked'],
+        };
 
-          chatsMapLocal['${chat['id']}'] = obj;
-          prefs.setString('chatsMap', json.encode(chatsMapLocal));
-        }
+        chatsMapLocal["${chat['id']}"] = obj;
+        prefs.setString('chatsMap', json.encode(chatsMapLocal));
       }
     }
   }
