@@ -354,7 +354,16 @@ class _BubblePageState extends State<BubblePage> {
           bottomNavigationBar: Container(
             height: 83.0,
             padding: EdgeInsets.only(top: 10.0),
-            color: Colors.white,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  offset: Offset(0.0, -0.2), // (x,y)
+                  blurRadius: 10.0,
+                ),
+              ],
+            ),
             child: Column(
               children: [
                 Row(
@@ -642,6 +651,8 @@ Widget _chatOrderBlock(orderId, createdAt) {
                                       ),
                                       SizedBox(height: 6.0),
                                       Container(
+                                        width: double.infinity,
+                                        height: 51.0,
                                         padding: EdgeInsets.all(8.0),
                                         decoration: BoxDecoration(
                                           color: HexColor("#EDEEF2"),
@@ -649,9 +660,11 @@ Widget _chatOrderBlock(orderId, createdAt) {
                                               BorderRadius.circular(16.0),
                                         ),
                                         child: Text(
-                                          "Lorem ipsum dolor sit amet, enim consectetur adipiscing elit."
-                                          "Lorem ipsum dolor sit amet, enim consectetur adipiscing elit."
-                                          "Lorem ipsum dolor sit amet, enim consectetur adipiscing elit.",
+                                          order['rejectedReason'] != null
+                                              ? order['rejectedReason']
+                                              : "Lorem ipsum dolor sit amet, enim consectetur adipiscing elit."
+                                                  "Lorem ipsum dolor sit amet, enim consectetur adipiscing elit."
+                                                  "Lorem ipsum dolor sit amet, enim consectetur adipiscing elit.",
                                           style: TextStyle(
                                             fontSize: 14.0,
                                           ),
@@ -885,200 +898,288 @@ class OrderWidget extends StatefulWidget {
 }
 
 class _OrderWidgetState extends State<OrderWidget> {
+  double allProductsTotalPrice = 0.0;
+
   Future getInitialData() async {
     QueryResult result =
         await BaseGraphQLClient.instance.fetchOrder(widget.orderId);
-    return result.data['orders'][0];
+    if (result.hasException) print(result.exception);
+    var order = result.data['orders'][0];
+    return order;
+  }
+
+  Future<void> getOrderTotalPrice() async {
+    QueryResult result =
+        await BaseGraphQLClient.instance.fetchOrder(widget.orderId);
+    if (result.hasException) print(result.exception);
+    var order = result.data['orders'][0];
+
+    if (order != null && order['totalPrice'] != null) {
+      setState(() {
+        allProductsTotalPrice = double.parse(order['totalPrice'].toString());
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getOrderTotalPrice();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Order"),
-        centerTitle: true,
-        flexibleSpace: Container(
-          decoration: new BoxDecoration(
-            gradient: new LinearGradient(
-              colors: [HexColor('#3D9FB0'), HexColor('#557084')],
-              begin: const FractionalOffset(0.5, 0.5),
-              end: const FractionalOffset(0.5, 1.0),
-              stops: [0.0, 1.0],
-              tileMode: TileMode.clamp,
+    return Stack(
+      children: [
+        Positioned(
+          top: 0,
+          left: 0,
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            height: 181.0,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [HexColor('#8FADEB'), HexColor('#7397E2')],
+                begin: const FractionalOffset(0.0, 0.0),
+                end: const FractionalOffset(1.0, 0.0),
+                stops: [0.0, 1.0],
+                tileMode: TileMode.clamp,
+              ),
             ),
           ),
         ),
-      ),
-      body: Container(
-        color: HexColor('#3D9FB0'),
-        width: double.infinity,
-        height: double.infinity,
-        child: FutureBuilder(
-          future: getInitialData(),
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (snapshot.hasData && !snapshot.hasError) {
-              List<dynamic> products = snapshot.data['products'];
+        Scaffold(
+          appBar: AppBar(
+            title: Text(
+              "Details of order",
+              style: TextStyle(
+                fontSize: 22,
+                color: Colors.white,
+                fontFeatures: [FontFeature.enable('smcp')],
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            centerTitle: true,
+            backgroundColor: Colors.transparent,
+            elevation: 0.0,
+            leadingWidth: 70.0,
+            automaticallyImplyLeading: false,
+            leading: InkWell(
+              child: Image.asset("images/back_button_white.png"),
+              onTap: () => Navigator.of(context).pop(),
+            ),
+          ),
+          backgroundColor: Colors.transparent,
+          resizeToAvoidBottomInset: true,
+          body: Container(
+            width: MediaQuery.of(context).size.width,
+            height: double.infinity,
+            padding: EdgeInsets.only(top: 20.0, left: 16.0, right: 16.0),
+            decoration: BoxDecoration(
+              color: HexColor("#FAFCFF"),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(32.0),
+                topRight: Radius.circular(32.0),
+              ),
+            ),
+            child: FutureBuilder(
+              future: getInitialData(),
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.hasData && !snapshot.hasError) {
+                  var order = snapshot.data;
+                  List<dynamic> products = order['products'];
 
-              return SingleChildScrollView(
-                child: Padding(
-                  padding: EdgeInsets.all(8),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.symmetric(vertical: 5.0),
-                        height: 200.0 * products.length,
-                        child: ListView.builder(
-                          itemCount: products.length,
-                          itemBuilder: (_, index) {
-                            return Container(
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 10.0, vertical: 10.0),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        products[index] != null &&
-                                                AppConfig.instance.baseApiHost +
-                                                        products[index]
-                                                                ['thumbnail']
-                                                            ['url'] !=
-                                                    null
-                                            ? ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(8.0),
-                                                child: new CachedNetworkImage(
-                                                  imageUrl: products[index]
-                                                              ['thumbnail'] !=
-                                                          null
-                                                      ? AppConfig.instance
-                                                              .baseApiHost +
-                                                          products[index]
-                                                                  ['thumbnail']
-                                                              ['url']
-                                                      : null,
-                                                  width: 100,
-                                                  height: 100,
-                                                  fit: BoxFit.cover,
-                                                ),
-                                              )
-                                            : Container(),
-                                        Expanded(
-                                          child: new Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: <Widget>[
-                                              Text(
-                                                products[index]['name'],
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 24,
-                                                    fontWeight:
-                                                        FontWeight.normal),
-                                              ),
-                                              Text(
-                                                '\$${products[index]['price']}',
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 30,
-                                                  fontWeight: FontWeight.normal,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    Row(children: [
-                                      RichText(
-                                        text: TextSpan(
-                                          style: DefaultTextStyle.of(
-                                            context,
-                                          ).style,
-                                          children: [
-                                            TextSpan(
-                                              text: 'Count: ',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 23,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                            TextSpan(
-                                              text:
-                                                  '${snapshot.data['orderDetails'][0]['quantity']}',
-                                              style: TextStyle(
-                                                fontSize: 23,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Spacer(),
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  OrderDetailsWidget(
-                                                      product: products[index]),
-                                            ),
-                                          );
-                                        },
-                                        style: ButtonStyle(
-                                          backgroundColor:
-                                              MaterialStateProperty.all<Color>(
-                                            HexColor('#3D9FB0'),
-                                          ),
-                                        ),
+                  return SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          margin: EdgeInsets.symmetric(vertical: 5.0),
+                          height: MediaQuery.of(context).size.height,
+                          child: ListView.builder(
+                            itemCount: products.length,
+                            itemBuilder: (_, index) {
+                              var product = products[index];
+
+                              if (product != null) {
+                                return Card(
+                                  elevation: 5.0,
+                                  margin: EdgeInsets.only(bottom: 16.0),
+                                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                                  shadowColor: Colors.black26,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16.0),
+                                    side: BorderSide(color: Colors.grey[50]),
+                                  ),
+                                  child: InkWell(
+                                    child: Container(
+                                      width: double.infinity,
+                                      height: 111.0,
+                                      constraints:
+                                          BoxConstraints(maxWidth: 343.0),
+                                      padding: EdgeInsets.all(10.0),
+                                      child: Container(
+                                        width: double.infinity,
+                                        height: 91.0,
                                         child: Row(
                                           children: [
-                                            Text("details"),
-                                            Icon(Icons.arrow_right),
+                                            Container(
+                                              width: 78.0,
+                                              height: double.infinity,
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(16.0),
+                                                child: product['thumbnail'] !=
+                                                        null
+                                                    ? Image.network(
+                                                        AppConfig.instance
+                                                                .baseApiHost +
+                                                            product['thumbnail']
+                                                                ['url'],
+                                                        fit: BoxFit.cover,
+                                                        width: double.infinity,
+                                                        height: double.infinity,
+                                                      )
+                                                    : Text(""),
+                                              ),
+                                            ),
+                                            SizedBox(width: 10.0),
+                                            Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  product['name'],
+                                                  style: TextStyle(
+                                                    fontSize: 16.0,
+                                                    color: HexColor("#53586F"),
+                                                  ),
+                                                ),
+                                                SizedBox(height: 12.0),
+                                                RichText(
+                                                  text: TextSpan(
+                                                    style: DefaultTextStyle.of(
+                                                      context,
+                                                    ).style,
+                                                    children: [
+                                                      TextSpan(
+                                                        text: product[
+                                                                    'price'] !=
+                                                                null
+                                                            ? "\$${product['price']}"
+                                                            : '',
+                                                        style: TextStyle(
+                                                          fontSize: 22.0,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          color: HexColor(
+                                                              "#53586F"),
+                                                        ),
+                                                      ),
+                                                      TextSpan(
+                                                        text: product['orderDetails'] !=
+                                                                    null &&
+                                                                product['orderDetails']
+                                                                        [
+                                                                        'quantity'] !=
+                                                                    null
+                                                            ? "x${product['orderDetails']['quantity']}"
+                                                            : '',
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
                                           ],
                                         ),
                                       ),
-                                    ])
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
+                                    ),
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              OrderDetailsWidget(
+                                            product: products[index],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                );
+                              } else {
+                                return SizedBox.shrink(child: null);
+                              }
+                            },
+                          ),
                         ),
+                      ],
+                    ),
+                  );
+                }
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(height: Adapt.screenH() / 4),
+                    SizedBox(
+                      width: Adapt.screenW(),
+                      height: Adapt.screenH() / 4,
+                      child: Container(
+                        child: CircularProgressIndicator(),
+                        alignment: Alignment.center,
                       ),
-                    ],
-                  ),
+                    )
+                  ],
+                );
+              },
+            ),
+          ),
+          bottomNavigationBar: Container(
+            height: 83.0,
+            padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  offset: Offset(0.0, -0.2), // (x,y)
+                  blurRadius: 10.0,
                 ),
-              );
-            }
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(height: Adapt.screenH() / 4),
-                SizedBox(
-                  width: Adapt.screenW(),
-                  height: Adapt.screenH() / 4,
-                  child: Container(
-                    child: CircularProgressIndicator(),
-                    alignment: Alignment.center,
-                  ),
-                )
               ],
-            );
-          },
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      "TOTAL PRICE:",
+                      style: TextStyle(
+                        fontSize: 14.0,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Text(
+                      "\$$allProductsTotalPrice",
+                      style: TextStyle(
+                        fontSize: 26.0,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
 }

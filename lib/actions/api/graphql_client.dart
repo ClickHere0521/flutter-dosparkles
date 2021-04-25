@@ -384,6 +384,7 @@ class BaseGraphQLClient {
           shipmentDetails
           shineonId
           cancelReason
+          rejectedReason
         }
       }
     ''';

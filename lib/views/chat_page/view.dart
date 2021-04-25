@@ -145,48 +145,60 @@ class __FirstPageState extends State<_FirstPage> {
             ),
           ),
           drawer: SparklesDrawer(),
-          bottomNavigationBar: BottomNavigationBar(
-            backgroundColor: Colors.white,
-            elevation: 0.0,
-            showSelectedLabels: false,
-            showUnselectedLabels: false,
-            items: <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                label: "",
-                icon: SvgPicture.asset(
-                  'images/Vector.svg',
-                  color: HexColor("#C4C6D2"),
+          bottomNavigationBar: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  offset: Offset(0.0, -0.2), // (x,y)
+                  blurRadius: 10.0,
                 ),
-                activeIcon: SvgPicture.asset(
-                  'images/Vector.svg',
-                  color: HexColor("#6092DC"),
+              ],
+            ),
+            child: BottomNavigationBar(
+              backgroundColor: Colors.white,
+              elevation: 0.0,
+              showSelectedLabels: false,
+              showUnselectedLabels: false,
+              items: <BottomNavigationBarItem>[
+                BottomNavigationBarItem(
+                  label: "",
+                  icon: SvgPicture.asset(
+                    'images/Vector.svg',
+                    color: HexColor("#C4C6D2"),
+                  ),
+                  activeIcon: SvgPicture.asset(
+                    'images/Vector.svg',
+                    color: HexColor("#6092DC"),
+                  ),
                 ),
-              ),
-              BottomNavigationBarItem(
-                label: "",
-                icon: SvgPicture.asset(
-                  'images/Group.svg',
-                  color: HexColor("#C4C6D2"),
+                BottomNavigationBarItem(
+                  label: "",
+                  icon: SvgPicture.asset(
+                    'images/Group.svg',
+                    color: HexColor("#C4C6D2"),
+                  ),
+                  activeIcon: SvgPicture.asset(
+                    'images/Group.svg',
+                    color: HexColor("#6092DC"),
+                  ),
                 ),
-                activeIcon: SvgPicture.asset(
-                  'images/Group.svg',
-                  color: HexColor("#6092DC"),
+                BottomNavigationBarItem(
+                  label: "",
+                  icon: SvgPicture.asset(
+                    'images/Group 41.svg',
+                    color: HexColor("#C4C6D2"),
+                  ),
+                  activeIcon: SvgPicture.asset(
+                    'images/Group 41.svg',
+                    color: HexColor("#6092DC"),
+                  ),
                 ),
-              ),
-              BottomNavigationBarItem(
-                label: "",
-                icon: SvgPicture.asset(
-                  'images/Group 41.svg',
-                  color: HexColor("#C4C6D2"),
-                ),
-                activeIcon: SvgPicture.asset(
-                  'images/Group 41.svg',
-                  color: HexColor("#6092DC"),
-                ),
-              ),
-            ],
-            currentIndex: _selectedIndex,
-            onTap: _onItemTapped,
+              ],
+              currentIndex: _selectedIndex,
+              onTap: _onItemTapped,
+            ),
           ),
         ),
       ],
@@ -997,6 +1009,8 @@ class _ChatPageWidgetState extends State<ChatPageWidget> {
   Future fetchData() async {
     final chatsRequest = await BaseGraphQLClient.instance.fetchChats();
     if (chatsRequest.hasException) print(chatsRequest.exception);
+    if (chatsRequest.data == null) return null;
+
     List chats = chatsRequest.data['chats'];
     List relevantChats = [];
 
