@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
 import 'package:com.floridainc.dosparkles/actions/api/graphql_client.dart';
 import 'package:com.floridainc.dosparkles/actions/app_config.dart';
+import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/utils/colors.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
@@ -223,21 +224,8 @@ class _BubblePageState extends State<BubblePage> {
                                       )
                                     : Align(
                                         alignment: Alignment.centerLeft,
-                                        child: GestureDetector(
-                                          child: _chatOrderBlock(orderId,
-                                              chatMessage['createdAt']),
-                                          onTap: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    OrderWidget(
-                                                  orderId: orderId,
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                        ),
+                                        child: _chatOrderBlock(
+                                            orderId, chatMessage['createdAt']),
                                       ),
                                 insetV,
                               ],
@@ -449,6 +437,7 @@ class _BubblePageState extends State<BubblePage> {
 
 Widget _chatOrderBlock(orderId, createdAt) {
   var formatter = new DateFormat.yMMMMd().add_jm();
+  bool isAdmin = GlobalStore.store.getState().user.role == 'Authenticated';
 
   Future getInitialData() async {
     QueryResult result = await BaseGraphQLClient.instance.fetchOrder(orderId);
@@ -465,7 +454,7 @@ Widget _chatOrderBlock(orderId, createdAt) {
             alignment: Alignment.centerLeft,
             child: Container(
               width: 300.0,
-              height: 110.0,
+              height: isAdmin ? 160.0 : 115.0,
               child: Stack(
                 clipBehavior: Clip.none,
                 children: [
@@ -490,53 +479,94 @@ Widget _chatOrderBlock(orderId, createdAt) {
                     stick: true,
                     color: Colors.white,
                     nip: BubbleNip.leftBottom,
-                    child: Container(
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 85.0,
-                            height: double.infinity,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(8.0),
-                              child: order['media'] != null &&
-                                      order['media'].length > 0
-                                  ? Image.network(
-                                      AppConfig.instance.baseApiHost +
-                                          order['media'][0]['url'],
-                                      fit: BoxFit.cover,
-                                      width: double.infinity,
-                                      height: double.infinity,
-                                    )
-                                  : Text(""),
-                            ),
-                          ),
-                          SizedBox(width: 10.0),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              order['orderDetails'] != null &&
-                                      order['orderDetails'].length > 0
-                                  ? Text(
-                                      order['orderDetails'][0]['sku'],
-                                      style: TextStyle(
-                                        fontSize: 16.0,
-                                        fontWeight: FontWeight.bold,
-                                        color: HexColor("#0F142B"),
-                                      ),
-                                    )
-                                  : Text(""),
-                              Text(
-                                order['status'],
-                                style: TextStyle(
-                                  fontSize: 12.0,
-                                  color: Colors.orange,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        GestureDetector(
+                          child: Container(
+                            width: double.infinity,
+                            height: 86.0,
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 85.0,
+                                  height: double.infinity,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    child: order['media'] != null &&
+                                            order['media'].length > 0
+                                        ? Image.network(
+                                            AppConfig.instance.baseApiHost +
+                                                order['media'][0]['url'],
+                                            fit: BoxFit.cover,
+                                            width: double.infinity,
+                                            height: double.infinity,
+                                          )
+                                        : Text(""),
+                                  ),
                                 ),
-                              ),
-                              SizedBox(height: 4),
-                              order['orderDetails'] != null &&
-                                      order['orderDetails'].length > 0
-                                  ? SizedBox(
+                                SizedBox(width: 10.0),
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    order['orderDetails'] != null &&
+                                            order['orderDetails'].length > 0
+                                        ? Text(
+                                            order['orderDetails'][0]['sku'],
+                                            style: TextStyle(
+                                              fontSize: 16.0,
+                                              fontWeight: FontWeight.bold,
+                                              color: HexColor("#0F142B"),
+                                            ),
+                                          )
+                                        : Text(""),
+                                    Text(
+                                      order['status'],
+                                      style: TextStyle(
+                                        fontSize: 12.0,
+                                        color: Colors.orange,
+                                      ),
+                                    ),
+                                    SizedBox(height: 4),
+                                    order['orderDetails'] != null &&
+                                            order['orderDetails'].length > 0
+                                        ? SizedBox(
+                                            width: 100.0,
+                                            height: 15.0,
+                                            child: Stack(
+                                              children: [
+                                                Positioned(
+                                                  top: 0,
+                                                  left: 0,
+                                                  child: Text(
+                                                    "Number:",
+                                                    style: TextStyle(
+                                                      fontSize: 12.0,
+                                                      color:
+                                                          HexColor("#53586F"),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Positioned(
+                                                  top: 0,
+                                                  left: 70.0,
+                                                  child: Text(
+                                                    "${order['orderDetails'][0]['quantity']}",
+                                                    style: TextStyle(
+                                                      fontSize: 12.0,
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          )
+                                        : Text(""),
+                                    SizedBox(height: 4),
+                                    SizedBox(
                                       width: 100.0,
                                       height: 15.0,
                                       child: Stack(
@@ -545,7 +575,7 @@ Widget _chatOrderBlock(orderId, createdAt) {
                                             top: 0,
                                             left: 0,
                                             child: Text(
-                                              "Number:",
+                                              "Total price:",
                                               style: TextStyle(
                                                 fontSize: 12.0,
                                                 color: HexColor("#53586F"),
@@ -556,7 +586,7 @@ Widget _chatOrderBlock(orderId, createdAt) {
                                             top: 0,
                                             left: 70.0,
                                             child: Text(
-                                              "${order['orderDetails'][0]['quantity']}",
+                                              "\$${order['totalPrice']}",
                                               style: TextStyle(
                                                 fontSize: 12.0,
                                                 color: Colors.black,
@@ -566,44 +596,91 @@ Widget _chatOrderBlock(orderId, createdAt) {
                                           ),
                                         ],
                                       ),
-                                    )
-                                  : Text(""),
-                              SizedBox(height: 4),
-                              SizedBox(
-                                width: 100.0,
-                                height: 15.0,
-                                child: Stack(
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => OrderWidget(
+                                  orderId: orderId,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        if (isAdmin)
+                          Expanded(
+                            child: Column(
+                              children: [
+                                SizedBox(height: 12.0),
+                                Row(
                                   children: [
-                                    Positioned(
-                                      top: 0,
-                                      left: 0,
-                                      child: Text(
-                                        "Total price:",
-                                        style: TextStyle(
-                                          fontSize: 12.0,
-                                          color: HexColor("#53586F"),
+                                    Container(
+                                      width: 120.0,
+                                      height: 30.0,
+                                      child: OutlinedButton(
+                                        style: ButtonStyle(
+                                          side: MaterialStateProperty.all(
+                                            BorderSide(color: Colors.red),
+                                          ),
+                                          shape: MaterialStateProperty.all(
+                                            RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(27.0),
+                                            ),
+                                          ),
                                         ),
+                                        child: Text(
+                                          "Reject",
+                                          style: TextStyle(
+                                            color: Colors.red,
+                                            fontSize: 14.0,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        onPressed: () => null,
                                       ),
                                     ),
-                                    Positioned(
-                                      top: 0,
-                                      left: 70.0,
-                                      child: Text(
-                                        "\$${order['totalPrice']}",
-                                        style: TextStyle(
-                                          fontSize: 12.0,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.bold,
+                                    SizedBox(width: 22.0),
+                                    Container(
+                                      width: 120.0,
+                                      height: 30.0,
+                                      child: ElevatedButton(
+                                        style: ButtonStyle(
+                                          backgroundColor:
+                                              MaterialStateProperty.all(
+                                                  HexColor("#27AE60")),
+                                          elevation:
+                                              MaterialStateProperty.all(0.0),
+                                          shape: MaterialStateProperty.all(
+                                            RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(27.0),
+                                            ),
+                                          ),
                                         ),
+                                        child: Text(
+                                          "Reject",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 14.0,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        onPressed: () => null,
                                       ),
                                     ),
                                   ],
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ],
-                      ),
+                      ],
                     ),
                   ),
                 ],

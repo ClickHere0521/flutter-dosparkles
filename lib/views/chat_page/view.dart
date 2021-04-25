@@ -993,6 +993,7 @@ class _ChatPageWidgetState extends State<ChatPageWidget> {
 
   Future fetchData() async {
     final chatsRequest = await BaseGraphQLClient.instance.fetchChats();
+    if (chatsRequest.hasException) print(chatsRequest.exception);
     List chats = chatsRequest.data['chats'];
     List relevantChats = [];
 
