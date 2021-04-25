@@ -784,6 +784,8 @@ Future<void> _rejectDialog(BuildContext context) async {
                 SizedBox(height: 20.0),
                 Container(
                   height: 40.0,
+                  width: MediaQuery.of(context).size.width * 0.85,
+                  constraints: BoxConstraints(maxWidth: 355.0),
                   margin: EdgeInsets.only(
                     left: 12.0,
                     right: 12.0,
@@ -816,7 +818,6 @@ Future<void> _rejectDialog(BuildContext context) async {
                       ),
                     ),
                   ),
-                  width: MediaQuery.of(context).size.width * 0.78,
                 ),
                 SizedBox(height: 40.0),
                 Container(
