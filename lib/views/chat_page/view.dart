@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:com.floridainc.dosparkles/models/cart_item_model.dart';
 import 'package:com.floridainc.dosparkles/utils/general.dart';
 import 'package:fish_redux/fish_redux.dart';
@@ -125,6 +127,7 @@ class __FirstPageState extends State<_FirstPage> {
                 fontSize: 22,
                 color: Colors.white,
                 fontWeight: FontWeight.w600,
+                fontFeatures: [FontFeature.enable('smcp')],
               ),
             ),
             centerTitle: true,

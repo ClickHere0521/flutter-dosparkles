@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:bubble/bubble.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
@@ -300,6 +302,7 @@ class _BubblePageState extends State<BubblePage> {
               style: TextStyle(
                 fontSize: 22,
                 color: Colors.white,
+                fontFeatures: [FontFeature.enable('smcp')],
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -371,7 +374,7 @@ class _BubblePageState extends State<BubblePage> {
                         onChanged: (text) {
                           this.inputData = text;
                         },
-                        style: TextStyle(color: Colors.white, fontSize: 14),
+                        style: TextStyle(color: Colors.black, fontSize: 14),
                         decoration: InputDecoration(
                           isDense: true,
                           hintText: 'Enter message',
@@ -449,12 +452,17 @@ Widget _chatOrderBlock(orderId, createdAt) {
       builder: (context, snapshot) {
         if (snapshot.hasData && !snapshot.hasError) {
           var order = snapshot.data;
+          bool isStatusRejected = order['status'] == 'cancelled';
 
           return Align(
             alignment: Alignment.centerLeft,
             child: Container(
               width: 300.0,
-              height: isAdmin ? 160.0 : 115.0,
+              height: isAdmin
+                  ? isStatusRejected
+                      ? 200.0
+                      : 160.0
+                  : 115.0,
               child: Stack(
                 clipBehavior: Clip.none,
                 children: [
@@ -525,7 +533,9 @@ Widget _chatOrderBlock(orderId, createdAt) {
                                       order['status'],
                                       style: TextStyle(
                                         fontSize: 12.0,
-                                        color: Colors.orange,
+                                        color: isStatusRejected
+                                            ? Colors.red
+                                            : Colors.orange,
                                       ),
                                     ),
                                     SizedBox(height: 4),
@@ -618,65 +628,100 @@ Widget _chatOrderBlock(orderId, createdAt) {
                             child: Column(
                               children: [
                                 SizedBox(height: 12.0),
-                                Row(
-                                  children: [
-                                    Container(
-                                      width: 120.0,
-                                      height: 30.0,
-                                      child: OutlinedButton(
-                                        style: ButtonStyle(
-                                          side: MaterialStateProperty.all(
-                                            BorderSide(color: Colors.red),
-                                          ),
-                                          shape: MaterialStateProperty.all(
-                                            RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(27.0),
-                                            ),
-                                          ),
+                                if (isStatusRejected)
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Reason why reject:",
+                                        style: TextStyle(
+                                          color: Colors.red,
+                                          fontSize: 14.0,
+                                        ),
+                                      ),
+                                      SizedBox(height: 6.0),
+                                      Container(
+                                        padding: EdgeInsets.all(8.0),
+                                        decoration: BoxDecoration(
+                                          color: HexColor("#EDEEF2"),
+                                          borderRadius:
+                                              BorderRadius.circular(16.0),
                                         ),
                                         child: Text(
-                                          "Reject",
+                                          "Lorem ipsum dolor sit amet, enim consectetur adipiscing elit."
+                                          "Lorem ipsum dolor sit amet, enim consectetur adipiscing elit."
+                                          "Lorem ipsum dolor sit amet, enim consectetur adipiscing elit.",
                                           style: TextStyle(
-                                            color: Colors.red,
                                             fontSize: 14.0,
-                                            fontWeight: FontWeight.w600,
                                           ),
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 2,
                                         ),
-                                        onPressed: () => null,
                                       ),
-                                    ),
-                                    SizedBox(width: 22.0),
-                                    Container(
-                                      width: 120.0,
-                                      height: 30.0,
-                                      child: ElevatedButton(
-                                        style: ButtonStyle(
-                                          backgroundColor:
-                                              MaterialStateProperty.all(
-                                                  HexColor("#27AE60")),
-                                          elevation:
-                                              MaterialStateProperty.all(0.0),
-                                          shape: MaterialStateProperty.all(
-                                            RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(27.0),
+                                    ],
+                                  )
+                                else
+                                  Row(
+                                    children: [
+                                      Container(
+                                        width: 120.0,
+                                        height: 30.0,
+                                        child: OutlinedButton(
+                                          style: ButtonStyle(
+                                            side: MaterialStateProperty.all(
+                                              BorderSide(color: Colors.red),
+                                            ),
+                                            shape: MaterialStateProperty.all(
+                                              RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(27.0),
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                        child: Text(
-                                          "Reject",
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 14.0,
-                                            fontWeight: FontWeight.w600,
+                                          child: Text(
+                                            "Reject",
+                                            style: TextStyle(
+                                              color: Colors.red,
+                                              fontSize: 14.0,
+                                              fontWeight: FontWeight.w600,
+                                            ),
                                           ),
+                                          onPressed: () =>
+                                              _rejectDialog(context),
                                         ),
-                                        onPressed: () => null,
                                       ),
-                                    ),
-                                  ],
-                                ),
+                                      SizedBox(width: 22.0),
+                                      Container(
+                                        width: 120.0,
+                                        height: 30.0,
+                                        child: ElevatedButton(
+                                          style: ButtonStyle(
+                                            backgroundColor:
+                                                MaterialStateProperty.all(
+                                                    HexColor("#27AE60")),
+                                            elevation:
+                                                MaterialStateProperty.all(0.0),
+                                            shape: MaterialStateProperty.all(
+                                              RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(27.0),
+                                              ),
+                                            ),
+                                          ),
+                                          child: Text(
+                                            "Approve",
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 14.0,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                          onPressed: () => null,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                               ],
                             ),
                           ),
@@ -691,6 +736,143 @@ Widget _chatOrderBlock(orderId, createdAt) {
           return Container();
         }
       });
+}
+
+Future<void> _rejectDialog(BuildContext context) async {
+  return showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+        child: AlertDialog(
+          title: Center(child: Text('REJECT')),
+          titleTextStyle: TextStyle(
+            color: Colors.red,
+            fontSize: 20.0,
+            fontWeight: FontWeight.w600,
+            fontFeatures: [FontFeature.enable('smcp')],
+          ),
+          titlePadding: EdgeInsets.only(top: 30.0),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          insetPadding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
+          contentPadding: EdgeInsets.zero,
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(height: 9.0),
+                Text(
+                  'Enter reason why you reject',
+                  style: TextStyle(fontSize: 18),
+                ),
+                SizedBox(height: 20.0),
+                Container(
+                  height: 40.0,
+                  margin: EdgeInsets.only(
+                    left: 12.0,
+                    right: 12.0,
+                  ),
+                  decoration: BoxDecoration(
+                    color: HexColor("#EDEEF2"),
+                    borderRadius: BorderRadius.circular(22.0),
+                  ),
+                  child: TextField(
+                    onChanged: (text) {},
+                    style: TextStyle(color: Colors.black, fontSize: 14),
+                    decoration: InputDecoration(
+                      isDense: true,
+                      hintText: 'Enter here',
+                      contentPadding: EdgeInsets.symmetric(
+                        vertical: 12,
+                        horizontal: 10,
+                      ),
+                      fillColor: Colors.white,
+                      hintStyle: TextStyle(color: Colors.grey),
+                      labelStyle: TextStyle(color: Colors.white),
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
+                      border: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                  width: MediaQuery.of(context).size.width * 0.78,
+                ),
+                SizedBox(height: 40.0),
+                Container(
+                  height: 53.0,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: InkWell(
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(16.0),
+                          ),
+                          child: Ink(
+                            height: double.infinity,
+                            decoration: BoxDecoration(
+                              color: HexColor("#FAFCFF"),
+                              borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(16.0),
+                              ),
+                            ),
+                            child: Center(
+                              child: Text(
+                                'Cancel',
+                                style: TextStyle(color: Colors.black),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                          onTap: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ),
+                      Expanded(
+                        child: InkWell(
+                          borderRadius: BorderRadius.only(
+                            bottomRight: Radius.circular(16.0),
+                          ),
+                          child: Ink(
+                            height: double.infinity,
+                            decoration: BoxDecoration(
+                              color: HexColor("#6092DC"),
+                              borderRadius: BorderRadius.only(
+                                bottomRight: Radius.circular(16.0),
+                              ),
+                            ),
+                            child: Center(
+                              child: Text(
+                                'Confirm',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ),
+                          onTap: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+  );
 }
 
 class OrderWidget extends StatefulWidget {
