@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:com.floridainc.dosparkles/globalbasestate/action.dart';
 import 'package:com.floridainc.dosparkles/models/cart_item_model.dart';
 import 'package:com.floridainc.dosparkles/utils/general.dart';
 import 'package:fish_redux/fish_redux.dart';
@@ -78,9 +79,19 @@ class __FirstPageState extends State<_FirstPage> {
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    setState(() => _selectedIndex = index);
+
+    if (index == 0) {
+      var globalState = GlobalStore.store.getState();
+      var storeFavorite = globalState.user.storeFavorite;
+
+      if (storeFavorite != null)
+        Navigator.of(context).pushReplacementNamed('storepage');
+      else
+        Navigator.of(context).pushReplacementNamed('storeselectionpage');
+    } else if (index == 2) {
+      Navigator.of(context).pushReplacementNamed('invite_friendpage');
+    }
   }
 
   @override
@@ -168,10 +179,10 @@ class __FirstPageState extends State<_FirstPage> {
                     'images/Vector.svg',
                     color: HexColor("#C4C6D2"),
                   ),
-                  activeIcon: SvgPicture.asset(
-                    'images/Vector.svg',
-                    color: HexColor("#6092DC"),
-                  ),
+                  // activeIcon: SvgPicture.asset(
+                  //   'images/Vector.svg',
+                  //   color: HexColor("#6092DC"),
+                  // ),
                 ),
                 BottomNavigationBarItem(
                   label: "",
@@ -179,10 +190,10 @@ class __FirstPageState extends State<_FirstPage> {
                     'images/Group.svg',
                     color: HexColor("#C4C6D2"),
                   ),
-                  activeIcon: SvgPicture.asset(
-                    'images/Group.svg',
-                    color: HexColor("#6092DC"),
-                  ),
+                  // activeIcon: SvgPicture.asset(
+                  //   'images/Group.svg',
+                  //   color: HexColor("#6092DC"),
+                  // ),
                 ),
                 BottomNavigationBarItem(
                   label: "",
@@ -190,10 +201,10 @@ class __FirstPageState extends State<_FirstPage> {
                     'images/Group 41.svg',
                     color: HexColor("#C4C6D2"),
                   ),
-                  activeIcon: SvgPicture.asset(
-                    'images/Group 41.svg',
-                    color: HexColor("#6092DC"),
-                  ),
+                  // activeIcon: SvgPicture.asset(
+                  //   'images/Group 41.svg',
+                  //   color: HexColor("#6092DC"),
+                  // ),
                 ),
               ],
               currentIndex: _selectedIndex,

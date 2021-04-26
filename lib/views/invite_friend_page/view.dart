@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
+import 'package:com.floridainc.dosparkles/widgets/sparkles_drawer.dart';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flui/flui.dart';
@@ -7,6 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../utils/colors.dart';
 import 'state.dart';
@@ -14,7 +17,7 @@ import 'state.dart';
 Widget buildView(
     InviteFriendPageState state, Dispatch dispatch, ViewService viewService) {
   Adapt.initContext(viewService.context);
-  return _ContactsPage();
+  return _FirstPage();
 }
 
 Future<PermissionStatus> _getContactPermission() async {
@@ -45,6 +48,212 @@ Future<bool> _askPermissions() async {
 
 int _checkIsInvited(List checkedList) {
   return checkedList.where((item) => item['invited'] == false).toList().length;
+}
+
+class _FirstPage extends StatefulWidget {
+  @override
+  __FirstPageState createState() => __FirstPageState();
+}
+
+class __FirstPageState extends State<_FirstPage> {
+  int _selectedIndex = 2;
+
+  void _onItemTapped(int index) {
+    setState(() => _selectedIndex = index);
+
+    if (index == 0) {
+      var globalState = GlobalStore.store.getState();
+      var storeFavorite = globalState.user.storeFavorite;
+
+      if (storeFavorite != null)
+        Navigator.of(context).pushReplacementNamed('storepage');
+      else
+        Navigator.of(context).pushReplacementNamed('storeselectionpage');
+    } else if (index == 2) {
+      Navigator.of(context).pushReplacementNamed('invite_friendpage');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        Positioned(
+          top: 0,
+          left: 0,
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            height: 181.0,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [HexColor('#8FADEB'), HexColor('#7397E2')],
+                begin: const FractionalOffset(0.0, 0.0),
+                end: const FractionalOffset(1.0, 0.0),
+                stops: [0.0, 1.0],
+                tileMode: TileMode.clamp,
+              ),
+            ),
+          ),
+        ),
+        Scaffold(
+          body: Container(
+            padding: EdgeInsets.only(top: 13.0, left: 16.0, right: 16.0),
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            decoration: BoxDecoration(
+              color: HexColor("#FAFCFF"),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(32.0),
+                topRight: Radius.circular(32.0),
+              ),
+            ),
+            child: _MainBody(),
+          ),
+          backgroundColor: Colors.transparent,
+          resizeToAvoidBottomInset: true,
+          appBar: AppBar(
+            title: Text(
+              "Invite Friends",
+              style: TextStyle(
+                fontSize: 22,
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+                fontFeatures: [FontFeature.enable('smcp')],
+              ),
+            ),
+            centerTitle: true,
+            backgroundColor: Colors.transparent,
+            elevation: 0.0,
+            leadingWidth: 70.0,
+            automaticallyImplyLeading: false,
+            leading: Builder(
+              builder: (context) => IconButton(
+                highlightColor: Colors.transparent,
+                splashColor: Colors.transparent,
+                icon: Image.asset("images/offcanvas_icon.png"),
+                onPressed: () => Scaffold.of(context).openDrawer(),
+              ),
+            ),
+          ),
+          drawer: SparklesDrawer(),
+          bottomNavigationBar: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  offset: Offset(0.0, -0.2), // (x,y)
+                  blurRadius: 10.0,
+                ),
+              ],
+            ),
+            child: BottomNavigationBar(
+              backgroundColor: Colors.white,
+              elevation: 0.0,
+              showSelectedLabels: false,
+              showUnselectedLabels: false,
+              items: <BottomNavigationBarItem>[
+                BottomNavigationBarItem(
+                  label: "",
+                  icon: SvgPicture.asset(
+                    'images/Vector.svg',
+                    color: HexColor("#C4C6D2"),
+                  ),
+                  activeIcon: SvgPicture.asset(
+                    'images/Vector.svg',
+                    color: HexColor("#6092DC"),
+                  ),
+                ),
+                BottomNavigationBarItem(
+                  label: "",
+                  icon: SvgPicture.asset(
+                    'images/Group.svg',
+                    color: HexColor("#C4C6D2"),
+                  ),
+                  activeIcon: SvgPicture.asset(
+                    'images/Group.svg',
+                    color: HexColor("#6092DC"),
+                  ),
+                ),
+                BottomNavigationBarItem(
+                  label: "",
+                  icon: SvgPicture.asset(
+                    'images/Group 41.svg',
+                    color: HexColor("#C4C6D2"),
+                  ),
+                  activeIcon: SvgPicture.asset(
+                    'images/Group 41.svg',
+                    color: HexColor("#6092DC"),
+                  ),
+                ),
+              ],
+              currentIndex: _selectedIndex,
+              onTap: _onItemTapped,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _MainBody extends StatefulWidget {
+  @override
+  __MainBodyState createState() => __MainBodyState();
+}
+
+class __MainBodyState extends State<_MainBody> {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Container(
+          width: 243.0,
+          height: 135.0,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("images/Mask Group.png"),
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+        Container(
+          width: 300.0,
+          height: 48.0,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(31.0),
+          ),
+          child: ElevatedButton(
+            style: ButtonStyle(
+              elevation: MaterialStateProperty.all(0),
+              backgroundColor: MaterialStateProperty.all(HexColor("#6092DC")),
+              shape: MaterialStateProperty.all(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(31.0),
+                ),
+              ),
+            ),
+            child: Text(
+              'Invite Friends',
+              style: TextStyle(
+                fontSize: 17.0,
+                fontWeight: FontWeight.normal,
+                color: Colors.white,
+              ),
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => _ContactsPage()),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
 }
 
 class _ContactsPage extends StatefulWidget {
