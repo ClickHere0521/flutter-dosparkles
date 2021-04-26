@@ -43,6 +43,10 @@ Future<bool> _askPermissions() async {
   return isAccepted;
 }
 
+int _checkIsInvited(List checkedList) {
+  return checkedList.where((item) => item['invited'] == false).toList().length;
+}
+
 class _ContactsPage extends StatefulWidget {
   @override
   __ContactsPageState createState() => __ContactsPageState();
@@ -50,7 +54,9 @@ class _ContactsPage extends StatefulWidget {
 
 class __ContactsPageState extends State<_ContactsPage> {
   List<Map<String, dynamic>> contactsList = [];
-  List checkedList = [];
+  List<Map<String, dynamic>> filteredList;
+  List<Map<String, dynamic>> checkedList;
+  String searchValue = '';
 
   @override
   void initState() {
@@ -67,6 +73,8 @@ class __ContactsPageState extends State<_ContactsPage> {
                   ? contact.phones.elementAt(0).value
                   : '',
               "name": contact.displayName != null ? contact.displayName : '',
+              "checked": false,
+              "invited": false,
             });
             setState(() {});
           }
@@ -77,6 +85,17 @@ class __ContactsPageState extends State<_ContactsPage> {
 
   @override
   Widget build(BuildContext context) {
+    setState(() {
+      filteredList = contactsList.where((contact) {
+        String name = contact['name'].toLowerCase();
+        String value = searchValue.toLowerCase();
+        return name.indexOf(value) != -1;
+      }).toList();
+
+      checkedList =
+          contactsList.where((contact) => contact['checked'] == true).toList();
+    });
+
     return Stack(
       children: [
         Positioned(
@@ -126,7 +145,21 @@ class __ContactsPageState extends State<_ContactsPage> {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  List foundList = [];
+
+                  for (int i = 0; i < filteredList.length; i++) {
+                    var item = filteredList[i];
+
+                    if (foundList.length == 15) break;
+                    if (item['checked'] == true) continue;
+
+                    item['checked'] = true;
+                    foundList.add(item);
+                  }
+
+                  setState(() {});
+                },
               ),
             ],
           ),
@@ -166,6 +199,11 @@ class __ContactsPageState extends State<_ContactsPage> {
                               child: TextField(
                                 textAlign: TextAlign.left,
                                 keyboardType: TextInputType.visiblePassword,
+                                onChanged: (String value) {
+                                  setState(() {
+                                    searchValue = value;
+                                  });
+                                },
                                 decoration: InputDecoration(
                                   hintText: 'Search friends',
                                   hintStyle: TextStyle(
@@ -194,44 +232,110 @@ class __ContactsPageState extends State<_ContactsPage> {
                             ),
                           ),
                           SizedBox(height: 20),
-                          ListView.builder(
-                            itemCount: contactsList.length,
+                          ListView.separated(
+                            itemCount: filteredList.length,
                             shrinkWrap: true,
                             physics: BouncingScrollPhysics(),
+                            separatorBuilder: (_, index) => Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 4.0),
+                              child: Divider(
+                                color: Colors.white,
+                                thickness: 2.0,
+                                height: 0.0,
+                              ),
+                            ),
                             itemBuilder: (BuildContext context, int index) {
-                              Map contact = contactsList[index];
+                              Map contact = filteredList[index];
 
-                              return ListTile(
-                                title: Text(
-                                  "${contact['name']}",
-                                  style: TextStyle(fontSize: 16.0),
-                                ),
-                                leading: FLAvatar(
-                                  image: Image.asset(
-                                    'images/image-not-found.png',
-                                    fit: BoxFit.cover,
-                                    width: double.infinity,
-                                    height: double.infinity,
-                                  ),
-                                  width: 50.0,
+                              return GestureDetector(
+                                child: Container(
+                                  width: MediaQuery.of(context).size.width,
                                   height: 50.0,
-                                ),
-                                trailing: IconButton(
-                                  icon: Image.asset(
-                                    'images/Group 230.png',
-                                    fit: BoxFit.contain,
-                                    width: 32.0,
-                                    height: 32.0,
+                                  color: HexColor("#FAFCFF"),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      FLAvatar(
+                                        image: Image.asset(
+                                          'images/user-male-circle.png',
+                                          fit: BoxFit.cover,
+                                          width: double.infinity,
+                                          height: double.infinity,
+                                        ),
+                                        width: 50.0,
+                                        height: double.infinity,
+                                      ),
+                                      SizedBox(width: 13.0),
+                                      Expanded(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "${contact['name']}",
+                                              style: TextStyle(
+                                                fontSize: 16.0,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            contact['invited'] == true
+                                                ? Text(
+                                                    "You can resend in 3 days.",
+                                                    style: TextStyle(
+                                                        fontSize: 12.0),
+                                                  )
+                                                : SizedBox.shrink(child: null),
+                                          ],
+                                        ),
+                                      ),
+                                      SizedBox(width: 13.0),
+                                      contact['invited'] == true
+                                          ? ElevatedButton(
+                                              child: Text(
+                                                'Resend',
+                                                style: TextStyle(
+                                                  fontSize: 14.0,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                              style: ButtonStyle(
+                                                backgroundColor:
+                                                    MaterialStateProperty
+                                                        .resolveWith<Color>(
+                                                  (Set<MaterialState> states) {
+                                                    if (states.contains(
+                                                      MaterialState.disabled,
+                                                    )) return Colors.white;
+                                                    return null;
+                                                  },
+                                                ),
+                                              ),
+                                              onPressed: null,
+                                            )
+                                          : Image.asset(
+                                              contact['checked']
+                                                  ? 'images/Group 231.png'
+                                                  : 'images/Group 230.png',
+                                              fit: BoxFit.contain,
+                                              width: 32.0,
+                                              height: 32.0,
+                                            ),
+                                    ],
                                   ),
-                                  onPressed: () {
-                                    List resultList = checkedList
-                                        .where((dynamic item) =>
-                                            item == contact['phone'].toString())
-                                        .toList();
-
-                                    print("111___$resultList");
-                                  },
                                 ),
+                                onTap: () {
+                                  setState(() {
+                                    contact['checked'] = !contact['checked'];
+                                  });
+                                },
                               );
                             },
                           ),
@@ -265,14 +369,29 @@ class __ContactsPageState extends State<_ContactsPage> {
                     ),
                   ),
                   child: Text(
-                    'Invite Friends',
+                    _checkIsInvited(checkedList) == 0
+                        ? 'Invite Friends'
+                        : 'Invite Friends (${_checkIsInvited(checkedList)})',
                     style: TextStyle(
                       fontSize: 16.0,
                       fontWeight: FontWeight.normal,
                       color: Colors.white,
                     ),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    if (checkedList.isNotEmpty) {
+                      for (var i = 0; i < filteredList.length; i++) {
+                        var contact = filteredList[i];
+
+                        if (contact['checked'] == true &&
+                            contact['invited'] == false) {
+                          setState(() {
+                            contact['invited'] = true;
+                          });
+                        }
+                      }
+                    }
+                  },
                 ),
               ),
             ),
