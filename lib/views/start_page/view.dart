@@ -21,17 +21,59 @@ Widget buildView(
     return keepAliveWrapper(page);
   }
 
-  return Scaffold(
-    body: Container(
-      width: double.infinity,
-      child: SingleChildScrollView(
-        child: Image.asset(
-          "images/screenshot.png",
-          fit: BoxFit.cover,
+  return Builder(builder: (BuildContext context) {
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: Stack(
+          children: [
+            Positioned(
+              top: 0,
+              left: 0,
+              child: Image.asset(
+                "images/image 37.png",
+                fit: BoxFit.cover,
+              ),
+            ),
+            Positioned(
+              top: 0,
+              left: 0,
+              child: Image.asset(
+                "images/image 38.png",
+                fit: BoxFit.cover,
+              ),
+            ),
+            Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(height: 67.0),
+                    Image.asset(
+                      "images/The Perfect Gift.png",
+                      fit: BoxFit.cover,
+                    ),
+                    SizedBox(height: 12.0),
+                    Text(
+                      "made for you".toUpperCase(),
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
-    ),
-  );
+    );
+  });
 
   // return Scaffold(
   //   body: FutureBuilder(
