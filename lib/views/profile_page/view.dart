@@ -444,9 +444,10 @@ class __MainBodyState extends State<_MainBody> {
                 SizedBox(height: 17.0),
                 Flexible(
                   fit: FlexFit.loose,
-                  child: ListView.builder(
+                  child: ListView.separated(
                     itemCount: 15,
                     shrinkWrap: true,
+                    separatorBuilder: (context, index) => SizedBox(height: 15),
                     itemBuilder: (context, index) {
                       return Card(
                         child: Container(

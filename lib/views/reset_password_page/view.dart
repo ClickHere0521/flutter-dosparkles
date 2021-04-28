@@ -1,15 +1,17 @@
-import 'dart:convert';
+import 'dart:ui';
 
-import 'package:com.floridainc.dosparkles/views/reset_password_page/state.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
+import 'package:flutter/services.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-
 import '../../actions/api/graphql_client.dart';
-import '../../globalbasestate/store.dart';
 import '../../utils/colors.dart';
 import '../../utils/general.dart';
+import 'state.dart';
+
+import 'package:country_pickers/country.dart';
+import 'package:country_pickers/country_pickers.dart';
 
 Widget buildView(
   ResetPasswordPageState state,
@@ -17,168 +19,262 @@ Widget buildView(
   ViewService viewService,
 ) {
   Adapt.initContext(viewService.context);
-  return Scaffold(
-    appBar: AppBar(
-      title: Text("Reset Password"),
-      centerTitle: true,
-      flexibleSpace: Container(
-        decoration: new BoxDecoration(
-          gradient: new LinearGradient(
-            colors: [HexColor('#3D9FB0'), HexColor('#557084')],
-            begin: const FractionalOffset(0.5, 0.5),
-            end: const FractionalOffset(0.5, 1.0),
-            stops: [0.0, 1.0],
-            tileMode: TileMode.clamp,
-          ),
-        ),
-      ),
-    ),
-    body: Container(
-      color: HexColor('#3D9FB0'),
-      width: double.infinity,
-      height: double.infinity,
-      child: SingleChildScrollView(
-        child: Column(children: [
-          SizedBox(height: 50),
-          ResetForm(),
-          BottomPart(),
-        ]),
-      ),
-    ),
-  );
+  return _MainBody();
 }
 
-class BottomPart extends StatelessWidget {
+class _MainBody extends StatefulWidget {
+  @override
+  __MainBodyState createState() => __MainBodyState();
+}
+
+class __MainBodyState extends State<_MainBody> {
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.center,
-      child: Column(
+    return Container(
+      color: HexColor("#F2F6FA"),
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height,
+      child: Stack(
         children: [
-          SizedBox(height: 20),
-          Text("Or SignUp Using", style: TextStyle(fontSize: 20.0)),
-          SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.fact_check_sharp, size: 40),
-              SizedBox(width: 10),
-              Icon(Icons.g_translate, size: 40),
-            ],
-          ),
-          SizedBox(height: 20),
-          Text(
-            "Already Have an Account ?",
-            style: TextStyle(fontSize: 20.0),
-          ),
-          SizedBox(height: 20),
-          TextButton(
-            child: Text(
-              "Log In",
-              style: TextStyle(color: Colors.white, fontSize: 20.0),
+          Positioned(
+            top: 0,
+            left: 0,
+            width: MediaQuery.of(context).size.width,
+            child: Image.asset(
+              "images/background_lines_top.png",
+              fit: BoxFit.contain,
             ),
-            onPressed: () => null,
-          )
+          ),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            width: MediaQuery.of(context).size.width,
+            child: Image.asset(
+              "images/background_lines_bottom.png",
+              fit: BoxFit.contain,
+            ),
+          ),
+          Scaffold(
+            backgroundColor: Colors.transparent,
+            resizeToAvoidBottomInset: true,
+            appBar: AppBar(
+              centerTitle: true,
+              elevation: 0.0,
+              leadingWidth: 70.0,
+              automaticallyImplyLeading: false,
+              leading: InkWell(
+                child: Image.asset("images/back_button.png"),
+                onTap: () => Navigator.of(context).pop(),
+              ),
+              backgroundColor: Colors.transparent,
+              title: Text(
+                "Change Password",
+                style: TextStyle(
+                  fontSize: 22,
+                  color: HexColor("#53586F"),
+                  fontWeight: FontWeight.w600,
+                  fontFeatures: [FontFeature.enable('smcp')],
+                ),
+              ),
+            ),
+            body: Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              padding: EdgeInsets.only(
+                left: 16.0,
+                right: 16.0,
+              ),
+              child: _InnerPart(),
+            ),
+          ),
         ],
       ),
     );
   }
 }
 
-class ResetForm extends StatefulWidget {
+class _InnerPart extends StatefulWidget {
   @override
-  ResetFormState createState() {
-    return ResetFormState();
-  }
+  __InnerPartState createState() => __InnerPartState();
 }
 
-class ResetFormState extends State<ResetForm> {
+class __InnerPartState extends State<_InnerPart> {
   final _formKey = GlobalKey<FormState>();
-  String passwordValue = '';
-  String repeatPassValue = '';
+  String oldValue = '';
+  bool oldHide = false;
+  String newValue = '';
+  bool newHide = false;
+  String repeatValue = '';
+  bool repeatHide = false;
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.center,
-      child: Container(
-        width: MediaQuery.of(context).size.width / 1.2,
-        child: Form(
-          key: _formKey,
+    return Container(
+      height: MediaQuery.of(context).size.height -
+          Scaffold.of(context).appBarMaxHeight,
+      child: Form(
+        key: _formKey,
+        child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              SizedBox(height: 15),
-              TextFormField(
-                textAlign: TextAlign.center,
-                keyboardType: TextInputType.visiblePassword,
-                onChanged: (value) {
-                  setState(() => passwordValue = value);
-                },
-                decoration: InputDecoration(
-                  hintText: 'Password',
-                  hintStyle: TextStyle(fontSize: 20),
-                  prefixIcon: Icon(Icons.email),
-                  filled: true,
-                  contentPadding: EdgeInsets.all(14),
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(25),
-                  ),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter some text';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 15),
-              TextFormField(
-                textAlign: TextAlign.center,
-                keyboardType: TextInputType.visiblePassword,
-                onChanged: (value) {
-                  setState(() => repeatPassValue = value);
-                },
-                decoration: InputDecoration(
-                  hintText: 'Retype Password',
-                  hintStyle: TextStyle(fontSize: 20),
-                  prefixIcon: Icon(Icons.email),
-                  filled: true,
-                  contentPadding: EdgeInsets.all(14),
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(25),
-                  ),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter some text';
-                  }
-                  return null;
-                },
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: ButtonTheme(
-                  minWidth: 220.0,
-                  height: 45.0,
-                  child: OutlineButton(
-                    child: Text(
-                      'Sign up',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20.0,
+              SizedBox(height: MediaQuery.of(context).size.height * 0.05),
+              Column(
+                children: [
+                  TextFormField(
+                    textAlign: TextAlign.left,
+                    obscureText: oldHide,
+                    decoration: InputDecoration(
+                      hintText: 'Enter here',
+                      hintStyle: TextStyle(fontSize: 16, color: Colors.black26),
+                      contentPadding: EdgeInsets.symmetric(vertical: 5),
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                      labelText: 'Old Password',
+                      labelStyle: TextStyle(
+                        color: Colors.black,
+                        height: 0.7,
+                        fontSize: 22,
+                      ),
+                      suffixIcon: Padding(
+                        padding:
+                            EdgeInsetsDirectional.only(start: 12.0, top: 12.0),
+                        child: InkWell(
+                          child: Icon(
+                            oldHide ? Icons.visibility : Icons.visibility_off,
+                            color: Colors.black26,
+                          ),
+                          onTap: () {
+                            setState(() {
+                              oldHide = !oldHide;
+                            });
+                          },
+                        ),
                       ),
                     ),
-                    shape: StadiumBorder(),
-                    borderSide: BorderSide(color: Colors.white, width: 2),
-                    onPressed: () {
-                      _onSubmit(_formKey, passwordValue, repeatPassValue);
+                    onFieldSubmitted: (value) {},
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter some text';
+                      }
+                      return null;
                     },
                   ),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.04),
+                  TextFormField(
+                    textAlign: TextAlign.left,
+                    obscureText: newHide,
+                    decoration: InputDecoration(
+                      hintText: 'Enter here',
+                      hintStyle: TextStyle(fontSize: 16, color: Colors.black26),
+                      contentPadding: EdgeInsets.symmetric(vertical: 5),
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                      labelText: 'New Password',
+                      labelStyle: TextStyle(
+                        color: Colors.black,
+                        height: 0.7,
+                        fontSize: 22,
+                      ),
+                      suffixIcon: Padding(
+                        padding:
+                            EdgeInsetsDirectional.only(start: 12.0, top: 12.0),
+                        child: InkWell(
+                          child: Icon(
+                            newHide ? Icons.visibility : Icons.visibility_off,
+                            color: Colors.black26,
+                          ),
+                          onTap: () {
+                            setState(() {
+                              newHide = !newHide;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                    onFieldSubmitted: (value) {},
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter some text';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.04),
+                  TextFormField(
+                    textAlign: TextAlign.left,
+                    obscureText: repeatHide,
+                    decoration: InputDecoration(
+                      hintText: 'Enter here',
+                      hintStyle: TextStyle(fontSize: 16, color: Colors.black26),
+                      contentPadding: EdgeInsets.symmetric(vertical: 5),
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                      labelText: 'Confirm Password',
+                      labelStyle: TextStyle(
+                        color: Colors.black,
+                        height: 0.7,
+                        fontSize: 22,
+                      ),
+                      suffixIcon: Padding(
+                        padding:
+                            EdgeInsetsDirectional.only(start: 12.0, top: 12.0),
+                        child: InkWell(
+                          child: Icon(
+                            repeatHide
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                            color: Colors.black26,
+                          ),
+                          onTap: () {
+                            setState(() {
+                              repeatHide = !repeatHide;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                    onFieldSubmitted: (value) {},
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter some text';
+                      }
+                      return null;
+                    },
+                  ),
+                ],
+              ),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.06),
+              Container(
+                width: 300.0,
+                height: 48.0,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(31.0),
+                ),
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                    elevation: MaterialStateProperty.all(0),
+                    backgroundColor:
+                        MaterialStateProperty.all(HexColor("#6092DC")),
+                    shape: MaterialStateProperty.all(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(31.0),
+                      ),
+                    ),
+                  ),
+                  child: Text(
+                    'Save',
+                    style: TextStyle(
+                      fontSize: 17.0,
+                      fontWeight: FontWeight.normal,
+                      color: Colors.white,
+                    ),
+                  ),
+                  onPressed: () {
+                    _onSubmit(_formKey);
+                  },
                 ),
               ),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.20),
             ],
           ),
         ),
@@ -187,18 +283,12 @@ class ResetFormState extends State<ResetForm> {
   }
 }
 
-void _onSubmit(formKey, passwordValue, repeatPassValue) async {
+void _onSubmit(formKey) async {
   if (formKey.currentState.validate()) {
     try {
-      var user = await BaseGraphQLClient.instance.me();
-      QueryResult result = await BaseGraphQLClient.instance.resetPassword(
-        passwordValue,
-        repeatPassValue,
-        user.data['me']['id'],
-      );
-
-      print("____DATA____${result.data}");
-      printWrapped(result.exception.toString());
+      // QueryResult result =
+      //     await BaseGraphQLClient.instance.forgotPassword(emailValue);
+      // if (result.hasException) print(result.exception);
     } catch (e) {
       print(e);
     }
