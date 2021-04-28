@@ -79,6 +79,12 @@ class BaseGraphQLClient {
             }
             name
             country
+            orders {
+              id
+              products {
+                id
+              }
+            }
             avatar {
               url
             }

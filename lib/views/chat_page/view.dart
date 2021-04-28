@@ -187,8 +187,8 @@ class __FirstPageState extends State<_FirstPage> {
                 BottomNavigationBarItem(
                   label: "",
                   icon: SvgPicture.asset(
-                    'images/Group.svg',
-                    color: HexColor("#C4C6D2"),
+                    'images/Group 249.svg',
+                    // color: HexColor("#C4C6D2"),
                   ),
                   // activeIcon: SvgPicture.asset(
                   //   'images/Group.svg',

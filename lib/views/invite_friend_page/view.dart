@@ -289,18 +289,13 @@ class __FirstPageState extends State<_FirstPage> {
           backgroundColor: Colors.transparent,
           resizeToAvoidBottomInset: true,
           appBar: AppBar(
-            title: InkWell(
-              onTap: () {
-                _congratulationsDialog(context);
-              },
-              child: Text(
-                "Invite Friends",
-                style: TextStyle(
-                  fontSize: 22,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                  fontFeatures: [FontFeature.enable('smcp')],
-                ),
+            title: Text(
+              "Invite Friends",
+              style: TextStyle(
+                fontSize: 22,
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+                fontFeatures: [FontFeature.enable('smcp')],
               ),
             ),
             centerTitle: true,
@@ -349,11 +344,11 @@ class __FirstPageState extends State<_FirstPage> {
                 BottomNavigationBarItem(
                   label: "",
                   icon: SvgPicture.asset(
-                    'images/Group.svg',
-                    color: HexColor("#C4C6D2"),
+                    'images/Group 249.svg',
+                    // color: HexColor("#C4C6D2"),
                   ),
                   activeIcon: SvgPicture.asset(
-                    'images/Group.svg',
+                    'images/Group 249.svg',
                     color: HexColor("#6092DC"),
                   ),
                 ),
@@ -533,8 +528,6 @@ class __MainBodyState extends State<_MainBody> {
                           fontWeight: FontWeight.w500,
                           color: HexColor("#6092DC"),
                         ),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 2,
                       ),
                     ),
                     Positioned(
