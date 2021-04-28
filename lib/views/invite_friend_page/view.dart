@@ -11,6 +11,7 @@ import 'package:com.floridainc.dosparkles/actions/adapt.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:share/share.dart';
 import '../../utils/colors.dart';
 import 'state.dart';
 
@@ -389,6 +390,8 @@ class _MainBody extends StatefulWidget {
 }
 
 class __MainBodyState extends State<_MainBody> {
+  String referralLink = "https://2deg.rs/DOVID";
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -524,7 +527,7 @@ class __MainBodyState extends State<_MainBody> {
                         borderRadius: BorderRadius.circular(22.0),
                       ),
                       child: Text(
-                        "https://2deg.rs/DOVID",
+                        referralLink,
                         style: TextStyle(
                           fontSize: 14.0,
                           fontWeight: FontWeight.w500,
@@ -571,7 +574,9 @@ class __MainBodyState extends State<_MainBody> {
                               color: HexColor("#53586F"),
                             ),
                           ),
-                          onPressed: () {},
+                          onPressed: () async {
+                            await Share.share(referralLink);
+                          },
                         ),
                       ),
                     ),
