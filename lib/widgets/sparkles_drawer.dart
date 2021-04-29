@@ -13,6 +13,7 @@ import 'package:com.floridainc.dosparkles/widgets/test_google_signin.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_image_picker.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_share_module.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_stripe_payment.dart';
+import 'package:com.floridainc.dosparkles/widgets/upload_files.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -38,7 +39,7 @@ class SparklesDrawer extends StatelessWidget {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => Blog()),
+                      MaterialPageRoute(builder: (context) => UploadFiles()),
                     );
                   },
                   child: Container(
