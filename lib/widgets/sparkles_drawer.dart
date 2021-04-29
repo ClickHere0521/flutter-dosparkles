@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:com.floridainc.dosparkles/actions/user_info_operate.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/utils/colors.dart';
+import 'package:com.floridainc.dosparkles/widgets/blog.dart';
 import 'package:com.floridainc.dosparkles/widgets/branch/branch_two.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_apple_signin.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_country_code_picker.dart';
@@ -33,95 +34,91 @@ class SparklesDrawer extends StatelessWidget {
             color: HexColor("#6092DC"),
             child: ListView(
               children: [
-                Container(
-                  height: 218.0,
-                  child: DrawerHeader(
-                    child: Stack(
-                      children: [
-                        Positioned(
-                          top: 18.0,
-                          right: 8.0,
-                          child: GestureDetector(
-                            child: SvgPicture.asset(
-                              "images/close_icon.svg",
-                              width: 17.0,
-                              height: 17.0,
-                            ),
-                            onTap: () {
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ),
-                        Align(
-                          alignment: Alignment.center,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Container(
-                                width: 82.0,
-                                height: 82.0,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  border: Border.all(color: Colors.white),
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  child: globalUser.avatarUrl != null
-                                      ? Image.network(
-                                          globalUser.avatarUrl,
-                                          width: double.infinity,
-                                          height: double.infinity,
-                                        )
-                                      : Image.asset(
-                                          "images/image-not-found.png",
-                                          width: double.infinity,
-                                          height: double.infinity,
-                                        ),
-                                ),
-                              ),
-                              SizedBox(height: 12.0),
-                              Text(
-                                globalUser.name != null
-                                    ? globalUser.name
-                                    : "User",
-                                style: TextStyle(
-                                  fontSize: 18.0,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white,
-                                  fontFeatures: [FontFeature.enable('smcp')],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    decoration: BoxDecoration(
-                      color: HexColor("#182465"),
-                      borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(32.0),
-                      ),
-                      gradient: LinearGradient(
-                        colors: [HexColor('#8FADEB'), HexColor('#7397E2')],
-                        begin: const FractionalOffset(0.0, 0.0),
-                        end: const FractionalOffset(1.0, 0.0),
-                        stops: [0.0, 1.0],
-                        tileMode: TileMode.clamp,
-                      ),
-                    ),
-                  ),
-                ),
-                ListTile(
-                  leading: const Icon(Icons.money),
-                  minLeadingWidth: 0.0,
-                  title: Text(
-                    'Forgot Password',
-                    style: TextStyle(color: Colors.white),
-                  ),
+                GestureDetector(
                   onTap: () {
-                    Navigator.of(context)
-                        .pushNamed('forgot_passwordpage', arguments: null);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Blog()),
+                    );
                   },
+                  child: Container(
+                    height: 218.0,
+                    child: DrawerHeader(
+                      child: Stack(
+                        children: [
+                          Positioned(
+                            top: 18.0,
+                            right: 8.0,
+                            child: GestureDetector(
+                              child: SvgPicture.asset(
+                                "images/close_icon.svg",
+                                width: 17.0,
+                                height: 17.0,
+                              ),
+                              onTap: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ),
+                          Align(
+                            alignment: Alignment.center,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  width: 82.0,
+                                  height: 82.0,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    border: Border.all(color: Colors.white),
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    child: globalUser.avatarUrl != null
+                                        ? Image.network(
+                                            globalUser.avatarUrl,
+                                            width: double.infinity,
+                                            height: double.infinity,
+                                          )
+                                        : Image.asset(
+                                            "images/image-not-found.png",
+                                            width: double.infinity,
+                                            height: double.infinity,
+                                          ),
+                                  ),
+                                ),
+                                SizedBox(height: 12.0),
+                                Text(
+                                  globalUser.name != null
+                                      ? globalUser.name
+                                      : "User",
+                                  style: TextStyle(
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
+                                    fontFeatures: [FontFeature.enable('smcp')],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      decoration: BoxDecoration(
+                        color: HexColor("#182465"),
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(32.0),
+                        ),
+                        gradient: LinearGradient(
+                          colors: [HexColor('#8FADEB'), HexColor('#7397E2')],
+                          begin: const FractionalOffset(0.0, 0.0),
+                          end: const FractionalOffset(1.0, 0.0),
+                          stops: [0.0, 1.0],
+                          tileMode: TileMode.clamp,
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
                 ListTile(
                   leading: const Icon(Icons.login),
