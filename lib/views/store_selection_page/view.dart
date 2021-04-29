@@ -88,6 +88,7 @@ class __MainBodyState extends State<_MainBody> {
             body: Container(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
+              color: Colors.white,
               padding: EdgeInsets.only(
                 left: 16.0,
                 right: 16.0,
@@ -140,85 +141,183 @@ class __InnerPartState extends State<_InnerPart> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height -
-          Scaffold.of(context).appBarMaxHeight,
+      // height: MediaQuery.of(context).size.height -
+      //     Scaffold.of(context).appBarMaxHeight,
       child: Form(
         key: _formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            SizedBox(height: 20.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  "Choose default school",
-                  style: TextStyle(fontSize: 16, color: Colors.black),
-                ),
-                DropdownButton(
-                  value: dropDownValue,
-                  elevation: 16,
-                  hint: Text(
-                    "Choose",
-                    style: TextStyle(fontSize: 16, color: Colors.black26),
-                  ),
-                  icon: RotatedBox(
-                    quarterTurns: 1,
-                    child: SvgPicture.asset("images/chevron_right.svg"),
-                  ),
-                  isExpanded: true,
-                  underline: Container(height: 1, color: Colors.black26),
-                  onChanged: (String newValue) {
-                    setState(() {
-                      dropDownValue = newValue;
-                    });
-                  },
-                  items: widget.stores
-                      .map<DropdownMenuItem<String>>((dynamic value) {
-                    return DropdownMenuItem<String>(
-                      value: value.name,
-                      child: Text(
-                        value.name,
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    );
-                  }).toList(),
-                ),
-              ],
-            ),
-            SizedBox(height: MediaQuery.of(context).size.height * 0.06),
-            Container(
-              width: 300.0,
-              height: 48.0,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(31.0),
-              ),
-              child: ElevatedButton(
-                style: ButtonStyle(
-                  elevation: MaterialStateProperty.all(0),
-                  backgroundColor:
-                      MaterialStateProperty.all(HexColor("#6092DC")),
-                  shape: MaterialStateProperty.all(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(31.0),
+                Container(
+                  height: 40.0,
+                  decoration: BoxDecoration(
+                    color: HexColor("#EDEEF2"),
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(22),
+                      bottomLeft: Radius.circular(22),
                     ),
                   ),
-                ),
-                child: Text(
-                  'Save',
-                  style: TextStyle(
-                    fontSize: 17.0,
-                    fontWeight: FontWeight.normal,
-                    color: Colors.white,
+                  child: TextField(
+                    onChanged: (text) {},
+                    style: TextStyle(color: Colors.black, fontSize: 14),
+                    decoration: InputDecoration(
+                      isDense: true,
+                      hintText: 'Enter message',
+                      contentPadding: EdgeInsets.symmetric(
+                        vertical: 12,
+                        horizontal: 10,
+                      ),
+                      fillColor: Colors.white,
+                      hintStyle: new TextStyle(color: Colors.grey),
+                      labelStyle: new TextStyle(color: Colors.white),
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
+                      border: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
+                    ),
                   ),
+                  width: MediaQuery.of(context).size.width * 0.78,
                 ),
-                onPressed: () {
-                  _onSubmit();
+                InkWell(
+                  child: Container(
+                    width: 45,
+                    height: 40.0,
+                    decoration: BoxDecoration(
+                      color: HexColor("#6092DC"),
+                      borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(22),
+                        bottomRight: Radius.circular(22),
+                      ),
+                    ),
+                    child: Icon(
+                      Icons.search,
+                      color: Colors.white,
+                      size: 25.0,
+                    ),
+                  ),
+                  onTap: () {},
+                )
+              ],
+            ),
+            SizedBox(height: 17.0),
+            Flexible(
+              fit: FlexFit.loose,
+              child: ListView.separated(
+                itemCount: 10,
+                separatorBuilder: (context, index) => SizedBox(height: 10.0),
+                itemBuilder: (context, index) {
+                  return Card(
+                    elevation: 5.0,
+                    shadowColor: Colors.grey[50],
+                    child: Container(
+                      width: double.infinity,
+                      height: 85.0,
+                      padding: EdgeInsets.all(6.0),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 73.0,
+                            height: double.infinity,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(16.0),
+                              child: Image.asset(
+                                index.isOdd
+                                    ? "images/Image 9.png"
+                                    : "images/Image 11.png",
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                                height: double.infinity,
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 8.0),
+                          Expanded(
+                            child: Container(
+                              height: double.infinity,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    "Tifaany&Co.",
+                                    style: TextStyle(
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  SizedBox(height: 5.0),
+                                  SizedBox(
+                                    width: double.infinity,
+                                    height: 15.0,
+                                    child: Stack(
+                                      alignment: Alignment.centerLeft,
+                                      children: [
+                                        SvgPicture.asset(
+                                          "images/Group 2131.svg",
+                                        ),
+                                        Positioned(
+                                          top: 0,
+                                          left: 15.0,
+                                          child: Text(
+                                            "72 Street , NY lorem ipsum",
+                                            style: TextStyle(
+                                              fontSize: 13.0,
+                                              color:
+                                                  Colors.black.withOpacity(0.7),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(height: 5.0),
+                                  SizedBox(
+                                    width: double.infinity,
+                                    height: 16.0,
+                                    child: Stack(
+                                      alignment: Alignment.centerLeft,
+                                      children: [
+                                        SvgPicture.asset(
+                                          "images/Group (1).svg",
+                                        ),
+                                        Positioned(
+                                          top: 0,
+                                          left: 15.0,
+                                          child: Text(
+                                            "+92390202020",
+                                            style: TextStyle(
+                                              fontSize: 13.0,
+                                              color:
+                                                  Colors.black.withOpacity(0.7),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
                 },
               ),
             ),
-            SizedBox(height: MediaQuery.of(context).size.height * 0.20),
           ],
         ),
       ),

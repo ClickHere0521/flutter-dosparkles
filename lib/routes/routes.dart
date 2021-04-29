@@ -30,6 +30,7 @@ class Routes {
       'chatmessagespage': ChatMessagesPage(),
       'registerpage': RegisterPage(),
       'addphonepage': AddPhonePage(),
+      'helpsupportpage': HelpSupportPage(),
     },
     visitor: (String path, Page<Object, dynamic> page) {
       if (page.isTypeof<GlobalBaseState>()) {

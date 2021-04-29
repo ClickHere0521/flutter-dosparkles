@@ -208,20 +208,6 @@ class SparklesDrawer extends StatelessWidget {
                   },
                 ),
                 ListTile(
-                  leading: const Icon(Icons.share),
-                  minLeadingWidth: 0.0,
-                  title: Text(
-                    'Share',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => DemoApp()),
-                    );
-                  },
-                ),
-                ListTile(
                   leading: const Icon(Icons.location_on),
                   minLeadingWidth: 0.0,
                   title: Text(
@@ -555,7 +541,7 @@ class SparklesDrawer extends StatelessWidget {
                   ),
                   onTap: () {
                     Navigator.of(context)
-                        .pushReplacementNamed('storeselectionpage');
+                        .pushReplacementNamed('helpsupportpage');
                   },
                 ),
                 SizedBox(height: 140.0),
