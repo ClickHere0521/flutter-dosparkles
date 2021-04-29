@@ -179,6 +179,7 @@ class __InnerPartState extends State<_InnerPart> {
                 ],
               ),
             ),
+            SizedBox(height: 26.0),
             Container(
               width: double.infinity,
               constraints: BoxConstraints(
@@ -201,12 +202,13 @@ class __InnerPartState extends State<_InnerPart> {
               ),
               padding: EdgeInsets.symmetric(horizontal: 16.0),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: 19.0),
                   Text(
                     "Your uploaded files",
                     style: TextStyle(
-                      fontSize: 16.0,
+                      fontSize: 18.0,
                       fontWeight: FontWeight.w700,
                       color: HexColor("#53586F"),
                     ),

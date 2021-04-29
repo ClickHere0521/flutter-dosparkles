@@ -31,6 +31,7 @@ class Routes {
       'registerpage': RegisterPage(),
       'addphonepage': AddPhonePage(),
       'helpsupportpage': HelpSupportPage(),
+      'uploadvideopage': UploadVideo(),
     },
     visitor: (String path, Page<Object, dynamic> page) {
       if (page.isTypeof<GlobalBaseState>()) {
