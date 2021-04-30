@@ -38,10 +38,8 @@ class SparklesDrawer extends StatelessWidget {
               children: [
                 GestureDetector(
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => VideoPlayerNow()),
-                    );
+                    Navigator.of(context)
+                        .pushNamed('storepage', arguments: null);
                   },
                   child: Container(
                     height: 218.0,

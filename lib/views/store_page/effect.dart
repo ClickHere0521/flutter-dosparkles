@@ -60,6 +60,7 @@ void _onAction(Action action, Context<StorePageState> ctx) {}
 
 void onGoToProductPage(Action action, Context<StorePageState> ctx) async {
   ProductItem product = action.payload;
+
   GlobalStore.store.dispatch(GlobalActionCreator.setSelectedProduct(product));
 
   await Navigator.of(ctx.context).pushReplacementNamed('productpage');
