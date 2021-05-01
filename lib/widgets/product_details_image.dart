@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:ui';
 
-import 'package:com.floridainc.dosparkles/widgets/product_details_image.dart';
+import 'package:flutter_dash/flutter_dash.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -61,26 +61,14 @@ void _sendRequest(imagesList, Function setOrderImageData) async {
   setOrderImageData(orderImageData);
 }
 
-Widget buildView(
-    ProductPageState state, Dispatch dispatch, ViewService viewService) {
-  Adapt.initContext(viewService.context);
-  return _FirstPage(
-    dispatch: dispatch,
-    selectedProduct: state.selectedProduct,
-    optionalMaterialSelected: state.optionalMaterialSelected,
-    engraveInputs: state.engraveInputs,
-    productQuantity: state.productQuantity,
-  );
-}
-
-class _FirstPage extends StatefulWidget {
+class ProductDetailsImage extends StatefulWidget {
   final Dispatch dispatch;
   final ProductItem selectedProduct;
   final bool optionalMaterialSelected;
   final List<String> engraveInputs;
   final int productQuantity;
 
-  _FirstPage({
+  ProductDetailsImage({
     this.dispatch,
     this.selectedProduct,
     this.optionalMaterialSelected,
@@ -89,10 +77,10 @@ class _FirstPage extends StatefulWidget {
   });
 
   @override
-  __FirstPageState createState() => __FirstPageState();
+  _ProductDetailsImageState createState() => _ProductDetailsImageState();
 }
 
-class __FirstPageState extends State<_FirstPage> {
+class _ProductDetailsImageState extends State<ProductDetailsImage> {
   int _selectedIndex = 0;
   int currentPage = 0;
 
@@ -125,29 +113,13 @@ class __FirstPageState extends State<_FirstPage> {
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        title: GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ProductDetailsImage(
-                  dispatch: widget.dispatch,
-                  selectedProduct: widget.selectedProduct,
-                  optionalMaterialSelected: widget.optionalMaterialSelected,
-                  engraveInputs: widget.engraveInputs,
-                  productQuantity: widget.productQuantity,
-                ),
-              ),
-            );
-          },
-          child: Text(
-            "Product Details",
-            style: TextStyle(
-              fontSize: 22,
-              color: HexColor("#53586F"),
-              fontWeight: FontWeight.w600,
-              fontFeatures: [FontFeature.enable('smcp')],
-            ),
+        title: Text(
+          "Product Details",
+          style: TextStyle(
+            fontSize: 22,
+            color: HexColor("#53586F"),
+            fontWeight: FontWeight.w600,
+            fontFeatures: [FontFeature.enable('smcp')],
           ),
         ),
         centerTitle: true,
@@ -260,71 +232,145 @@ class __FirstPageState extends State<_FirstPage> {
           ],
         ),
         child: Center(
+          // child: Container(
+          //   width: 300.0,
+          //   height: 42.0,
+          //   decoration: BoxDecoration(
+          //     borderRadius: BorderRadius.circular(31.0),
+          //   ),
+          //   child: ElevatedButton(
+          //     style: ButtonStyle(
+          //       elevation: MaterialStateProperty.all(0.0),
+          //       backgroundColor: MaterialStateProperty.all(HexColor("#6092DC")),
+          //       shape: MaterialStateProperty.all(
+          //         RoundedRectangleBorder(
+          //           borderRadius: BorderRadius.circular(31.0),
+          //         ),
+          //       ),
+          //     ),
+          //     child: Text(
+          //       'Upload your photo',
+          //       style: TextStyle(
+          //         fontSize: 17.0,
+          //         fontWeight: FontWeight.normal,
+          //         color: Colors.white,
+          //       ),
+          //     ),
+          //     onPressed: () {
+          //       Navigator.push(
+          //         context,
+          //         MaterialPageRoute(
+          //           builder: (context) => _ProductCustomization(
+          //             dispatch: widget.dispatch,
+          //             selectedProduct: widget.selectedProduct,
+          //             productQuantity: widget.productQuantity,
+          //             engraveInputs: widget.engraveInputs,
+          //             optionalMaterialSelected: widget.optionalMaterialSelected,
+          //           ),
+          //         ),
+          //       );
+          //     },
+          //   ),
+          // ),
           child: Row(
             children: [
-              Container(
-                width: 163.0,
-                height: 42.0,
-                child: Center(
-                  child: Text(
-                    "\$39,95",
-                    style: TextStyle(
-                      color: HexColor("#53586F"),
-                      fontSize: 22.0,
-                      fontWeight: FontWeight.w700,
+              Expanded(
+                child: Container(
+                  width: double.infinity,
+                  height: 42.0,
+                  constraints: BoxConstraints(
+                    maxWidth: 163.0,
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(31.0),
+                  ),
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                      elevation: MaterialStateProperty.all(0.0),
+                      backgroundColor:
+                          MaterialStateProperty.all(HexColor("#F4F6FD")),
+                      shape: MaterialStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(31.0),
+                          side: BorderSide(
+                            width: 1.0,
+                            color: HexColor("#6092DC"),
+                          ),
+                        ),
+                      ),
                     ),
+                    child: Text(
+                      'Change image',
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.normal,
+                        color: HexColor("#6092DC"),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => _ProductCustomization(
+                            dispatch: widget.dispatch,
+                            selectedProduct: widget.selectedProduct,
+                            productQuantity: widget.productQuantity,
+                            engraveInputs: widget.engraveInputs,
+                            optionalMaterialSelected:
+                                widget.optionalMaterialSelected,
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ),
               ),
-              Container(
-                width: 163.0,
-                height: 42.0,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(31.0),
-                ),
-                child: ElevatedButton(
-                  style: ButtonStyle(
-                    elevation: MaterialStateProperty.all(0.0),
-                    backgroundColor:
-                        MaterialStateProperty.all(HexColor("#6092DC")),
-                    shape: MaterialStateProperty.all(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(31.0),
+              SizedBox(width: 7.0),
+              Expanded(
+                child: Container(
+                  width: double.infinity,
+                  height: 42.0,
+                  constraints: BoxConstraints(
+                    maxWidth: 163.0,
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(31.0),
+                  ),
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                      elevation: MaterialStateProperty.all(0.0),
+                      backgroundColor:
+                          MaterialStateProperty.all(HexColor("#6092DC")),
+                      shape: MaterialStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(31.0),
+                        ),
                       ),
                     ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      SvgPicture.asset("images/Group 423423.svg"),
-                      SizedBox(width: 4.0),
-                      Text(
-                        'Add to cart',
-                        style: TextStyle(
-                          fontSize: 17.0,
-                          fontWeight: FontWeight.normal,
-                          color: Colors.white,
-                        ),
+                    child: Text(
+                      'Add to cart',
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.normal,
+                        color: Colors.white,
                       ),
-                    ],
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => _ProductCustomization(
-                          dispatch: widget.dispatch,
-                          selectedProduct: widget.selectedProduct,
-                          productQuantity: widget.productQuantity,
-                          engraveInputs: widget.engraveInputs,
-                          optionalMaterialSelected:
-                              widget.optionalMaterialSelected,
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => _ProductCustomization(
+                            dispatch: widget.dispatch,
+                            selectedProduct: widget.selectedProduct,
+                            productQuantity: widget.productQuantity,
+                            engraveInputs: widget.engraveInputs,
+                            optionalMaterialSelected:
+                                widget.optionalMaterialSelected,
+                          ),
                         ),
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 ),
               ),
             ],
@@ -365,6 +411,75 @@ class __MainBodyState extends State<_MainBody> {
         mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(height: 20.0),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Image.asset("images/Group 203.png"),
+                  Dash(
+                    direction: Axis.horizontal,
+                    length: 90,
+                    dashLength: 10,
+                    dashColor: HexColor("#C4C6D2"),
+                  ),
+                  Image.asset("images/Group 204.png"),
+                  Dash(
+                    direction: Axis.horizontal,
+                    length: 90,
+                    dashLength: 10,
+                    dashColor: HexColor("#C4C6D2"),
+                  ),
+                  Image.asset("images/Group 204.png"),
+                ],
+              ),
+              SizedBox(height: 7.0),
+              Container(
+                width: 320.0,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Upload Photo",
+                      style: TextStyle(
+                        fontSize: 14.0,
+                        fontWeight: FontWeight.w700,
+                        foreground: Paint()
+                          ..shader = LinearGradient(
+                            colors: [HexColor('#CBD3FD'), HexColor('#8DA3EA')],
+                            begin: const FractionalOffset(0.0, 0.0),
+                            end: const FractionalOffset(1.0, 0.0),
+                            stops: [0.0, 1.0],
+                            tileMode: TileMode.clamp,
+                          ).createShader(Rect.fromLTWH(0.0, 0.0, 200.0, 70.0)),
+                      ),
+                    ),
+                    Text(
+                      "Confirm Design",
+                      style: TextStyle(
+                        fontSize: 14.0,
+                        fontWeight: FontWeight.w700,
+                        color: HexColor("#C4C6D2"),
+                      ),
+                    ),
+                    Text(
+                      "Customization",
+                      style: TextStyle(
+                        fontSize: 14.0,
+                        fontWeight: FontWeight.w700,
+                        color: HexColor("#C4C6D2"),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 20.0),
           Swiper(
             itemBuilder: (BuildContext context, int index) {
               return Image.network(
@@ -385,77 +500,219 @@ class __MainBodyState extends State<_MainBody> {
             ),
           ),
           SizedBox(height: 21.0),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Container(
-                width: 80.0,
-                height: 64.0,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.0),
-                  gradient: LinearGradient(
-                    colors: [HexColor('#E3D3FF'), HexColor('#C2A2FA')],
-                    begin: const FractionalOffset(0.0, 0.0),
-                    end: const FractionalOffset(1.0, 0.0),
-                    stops: [0.0, 1.0],
-                    tileMode: TileMode.clamp,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Container(
+                    width: double.infinity,
+                    height: 40.0,
+                    constraints: BoxConstraints(
+                      maxWidth: 155.0,
+                    ),
+                    decoration: BoxDecoration(
+                      color: HexColor("#CCD4FE"),
+                      borderRadius: BorderRadius.circular(10.0),
+                      border: Border.all(color: HexColor("#B3C1F2")),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey[300],
+                          offset: Offset(0.0, 0.0), // (x,y)
+                          blurRadius: 5.0,
+                        ),
+                      ],
+                    ),
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              width: 42.5,
+                              height: 42.5,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10.0),
+                                child: Image.asset(
+                                  "images/image 535435.png",
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 5.5),
+                            Text(
+                              "Stainless",
+                              style: TextStyle(
+                                fontSize: 16.0,
+                                color: HexColor("#53586F"),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Positioned.fill(
+                          top: -7.0,
+                          child: Align(
+                            alignment: Alignment.topRight,
+                            child: Container(
+                              width: 18.0,
+                              height: 18.0,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white,
+                              ),
+                              child: Center(
+                                child: SvgPicture.asset(
+                                  "images/checed_icon.svg",
+                                  width: 11.0,
+                                  height: 8.0,
+                                  color: HexColor("#6092DC"),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                child: Center(
-                  child: SvgPicture.asset(
-                    "images/Group 12231221.svg",
-                    width: 70.0,
-                    height: 52.0,
-                    fit: BoxFit.contain,
+                SizedBox(width: 11.0),
+                Expanded(
+                  child: Container(
+                    width: double.infinity,
+                    height: 40.0,
+                    constraints: BoxConstraints(
+                      maxWidth: 155.0,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey[300],
+                          offset: Offset(0.0, 0.0), // (x,y)
+                          blurRadius: 5.0,
+                        ),
+                      ],
+                    ),
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              width: 42.5,
+                              height: 42.5,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10.0),
+                                child: Image.asset(
+                                  "images/image 12424.png",
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 5.5),
+                            Text(
+                              "18K Gold Fish",
+                              style: TextStyle(
+                                fontSize: 16.0,
+                                color: HexColor("#53586F"),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              Container(
-                width: 80.0,
-                height: 64.0,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.0),
-                  gradient: LinearGradient(
-                    colors: [HexColor('#E3D3FF'), HexColor('#C2A2FA')],
-                    begin: const FractionalOffset(0.0, 0.0),
-                    end: const FractionalOffset(1.0, 0.0),
-                    stops: [0.0, 1.0],
-                    tileMode: TileMode.clamp,
-                  ),
-                ),
-                child: Center(
-                  child: SvgPicture.asset(
-                    "images/Group 123.svg",
-                    width: 70.0,
-                    height: 52.0,
-                    fit: BoxFit.contain,
-                  ),
-                ),
-              ),
-              Container(
-                width: 80.0,
-                height: 64.0,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.0),
-                  gradient: LinearGradient(
-                    colors: [HexColor('#E3D3FF'), HexColor('#C2A2FA')],
-                    begin: const FractionalOffset(0.0, 0.0),
-                    end: const FractionalOffset(1.0, 0.0),
-                    stops: [0.0, 1.0],
-                    tileMode: TileMode.clamp,
-                  ),
-                ),
-                child: Center(
-                  child: SvgPicture.asset(
-                    "images/Group 126.svg",
-                    width: 70.0,
-                    height: 52.0,
-                    fit: BoxFit.contain,
-                  ),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          //   children: [
+          //     Container(
+          //       width: 80.0,
+          //       height: 64.0,
+          //       decoration: BoxDecoration(
+          //         borderRadius: BorderRadius.circular(10.0),
+          //         gradient: LinearGradient(
+          //           colors: [HexColor('#E3D3FF'), HexColor('#C2A2FA')],
+          //           begin: const FractionalOffset(0.0, 0.0),
+          //           end: const FractionalOffset(1.0, 0.0),
+          //           stops: [0.0, 1.0],
+          //           tileMode: TileMode.clamp,
+          //         ),
+          //       ),
+          //       child: Center(
+          //         child: SvgPicture.asset(
+          //           "images/Group 12231221.svg",
+          //           width: 70.0,
+          //           height: 52.0,
+          //           color: Colors.white,
+          //           fit: BoxFit.contain,
+          //         ),
+          //       ),
+          //     ),
+          //     Container(
+          //       width: 80.0,
+          //       height: 64.0,
+          //       decoration: BoxDecoration(
+          //         borderRadius: BorderRadius.circular(10.0),
+          //         gradient: LinearGradient(
+          //           colors: [HexColor('#E3D3FF'), HexColor('#C2A2FA')],
+          //           begin: const FractionalOffset(0.0, 0.0),
+          //           end: const FractionalOffset(1.0, 0.0),
+          //           stops: [0.0, 1.0],
+          //           tileMode: TileMode.clamp,
+          //         ),
+          //       ),
+          //       child: Center(
+          //         child: SvgPicture.asset(
+          //           "images/Group 123.svg",
+          //           width: 70.0,
+          //           height: 52.0,
+          //           color: Colors.white,
+          //           fit: BoxFit.contain,
+          //         ),
+          //       ),
+          //     ),
+          //     Container(
+          //       width: 80.0,
+          //       height: 64.0,
+          //       decoration: BoxDecoration(
+          //         borderRadius: BorderRadius.circular(10.0),
+          //         gradient: LinearGradient(
+          //           colors: [HexColor('#E3D3FF'), HexColor('#C2A2FA')],
+          //           begin: const FractionalOffset(0.0, 0.0),
+          //           end: const FractionalOffset(1.0, 0.0),
+          //           stops: [0.0, 1.0],
+          //           tileMode: TileMode.clamp,
+          //         ),
+          //       ),
+          //       child: Center(
+          //         child: SvgPicture.asset(
+          //           "images/Group 126.svg",
+          //           width: 70.0,
+          //           height: 52.0,
+          //           color: Colors.white,
+          //           fit: BoxFit.contain,
+          //         ),
+          //       ),
+          //     ),
+          //   ],
+          // ),
           SizedBox(height: 19.0),
           Container(
             width: double.infinity,
@@ -481,7 +738,7 @@ class __MainBodyState extends State<_MainBody> {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 37.0),
                   child: Text(
-                    "Modal Launch +22% Conversion",
+                    "Name of Jewerly Upload Photo",
                     style: TextStyle(
                       color: HexColor("#53586F"),
                       fontSize: 18.0,
@@ -490,78 +747,43 @@ class __MainBodyState extends State<_MainBody> {
                   ),
                 ),
                 SizedBox(height: 21.0),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 37.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    RichText(
+                      text: TextSpan(
+                        style: DefaultTextStyle.of(context).style,
                         children: [
-                          RichText(
-                            text: TextSpan(
-                              style: DefaultTextStyle.of(context).style,
-                              children: [
-                                TextSpan(
-                                  text: "\$79,95",
-                                  style: TextStyle(
-                                    color: HexColor("#53586F").withOpacity(.5),
-                                    fontSize: 18.0,
-                                    decoration: TextDecoration.lineThrough,
-                                  ),
-                                ),
-                                TextSpan(
-                                  text: "\$39,95",
-                                  style: TextStyle(
-                                    color: HexColor("#53586F"),
-                                    fontSize: 24.0,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                              ],
+                          TextSpan(
+                            text: "\$79,95",
+                            style: TextStyle(
+                              color: HexColor("#53586F").withOpacity(.5),
+                              fontSize: 18.0,
+                              decoration: TextDecoration.lineThrough,
                             ),
                           ),
-                          SizedBox(height: 3.0),
-                          Text(
-                            "You Save: \$40 (50%)",
+                          TextSpan(
+                            text: "\$39,95",
                             style: TextStyle(
-                              fontSize: 12.0,
-                              color: HexColor("#27AE60"),
+                              color: HexColor("#53586F"),
+                              fontSize: 24.0,
+                              fontWeight: FontWeight.w700,
                             ),
                           ),
                         ],
                       ),
-                      Container(
-                        width: 120.0,
-                        height: 34.0,
-                        child: TouchSpin(
-                          value: _productQuantity,
-                          onChanged: (val) {
-                            print('TouchSpin val: $val');
-                            widget.dispatch(
-                              ProductPageActionCreator.onSetProductCount(
-                                val.toInt(),
-                              ),
-                            );
-                          },
-                          min: 1,
-                          max: 100,
-                          step: 1,
-                          iconSize: 20.0,
-                          subtractIcon: Icon(Icons.remove),
-                          addIcon: Icon(Icons.add),
-                          iconPadding: EdgeInsets.all(0),
-                          textStyle: TextStyle(fontSize: 18),
-                          iconActiveColor: Colors.white,
-                          iconDisabledColor: Colors.grey,
-                          displayFormat: NumberFormat("###"),
-                        ),
+                    ),
+                    SizedBox(height: 3.0),
+                    Text(
+                      "You Save: \$40 (50%)",
+                      style: TextStyle(
+                        fontSize: 12.0,
+                        color: HexColor("#27AE60"),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
                 SizedBox(height: 10.0),
                 Row(
@@ -639,16 +861,79 @@ class __MainBodyState extends State<_MainBody> {
                 ),
                 SizedBox(height: 16.0),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Text(
-                    "Purchase This  Best - Seller and We Guarantee it will Exceed Your Highest Expectations. Purchase This Best - Seller and We Guarantee it will Exceed Your Highest Expectations! Purchase This  Best - Seller and We Guarantee it will Exceed Your Highest Expectations !",
-                    style: TextStyle(
-                      fontSize: 11.0,
-                      fontWeight: FontWeight.w300,
-                    ),
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Description",
+                        style: TextStyle(
+                          fontSize: 11.0,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      Text(
+                        "Surprise someone you love with this unique and elegant jewelry item 🎁.",
+                        style: TextStyle(
+                          fontSize: 11.0,
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                      Text(
+                        "We say 'UNIQUE' because each piece is different when you provide your photo.",
+                        style: TextStyle(
+                          fontSize: 11.0,
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                      Text(
+                        "This hand-crafted piece will never fade and is built to last!",
+                        style: TextStyle(
+                          fontSize: 11.0,
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                      SizedBox(height: 8.0),
+                      Text(
+                        "Specifics",
+                        style: TextStyle(
+                          fontSize: 11.0,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      Text(
+                        "Made in the U.S.A",
+                        style: TextStyle(
+                          fontSize: 11.0,
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                      Text(
+                        "316 Steel or 18k Gold Finish",
+                        style: TextStyle(
+                          fontSize: 11.0,
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                      Text(
+                        "Adjustable Necklace Chain Measures 18'-22'",
+                        style: TextStyle(
+                          fontSize: 11.0,
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                      Text(
+                        "Water-Resistant",
+                        style: TextStyle(
+                          fontSize: 11.0,
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                SizedBox(height: 35.0),
+                SizedBox(height: 20.0),
               ],
             ),
           ),

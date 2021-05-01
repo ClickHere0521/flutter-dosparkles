@@ -1,8 +1,10 @@
 import 'dart:ui';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/models/models.dart';
 import 'package:com.floridainc.dosparkles/views/store_selection_page/action.dart';
+import 'package:com.floridainc.dosparkles/widgets/sparkles_drawer.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
@@ -23,81 +25,163 @@ Widget buildView(
   ViewService viewService,
 ) {
   Adapt.initContext(viewService.context);
-  return _MainBody(dispatch: dispatch);
+  return _MainBodyPage(dispatch: dispatch);
 }
 
-class _MainBody extends StatefulWidget {
+class _MainBodyPage extends StatefulWidget {
   final Dispatch dispatch;
 
-  _MainBody({Key key, this.dispatch}) : super(key: key);
+  const _MainBodyPage({this.dispatch});
 
   @override
-  __MainBodyState createState() => __MainBodyState();
+  __MainBodyPageState createState() => __MainBodyPageState();
 }
 
-class __MainBodyState extends State<_MainBody> {
+class __MainBodyPageState extends State<_MainBodyPage> {
+  int _selectedIndex = 0;
+  int currentPage = 0;
+
+  void _onItemTapped(int index) {
+    setState(() => _selectedIndex = index);
+
+    if (index == 0) {
+      var globalState = GlobalStore.store.getState();
+      var storeFavorite = globalState.user.storeFavorite;
+
+      if (storeFavorite != null)
+        Navigator.of(context).pushReplacementNamed('storepage');
+      else
+        Navigator.of(context).pushReplacementNamed('storeselectionpage');
+    } else if (index == 2) {
+      Navigator.of(context).pushReplacementNamed('invite_friendpage');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: HexColor("#F2F6FA"),
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height,
-      child: Stack(
-        children: [
-          Positioned(
-            top: 0,
-            left: 0,
+    return Stack(
+      children: [
+        Positioned(
+          top: 0,
+          left: 0,
+          child: Container(
             width: MediaQuery.of(context).size.width,
-            child: Image.asset(
-              "images/background_lines_top.png",
-              fit: BoxFit.contain,
+            height: 181.0,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [HexColor('#8FADEB'), HexColor('#7397E2')],
+                begin: const FractionalOffset(0.0, 0.0),
+                end: const FractionalOffset(1.0, 0.0),
+                stops: [0.0, 1.0],
+                tileMode: TileMode.clamp,
+              ),
             ),
           ),
-          Positioned(
-            bottom: 0,
-            left: 0,
+        ),
+        Scaffold(
+          body: Container(
             width: MediaQuery.of(context).size.width,
-            child: Image.asset(
-              "images/background_lines_bottom.png",
-              fit: BoxFit.contain,
+            constraints:
+                BoxConstraints(minHeight: MediaQuery.of(context).size.height),
+            decoration: BoxDecoration(
+              color: HexColor("#FAFCFF"),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(32.0),
+                topRight: Radius.circular(32.0),
+              ),
             ),
+            child: AnimatedSwitcher(
+              duration: Duration(milliseconds: 300),
+              child: _InnerPart(
+                dispatch: widget.dispatch,
+              ),
+            ),
+            padding: EdgeInsets.symmetric(horizontal: 16.0),
           ),
-          Scaffold(
+          backgroundColor: Colors.transparent,
+          resizeToAvoidBottomInset: true,
+          appBar: AppBar(
+            title: Text(
+              "Choose your school",
+              style: TextStyle(
+                fontSize: 22,
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+                fontFeatures: [FontFeature.enable('smcp')],
+              ),
+            ),
+            centerTitle: true,
             backgroundColor: Colors.transparent,
-            resizeToAvoidBottomInset: true,
-            appBar: AppBar(
-              centerTitle: true,
-              elevation: 0.0,
-              leadingWidth: 70.0,
-              automaticallyImplyLeading: false,
-              leading: InkWell(
-                child: Image.asset("images/back_button.png"),
-                onTap: () => Navigator.of(context).pop(),
+            elevation: 0.0,
+            leadingWidth: 70.0,
+            automaticallyImplyLeading: false,
+            leading: Builder(
+              builder: (context) => IconButton(
+                highlightColor: Colors.transparent,
+                splashColor: Colors.transparent,
+                icon: Image.asset("images/offcanvas_icon.png"),
+                onPressed: () => Scaffold.of(context).openDrawer(),
               ),
-              backgroundColor: Colors.transparent,
-              title: Text(
-                "Location",
-                style: TextStyle(
-                  fontSize: 22,
-                  color: HexColor("#53586F"),
-                  fontWeight: FontWeight.w600,
-                  fontFeatures: [FontFeature.enable('smcp')],
-                ),
-              ),
-            ),
-            body: Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              color: Colors.white,
-              padding: EdgeInsets.only(
-                left: 16.0,
-                right: 16.0,
-              ),
-              child: _InnerPart(dispatch: widget.dispatch),
             ),
           ),
-        ],
-      ),
+          drawer: SparklesDrawer(),
+          bottomNavigationBar: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  offset: Offset(0.0, -0.2), // (x,y)
+                  blurRadius: 10.0,
+                ),
+              ],
+            ),
+            child: BottomNavigationBar(
+              backgroundColor: Colors.white,
+              elevation: 0.0,
+              showSelectedLabels: false,
+              showUnselectedLabels: false,
+              items: <BottomNavigationBarItem>[
+                BottomNavigationBarItem(
+                  label: "",
+                  icon: SvgPicture.asset(
+                    'images/Group 121.svg',
+                    color: HexColor("#C4C6D2"),
+                  ),
+                  activeIcon: SvgPicture.asset(
+                    'images/Vector (1)121.svg',
+                    color: HexColor("#C4C6D2"),
+                  ),
+                ),
+                BottomNavigationBarItem(
+                  label: "",
+                  icon: SvgPicture.asset(
+                    'images/Group 253.svg',
+                    // color: HexColor("#C4C6D2"),
+                  ),
+                  activeIcon: SvgPicture.asset(
+                    'images/Group 249.svg',
+                    // color: HexColor("#C4C6D2"),
+                  ),
+                ),
+                BottomNavigationBarItem(
+                  label: "",
+                  icon: SvgPicture.asset(
+                    'images/Group 255.svg',
+                    color: HexColor("#C4C6D2"),
+                  ),
+                  activeIcon: SvgPicture.asset(
+                    'images/Vector 1212.svg',
+                    color: HexColor("#C4C6D2"),
+                  ),
+                ),
+              ],
+              currentIndex: _selectedIndex,
+              onTap: _onItemTapped,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -115,18 +199,6 @@ class _InnerPart extends StatefulWidget {
 class __InnerPartState extends State<_InnerPart> {
   final _formKey = GlobalKey<FormState>();
   String dropDownValue;
-
-  void _onSubmit() async {
-    for (var i = 0; i < widget.stores.length; i++) {
-      StoreItem store = widget.stores[i];
-
-      if (store.name == dropDownValue) {
-        widget.dispatch(
-          StoreSelectionPageActionCreator.onStoreSelected(store),
-        );
-      }
-    }
-  }
 
   @override
   void initState() {
@@ -213,107 +285,120 @@ class __InnerPartState extends State<_InnerPart> {
             Flexible(
               fit: FlexFit.loose,
               child: ListView.separated(
-                itemCount: 10,
+                itemCount: widget.stores.length,
                 separatorBuilder: (context, index) => SizedBox(height: 10.0),
                 itemBuilder: (context, index) {
-                  return Card(
-                    elevation: 5.0,
-                    shadowColor: Colors.grey[50],
-                    child: Container(
-                      width: double.infinity,
-                      height: 85.0,
-                      padding: EdgeInsets.all(6.0),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 73.0,
-                            height: double.infinity,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(16.0),
-                              child: Image.asset(
-                                index.isOdd
-                                    ? "images/Image 9.png"
-                                    : "images/Image 11.png",
-                                fit: BoxFit.cover,
-                                width: double.infinity,
-                                height: double.infinity,
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 8.0),
-                          Expanded(
-                            child: Container(
+                  return InkWell(
+                    child: Card(
+                      elevation: 5.0,
+                      shadowColor: Colors.grey[50],
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16.0),
+                      ),
+                      child: Container(
+                        width: double.infinity,
+                        height: 85.0,
+                        padding: EdgeInsets.all(6.0),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16.0),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 73.0,
                               height: double.infinity,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    "Tifaany&Co.",
-                                    style: TextStyle(
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  SizedBox(height: 5.0),
-                                  SizedBox(
-                                    width: double.infinity,
-                                    height: 15.0,
-                                    child: Stack(
-                                      alignment: Alignment.centerLeft,
-                                      children: [
-                                        SvgPicture.asset(
-                                          "images/Group 2131.svg",
-                                        ),
-                                        Positioned(
-                                          top: 0,
-                                          left: 15.0,
-                                          child: Text(
-                                            "72 Street , NY lorem ipsum",
-                                            style: TextStyle(
-                                              fontSize: 13.0,
-                                              color:
-                                                  Colors.black.withOpacity(0.7),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(height: 5.0),
-                                  SizedBox(
-                                    width: double.infinity,
-                                    height: 16.0,
-                                    child: Stack(
-                                      alignment: Alignment.centerLeft,
-                                      children: [
-                                        SvgPicture.asset(
-                                          "images/Group (1).svg",
-                                        ),
-                                        Positioned(
-                                          top: 0,
-                                          left: 15.0,
-                                          child: Text(
-                                            "+92390202020",
-                                            style: TextStyle(
-                                              fontSize: 13.0,
-                                              color:
-                                                  Colors.black.withOpacity(0.7),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(16.0),
+                                child: CachedNetworkImage(
+                                  imageUrl: widget.stores[index].thumbnail,
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                            SizedBox(width: 8.0),
+                            Expanded(
+                              child: Container(
+                                height: double.infinity,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      widget.stores[index].name,
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    SizedBox(height: 5.0),
+                                    SizedBox(
+                                      width: double.infinity,
+                                      height: 15.0,
+                                      child: Stack(
+                                        alignment: Alignment.centerLeft,
+                                        children: [
+                                          SvgPicture.asset(
+                                            "images/Group 2131.svg",
+                                          ),
+                                          Positioned(
+                                            top: 0,
+                                            left: 15.0,
+                                            child: Text(
+                                              widget.stores[index].address,
+                                              style: TextStyle(
+                                                fontSize: 13.0,
+                                                color: Colors.black
+                                                    .withOpacity(0.7),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(height: 5.0),
+                                    SizedBox(
+                                      width: double.infinity,
+                                      height: 16.0,
+                                      child: Stack(
+                                        alignment: Alignment.centerLeft,
+                                        children: [
+                                          SvgPicture.asset(
+                                            "images/Group (1).svg",
+                                          ),
+                                          Positioned(
+                                            top: 0,
+                                            left: 15.0,
+                                            child: Text(
+                                              widget.stores[index].phone,
+                                              style: TextStyle(
+                                                fontSize: 13.0,
+                                                color: Colors.black
+                                                    .withOpacity(0.7),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
+                    onTap: () {
+                      widget.dispatch(
+                        StoreSelectionPageActionCreator.onStoreSelected(
+                          widget.stores[index],
+                        ),
+                      );
+                    },
                   );
                 },
               ),

@@ -164,8 +164,8 @@ class __InnerPartState extends State<_InnerPart> {
                             foreground: Paint()
                               ..shader = LinearGradient(
                                 colors: [
-                                  HexColor('#8FADEB'),
-                                  HexColor('#7397E2')
+                                  HexColor('#CBD3FD'),
+                                  HexColor('#8DA3EA')
                                 ],
                                 begin: const FractionalOffset(0.0, 0.0),
                                 end: const FractionalOffset(1.0, 0.0),
@@ -479,8 +479,8 @@ class __InnerCardPartState extends State<_InnerCardPart> {
                             foreground: Paint()
                               ..shader = LinearGradient(
                                 colors: [
-                                  HexColor('#8FADEB').withOpacity(.5),
-                                  HexColor('#7397E2').withOpacity(.5),
+                                  HexColor('#CBD3FD'),
+                                  HexColor('#8DA3EA')
                                 ],
                                 begin: const FractionalOffset(0.0, 0.0),
                                 end: const FractionalOffset(1.0, 0.0),
@@ -498,8 +498,8 @@ class __InnerCardPartState extends State<_InnerCardPart> {
                             foreground: Paint()
                               ..shader = LinearGradient(
                                 colors: [
-                                  HexColor('#8FADEB'),
-                                  HexColor('#7397E2')
+                                  HexColor('#CBD3FD'),
+                                  HexColor('#8DA3EA')
                                 ],
                                 begin: const FractionalOffset(0.0, 0.0),
                                 end: const FractionalOffset(1.0, 0.0),
