@@ -71,11 +71,14 @@ dependencies:
   bubble: ^1.2.1
   flutter_svg:
   cupertino_icons: ^1.0.0
+  flutter_dash: ^0.0.1
+  dotted_border: ^2.0.0
   video_player:
     git:
       url: https://github.com/sanekyy/plugins.git
       ref: caching
       path: packages/video_player/video_player
+  
 
 dev_dependencies:
   flutter_test:

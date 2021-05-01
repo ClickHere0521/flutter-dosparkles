@@ -1,120 +1,173 @@
-import 'package:fish_redux/fish_redux.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:com.floridainc.dosparkles/actions/adapt.dart';
-import 'package:com.floridainc.dosparkles/style/themestyle.dart';
-import 'package:com.floridainc.dosparkles/utils/colors.dart';
-import 'package:com.floridainc.dosparkles/widgets/sparkles_drawer.dart';
-
-import 'package:com.floridainc.dosparkles/models/models.dart';
-
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
-import 'package:com.floridainc.dosparkles/widgets/touch_spin.dart';
-import 'package:intl/intl.dart';
+import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:com.floridainc.dosparkles/actions/adapt.dart';
+import 'package:com.floridainc.dosparkles/actions/api/graphql_client.dart';
+import 'package:com.floridainc.dosparkles/actions/app_config.dart';
+import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
+import 'package:com.floridainc.dosparkles/models/models.dart';
+import 'package:com.floridainc.dosparkles/utils/colors.dart';
+import 'package:com.floridainc.dosparkles/views/cart_page/action.dart';
+import 'package:com.floridainc.dosparkles/views/cart_page/state.dart';
+import 'package:com.floridainc.dosparkles/views/profile_page/state.dart';
+import 'package:com.floridainc.dosparkles/views/store_page/action.dart';
+import 'package:com.floridainc.dosparkles/views/store_page/state.dart';
+import 'package:com.floridainc.dosparkles/widgets/confirm_video.dart';
+import 'package:com.floridainc.dosparkles/widgets/custom_switch.dart';
+import 'package:com.floridainc.dosparkles/widgets/sparkles_drawer.dart';
+import 'package:com.floridainc.dosparkles/widgets/touch_spin.dart';
+import 'package:fish_redux/fish_redux.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:stripe_payment/stripe_payment.dart';
-
-import 'action.dart';
-import 'state.dart';
+import 'package:video_player/video_player.dart';
 
 Widget buildView(
     CartPageState state, Dispatch dispatch, ViewService viewService) {
   Adapt.initContext(viewService.context);
-  return Scaffold(
-    body: Container(
-      alignment: Alignment.center,
-      width: double.infinity,
-      height: Adapt.screenH(),
-      color: HexColor('#50DDE1'),
-      child: _MainBody(
-        animationController: state.animationController,
-        dispatch: dispatch,
-        shoppingCart: state.shoppingCart,
-      ),
-    ),
-    appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(60),
-        child: _AppBar(dispatch: dispatch, shoppingCart: state.shoppingCart)),
-    drawer: SparklesDrawer(),
+  return _FirstPage(
+    dispatch: dispatch,
+    shoppingCart: state.shoppingCart,
   );
 }
 
-class _AppBar extends StatelessWidget {
-  final List<CartItem> shoppingCart;
+class _FirstPage extends StatefulWidget {
   final Dispatch dispatch;
+  final List<CartItem> shoppingCart;
 
-  const _AppBar({this.shoppingCart, this.dispatch});
+  const _FirstPage({this.dispatch, this.shoppingCart});
 
   @override
+  __FirstPageState createState() => __FirstPageState();
+}
+
+class __FirstPageState extends State<_FirstPage> {
+  @override
   Widget build(BuildContext context) {
-    return AppBar(
-      title: Center(
-          child: Text("Cart"
-              // AppLocalizations.of(context).cartPageTitle
-              )),
-      flexibleSpace: Container(
-        decoration: new BoxDecoration(
-          gradient: new LinearGradient(
-            colors: [HexColor('#3D9FB0'), HexColor('#557084')],
-            begin: const FractionalOffset(0.5, 0.5),
-            end: const FractionalOffset(0.5, 1.0),
-            stops: [0.0, 1.0],
-            tileMode: TileMode.clamp,
-          ),
-        ),
-      ),
-      actions: <Widget>[
-        new Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: new Container(
-            height: 150.0,
-            width: 30.0,
-            child: new GestureDetector(
-              onTap: () {
-                // if (shoppingCart.length > 0) {
-                //   dispatch(ProductPageActionCreator.onGoToCart());
-                // }
-              },
-              child: new Stack(
-                children: <Widget>[
-                  new IconButton(
-                    icon: new Icon(
-                      Icons.shopping_cart,
-                      color: Colors.white,
-                    ),
-                    onPressed: () => null,
-                  ),
-                  shoppingCart.length == 0
-                      ? new Container()
-                      : new Positioned(
-                          left: 5,
-                          child: new Stack(
-                            children: <Widget>[
-                              new Icon(Icons.brightness_1,
-                                  size: 20.0, color: HexColor('#FF0000')),
-                              new Positioned(
-                                top: 3.0,
-                                right: 6.0,
-                                child: new Center(
-                                  child: new Text(
-                                    shoppingCart.length.toString(),
-                                    style: new TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 11.0,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                ],
+    return Stack(
+      children: [
+        Positioned(
+          top: 0,
+          left: 0,
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            height: 181.0,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [HexColor('#8FADEB'), HexColor('#7397E2')],
+                begin: const FractionalOffset(0.0, 0.0),
+                end: const FractionalOffset(1.0, 0.0),
+                stops: [0.0, 1.0],
+                tileMode: TileMode.clamp,
               ),
             ),
           ),
+        ),
+        Scaffold(
+          body: Container(
+            width: MediaQuery.of(context).size.width,
+            constraints:
+                BoxConstraints(minHeight: MediaQuery.of(context).size.height),
+            decoration: BoxDecoration(
+              color: HexColor("#FAFCFF"),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(32.0),
+                topRight: Radius.circular(32.0),
+              ),
+            ),
+            child: AnimatedSwitcher(
+              duration: Duration(milliseconds: 300),
+              child: _MainBody(
+                dispatch: widget.dispatch,
+                shoppingCart: widget.shoppingCart,
+              ),
+            ),
+          ),
+          backgroundColor: Colors.transparent,
+          resizeToAvoidBottomInset: true,
+          appBar: AppBar(
+            title: Text(
+              "Cart",
+              style: TextStyle(
+                fontSize: 22,
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+                fontFeatures: [FontFeature.enable('smcp')],
+              ),
+            ),
+            centerTitle: true,
+            backgroundColor: Colors.transparent,
+            elevation: 0.0,
+            leadingWidth: 70.0,
+            automaticallyImplyLeading: false,
+            leading: Builder(
+              builder: (context) => IconButton(
+                highlightColor: Colors.transparent,
+                splashColor: Colors.transparent,
+                icon: Image.asset("images/offcanvas_icon.png"),
+                onPressed: () => Scaffold.of(context).openDrawer(),
+              ),
+            ),
+            actions: [
+              Center(
+                child: Container(
+                  width: 32.0,
+                  height: 32.0,
+                  margin: EdgeInsets.only(right: 16.0),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(.2),
+                    borderRadius: BorderRadius.circular(10.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.white.withOpacity(.2),
+                        offset: Offset(0.0, 0.0), // (x, y)
+                        blurRadius: 5.0,
+                      ),
+                    ],
+                  ),
+                  child: Center(
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        SvgPicture.asset(
+                          "images/Group 2424.svg",
+                          color: Colors.white,
+                        ),
+                        Positioned.fill(
+                          top: -2.5,
+                          child: Align(
+                            alignment: Alignment.topRight,
+                            child: Container(
+                              width: 10.0,
+                              height: 10.0,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  widget.shoppingCart.length.toString(),
+                                  style: TextStyle(
+                                    fontSize: 6.0,
+                                    fontWeight: FontWeight.w900,
+                                    color: HexColor("#6092DC"),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          drawer: SparklesDrawer(),
         ),
       ],
     );
@@ -123,10 +176,9 @@ class _AppBar extends StatelessWidget {
 
 class _MainBody extends StatefulWidget {
   final Dispatch dispatch;
-  final AnimationController animationController;
   final List<CartItem> shoppingCart;
 
-  const _MainBody({this.animationController, this.dispatch, this.shoppingCart});
+  const _MainBody({this.dispatch, this.shoppingCart});
 
   @override
   __MainBodyState createState() => __MainBodyState();
@@ -135,14 +187,6 @@ class _MainBody extends StatefulWidget {
 class __MainBodyState extends State<_MainBody> {
   @override
   Widget build(BuildContext context) {
-    final cardCurve = CurvedAnimation(
-      parent: widget.animationController,
-      curve: Interval(
-        0,
-        0.4,
-        curve: Curves.ease,
-      ),
-    );
     PaymentMethod _paymentMethod;
     String _error;
 
@@ -163,417 +207,395 @@ class __MainBodyState extends State<_MainBody> {
       });
     }
 
-    return Center(
-      child: SlideTransition(
-        position:
-            Tween(begin: Offset(0, 1), end: Offset.zero).animate(cardCurve),
-        child: GestureDetector(
-          // Using the DragEndDetails allows us to only fire once per swipe.
-          // onHorizontalDragEnd: (dragEndDetails) {
-          //   if (dragEndDetails.primaryVelocity < 0) {
-          //     // Page up
-          //   } else if (dragEndDetails.primaryVelocity > 0) {
-          //     // Page down
-          //     dispatch(CartPageActionCreator.onBackToProduct());
-          //   }
-          // },
-          child: RefreshIndicator(
-            onRefresh: () {
-              return widget.dispatch(CartPageActionCreator.onBackToProduct());
-            },
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: EdgeInsets.all(8),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(
-                          left: 30, right: 30, top: 30, bottom: 5),
-                      child: Text(
-                        'Item in your cart  is in high demand. Proceed to quickly to reserve',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.normal,
+    return Container(
+      constraints:
+          BoxConstraints(minHeight: MediaQuery.of(context).size.height),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(height: 16.0),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Text(
+                "Item in your cart is in high demand. Proceed to quickly to reserve.",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 12.0,
+                  color: HexColor("#EB5757"),
+                ),
+              ),
+            ),
+            SizedBox(height: 26.0),
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: widget.shoppingCart
+                  .asMap()
+                  .map(
+                    (index, value) => MapEntry(
+                      index,
+                      Padding(
+                        padding: EdgeInsets.only(
+                          bottom: 26.0,
+                          right: 16.0,
+                          left: 16.0,
                         ),
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.symmetric(vertical: 5.0),
-                      height: 200.0 * widget.shoppingCart.length,
-                      child: Column(
-                          children: widget.shoppingCart
-                              .asMap()
-                              .map(
-                                (index, value) => MapEntry(
-                                  index,
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      border: Border(
-                                        top: BorderSide(
-                                            width: 1.0, color: Colors.white),
-                                        bottom: BorderSide(
-                                            width: 1.0, color: Colors.white),
+                        child: Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            Container(
+                              width: double.infinity,
+                              height: 111.0,
+                              constraints: BoxConstraints(maxWidth: 343.0),
+                              padding: EdgeInsets.all(10.0),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(16.0),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey[200],
+                                    offset: Offset(0.0, 3.0), // (x, y)
+                                    blurRadius: 5.0,
+                                  ),
+                                ],
+                              ),
+                              child: Container(
+                                width: double.infinity,
+                                height: 91.0,
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      width: 78.0,
+                                      height: double.infinity,
+                                      child: ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(16.0),
+                                        child: widget.shoppingCart[index]
+                                                        .product !=
+                                                    null &&
+                                                widget.shoppingCart[index]
+                                                        .product.thumbnailUrl !=
+                                                    null
+                                            ? ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                                child: CachedNetworkImage(
+                                                  imageUrl: widget
+                                                      .shoppingCart[index]
+                                                      .product
+                                                      .thumbnailUrl,
+                                                  width: 100,
+                                                  height: 100,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              )
+                                            : SizedBox.shrink(child: null),
                                       ),
                                     ),
-                                    child: Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 10.0, vertical: 10.0),
+                                    SizedBox(width: 10.0),
+                                    Expanded(
                                       child: Column(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.start,
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
+                                          Text(
+                                            widget.shoppingCart[index].product
+                                                .name,
+                                            style: TextStyle(
+                                              fontSize: 16.0,
+                                              color: HexColor("#53586F"),
+                                            ),
+                                          ),
+                                          SizedBox(height: 12.0),
                                           Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
                                             children: [
-                                              widget.shoppingCart[index]
-                                                              .product !=
-                                                          null &&
-                                                      widget
-                                                              .shoppingCart[
-                                                                  index]
-                                                              .product
-                                                              .thumbnailUrl !=
-                                                          null
-                                                  ? ClipRRect(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              8.0),
-                                                      child:
-                                                          new CachedNetworkImage(
-                                                        imageUrl: widget
-                                                            .shoppingCart[index]
-                                                            .product
-                                                            .thumbnailUrl,
-                                                        width: 100,
-                                                        height: 100,
-                                                        fit: BoxFit.cover,
+                                              Text(
+                                                '\$${widget.shoppingCart[index].amount}',
+                                                style: TextStyle(
+                                                  fontSize: 22.0,
+                                                  fontWeight: FontWeight.w700,
+                                                  color: HexColor("#53586F"),
+                                                ),
+                                              ),
+                                              Container(
+                                                width: 120.0,
+                                                height: 34.0,
+                                                child: TouchSpin(
+                                                  value: widget
+                                                      .shoppingCart[index]
+                                                      .count,
+                                                  onChanged: (val) {
+                                                    print(
+                                                        'TouchSpin val: $val');
+
+                                                    widget.dispatch(
+                                                      CartPageActionCreator
+                                                          .onSetProductCount(
+                                                        widget.shoppingCart[
+                                                            index],
+                                                        val.toInt(),
                                                       ),
-                                                    )
-                                                  : Container(),
-                                              Expanded(
-                                                child: new Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  children: <Widget>[
-                                                    Text(
-                                                      widget.shoppingCart[index]
-                                                          .product.name,
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 24,
-                                                          fontWeight: FontWeight
-                                                              .normal),
-                                                    ),
-                                                    Text(
-                                                      '\$${widget.shoppingCart[index].amount}',
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 30,
-                                                          fontWeight: FontWeight
-                                                              .normal),
-                                                    ),
-                                                  ],
+                                                    );
+                                                  },
+                                                  min: 1,
+                                                  max: 100,
+                                                  step: 1,
+                                                  iconSize: 20.0,
+                                                  subtractIcon:
+                                                      Icon(Icons.remove),
+                                                  addIcon: Icon(Icons.add),
+                                                  iconPadding:
+                                                      EdgeInsets.all(0),
+                                                  textStyle:
+                                                      TextStyle(fontSize: 18),
+                                                  iconActiveColor: Colors.white,
+                                                  iconDisabledColor:
+                                                      Colors.grey,
+                                                  displayFormat:
+                                                      NumberFormat("###"),
                                                 ),
                                               ),
                                             ],
                                           ),
-                                          SizedBox(
-                                            height: 20,
-                                          ),
-                                          Row(children: [
-                                            Spacer(),
-                                            TouchSpin(
-                                                value: widget
-                                                    .shoppingCart[index].count,
-                                                onChanged: (val) {
-                                                  print('TouchSpin val: $val');
-
-                                                  widget.dispatch(
-                                                      CartPageActionCreator
-                                                          .onSetProductCount(
-                                                              widget.shoppingCart[
-                                                                  index],
-                                                              val.toInt()));
-                                                },
-                                                min: 1,
-                                                max: 100,
-                                                step: 1,
-                                                iconSize: 20.0,
-                                                subtractIcon:
-                                                    Icon(Icons.remove),
-                                                addIcon: Icon(Icons.add),
-                                                iconPadding: EdgeInsets.all(0),
-                                                textStyle:
-                                                    TextStyle(fontSize: 18),
-                                                iconActiveColor: Colors.white,
-                                                iconDisabledColor: Colors.grey,
-                                                displayFormat:
-                                                    new NumberFormat("###")),
-                                            Spacer(),
-                                            InkWell(
-                                              child: Container(
-                                                width: 48,
-                                                height: 46,
-                                                decoration: BoxDecoration(
-                                                  image: DecorationImage(
-                                                      image: AssetImage(
-                                                          "images/delete.png"),
-                                                      fit: BoxFit.contain),
-                                                ),
-                                              ),
-                                              onTap: () {
-                                                widget.dispatch(
-                                                    CartPageActionCreator
-                                                        .onRemoveCartItem(
-                                                            widget.shoppingCart[
-                                                                index]));
-                                              },
-                                            ),
-                                          ])
                                         ],
                                       ),
                                     ),
-                                  ),
+                                  ],
                                 ),
-                              )
-                              .values
-                              .toList()),
-                    ),
-
-                    // SizedBox(
-                    //   height: 10,
-                    // ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                          left: 20, right: 20, top: 0, bottom: 20),
-                      child: Column(
-                        children: [
-                          Text(
-                            'Summary',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.normal),
-                          ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          Row(
-                            children: [
-                              Spacer(),
-                              Text(
-                                'Total:',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.bold),
                               ),
-                              Text(
-                                '   \$$totalAmount USD',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              Spacer(),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          Text(
-                            'Shipping calculated at checkout',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.normal),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Row(
-                            children: [
-                              Spacer(),
-                              Column(
-                                children: [
-                                  Container(
-                                    width: 45 * 1.2,
-                                    height: 25 * 1.2,
-                                    decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                          image: AssetImage("images/money.png"),
-                                          fit: BoxFit.contain),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 5,
-                                  ),
-                                  Container(
-                                    height: 60,
-                                    child: Text(
-                                      '60-Days Satisfaction\nGuarantee With\nMoney Back',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          color: Colors.black, fontSize: 14),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Spacer(),
-                              Column(
-                                children: [
-                                  Container(
-                                    width: 25 * 1.2,
-                                    height: 25 * 1.2,
-                                    decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                          image: AssetImage("images/check.png"),
-                                          fit: BoxFit.contain),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 5,
-                                  ),
-                                  Container(
-                                    height: 60,
-                                    child: Text(
-                                      '100% Secure\nCheckout',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          color: Colors.black, fontSize: 14),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Spacer(),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          FlatButton(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(25.0),
-                              side: BorderSide(color: Colors.white),
                             ),
-                            color: Colors.transparent,
-                            textColor: Colors.white,
-                            padding: EdgeInsets.only(
-                              top: 12.0,
-                              bottom: 12.0,
-                              left: 30,
-                              right: 30,
+                            Positioned.fill(
+                              top: -13.0,
+                              child: Align(
+                                alignment: Alignment.topRight,
+                                child: InkWell(
+                                  child: Image.asset("images/Component 16.png"),
+                                  onTap: () {
+                                    widget.dispatch(
+                                        CartPageActionCreator.onRemoveCartItem(
+                                            widget.shoppingCart[index]));
+                                  },
+                                ),
+                              ),
                             ),
-                            onPressed: () async {
-                              widget.dispatch(
-                                CartPageActionCreator.onProceedToCheckout(),
-                              );
-                              StripePayment.paymentRequestWithCardForm(
-                                CardFormPaymentRequest(),
-                              ).then((paymentMethod) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content:
-                                        Text('Received ${paymentMethod.id}'),
-                                  ),
-                                );
-                                setState(() {
-                                  _paymentMethod = paymentMethod;
-                                });
-                              }).catchError(setError);
-                            },
-                            child: Row(
-                              children: [
-                                Spacer(),
-                                Container(
-                                  width: 22 * 1.2,
-                                  height: 25 * 1.2,
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                        image: AssetImage("images/lock.png"),
-                                        fit: BoxFit.contain),
-                                  ),
-                                ),
-                                Spacer(),
-                                Text(
-                                  'Proceed To Checkout',
-                                  style: TextStyle(
-                                      fontSize: 15.0,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                Spacer(),
-                                Container(
-                                  width: 19 * 1.2,
-                                  height: 7 * 1.2,
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                        image: AssetImage(
-                                            "images/arrow-right.png"),
-                                        fit: BoxFit.contain),
-                                  ),
-                                ),
-                                Spacer(),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Row(
-                            children: [
-                              Spacer(),
-                              Container(
-                                width: 53 * 1.4,
-                                height: 22 * 1.4,
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                      image: AssetImage("images/applepay.png"),
-                                      fit: BoxFit.contain),
-                                ),
-                              ),
-                              Spacer(),
-                              Container(
-                                width: 53 * 1.4,
-                                height: 22 * 1.4,
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                      image: AssetImage("images/paypal.png"),
-                                      fit: BoxFit.contain),
-                                ),
-                              ),
-                              Spacer(),
-                              Container(
-                                width: 53 * 1.4,
-                                height: 22 * 1.4,
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                      image: AssetImage("images/gpay.png"),
-                                      fit: BoxFit.contain),
-                                ),
-                              ),
-                              Spacer()
-                            ],
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                    // Spacer(),
-                  ],
+                  )
+                  .values
+                  .toList(),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Container(
+                  width: 120.0,
+                  height: 100.0,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.0),
+                    color: HexColor("#CCD4FE"),
+                  ),
+                  child: Center(
+                    child: SvgPicture.asset(
+                      "images/Group 1232423.svg",
+                      height: 79.0,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+                Container(
+                  width: 120.0,
+                  height: 100.0,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.0),
+                    color: HexColor("#CCD4FE"),
+                  ),
+                  child: Center(
+                    child: SvgPicture.asset(
+                      "images/Group 123 (1).svg",
+                      height: 79.0,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 13.0),
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(32.0),
+                  topLeft: Radius.circular(32.0),
                 ),
               ),
+              child: Column(
+                children: [
+                  SizedBox(height: 27.0),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        "TOTAL PRICE:",
+                        style: TextStyle(
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.w700,
+                          color: HexColor("#0F142B"),
+                        ),
+                      ),
+                      Text(
+                        "\$79.90",
+                        style: TextStyle(
+                          fontSize: 26.0,
+                          fontWeight: FontWeight.w900,
+                          color: HexColor("#0F142B"),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 16.0),
+                  Text(
+                    "Shipping calculated at checkout",
+                    style: TextStyle(
+                      color: HexColor("#0F142B"),
+                      fontSize: 12.0,
+                    ),
+                  ),
+                  SizedBox(height: 8.0),
+                  Container(
+                    width: 300.0,
+                    height: 48.0,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(31.0),
+                    ),
+                    child: ElevatedButton(
+                      style: ButtonStyle(
+                        elevation: MaterialStateProperty.all(0),
+                        backgroundColor:
+                            MaterialStateProperty.all(HexColor("#6092DC")),
+                        shape: MaterialStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(31.0),
+                          ),
+                        ),
+                      ),
+                      child: Text(
+                        'Proceed To Checkout',
+                        style: TextStyle(
+                          fontSize: 17.0,
+                          fontWeight: FontWeight.normal,
+                          color: Colors.white,
+                        ),
+                      ),
+                      onPressed: () {
+                        StripePayment.paymentRequestWithCardForm(
+                          CardFormPaymentRequest(),
+                        ).then((paymentMethod) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Received ${paymentMethod.id}'),
+                            ),
+                          );
+                          setState(() {
+                            _paymentMethod = paymentMethod;
+                          });
+                        }).catchError(setError);
+
+                        widget.dispatch(
+                          CartPageActionCreator.onProceedToCheckout(),
+                        );
+                      },
+                    ),
+                  ),
+                  SizedBox(height: 18.0),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Container(
+                        width: 107.0,
+                        height: 58.0,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey[300],
+                              offset: Offset(0.0, 3.0), // (x, y)
+                              blurRadius: 5.0,
+                            ),
+                          ],
+                        ),
+                        child: Center(
+                          child: Image.asset(
+                            "images/1280px-Apple_Pay_logo.png",
+                            height: 20.0,
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        width: 107.0,
+                        height: 58.0,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey[300],
+                              offset: Offset(0.0, 3.0), // (x, y)
+                              blurRadius: 5.0,
+                            ),
+                          ],
+                        ),
+                        child: Center(
+                          child: Image.asset(
+                            "images/paypal-logo-big.png",
+                            height: 20.0,
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        width: 107.0,
+                        height: 58.0,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey[300],
+                              offset: Offset(0.0, 3.0), // (x, y)
+                              blurRadius: 5.0,
+                            ),
+                          ],
+                        ),
+                        child: Center(
+                          child: Image.asset(
+                            "images/Group 156.png",
+                            height: 20.0,
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 24.0),
+                ],
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );

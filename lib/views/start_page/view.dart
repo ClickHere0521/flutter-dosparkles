@@ -4,8 +4,6 @@ import 'package:com.floridainc.dosparkles/actions/adapt.dart';
 import 'package:com.floridainc.dosparkles/widgets/keepalive_widget.dart';
 import 'package:com.floridainc.dosparkles/utils/colors.dart';
 
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
 import '../../widgets/sparkles_drawer.dart';
 import 'action.dart';
 import 'state.dart';

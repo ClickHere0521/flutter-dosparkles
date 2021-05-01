@@ -5,6 +5,7 @@ import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/utils/colors.dart';
 import 'package:com.floridainc.dosparkles/widgets/blog.dart';
 import 'package:com.floridainc.dosparkles/widgets/branch/branch_two.dart';
+import 'package:com.floridainc.dosparkles/widgets/checkout.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_apple_signin.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_country_code_picker.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_facebook_signin.dart';
@@ -38,8 +39,12 @@ class SparklesDrawer extends StatelessWidget {
               children: [
                 GestureDetector(
                   onTap: () {
-                    Navigator.of(context)
-                        .pushNamed('storepage', arguments: null);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Checkout(),
+                      ),
+                    );
                   },
                   child: Container(
                     height: 218.0,

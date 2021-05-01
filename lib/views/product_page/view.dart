@@ -1,434 +1,641 @@
 import 'dart:convert';
-import 'dart:ffi';
+import 'dart:typed_data';
+import 'dart:ui';
 
-import 'package:com.floridainc.dosparkles/actions/api/graphql_client.dart';
-import 'package:fish_redux/fish_redux.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:com.floridainc.dosparkles/actions/adapt.dart';
-import 'package:com.floridainc.dosparkles/style/themestyle.dart';
-import 'package:com.floridainc.dosparkles/utils/colors.dart';
-import 'package:com.floridainc.dosparkles/widgets/sparkles_drawer.dart';
-
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:com.floridainc.dosparkles/models/models.dart';
-
-import 'package:flutter_swiper/flutter_swiper.dart';
-import 'package:com.floridainc.dosparkles/widgets/touch_spin.dart';
-import 'package:flutter/gestures.dart';
-import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
-import 'package:http_parser/http_parser.dart';
-import 'package:intl/intl.dart';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:com.floridainc.dosparkles/actions/adapt.dart';
+import 'package:com.floridainc.dosparkles/actions/api/graphql_client.dart';
+import 'package:com.floridainc.dosparkles/actions/app_config.dart';
+import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
+import 'package:com.floridainc.dosparkles/models/models.dart';
+import 'package:com.floridainc.dosparkles/utils/colors.dart';
+import 'package:com.floridainc.dosparkles/views/product_page/action.dart';
+import 'package:com.floridainc.dosparkles/views/product_page/state.dart';
+import 'package:com.floridainc.dosparkles/views/profile_page/state.dart';
+import 'package:com.floridainc.dosparkles/widgets/confirm_video.dart';
+import 'package:com.floridainc.dosparkles/widgets/custom_switch.dart';
+import 'package:com.floridainc.dosparkles/widgets/sparkles_drawer.dart';
+import 'package:com.floridainc.dosparkles/widgets/touch_spin.dart';
+import 'package:fish_redux/fish_redux.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:http/http.dart';
+import 'package:http_parser/http_parser.dart';
+import 'package:intl/intl.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 
-import 'action.dart';
-import 'state.dart';
+void _sendRequest(imagesList, Function setOrderImageData) async {
+  Uri uri = Uri.parse('https://backend.dosparkles.com/upload');
+
+  MultipartRequest request = http.MultipartRequest("POST", uri);
+
+  for (var i = 0; i < imagesList.length; i++) {
+    var asset = imagesList[i];
+
+    ByteData byteData = await asset.getByteData();
+    List<int> imageData = byteData.buffer.asUint8List();
+
+    MultipartFile multipartFile = MultipartFile.fromBytes(
+      'files',
+      imageData,
+      filename: '${asset.name}',
+      contentType: MediaType("image", "jpg"),
+    );
+    request.files.add(multipartFile);
+  }
+
+  http.Response response = await http.Response.fromStream(await request.send());
+  List imagesResponse = json.decode(response.body);
+  // var listOfIds = imagesResponse.map((image) => "\"${image['id']}\"");
+
+  List<Map<String, String>> orderImageData = imagesResponse
+      .map((image) => {'url': "${image['url']}", 'id': "${image['id']}"})
+      .toList();
+
+  setOrderImageData(orderImageData);
+}
 
 Widget buildView(
     ProductPageState state, Dispatch dispatch, ViewService viewService) {
   Adapt.initContext(viewService.context);
-  // print('state.optionalMaterialSelected: $r{state.optionalMaterialSelected}');
-
-  return Scaffold(
-    body: Container(
-      alignment: Alignment.center,
-      width: double.infinity,
-      height: Adapt.screenH(),
-      color: HexColor('#50DDE1'),
-      child: MainBody(
-        animationController: state.animationController,
-        dispatch: dispatch,
-        selectedProduct: state.selectedProduct,
-        optionalMaterialSelected: state.optionalMaterialSelected,
-        engraveInputs: state.engraveInputs,
-        productQuantity: state.productQuantity,
-      ),
-    ),
-    appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(60),
-        child: _AppBar(
-          shoppingCart: state.shoppingCart,
-          dispatch: dispatch,
-        )),
-    drawer: SparklesDrawer(),
+  return _FirstPage(
+    dispatch: dispatch,
+    selectedProduct: state.selectedProduct,
+    optionalMaterialSelected: state.optionalMaterialSelected,
+    engraveInputs: state.engraveInputs,
+    productQuantity: state.productQuantity,
   );
 }
 
-class _AppBar extends StatelessWidget {
-  final List<CartItem> shoppingCart;
+class _FirstPage extends StatefulWidget {
   final Dispatch dispatch;
-
-  const _AppBar({this.shoppingCart, this.dispatch});
-
-  @override
-  Widget build(BuildContext context) {
-    return AppBar(
-      title: Center(
-          child: Text("Product"
-              // AppLocalizations.of(context).productPageTitle
-              )),
-      flexibleSpace: Container(
-        decoration: new BoxDecoration(
-          gradient: new LinearGradient(
-              colors: [
-                HexColor('#3D9FB0'),
-                HexColor('#557084'),
-              ],
-              begin: const FractionalOffset(0.5, 0.5),
-              end: const FractionalOffset(0.5, 1.0),
-              stops: [0.0, 1.0],
-              tileMode: TileMode.clamp),
-        ),
-      ),
-      actions: <Widget>[
-        new Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: new Container(
-            height: 150.0,
-            width: 30.0,
-            child: new GestureDetector(
-              onTap: () {
-                if (shoppingCart.length > 0) {
-                  dispatch(ProductPageActionCreator.onGoToCart());
-                }
-              },
-              child: new Stack(
-                children: <Widget>[
-                  new IconButton(
-                    icon: new Icon(
-                      Icons.shopping_cart,
-                      color: Colors.white,
-                    ),
-                    onPressed: () => null,
-                  ),
-                  shoppingCart.length == 0
-                      ? new Container()
-                      : new Positioned(
-                          left: 5,
-                          child: new Stack(
-                            children: <Widget>[
-                              new Icon(Icons.brightness_1,
-                                  size: 20.0, color: HexColor('#FF0000')),
-                              new Positioned(
-                                  top: 3.0,
-                                  right: 6.0,
-                                  child: new Center(
-                                    child: new Text(
-                                      shoppingCart.length.toString(),
-                                      style: new TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 11.0,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                  )),
-                            ],
-                          )),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class MainBody extends StatefulWidget {
-  final Dispatch dispatch;
-  final AnimationController animationController;
   final ProductItem selectedProduct;
   final bool optionalMaterialSelected;
   final List<String> engraveInputs;
   final int productQuantity;
 
-  MainBody(
-      {this.animationController,
-      this.dispatch,
-      this.selectedProduct,
-      this.optionalMaterialSelected,
-      this.engraveInputs,
-      this.productQuantity});
+  _FirstPage({
+    this.dispatch,
+    this.selectedProduct,
+    this.optionalMaterialSelected,
+    this.engraveInputs,
+    this.productQuantity,
+  });
 
   @override
-  _MainBodyState createState() => _MainBodyState();
+  __FirstPageState createState() => __FirstPageState();
 }
 
-class _MainBodyState extends State<MainBody> {
+class __FirstPageState extends State<_FirstPage> {
+  int _selectedIndex = 0;
+  int currentPage = 0;
+
+  void _onItemTapped(int index) {
+    setState(() => _selectedIndex = index);
+
+    if (index == 0) {
+      var globalState = GlobalStore.store.getState();
+      var storeFavorite = globalState.user.storeFavorite;
+
+      if (storeFavorite != null)
+        Navigator.of(context).pushReplacementNamed('storepage');
+      else
+        Navigator.of(context).pushReplacementNamed('storeselectionpage');
+    } else if (index == 2) {
+      Navigator.of(context).pushReplacementNamed('invite_friendpage');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final cardCurve = CurvedAnimation(
-      parent: widget.animationController,
-      curve: Interval(0, 0.4, curve: Curves.ease),
-    );
-
-    // print('_MainBody optionalMaterialSelected: $optionalMaterialSelected');
-    // print(
-    //     'selectedProduct.price: ${selectedProduct.price} productQuantity: ${productQuantity}');
-    // print('popup: $optionalMaterialSelected');
-
-    int _productQuantity =
-        widget.productQuantity == null ? 1 : widget.productQuantity;
-
-    return Center(
-      child: SlideTransition(
-        position:
-            Tween(begin: Offset(0, 1), end: Offset.zero).animate(cardCurve),
-        child: GestureDetector(
-          // Using the DragEndDetails allows us to only fire once per swipe.
-          // onVerticalDragEnd: (dragEndDetails) {
-          //   if (dragEndDetails.primaryVelocity < 0) {
-          //     // Page up
-          //   } else if (dragEndDetails.primaryVelocity > 0) {
-          //     // Page down
-          //     widget.dispatch(ProductPageActionCreator.onBackToProduct());
-          //   }
-          // },
-          child: RefreshIndicator(
-            onRefresh: () {
-              return widget.dispatch(
-                ProductPageActionCreator.onBackToProduct(),
-              );
-            },
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: EdgeInsets.all(8),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    SizedBox(
-                      height: 30,
+    return Scaffold(
+      body: _MainBody(
+        dispatch: widget.dispatch,
+        selectedProduct: widget.selectedProduct,
+        optionalMaterialSelected: widget.optionalMaterialSelected,
+        engraveInputs: widget.engraveInputs,
+        productQuantity: widget.productQuantity,
+      ),
+      backgroundColor: Colors.white,
+      resizeToAvoidBottomInset: true,
+      appBar: AppBar(
+        title: Text(
+          "Product Details",
+          style: TextStyle(
+            fontSize: 22,
+            color: HexColor("#53586F"),
+            fontWeight: FontWeight.w600,
+            fontFeatures: [FontFeature.enable('smcp')],
+          ),
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        elevation: 0.0,
+        leadingWidth: 70.0,
+        automaticallyImplyLeading: false,
+        actions: [
+          Center(
+            child: Container(
+              width: 34.0,
+              height: 34.0,
+              margin: EdgeInsets.only(right: 16.0),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey[200],
+                    offset: Offset(0.0, 0.0), // (x, y)
+                    blurRadius: 10.0,
+                  ),
+                ],
+              ),
+              child: Center(
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    SvgPicture.asset(
+                      "images/Group 2424.svg",
+                      color: HexColor("#B3C1F2"),
                     ),
-                    new Swiper(
-                      itemBuilder: (BuildContext context, int index) {
-                        return new Image.network(
-                          widget.selectedProduct.mediaUrls[index],
-                          fit: BoxFit.fill,
-                        );
-                      },
-                      itemCount: widget.selectedProduct.mediaUrls.length,
-                      itemWidth: Adapt.screenW() * 0.6,
-                      itemHeight: Adapt.screenW() * 0.6,
-                      layout: SwiperLayout.STACK,
-                      pagination: new SwiperPagination(
-                        margin: new EdgeInsets.only(
-                            top: Adapt.screenW() * 0.6 + 20),
-                        builder: new DotSwiperPaginationBuilder(
-                          color: Colors.grey,
-                          activeColor: HexColor('#3D9FB0'),
+                    Positioned.fill(
+                      top: -2.5,
+                      child: Align(
+                        alignment: Alignment.topRight,
+                        child: Container(
+                          width: 10.0,
+                          height: 10.0,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Center(
+                            child: Text(
+                              "1",
+                              style: TextStyle(
+                                fontSize: 6.0,
+                                fontWeight: FontWeight.w900,
+                                color: HexColor("#6092DC"),
+                              ),
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Center(
-                        child: Text(
-                      widget.selectedProduct.name,
-                      style: TextStyle(color: Colors.white, fontSize: 30),
-                    )),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          '\$${widget.selectedProduct.price}',
-                          style: TextStyle(color: Colors.white, fontSize: 35),
-                        ),
-                        widget.selectedProduct.showOldPrice
-                            ? Padding(
-                                padding: const EdgeInsets.only(left: 15.0),
-                                child: Text(
-                                  '\$${widget.selectedProduct.oldPrice}',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 25,
-                                      fontStyle: FontStyle.italic,
-                                      decoration: TextDecoration.lineThrough,
-                                      shadows: <Shadow>[
-                                        Shadow(
-                                            offset: Offset(1, 1),
-                                            blurRadius: 0,
-                                            color: Colors.black),
-                                        Shadow(
-                                            offset: Offset(-1, -1),
-                                            blurRadius: 0,
-                                            color: Colors.black),
-                                        Shadow(
-                                            offset: Offset(1, -1),
-                                            blurRadius: 0,
-                                            color: Colors.black),
-                                        Shadow(
-                                            offset: Offset(-1, 1),
-                                            blurRadius: 0,
-                                            color: Colors.black),
-                                      ]),
-                                ),
-                              )
-                            : Container()
-                      ],
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Center(
-                        child: Text(
-                      'Quantity',
-                      style: TextStyle(color: Colors.white, fontSize: 18),
-                    )),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    TouchSpin(
-                      value: _productQuantity,
-                      onChanged: (val) {
-                        print('TouchSpin val: $val');
-                        // productQuantity = val.toInt();
-                        widget.dispatch(
-                            ProductPageActionCreator.onSetProductCount(
-                                val.toInt()));
-                      },
-                      min: 1,
-                      max: 100,
-                      step: 1,
-                      iconSize: 20.0,
-                      subtractIcon: Icon(Icons.remove),
-                      addIcon: Icon(Icons.add),
-                      iconPadding: EdgeInsets.all(0),
-                      textStyle: TextStyle(fontSize: 18),
-                      iconActiveColor: Colors.white,
-                      iconDisabledColor: Colors.grey,
-                      displayFormat: new NumberFormat("###"),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    FlatButton(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25.0),
-                          side: BorderSide(color: Colors.white)),
-                      color: Colors.transparent,
-                      textColor: Colors.white,
-                      padding: EdgeInsets.only(
-                          top: 12.0, bottom: 12.0, left: 50, right: 50),
-                      onPressed: () {
-                        showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return StatefulBuilder(
-                                builder: (context, setState) {
-                                  return _ProductCustomization(
-                                    dispatch: widget.dispatch,
-                                    selectedProduct: widget.selectedProduct,
-                                    productQuantity: widget.productQuantity,
-                                    engraveInputs: widget.engraveInputs,
-                                    optionalMaterialSelected:
-                                        widget.optionalMaterialSelected,
-                                  );
-                                },
-                              );
-                            });
-                      },
-                      child: Text(
-                        '\$${widget.selectedProduct.price * widget.productQuantity} - Add to Cart'
-                            .toUpperCase(),
-                        style: TextStyle(
-                          fontSize: 16.0,
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Row(
-                      children: [
-                        Spacer(),
-                        Column(
-                          children: [
-                            Container(
-                              width: 48,
-                              height: 46,
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                    image: AssetImage("images/usamade.png"),
-                                    fit: BoxFit.contain),
-                              ),
-                            ),
-                            Container(
-                              height: 60,
-                              child: Text(
-                                'U.S.A made',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 16),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Spacer(),
-                        Column(
-                          children: [
-                            Container(
-                              width: 48,
-                              height: 46,
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                    image:
-                                        AssetImage("images/shippingfast.png"),
-                                    fit: BoxFit.contain),
-                              ),
-                            ),
-                            Container(
-                              height: 60,
-                              child: Text(
-                                'Shipping Fast',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 16),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Spacer(),
-                        Column(
-                          children: [
-                            Container(
-                              width: 48,
-                              height: 46,
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                    image: AssetImage("images/guranteed.png"),
-                                    fit: BoxFit.contain),
-                              ),
-                            ),
-                            Container(
-                              height: 60,
-                              child: Text(
-                                'Quality\nGuranteed',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 16),
-                              ),
-                            )
-                          ],
-                        ),
-                        Spacer(),
-                      ],
-                    ),
-                    Center(
-                        child: Text(
-                      'Swipe down to go to the product page',
-                      style: TextStyle(color: Colors.white, fontSize: 20),
-                      textAlign: TextAlign.center,
-                    )),
-                    SizedBox(
-                      height: 30,
                     ),
                   ],
                 ),
               ),
             ),
           ),
+        ],
+        leading: Builder(
+          builder: (context) => IconButton(
+            highlightColor: Colors.transparent,
+            splashColor: Colors.transparent,
+            icon: Container(
+              width: 34.0,
+              height: 34.0,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey[200],
+                    offset: Offset(0.0, 0.0), // (x, y)
+                    blurRadius: 10.0,
+                  ),
+                ],
+              ),
+              child: Center(
+                child: SvgPicture.asset(
+                  "images/Group 934534.svg",
+                  color: HexColor("#B3C1F2"),
+                ),
+              ),
+            ),
+            onPressed: () => Scaffold.of(context).openDrawer(),
+          ),
         ),
+      ),
+      drawer: SparklesDrawer(),
+      bottomNavigationBar: Container(
+        width: double.infinity,
+        height: double.infinity,
+        constraints: BoxConstraints(maxHeight: 75.0),
+        padding: EdgeInsets.symmetric(horizontal: 16.0),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(.9),
+          borderRadius: BorderRadius.only(
+            topRight: Radius.circular(32.0),
+            topLeft: Radius.circular(32.0),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey[300],
+              offset: Offset(0.0, -0.2), // (x,y)
+              blurRadius: 10.0,
+            ),
+          ],
+        ),
+        child: Center(
+          child: Row(
+            children: [
+              Container(
+                width: 163.0,
+                height: 42.0,
+                child: Center(
+                  child: Text(
+                    "\$39,95",
+                    style: TextStyle(
+                      color: HexColor("#53586F"),
+                      fontSize: 22.0,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ),
+              Container(
+                width: 163.0,
+                height: 42.0,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(31.0),
+                ),
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                    elevation: MaterialStateProperty.all(0.0),
+                    backgroundColor:
+                        MaterialStateProperty.all(HexColor("#6092DC")),
+                    shape: MaterialStateProperty.all(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(31.0),
+                      ),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SvgPicture.asset("images/Group 423423.svg"),
+                      SizedBox(width: 4.0),
+                      Text(
+                        'Add to cart',
+                        style: TextStyle(
+                          fontSize: 17.0,
+                          fontWeight: FontWeight.normal,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => _ProductCustomization(
+                          dispatch: widget.dispatch,
+                          selectedProduct: widget.selectedProduct,
+                          productQuantity: widget.productQuantity,
+                          engraveInputs: widget.engraveInputs,
+                          optionalMaterialSelected:
+                              widget.optionalMaterialSelected,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _MainBody extends StatefulWidget {
+  final Dispatch dispatch;
+  final ProductItem selectedProduct;
+  final bool optionalMaterialSelected;
+  final List<String> engraveInputs;
+  final int productQuantity;
+
+  _MainBody({
+    this.dispatch,
+    this.selectedProduct,
+    this.optionalMaterialSelected,
+    this.engraveInputs,
+    this.productQuantity,
+  });
+
+  @override
+  __MainBodyState createState() => __MainBodyState();
+}
+
+class __MainBodyState extends State<_MainBody> {
+  @override
+  Widget build(BuildContext context) {
+    int _productQuantity =
+        widget.productQuantity == null ? 1 : widget.productQuantity;
+
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(height: 20.0),
+          Swiper(
+            itemBuilder: (BuildContext context, int index) {
+              return Image.network(
+                widget.selectedProduct.mediaUrls[index],
+                fit: BoxFit.fill,
+              );
+            },
+            itemCount: widget.selectedProduct.mediaUrls.length,
+            itemWidth: Adapt.screenW() * 0.6,
+            itemHeight: Adapt.screenW() * 0.6,
+            layout: SwiperLayout.STACK,
+            pagination: SwiperPagination(
+              margin: EdgeInsets.only(top: Adapt.screenW() * 0.6 + 20),
+              builder: DotSwiperPaginationBuilder(
+                color: Colors.grey,
+                activeColor: HexColor('#3D9FB0'),
+              ),
+            ),
+          ),
+          SizedBox(height: 21.0),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Container(
+                width: 80.0,
+                height: 64.0,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10.0),
+                  gradient: LinearGradient(
+                    colors: [HexColor('#E3D3FF'), HexColor('#C2A2FA')],
+                    begin: const FractionalOffset(0.0, 0.0),
+                    end: const FractionalOffset(1.0, 0.0),
+                    stops: [0.0, 1.0],
+                    tileMode: TileMode.clamp,
+                  ),
+                ),
+                child: Center(
+                  child: SvgPicture.asset(
+                    "images/Group 12231221.svg",
+                    width: 70.0,
+                    height: 52.0,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
+              Container(
+                width: 80.0,
+                height: 64.0,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10.0),
+                  gradient: LinearGradient(
+                    colors: [HexColor('#E3D3FF'), HexColor('#C2A2FA')],
+                    begin: const FractionalOffset(0.0, 0.0),
+                    end: const FractionalOffset(1.0, 0.0),
+                    stops: [0.0, 1.0],
+                    tileMode: TileMode.clamp,
+                  ),
+                ),
+                child: Center(
+                  child: SvgPicture.asset(
+                    "images/Group 123.svg",
+                    width: 70.0,
+                    height: 52.0,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
+              Container(
+                width: 80.0,
+                height: 64.0,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10.0),
+                  gradient: LinearGradient(
+                    colors: [HexColor('#E3D3FF'), HexColor('#C2A2FA')],
+                    begin: const FractionalOffset(0.0, 0.0),
+                    end: const FractionalOffset(1.0, 0.0),
+                    stops: [0.0, 1.0],
+                    tileMode: TileMode.clamp,
+                  ),
+                ),
+                child: Center(
+                  child: SvgPicture.asset(
+                    "images/Group 126.svg",
+                    width: 70.0,
+                    height: 52.0,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 19.0),
+          Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: HexColor("#FAFCFF"),
+              borderRadius: BorderRadius.only(
+                topRight: Radius.circular(32.0),
+                topLeft: Radius.circular(32.0),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey[300],
+                  offset: Offset(0.0, -0.2), // (x, y)
+                  blurRadius: 10.0,
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(height: 19.0),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 37.0),
+                  child: Text(
+                    "Modal Launch +22% Conversion",
+                    style: TextStyle(
+                      color: HexColor("#53586F"),
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 21.0),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 37.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          RichText(
+                            text: TextSpan(
+                              style: DefaultTextStyle.of(context).style,
+                              children: [
+                                TextSpan(
+                                  text: "\$79,95",
+                                  style: TextStyle(
+                                    color: HexColor("#53586F").withOpacity(.5),
+                                    fontSize: 18.0,
+                                    decoration: TextDecoration.lineThrough,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: "\$39,95",
+                                  style: TextStyle(
+                                    color: HexColor("#53586F"),
+                                    fontSize: 24.0,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 3.0),
+                          Text(
+                            "You Save: \$40 (50%)",
+                            style: TextStyle(
+                              fontSize: 12.0,
+                              color: HexColor("#27AE60"),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Container(
+                        width: 120.0,
+                        height: 34.0,
+                        child: TouchSpin(
+                          value: _productQuantity,
+                          onChanged: (val) {
+                            print('TouchSpin val: $val');
+                            widget.dispatch(
+                              ProductPageActionCreator.onSetProductCount(
+                                val.toInt(),
+                              ),
+                            );
+                          },
+                          min: 1,
+                          max: 100,
+                          step: 1,
+                          iconSize: 20.0,
+                          subtractIcon: Icon(Icons.remove),
+                          addIcon: Icon(Icons.add),
+                          iconPadding: EdgeInsets.all(0),
+                          textStyle: TextStyle(fontSize: 18),
+                          iconActiveColor: Colors.white,
+                          iconDisabledColor: Colors.grey,
+                          displayFormat: NumberFormat("###"),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 10.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Container(
+                        width: double.infinity,
+                        height: 36.0,
+                        constraints: BoxConstraints(
+                          maxWidth: 188.0,
+                        ),
+                        decoration: BoxDecoration(
+                          color: HexColor("#FAFCFF"),
+                          borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(16.0),
+                            bottomRight: Radius.circular(16.0),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey[300],
+                              offset: Offset(0.0, 5.0), // (x, y)
+                              blurRadius: 5.0,
+                            ),
+                          ],
+                        ),
+                        child: Center(
+                          child: Text(
+                            "Product Details",
+                            style: TextStyle(
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.w700,
+                              color: HexColor("#53586F"),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 20.0),
+                    Expanded(
+                      child: Container(
+                        width: double.infinity,
+                        height: 36.0,
+                        constraints: BoxConstraints(
+                          maxWidth: 188.0,
+                        ),
+                        decoration: BoxDecoration(
+                          color: HexColor("#FAFCFF"),
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(16.0),
+                            bottomLeft: Radius.circular(16.0),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey[300],
+                              offset: Offset(0.0, 5.0), // (x, y)
+                              blurRadius: 5.0,
+                            ),
+                          ],
+                        ),
+                        child: Center(
+                          child: Text(
+                            "Delivery Time",
+                            style: TextStyle(
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.w700,
+                              color: HexColor("#53586F"),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 16.0),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Text(
+                    "Purchase This  Best - Seller and We Guarantee it will Exceed Your Highest Expectations. Purchase This Best - Seller and We Guarantee it will Exceed Your Highest Expectations! Purchase This  Best - Seller and We Guarantee it will Exceed Your Highest Expectations !",
+                    style: TextStyle(
+                      fontSize: 11.0,
+                      fontWeight: FontWeight.w300,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 35.0),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -441,12 +648,13 @@ class _ProductCustomization extends StatefulWidget {
   final bool optionalMaterialSelected;
   final List<String> engraveInputs;
 
-  _ProductCustomization(
-      {this.dispatch,
-      this.selectedProduct,
-      this.productQuantity,
-      this.engraveInputs,
-      this.optionalMaterialSelected});
+  _ProductCustomization({
+    this.dispatch,
+    this.selectedProduct,
+    this.productQuantity,
+    this.engraveInputs,
+    this.optionalMaterialSelected,
+  });
 
   @override
   _ProductCustomizationState createState() => new _ProductCustomizationState(
@@ -548,428 +756,75 @@ class _ProductCustomizationState extends State<_ProductCustomization> {
 
     print('engravingsCount: $engravingsCount');
 
-    return Dialog(
-      clipBehavior: Clip.none,
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(10.0))),
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: <Widget>[
-          Container(
-            alignment: Alignment.center,
-            width: double.infinity,
-            height: double.infinity,
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: 20,
+    return Stack(
+      children: [
+        Positioned(
+          top: 0,
+          left: 0,
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            height: 181.0,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [HexColor('#8FADEB'), HexColor('#7397E2')],
+                begin: const FractionalOffset(0.0, 0.0),
+                end: const FractionalOffset(1.0, 0.0),
+                stops: [0.0, 1.0],
+                tileMode: TileMode.clamp,
+              ),
+            ),
+          ),
+        ),
+        Scaffold(
+          backgroundColor: Colors.transparent,
+          resizeToAvoidBottomInset: true,
+          extendBodyBehindAppBar: true,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            automaticallyImplyLeading: false,
+            elevation: 0.0,
+            actions: [
+              GestureDetector(
+                child: Image.asset("images/close_button_terms.png"),
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+          bottomNavigationBar: Container(
+            height: 83.0,
+            padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  width: 300.0,
+                  height: 48.0,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(31.0),
                   ),
-                  Center(
-                    child: Text(
-                      selectedProduct.name,
-                      style: TextStyle(color: Colors.black, fontSize: 20),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Center(
-                    child: Text(
-                      'Made in USA',
-                      style: TextStyle(color: Colors.grey, fontSize: 14),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  //
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        (selectedProduct.showOldPrice
-                            ? Padding(
-                                padding: const EdgeInsets.only(left: 0.0),
-                                child: Text(
-                                  '\$${selectedProduct.oldPrice}',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 25,
-                                      fontStyle: FontStyle.italic,
-                                      decoration: TextDecoration.lineThrough,
-                                      shadows: <Shadow>[
-                                        Shadow(
-                                            offset: Offset(1, 1),
-                                            blurRadius: 0,
-                                            color: Colors.red),
-                                        Shadow(
-                                            offset: Offset(-1, -1),
-                                            blurRadius: 0,
-                                            color: Colors.red),
-                                        Shadow(
-                                            offset: Offset(1, -1),
-                                            blurRadius: 0,
-                                            color: Colors.red),
-                                        Shadow(
-                                            offset: Offset(-1, 1),
-                                            blurRadius: 0,
-                                            color: Colors.red),
-                                      ]),
-                                ),
-                              )
-                            : Container()),
-                        //
-                        Padding(
-                          padding: const EdgeInsets.only(left: 15.0),
-                          child: Text(
-                            '\$${selectedProduct.price}',
-                            style: TextStyle(color: Colors.black, fontSize: 35),
-                          ),
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                      elevation: MaterialStateProperty.all(0),
+                      backgroundColor:
+                          MaterialStateProperty.all(HexColor("#6092DC")),
+                      shape: MaterialStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(31.0),
                         ),
-                      ],
+                      ),
                     ),
-                  ),
-                  //
-                  selectedProduct.engraveAvailable ||
-                          selectedProduct.optionalFinishMaterialEnabled
-                      ? RichText(
-                          textAlign: TextAlign.center,
-                          text: TextSpan(
-                              text: 'Add a ',
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.normal),
-                              children: <TextSpan>[
-                                selectedProduct.engraveAvailable
-                                    ? TextSpan(
-                                        text: 'personal message'.toUpperCase(),
-                                        style: TextStyle(
-                                          color: Colors.red,
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      )
-                                    : TextSpan(),
-                                selectedProduct.engraveAvailable &&
-                                        selectedProduct
-                                            .optionalFinishMaterialEnabled
-                                    ? TextSpan(
-                                        text: ' and ',
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.normal))
-                                    : TextSpan(),
-                                selectedProduct.optionalFinishMaterialEnabled
-                                    ? TextSpan(
-                                        text: 'gold finish'.toUpperCase(),
-                                        style: TextStyle(
-                                          color: Colors.red,
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      )
-                                    : TextSpan(),
-                              ]),
-                        )
-                      : Container(),
-                  //
-                  selectedProduct.engraveAvailable && engravingsCount > 0
-                      ? Column(
-                          children: [
-                            SizedBox(
-                              height: 30,
-                            ),
-
-                            Text(
-                              '1. Engrave  Personal Message',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.normal),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-
-                            RichText(
-                              textAlign: TextAlign.center,
-                              text: TextSpan(
-                                  text: '50% Off - One-time Offer ! ',
-                                  style: TextStyle(
-                                      color: Colors.red,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.normal),
-                                  children: <TextSpan>[
-                                    TextSpan(
-                                      text: '\n( ',
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.normal,
-                                      ),
-                                    ),
-                                    TextSpan(
-                                        text: selectedProduct
-                                                .showOldEngravePrice
-                                            ? '\$${selectedProduct.engraveOldPrice} '
-                                            : '',
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.normal,
-                                            decoration:
-                                                TextDecoration.lineThrough)),
-                                    TextSpan(
-                                      text: ' \$${selectedProduct.price} ',
-                                      style: TextStyle(
-                                        color: Colors.red,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.normal,
-                                      ),
-                                    ),
-                                    TextSpan(
-                                      text: ')',
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.normal,
-                                      ),
-                                    ),
-                                  ]),
-                            ),
-                            //
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Row(
-                              children: [
-                                selectedProduct.engraveExampleUrl != null
-                                    ? ClipRRect(
-                                        borderRadius:
-                                            BorderRadius.circular(8.0),
-                                        child: new CachedNetworkImage(
-                                          imageUrl:
-                                              selectedProduct.engraveExampleUrl,
-                                          width: 100,
-                                          height: 100,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      )
-                                    : Container(),
-                                Container(
-                                  margin: EdgeInsets.symmetric(vertical: 8.0),
-                                  width: Adapt.screenW() - 200,
-                                  height: 60.0 * engravingsCount,
-                                  child: ListView.builder(
-                                    itemCount: engravingsCount,
-                                    itemBuilder: (context, index) {
-                                      return Padding(
-                                        padding: EdgeInsets.all(5),
-                                        child: TextField(
-                                          maxLength: 16,
-                                          controller:
-                                              engravingControllers[index],
-                                          onChanged: (content) {
-                                            var engravingListActual =
-                                                List<String>.empty(
-                                                    growable: true);
-                                            for (var i = 0;
-                                                i < engravingControllers.length;
-                                                i++) {
-                                              engravingListActual.add(
-                                                  engravingControllers[i].text);
-                                            }
-                                            dispatch(ProductPageActionCreator
-                                                .onSetEngravingInputs(
-                                                    engravingListActual));
-                                          },
-                                          textAlign: TextAlign.center,
-                                          keyboardType: TextInputType.text,
-                                          decoration: InputDecoration(
-                                            counterText: '',
-                                            hintText: 'Your Words Here',
-                                            hintStyle: TextStyle(fontSize: 16),
-                                            border: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                              borderSide: BorderSide(
-                                                  width: 1.0,
-                                                  color: Colors.black),
-                                            ),
-                                            filled: true,
-                                            contentPadding: EdgeInsets.all(16),
-                                            fillColor: Colors.white,
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        )
-                      : Container(),
-
-                  //
-                  selectedProduct.optionalFinishMaterialEnabled
-                      ? Column(
-                          children: [
-                            SizedBox(
-                              height: 30,
-                            ),
-
-                            Text(
-                              '2. ${selectedProduct.optionalFinishMaterial}',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.normal),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-
-                            RichText(
-                              textAlign: TextAlign.center,
-                              text: TextSpan(
-                                  text: '50% Off - One-time Offer ! ',
-                                  style: TextStyle(
-                                      color: Colors.red,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.normal),
-                                  children: <TextSpan>[
-                                    TextSpan(
-                                      text: '\n( ',
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.normal,
-                                      ),
-                                    ),
-                                    TextSpan(
-                                        text: selectedProduct
-                                                .showOldEngravePrice
-                                            ? '\$${selectedProduct.optionalFinishMaterialPrice} '
-                                            : '',
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.normal,
-                                        )),
-                                    TextSpan(
-                                      text: ')',
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.normal,
-                                      ),
-                                    ),
-                                  ]),
-                            ),
-                            //
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Row(
-                              children: [
-                                selectedProduct.engraveExampleUrl != null
-                                    ? ClipRRect(
-                                        borderRadius:
-                                            BorderRadius.circular(8.0),
-                                        child: new CachedNetworkImage(
-                                          imageUrl: selectedProduct
-                                              .optionalMaterialExampleUrl,
-                                          width: 100,
-                                          height: 100,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      )
-                                    : Container(),
-                                InkWell(
-                                  onTap: () {
-                                    print(
-                                        'optionalMaterialSelected: $optionalMaterialSelected !optionalMaterialSelected: ${!optionalMaterialSelected}');
-                                    dispatch(ProductPageActionCreator
-                                        .onSetOptionMaterialSelected(
-                                            !optionalMaterialSelected));
-
-                                    var engravingListActual =
-                                        List<String>.empty(growable: true);
-                                    for (var i = 0;
-                                        i < engravingControllers.length;
-                                        i++) {
-                                      engravingListActual
-                                          .add(engravingControllers[i].text);
-                                    }
-                                    setState(() {
-                                      optionalMaterialSelected =
-                                          !optionalMaterialSelected;
-                                      engraveInputs = engravingListActual;
-                                    });
-                                  },
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                        'Add ${selectedProduct.optionalFinishMaterial}',
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      Container(
-                                        width: 30,
-                                        height: 30,
-                                        decoration: BoxDecoration(
-                                          image: DecorationImage(
-                                              image: AssetImage(
-                                                  optionalMaterialSelected ==
-                                                          true
-                                                      ? "images/checkblue.png"
-                                                      : "images/checkgrey.png"),
-                                              fit: BoxFit.contain),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        )
-                      : Container(),
-                  SizedBox(height: 20),
-                  widget.selectedProduct.uploadsAvailable == false
-                      ? SizedBox.shrink(child: null)
-                      : Container(
-                          height: 160.0,
-                          child: buildGridView(
-                            pickedImages,
-                            widget.selectedProduct.properties['buyer_uploads'],
-                          ),
-                        ),
-                  SizedBox(height: 20),
-                  FlatButton(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(25.0),
-                        side: BorderSide(color: Colors.grey)),
-                    color: Colors.transparent,
-                    textColor: Colors.red,
-                    padding: EdgeInsets.only(
-                      top: 12.0,
-                      bottom: 12.0,
-                      left: 50,
-                      right: 50,
+                    child: Text(
+                      'Customize and Proceed',
+                      style: TextStyle(
+                        fontSize: 17.0,
+                        fontWeight: FontWeight.normal,
+                        color: Colors.white,
+                      ),
                     ),
                     onPressed: orderImageData.length <
                                 widget.selectedProduct
@@ -986,42 +841,461 @@ class _ProductCustomizationState extends State<_ProductCustomization> {
                             );
                             dispatch(ProductPageActionCreator.onGoToCart());
                           },
-                    child: Text(
-                      'Customize and Proceed',
-                      style: TextStyle(
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          body: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: MediaQuery.of(context).size.width,
+                height: 125.0,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 261.0,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            "Modal Launch +22% Conversion | Made in USA",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 16.0,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          SizedBox(height: 9.0),
+                          RichText(
+                            text: TextSpan(
+                              style: DefaultTextStyle.of(context).style,
+                              children: [
+                                TextSpan(
+                                  text: "\$79,95",
+                                  style: TextStyle(
+                                    color: Colors.white.withOpacity(.5),
+                                    fontSize: 18.0,
+                                    decoration: TextDecoration.lineThrough,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: "\$39,95",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 24.0,
+                                    fontWeight: FontWeight.w700,
+                                    decoration: TextDecoration.none,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 13.0),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: double.infinity,
+                  padding: EdgeInsets.only(left: 16.0, right: 16.0),
+                  decoration: BoxDecoration(
+                    color: HexColor("#FAFCFF"),
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(32.0),
+                      topRight: Radius.circular(32.0),
+                    ),
+                  ),
+                  child: Container(
+                    alignment: Alignment.center,
+                    width: double.infinity,
+                    height: double.infinity,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          SizedBox(height: 21),
+                          Container(
+                            constraints: BoxConstraints(maxWidth: 307.0),
+                            child: RichText(
+                              textAlign: TextAlign.center,
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: "Add a ",
+                                    style: TextStyle(
+                                      fontSize: 18.0,
+                                      fontWeight: FontWeight.w600,
+                                      color: HexColor("#53586F"),
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: "personal message ",
+                                    style: TextStyle(
+                                      fontSize: 18.0,
+                                      fontWeight: FontWeight.w800,
+                                      color: HexColor("#839BE7"),
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: "and ",
+                                    style: TextStyle(
+                                      fontSize: 18.0,
+                                      fontWeight: FontWeight.w600,
+                                      color: HexColor("#53586F"),
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: "gold finish",
+                                    style: TextStyle(
+                                      fontSize: 18.0,
+                                      fontWeight: FontWeight.w800,
+                                      color: HexColor("#839BE7"),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 45.0),
+                          Container(
+                            height: 145.0,
+                            width: double.infinity,
+                            constraints: BoxConstraints(maxWidth: 343.0),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12.0),
+                              color: Colors.white,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey[300],
+                                  offset: Offset(0.0, 2.0), // (x,y)
+                                  blurRadius: 5.0,
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 75.0,
+                                  height: double.infinity,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(12.0),
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(12.0),
+                                      bottomLeft: Radius.circular(12.0),
+                                    ),
+                                    child: Image.asset(
+                                      "images/Image 11.png",
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Container(
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          "Engrave Personal Message",
+                                          style: TextStyle(
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.w600,
+                                            color: HexColor("#53586F"),
+                                          ),
+                                        ),
+                                        SizedBox(height: 8.0),
+                                        Text(
+                                          "50% Off - One - Time Offer !",
+                                          style: TextStyle(
+                                            fontSize: 14.0,
+                                            color: HexColor("#EB5757"),
+                                          ),
+                                        ),
+                                        SizedBox(height: 10.0),
+                                        RichText(
+                                          textAlign: TextAlign.center,
+                                          text: TextSpan(
+                                            children: [
+                                              TextSpan(
+                                                text: "\$30",
+                                                style: TextStyle(
+                                                  fontSize: 18.0,
+                                                  color: HexColor("#53586F")
+                                                      .withOpacity(.5),
+                                                  decoration: TextDecoration
+                                                      .lineThrough,
+                                                ),
+                                              ),
+                                              TextSpan(
+                                                text: "  \$15",
+                                                style: TextStyle(
+                                                  fontSize: 22.0,
+                                                  fontWeight: FontWeight.w800,
+                                                  color: HexColor("#53586F"),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        SizedBox(height: 9.0),
+                                        Container(
+                                          width: double.infinity,
+                                          height: 32.0,
+                                          constraints: BoxConstraints(
+                                            maxWidth: 240.0,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: HexColor("#FAFCFF"),
+                                            borderRadius:
+                                                BorderRadius.circular(22.0),
+                                          ),
+                                          child: TextField(
+                                            onChanged: (text) {},
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 14.0,
+                                            ),
+                                            // onChanged: (content) {
+                                            //     var engravingListActual =
+                                            //         List<String>.empty(
+                                            //             growable: true);
+                                            //     for (var i = 0;
+                                            //         i <
+                                            //             engravingControllers
+                                            //                 .length;
+                                            //         i++) {
+                                            //       engravingListActual.add(
+                                            //           engravingControllers[i]
+                                            //               .text);
+                                            //     }
+                                            //     dispatch(ProductPageActionCreator
+                                            //         .onSetEngravingInputs(
+                                            //             engravingListActual));
+                                            //   },
+                                            // controller:
+                                            //     engravingControllers[index],
+                                            decoration: InputDecoration(
+                                              isDense: true,
+                                              hintText: 'Enter your words here',
+                                              contentPadding: EdgeInsets.only(
+                                                top: 7.0,
+                                                bottom: 7.0,
+                                                left: 12.0,
+                                              ),
+                                              hintStyle: TextStyle(
+                                                color: HexColor("#C4C6D2"),
+                                                fontSize: 14.0,
+                                              ),
+                                              enabledBorder:
+                                                  UnderlineInputBorder(
+                                                borderSide: BorderSide(
+                                                    color: Colors.white),
+                                              ),
+                                              focusedBorder:
+                                                  UnderlineInputBorder(
+                                                borderSide: BorderSide(
+                                                    color: Colors.white),
+                                              ),
+                                              border: UnderlineInputBorder(
+                                                borderSide: BorderSide(
+                                                    color: Colors.white),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 20.0),
+                          Container(
+                            height: 145.0,
+                            width: double.infinity,
+                            constraints: BoxConstraints(maxWidth: 343.0),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12.0),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey[300],
+                                  offset: Offset(0.0, 2.0), // (x,y)
+                                  blurRadius: 5.0,
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 75.0,
+                                  height: double.infinity,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(12.0),
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(12.0),
+                                      bottomLeft: Radius.circular(12.0),
+                                    ),
+                                    child: Image.asset(
+                                      "images/Image 9.png",
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Container(
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          "Engrave Personal Message",
+                                          style: TextStyle(
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.w600,
+                                            color: HexColor("#53586F"),
+                                          ),
+                                        ),
+                                        SizedBox(height: 8.0),
+                                        Text(
+                                          "50% Off - One - Time Offer !",
+                                          style: TextStyle(
+                                            fontSize: 14.0,
+                                            color: HexColor("#EB5757"),
+                                          ),
+                                        ),
+                                        SizedBox(height: 10.0),
+                                        RichText(
+                                          textAlign: TextAlign.center,
+                                          text: TextSpan(
+                                            children: [
+                                              TextSpan(
+                                                text: "\$30",
+                                                style: TextStyle(
+                                                  fontSize: 18.0,
+                                                  color: HexColor("#53586F")
+                                                      .withOpacity(.5),
+                                                  decoration: TextDecoration
+                                                      .lineThrough,
+                                                ),
+                                              ),
+                                              TextSpan(
+                                                text: "  \$15",
+                                                style: TextStyle(
+                                                  fontSize: 22.0,
+                                                  fontWeight: FontWeight.w800,
+                                                  color: HexColor("#53586F"),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        SizedBox(height: 9.0),
+                                        Container(
+                                          width: double.infinity,
+                                          height: 32.0,
+                                          constraints: BoxConstraints(
+                                            maxWidth: 240.0,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: HexColor("#FAFCFF"),
+                                            borderRadius:
+                                                BorderRadius.circular(22.0),
+                                          ),
+                                          child: InkWell(
+                                            child: Row(
+                                              children: [
+                                                Container(
+                                                  width: 32,
+                                                  height: double.infinity,
+                                                  child:
+                                                      !optionalMaterialSelected
+                                                          ? SvgPicture.asset(
+                                                              "images/Vector5.svg",
+                                                            )
+                                                          : SvgPicture.asset(
+                                                              "images/Group 170.svg",
+                                                            ),
+                                                ),
+                                                Expanded(
+                                                  child: Center(
+                                                    child: Text(
+                                                      "Add 18K Gold Finish ",
+                                                      style: TextStyle(
+                                                        fontSize: 14.0,
+                                                        color:
+                                                            HexColor("#53586F"),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            onTap: () {
+                                              print(
+                                                  'optionalMaterialSelected: $optionalMaterialSelected !optionalMaterialSelected: ${!optionalMaterialSelected}');
+                                              dispatch(ProductPageActionCreator
+                                                  .onSetOptionMaterialSelected(
+                                                      !optionalMaterialSelected));
+
+                                              var engravingListActual =
+                                                  List<String>.empty(
+                                                      growable: true);
+                                              for (var i = 0;
+                                                  i <
+                                                      engravingControllers
+                                                          .length;
+                                                  i++) {
+                                                engravingListActual.add(
+                                                    engravingControllers[i]
+                                                        .text);
+                                              }
+                                              setState(() {
+                                                optionalMaterialSelected =
+                                                    !optionalMaterialSelected;
+                                                engraveInputs =
+                                                    engravingListActual;
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 20.0),
+                        ],
                       ),
                     ),
                   ),
-                  SizedBox(height: 20),
-                  //
-                ],
-              ),
-            ),
-          ),
-          Positioned(
-            right: -20.0,
-            top: -20.0,
-            width: 50,
-            height: 50,
-            child: InkWell(
-              onTap: () => Navigator.pop(context),
-              child: RawMaterialButton(
-                elevation: 2.0,
-                fillColor: Colors.white,
-                child: Icon(
-                  Icons.close,
-                  size: 26.0,
                 ),
-                padding: EdgeInsets.all(0.0),
-                shape: CircleBorder(),
-                onPressed: () => null,
               ),
-            ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -1052,35 +1326,4 @@ class _ProductCustomizationState extends State<_ProductCustomization> {
             ),
         ]);
   }
-}
-
-void _sendRequest(imagesList, Function setOrderImageData) async {
-  Uri uri = Uri.parse('https://backend.dosparkles.com/upload');
-
-  MultipartRequest request = http.MultipartRequest("POST", uri);
-
-  for (var i = 0; i < imagesList.length; i++) {
-    var asset = imagesList[i];
-
-    ByteData byteData = await asset.getByteData();
-    List<int> imageData = byteData.buffer.asUint8List();
-
-    MultipartFile multipartFile = MultipartFile.fromBytes(
-      'files',
-      imageData,
-      filename: '${asset.name}',
-      contentType: MediaType("image", "jpg"),
-    );
-    request.files.add(multipartFile);
-  }
-
-  http.Response response = await http.Response.fromStream(await request.send());
-  List imagesResponse = json.decode(response.body);
-  // var listOfIds = imagesResponse.map((image) => "\"${image['id']}\"");
-
-  List<Map<String, String>> orderImageData = imagesResponse
-      .map((image) => {'url': "${image['url']}", 'id': "${image['id']}"})
-      .toList();
-
-  setOrderImageData(orderImageData);
 }

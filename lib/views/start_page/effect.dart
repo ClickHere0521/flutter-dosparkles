@@ -6,8 +6,6 @@ import 'action.dart';
 import 'state.dart';
 import 'package:com.floridainc.dosparkles/actions/app_config.dart';
 
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
 import 'package:com.floridainc.dosparkles/models/models.dart';
 
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';

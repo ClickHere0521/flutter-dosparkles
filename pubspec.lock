@@ -218,6 +218,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.2.11"
+  dotted_border:
+    dependency: "direct main"
+    description:
+      name: dotted_border
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.0"
   fake_async:
     dependency: transitive
     description:
@@ -349,6 +356,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.4.2"
+  flutter_dash:
+    dependency: "direct main"
+    description:
+      name: flutter_dash
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.1"
   flutter_downloader:
     dependency: "direct main"
     description:
@@ -395,7 +409,7 @@ packages:
       name: flutter_svg
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.19.3"
+    version: "0.22.0"
   flutter_swiper:
     dependency: "direct main"
     description:
@@ -643,14 +657,14 @@ packages:
       name: path_drawing
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.4.1+1"
+    version: "0.5.0"
   path_parsing:
     dependency: transitive
     description:
       name: path_parsing
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.4"
+    version: "0.2.0"
   path_provider:
     dependency: transitive
     description:
@@ -699,7 +713,7 @@ packages:
       name: petitparser
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.1.0"
+    version: "4.1.0"
   platform:
     dependency: transitive
     description:
@@ -1041,7 +1055,7 @@ packages:
       name: xml
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.5.1"
+    version: "5.1.0"
   yaml:
     dependency: transitive
     description:
@@ -1051,4 +1065,4 @@ packages:
     version: "2.2.1"
 sdks:
   dart: ">=2.12.0 <3.0.0"
-  flutter: ">=1.24.0-10.1.pre"
+  flutter: ">=1.24.0-7.0"
