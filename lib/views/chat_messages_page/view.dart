@@ -6,7 +6,9 @@ import 'package:com.floridainc.dosparkles/actions/adapt.dart';
 import 'package:com.floridainc.dosparkles/actions/api/graphql_client.dart';
 import 'package:com.floridainc.dosparkles/actions/app_config.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
+import 'package:com.floridainc.dosparkles/models/models.dart';
 import 'package:com.floridainc.dosparkles/utils/colors.dart';
+import 'package:com.floridainc.dosparkles/widgets/order_product_details.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -1104,7 +1106,7 @@ class _OrderWidgetState extends State<OrderWidget> {
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) =>
-                                              OrderDetailsWidget(
+                                              OrderProductDetailsWidget(
                                             product: products[index],
                                           ),
                                         ),
@@ -1181,143 +1183,6 @@ class _OrderWidgetState extends State<OrderWidget> {
           ),
         ),
       ],
-    );
-  }
-}
-
-class OrderDetailsWidget extends StatefulWidget {
-  final product;
-
-  const OrderDetailsWidget({Key key, this.product}) : super(key: key);
-
-  @override
-  _OrderDetailsWidgetState createState() => _OrderDetailsWidgetState();
-}
-
-class _OrderDetailsWidgetState extends State<OrderDetailsWidget> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Order details"),
-        centerTitle: true,
-        flexibleSpace: Container(
-          decoration: new BoxDecoration(
-            gradient: new LinearGradient(
-              colors: [HexColor('#3D9FB0'), HexColor('#557084')],
-              begin: const FractionalOffset(0.5, 0.5),
-              end: const FractionalOffset(0.5, 1.0),
-              stops: [0.0, 1.0],
-              tileMode: TileMode.clamp,
-            ),
-          ),
-        ),
-      ),
-      body: Container(
-        color: HexColor('#3D9FB0'),
-        width: double.infinity,
-        height: double.infinity,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Container(
-                child: Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      ListTile(
-                        leading: Text(
-                          "Metal:",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 24,
-                            fontWeight: FontWeight.normal,
-                          ),
-                        ),
-                        horizontalTitleGap: 40,
-                        title: Text(
-                          widget.product['properties'] != null &&
-                                  widget.product['properties']['metal'] != null
-                              ? widget.product['properties']['metal']
-                              : "",
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 24,
-                            fontWeight: FontWeight.normal,
-                          ),
-                        ),
-                      ),
-                      ListTile(
-                        leading: Text(
-                          "Type:",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 24,
-                            fontWeight: FontWeight.normal,
-                          ),
-                        ),
-                        horizontalTitleGap: 40,
-                        title: Text(
-                          widget.product['properties'] != null &&
-                                  widget.product['properties']['type'] != null
-                              ? widget.product['properties']['type']
-                              : "",
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 24,
-                            fontWeight: FontWeight.normal,
-                          ),
-                        ),
-                      ),
-                      ListTile(
-                        leading: Text(
-                          "Shape:",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 24,
-                            fontWeight: FontWeight.normal,
-                          ),
-                        ),
-                        horizontalTitleGap: 40,
-                        title: Text(
-                          widget.product['properties'] != null &&
-                                  widget.product['properties']['shape'] != null
-                              ? widget.product['properties']['shape']
-                              : "",
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 24,
-                            fontWeight: FontWeight.normal,
-                          ),
-                        ),
-                      ),
-                      GridView.count(
-                          physics: NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          crossAxisCount: 2,
-                          childAspectRatio: 1,
-                          children: <Widget>[
-                            for (var asset in widget.product['media'])
-                              Card(
-                                clipBehavior: Clip.antiAlias,
-                                child: Stack(
-                                  children: <Widget>[
-                                    Image.network(
-                                        '${AppConfig.instance.baseApiHost + asset['url']}'),
-                                  ],
-                                ),
-                              ),
-                          ]),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }
