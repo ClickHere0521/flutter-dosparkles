@@ -30,6 +30,15 @@ class _OrderProductDetailsWidgetState extends State<OrderProductDetailsWidget> {
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
+        centerTitle: true,
+        elevation: 0.0,
+        leadingWidth: 70.0,
+        automaticallyImplyLeading: false,
+        leading: InkWell(
+          child: Image.asset("images/back_button.png"),
+          onTap: () => Navigator.of(context).pop(),
+        ),
+        backgroundColor: Colors.white,
         title: Text(
           "Details of product",
           style: TextStyle(
@@ -37,39 +46,6 @@ class _OrderProductDetailsWidgetState extends State<OrderProductDetailsWidget> {
             color: HexColor("#53586F"),
             fontWeight: FontWeight.w600,
             fontFeatures: [FontFeature.enable('smcp')],
-          ),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        elevation: 0.0,
-        leadingWidth: 70.0,
-        automaticallyImplyLeading: false,
-        leading: Builder(
-          builder: (context) => IconButton(
-            highlightColor: Colors.transparent,
-            splashColor: Colors.transparent,
-            icon: Container(
-              width: 34.0,
-              height: 34.0,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey[200],
-                    offset: Offset(0.0, 0.0), // (x, y)
-                    blurRadius: 10.0,
-                  ),
-                ],
-              ),
-              child: Center(
-                child: SvgPicture.asset(
-                  "images/Group 934534.svg",
-                  color: HexColor("#B3C1F2"),
-                ),
-              ),
-            ),
-            onPressed: () => Scaffold.of(context).openDrawer(),
           ),
         ),
       ),

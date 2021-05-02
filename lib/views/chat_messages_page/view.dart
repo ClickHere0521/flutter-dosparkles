@@ -9,8 +9,11 @@ import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/models/models.dart';
 import 'package:com.floridainc.dosparkles/utils/colors.dart';
 import 'package:com.floridainc.dosparkles/widgets/order_product_details.dart';
+import 'package:com.floridainc.dosparkles/widgets/sparkles_drawer.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:flui/flui.dart';
@@ -228,8 +231,60 @@ class _BubblePageState extends State<BubblePage> {
                                       )
                                     : Align(
                                         alignment: Alignment.centerLeft,
-                                        child: _chatOrderBlock(
-                                            orderId, chatMessage['createdAt']),
+                                        child: Column(
+                                          children: [
+                                            _chatOrderBlock(
+                                              orderId,
+                                              chatMessage['createdAt'],
+                                            ),
+                                            SizedBox(height: 29.0),
+                                            Container(
+                                              width: 120.0,
+                                              height: 30.0,
+                                              child: ElevatedButton(
+                                                style: ButtonStyle(
+                                                  backgroundColor:
+                                                      MaterialStateProperty.all(
+                                                    HexColor("#27AE60"),
+                                                  ),
+                                                  padding:
+                                                      MaterialStateProperty.all(
+                                                          EdgeInsets.zero),
+                                                  elevation:
+                                                      MaterialStateProperty.all(
+                                                          0.0),
+                                                  shape:
+                                                      MaterialStateProperty.all(
+                                                    RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              27.0),
+                                                    ),
+                                                  ),
+                                                ),
+                                                child: Text(
+                                                  "Change order",
+                                                  style: TextStyle(
+                                                    fontSize: 14.0,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                                onPressed: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          _ChangeOrder(
+                                                        orderId: orderId,
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                 insetV,
                               ],
@@ -476,6 +531,7 @@ Widget _chatOrderBlock(orderId, createdAt) {
                   : 115.0,
               child: Stack(
                 clipBehavior: Clip.none,
+                fit: StackFit.passthrough,
                 children: [
                   Positioned(
                     bottom: -20.0,
@@ -1183,6 +1239,492 @@ class _OrderWidgetState extends State<OrderWidget> {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _ChangeOrder extends StatefulWidget {
+  final orderId;
+
+  const _ChangeOrder({Key key, this.orderId}) : super(key: key);
+
+  @override
+  __ChangeOrderState createState() => __ChangeOrderState();
+}
+
+class __ChangeOrderState extends State<_ChangeOrder> {
+  Future getInitialData() async {
+    QueryResult result =
+        await BaseGraphQLClient.instance.fetchOrder(widget.orderId);
+    return result.data['orders'][0];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: getInitialData(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData && !snapshot.hasError) {
+          var order = snapshot.data;
+
+          var productMedia = order['products'][0]['media']
+              .map(
+                (item) =>
+                    AppConfig.instance.baseApiHost + item['url'].toString(),
+              )
+              .toList();
+          return Scaffold(
+            backgroundColor: Colors.white,
+            resizeToAvoidBottomInset: true,
+            appBar: AppBar(
+              centerTitle: true,
+              elevation: 0.0,
+              leadingWidth: 70.0,
+              automaticallyImplyLeading: false,
+              leading: InkWell(
+                child: Image.asset("images/back_button.png"),
+                onTap: () => Navigator.of(context).pop(),
+              ),
+              backgroundColor: Colors.white,
+              title: Text(
+                "Change Order",
+                style: TextStyle(
+                  fontSize: 22,
+                  color: HexColor("#53586F"),
+                  fontWeight: FontWeight.w600,
+                  fontFeatures: [FontFeature.enable('smcp')],
+                ),
+              ),
+            ),
+            drawer: SparklesDrawer(),
+            body: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 20.0),
+                  Swiper(
+                    itemBuilder: (BuildContext context, int index) {
+                      return Image.network(
+                        productMedia[index],
+                        fit: BoxFit.fill,
+                      );
+                    },
+                    itemCount: productMedia.length,
+                    itemWidth: Adapt.screenW() * 0.6,
+                    itemHeight: Adapt.screenW() * 0.6,
+                    layout: SwiperLayout.STACK,
+                    pagination: SwiperPagination(
+                      margin: EdgeInsets.only(top: Adapt.screenW() * 0.6 + 20),
+                      builder: DotSwiperPaginationBuilder(
+                        color: Colors.grey,
+                        activeColor: HexColor('#3D9FB0'),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 16.0),
+                  Container(
+                    height: 71.0,
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Stack(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(16.0),
+                              child: Image.asset(
+                                "images/image 2.png",
+                                width: 70.0,
+                                height: double.infinity,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            Positioned.fill(
+                              child: Container(
+                                width: 70.0,
+                                height: double.infinity,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(16.0),
+                                  color: Colors.white.withOpacity(.4),
+                                ),
+                              ),
+                            ),
+                            Positioned.fill(
+                              child: Center(
+                                child: SvgPicture.asset(
+                                  "images/cloud_white.svg",
+                                  color: Colors.white,
+                                  width: 24.0,
+                                  height: 18.0,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(width: 12.0),
+                        Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "your Uploaded image".toUpperCase(),
+                                style: TextStyle(
+                                  fontSize: 14.0,
+                                  fontWeight: FontWeight.w600,
+                                  color: HexColor("#C4C6D2"),
+                                ),
+                              ),
+                              SizedBox(height: 2.0),
+                              RichText(
+                                text: TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text: "Files should be ",
+                                      style: TextStyle(
+                                        fontSize: 12.0,
+                                        color: HexColor("#C4C6D2"),
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: "PNG, JPG ",
+                                      style: TextStyle(
+                                        fontSize: 12.0,
+                                        fontWeight: FontWeight.w600,
+                                        color:
+                                            HexColor("#53586F").withOpacity(.7),
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: "size - 0000",
+                                      style: TextStyle(
+                                        fontSize: 12.0,
+                                        color: HexColor("#C4C6D2"),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 12.0),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Text(
+                      "Engraving".toUpperCase(),
+                      style: TextStyle(
+                        fontSize: 14.0,
+                        fontWeight: FontWeight.w600,
+                        color: HexColor("#C4C6D2"),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 10.0),
+                  Container(
+                    height: 40.0,
+                    width: MediaQuery.of(context).size.width,
+                    margin: const EdgeInsets.symmetric(horizontal: 16.0),
+                    decoration: BoxDecoration(
+                      color: HexColor("#EDEEF2"),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    child: TextField(
+                      onChanged: (text) {},
+                      style: TextStyle(
+                        color: HexColor("#53586F"),
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.w700,
+                      ),
+                      decoration: InputDecoration(
+                        isDense: true,
+                        hintText: 'Engraving name',
+                        contentPadding: EdgeInsets.symmetric(
+                          vertical: 11,
+                          horizontal: 16,
+                        ),
+                        fillColor: Colors.white,
+                        hintStyle: new TextStyle(color: Colors.grey),
+                        labelStyle: new TextStyle(color: Colors.white),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white),
+                        ),
+                        border: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20.0),
+                  Center(
+                    child: Container(
+                      width: 300.0,
+                      height: 48.0,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(31.0),
+                      ),
+                      child: ElevatedButton(
+                        style: ButtonStyle(
+                          elevation: MaterialStateProperty.all(0),
+                          backgroundColor:
+                              MaterialStateProperty.all(HexColor("#6092DC")),
+                          shape: MaterialStateProperty.all(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(31.0),
+                            ),
+                          ),
+                        ),
+                        child: Text(
+                          'Save',
+                          style: TextStyle(
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.normal,
+                            color: Colors.white,
+                          ),
+                        ),
+                        onPressed: () {},
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 18.0),
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: HexColor("#FAFCFF"),
+                      borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(32.0),
+                        topLeft: Radius.circular(32.0),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey[300],
+                          offset: Offset(0.0, -0.2), // (x, y)
+                          blurRadius: 10.0,
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(height: 19.0),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 37.0),
+                          child: Text(
+                            "Modal Launch +22% Conversion",
+                            style: TextStyle(
+                              color: HexColor("#53586F"),
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 21.0),
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: "\$39,95",
+                                    style: TextStyle(
+                                      color: HexColor("#53586F"),
+                                      fontSize: 24.0,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: "\$79,95",
+                                    style: TextStyle(
+                                      color:
+                                          HexColor("#53586F").withOpacity(.5),
+                                      fontSize: 18.0,
+                                      decoration: TextDecoration.lineThrough,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(height: 3.0),
+                            Text(
+                              "You Save: \$40 (50%)",
+                              style: TextStyle(
+                                fontSize: 12.0,
+                                color: HexColor("#27AE60"),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 10.0),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              child: Container(
+                                width: double.infinity,
+                                height: 36.0,
+                                constraints: BoxConstraints(
+                                  maxWidth: 188.0,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: HexColor("#FAFCFF"),
+                                  borderRadius: BorderRadius.only(
+                                    topRight: Radius.circular(16.0),
+                                    bottomRight: Radius.circular(16.0),
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey[300],
+                                      offset: Offset(0.0, 5.0), // (x, y)
+                                      blurRadius: 5.0,
+                                    ),
+                                  ],
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "Product Details",
+                                    style: TextStyle(
+                                      fontSize: 14.0,
+                                      fontWeight: FontWeight.w700,
+                                      color: HexColor("#53586F"),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 20.0),
+                            Expanded(
+                              child: Container(
+                                width: double.infinity,
+                                height: 36.0,
+                                constraints: BoxConstraints(
+                                  maxWidth: 188.0,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: HexColor("#FAFCFF"),
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(16.0),
+                                    bottomLeft: Radius.circular(16.0),
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey[300],
+                                      offset: Offset(0.0, 5.0), // (x, y)
+                                      blurRadius: 5.0,
+                                    ),
+                                  ],
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "Delivery Time",
+                                    style: TextStyle(
+                                      fontSize: 14.0,
+                                      fontWeight: FontWeight.w700,
+                                      color: HexColor("#53586F"),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 16.0),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Description",
+                                style: TextStyle(
+                                  fontSize: 11.0,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              Text(
+                                "Surprise someone you love with this unique and elegant jewelry item 🎁.",
+                                style: TextStyle(
+                                  fontSize: 11.0,
+                                  fontWeight: FontWeight.w300,
+                                ),
+                              ),
+                              Text(
+                                "We say 'UNIQUE' because each piece is different when you provide your photo.",
+                                style: TextStyle(
+                                  fontSize: 11.0,
+                                  fontWeight: FontWeight.w300,
+                                ),
+                              ),
+                              Text(
+                                "This hand-crafted piece will never fade and is built to last!",
+                                style: TextStyle(
+                                  fontSize: 11.0,
+                                  fontWeight: FontWeight.w300,
+                                ),
+                              ),
+                              SizedBox(height: 8.0),
+                              Text(
+                                "Specifics",
+                                style: TextStyle(
+                                  fontSize: 11.0,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              Text(
+                                "Made in the U.S.A",
+                                style: TextStyle(
+                                  fontSize: 11.0,
+                                  fontWeight: FontWeight.w300,
+                                ),
+                              ),
+                              Text(
+                                "316 Steel or 18k Gold Finish",
+                                style: TextStyle(
+                                  fontSize: 11.0,
+                                  fontWeight: FontWeight.w300,
+                                ),
+                              ),
+                              Text(
+                                "Adjustable Necklace Chain Measures 18'-22'",
+                                style: TextStyle(
+                                  fontSize: 11.0,
+                                  fontWeight: FontWeight.w300,
+                                ),
+                              ),
+                              Text(
+                                "Water-Resistant",
+                                style: TextStyle(
+                                  fontSize: 11.0,
+                                  fontWeight: FontWeight.w300,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 20.0),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+        return Center(child: Text("Loading..."));
+      },
     );
   }
 }

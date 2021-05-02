@@ -142,7 +142,7 @@ class __InnerPartState extends State<_InnerPart> {
                   SizedBox(height: 20.0),
                   GestureDetector(
                     onTap: () {
-                      _termsDialog(context);
+                      _uploadDialog(context);
                     },
                     child: Container(
                       width: double.infinity,
@@ -291,7 +291,7 @@ class __InnerPartState extends State<_InnerPart> {
   }
 }
 
-Future<void> _termsDialog(BuildContext context) async {
+Future<void> _uploadDialog(BuildContext context) async {
   return showDialog(
     context: context,
     barrierDismissible: false,
