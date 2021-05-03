@@ -18,3 +18,4 @@ export 'register_page/page.dart';
 export 'add_phone_page/page.dart';
 export 'help_support_page/page.dart';
 export 'upload_video_page/page.dart';
+export 'empty_screen_page/page.dart';

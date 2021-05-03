@@ -69,7 +69,7 @@ class __MainBodyState extends State<_MainBody> {
               centerTitle: true,
               elevation: 0.0,
               leadingWidth: 70.0,
-              automaticallyImplyLeading: false,
+              automaticallyImplyLeading: true,
               leading: InkWell(
                 child: Image.asset("images/back_button.png"),
                 onTap: () => Navigator.of(context).pop(),
@@ -347,12 +347,7 @@ class __InnerPartState extends State<_InnerPart> {
   }
 }
 
-class _AboutUs extends StatefulWidget {
-  @override
-  __AboutUsState createState() => __AboutUsState();
-}
-
-class __AboutUsState extends State<_AboutUs> {
+class _AboutUs extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -386,7 +381,7 @@ class __AboutUsState extends State<_AboutUs> {
               centerTitle: true,
               elevation: 0.0,
               leadingWidth: 70.0,
-              automaticallyImplyLeading: false,
+              automaticallyImplyLeading: true,
               leading: InkWell(
                 child: Image.asset("images/back_button.png"),
                 onTap: () => Navigator.of(context).pop(),

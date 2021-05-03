@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:com.floridainc.dosparkles/routes/routes.dart';
 import 'package:com.floridainc.dosparkles/actions/user_info_operate.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/utils/colors.dart';
@@ -22,8 +24,26 @@ import 'package:flutter_svg/svg.dart';
 class SparklesDrawer extends StatelessWidget {
   final globalUser = GlobalStore.store.getState().user;
 
+  // String getCurrentRouteName(context) {
+  //   String currentRouteName;
+
+  //   Navigator.popUntil(context, (route) {
+  //     currentRouteName = route.settings.name;
+  //     return true;
+  //   });
+
+  //   return currentRouteName;
+  // }
+
   @override
   Widget build(BuildContext context) {
+    // String currentRoute = getCurrentRouteName(context);
+    // var pages = Routes.routes.pages['storeselectionpage'].name;
+
+    // var name = ModalRoute.of(context).settings;
+
+    // print("111___$pages");
+
     return ClipRRect(
       borderRadius: BorderRadius.only(
         topRight: Radius.circular(32.0),
@@ -40,7 +60,7 @@ class SparklesDrawer extends StatelessWidget {
                 GestureDetector(
                   onTap: () {
                     Navigator.of(context)
-                        .pushNamed('storeselectionpage', arguments: null);
+                        .pushNamed('startpage', arguments: null);
                   },
                   child: Container(
                     height: 218.0,
@@ -76,8 +96,8 @@ class SparklesDrawer extends StatelessWidget {
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(10.0),
                                     child: globalUser.avatarUrl != null
-                                        ? Image.network(
-                                            globalUser.avatarUrl,
+                                        ? CachedNetworkImage(
+                                            imageUrl: globalUser.avatarUrl,
                                             width: double.infinity,
                                             height: double.infinity,
                                           )
@@ -121,225 +141,232 @@ class SparklesDrawer extends StatelessWidget {
                     ),
                   ),
                 ),
-                ListTile(
-                  leading: const Icon(Icons.login),
-                  minLeadingWidth: 0.0,
-                  title: Text(
-                    'Register',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onTap: () {
-                    Navigator.of(context)
-                        .pushNamed('registerpage', arguments: null);
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.phone),
-                  minLeadingWidth: 0.0,
-                  title: Text(
-                    'Add Phone',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onTap: () {
-                    Navigator.of(context)
-                        .pushNamed('addphonepage', arguments: null);
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.money),
-                  minLeadingWidth: 0.0,
-                  title: Text(
-                    'Reset Password',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onTap: () {
-                    Navigator.of(context)
-                        .pushNamed('reset_passwordpage', arguments: null);
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.money),
-                  minLeadingWidth: 0.0,
-                  title: Text(
-                    'Sign Up',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onTap: () {
-                    Navigator.of(context)
-                        .pushNamed('registrationpage', arguments: null);
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.person),
-                  minLeadingWidth: 0.0,
-                  title: Text(
-                    'Invite Friends',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onTap: () {
-                    Navigator.of(context)
-                        .pushNamed('invite_friendpage', arguments: null);
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.person),
-                  minLeadingWidth: 0.0,
-                  title: Text(
-                    'Customize Link',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onTap: () {
-                    Navigator.of(context)
-                        .pushNamed('customize_linkpage', arguments: null);
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.person),
-                  minLeadingWidth: 0.0,
-                  title: Text(
-                    'Settings',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onTap: () {
-                    Navigator.of(context)
-                        .pushNamed('settings_page', arguments: null);
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.location_on),
-                  minLeadingWidth: 0.0,
-                  title: Text(
-                    'Location',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => GeolocatorWidget()),
-                    );
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.app_registration),
-                  minLeadingWidth: 0.0,
-                  title: Text(
-                    'Google Sign In',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => SignInDemo()),
-                    );
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.app_registration),
-                  minLeadingWidth: 0.0,
-                  title: Text(
-                    'Facebook Sign In',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => MyApp()),
-                    );
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.money_off),
-                  minLeadingWidth: 0.0,
-                  title: Text(
-                    'Stripe',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => MyStripeApp()),
-                    );
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.phone_iphone),
-                  minLeadingWidth: 0.0,
-                  title: Text(
-                    'Apple sign-in',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => MyAppleApp()),
-                    );
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.phone_iphone),
-                  minLeadingWidth: 0.0,
-                  title: Text(
-                    'Branch Routing',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => BranchApp()),
-                    );
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.chat),
-                  minLeadingWidth: 0.0,
-                  title: Text(
-                    'Chat',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onTap: () {
-                    Navigator.of(context).pushReplacementNamed('chatpage');
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.image),
-                  minLeadingWidth: 0.0,
-                  title: Text(
-                    'Image Picker',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => MyImagePickerPage()),
-                    );
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.flag),
-                  minLeadingWidth: 0.0,
-                  title: Text(
-                    'Country Code Picker',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => CountryPicker()),
-                    );
-                  },
-                ),
-                Divider(color: Colors.black),
+                // ListTile(
+                //   leading: const Icon(Icons.login),
+                //   minLeadingWidth: 0.0,
+                //   title: Text(
+                //     'Register',
+                //     style: TextStyle(color: Colors.white),
+                //   ),
+                //   onTap: () {
+                //     Navigator.of(context)
+                //         .pushNamed('registerpage', arguments: null);
+                //   },
+                // ),
+                // ListTile(
+                //   leading: const Icon(Icons.phone),
+                //   minLeadingWidth: 0.0,
+                //   title: Text(
+                //     'Add Phone',
+                //     style: TextStyle(color: Colors.white),
+                //   ),
+                //   onTap: () {
+                //     Navigator.of(context)
+                //         .pushNamed('addphonepage', arguments: null);
+                //   },
+                // ),
+                // ListTile(
+                //   leading: const Icon(Icons.money),
+                //   minLeadingWidth: 0.0,
+                //   title: Text(
+                //     'Reset Password',
+                //     style: TextStyle(color: Colors.white),
+                //   ),
+                //   onTap: () {
+                //     Navigator.of(context)
+                //         .pushNamed('reset_passwordpage', arguments: null);
+                //   },
+                // ),
+                // ListTile(
+                //   leading: const Icon(Icons.money),
+                //   minLeadingWidth: 0.0,
+                //   title: Text(
+                //     'Sign Up',
+                //     style: TextStyle(color: Colors.white),
+                //   ),
+                //   onTap: () {
+                //     Navigator.of(context)
+                //         .pushNamed('registrationpage', arguments: null);
+                //   },
+                // ),
+                // ListTile(
+                //   leading: const Icon(Icons.person),
+                //   minLeadingWidth: 0.0,
+                //   title: Text(
+                //     'Invite Friends',
+                //     style: TextStyle(color: Colors.white),
+                //   ),
+                //   onTap: () {
+                //     Navigator.of(context)
+                //         .pushNamed('invite_friendpage', arguments: null);
+                //   },
+                // ),
+                // ListTile(
+                //   leading: const Icon(Icons.person),
+                //   minLeadingWidth: 0.0,
+                //   title: Text(
+                //     'Customize Link',
+                //     style: TextStyle(color: Colors.white),
+                //   ),
+                //   onTap: () {
+                //     Navigator.of(context)
+                //         .pushNamed('customize_linkpage', arguments: null);
+                //   },
+                // ),
+                // ListTile(
+                //   leading: const Icon(Icons.person),
+                //   minLeadingWidth: 0.0,
+                //   title: Text(
+                //     'Settings',
+                //     style: TextStyle(color: Colors.white),
+                //   ),
+                //   onTap: () {
+                //     Navigator.of(context)
+                //         .pushNamed('settings_page', arguments: null);
+                //   },
+                // ),
+                // ListTile(
+                //   leading: const Icon(Icons.location_on),
+                //   minLeadingWidth: 0.0,
+                //   title: Text(
+                //     'Location',
+                //     style: TextStyle(color: Colors.white),
+                //   ),
+                //   onTap: () {
+                //     Navigator.push(
+                //       context,
+                //       MaterialPageRoute(
+                //           builder: (context) => GeolocatorWidget()),
+                //     );
+                //   },
+                // ),
+                // ListTile(
+                //   leading: const Icon(Icons.app_registration),
+                //   minLeadingWidth: 0.0,
+                //   title: Text(
+                //     'Google Sign In',
+                //     style: TextStyle(color: Colors.white),
+                //   ),
+                //   onTap: () {
+                //     Navigator.push(
+                //       context,
+                //       MaterialPageRoute(builder: (context) => SignInDemo()),
+                //     );
+                //   },
+                // ),
+                // ListTile(
+                //   leading: const Icon(Icons.app_registration),
+                //   minLeadingWidth: 0.0,
+                //   title: Text(
+                //     'Facebook Sign In',
+                //     style: TextStyle(color: Colors.white),
+                //   ),
+                //   onTap: () {
+                //     Navigator.push(
+                //       context,
+                //       MaterialPageRoute(builder: (context) => MyApp()),
+                //     );
+                //   },
+                // ),
+                // ListTile(
+                //   leading: const Icon(Icons.money_off),
+                //   minLeadingWidth: 0.0,
+                //   title: Text(
+                //     'Stripe',
+                //     style: TextStyle(color: Colors.white),
+                //   ),
+                //   onTap: () {
+                //     Navigator.push(
+                //       context,
+                //       MaterialPageRoute(builder: (context) => MyStripeApp()),
+                //     );
+                //   },
+                // ),
+                // ListTile(
+                //   leading: const Icon(Icons.phone_iphone),
+                //   minLeadingWidth: 0.0,
+                //   title: Text(
+                //     'Apple sign-in',
+                //     style: TextStyle(color: Colors.white),
+                //   ),
+                //   onTap: () {
+                //     Navigator.push(
+                //       context,
+                //       MaterialPageRoute(builder: (context) => MyAppleApp()),
+                //     );
+                //   },
+                // ),
+                // ListTile(
+                //   leading: const Icon(Icons.phone_iphone),
+                //   minLeadingWidth: 0.0,
+                //   title: Text(
+                //     'Branch Routing',
+                //     style: TextStyle(color: Colors.white),
+                //   ),
+                //   onTap: () {
+                //     Navigator.push(
+                //       context,
+                //       MaterialPageRoute(builder: (context) => BranchApp()),
+                //     );
+                //   },
+                // ),
+                // ListTile(
+                //   leading: const Icon(Icons.chat),
+                //   minLeadingWidth: 0.0,
+                //   title: Text(
+                //     'Chat',
+                //     style: TextStyle(color: Colors.white),
+                //   ),
+                //   onTap: () {
+                //     Navigator.of(context).pushReplacementNamed('chatpage');
+                //   },
+                // ),
+                // ListTile(
+                //   leading: const Icon(Icons.image),
+                //   minLeadingWidth: 0.0,
+                //   title: Text(
+                //     'Image Picker',
+                //     style: TextStyle(color: Colors.white),
+                //   ),
+                //   onTap: () {
+                //     Navigator.push(
+                //       context,
+                //       MaterialPageRoute(
+                //           builder: (context) => MyImagePickerPage()),
+                //     );
+                //   },
+                // ),
+                // ListTile(
+                //   leading: const Icon(Icons.flag),
+                //   minLeadingWidth: 0.0,
+                //   title: Text(
+                //     'Country Code Picker',
+                //     style: TextStyle(color: Colors.white),
+                //   ),
+                //   onTap: () {
+                //     Navigator.push(
+                //       context,
+                //       MaterialPageRoute(builder: (context) => CountryPicker()),
+                //     );
+                //   },
+                // ),
+                // Divider(color: Colors.black),
 
                 //
                 //
 
+                SizedBox(height: 45.0),
                 GestureDetector(
                   child: Container(
                     padding: EdgeInsets.all(12.0),
                     margin: EdgeInsets.only(left: 13.0),
-                    decoration: BoxDecoration(),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(16.0),
+                        bottomLeft: Radius.circular(16.0),
+                      ),
+                    ),
                     child: Stack(
                       alignment: Alignment.centerLeft,
                       children: [
@@ -360,7 +387,7 @@ class SparklesDrawer extends StatelessWidget {
                   ),
                   onTap: () {
                     Navigator.of(context)
-                        .pushReplacementNamed('storeselectionpage');
+                        .pushNamed('storeselectionpage', arguments: null);
                   },
                 ),
                 SizedBox(height: 10.0),
@@ -394,7 +421,8 @@ class SparklesDrawer extends StatelessWidget {
                     ),
                   ),
                   onTap: () {
-                    Navigator.of(context).pushReplacementNamed('profilepage');
+                    Navigator.of(context)
+                        .pushNamed('profilepage', arguments: null);
                   },
                 ),
                 SizedBox(height: 10.0),
@@ -423,7 +451,7 @@ class SparklesDrawer extends StatelessWidget {
                   ),
                   onTap: () {
                     Navigator.of(context)
-                        .pushReplacementNamed('storeselectionpage');
+                        .pushNamed('storeselectionpage', arguments: null);
                   },
                 ),
                 SizedBox(height: 10.0),
@@ -452,38 +480,73 @@ class SparklesDrawer extends StatelessWidget {
                   ),
                   onTap: () {
                     Navigator.of(context)
-                        .pushReplacementNamed('storeselectionpage');
+                        .pushNamed('storeselectionpage', arguments: null);
                   },
                 ),
                 SizedBox(height: 10.0),
-                GestureDetector(
-                  child: Container(
-                    padding: EdgeInsets.all(12.0),
-                    margin: EdgeInsets.only(left: 13.0),
-                    decoration: BoxDecoration(),
-                    child: Stack(
-                      alignment: Alignment.centerLeft,
-                      children: [
-                        SvgPicture.asset("images/Group 251.svg"),
-                        Positioned(
-                          left: 32.0,
-                          child: Text(
-                            "Upload Video",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.w500,
-                            ),
+                globalUser.role == "Store Manager" ||
+                        globalUser.role == "Authenticated"
+                    ? GestureDetector(
+                        child: Container(
+                          padding: EdgeInsets.all(12.0),
+                          margin: EdgeInsets.only(left: 13.0),
+                          decoration: BoxDecoration(),
+                          child: Stack(
+                            alignment: Alignment.centerLeft,
+                            children: [
+                              SvgPicture.asset("images/Group 232.svg"),
+                              Positioned(
+                                left: 32.0,
+                                child: Text(
+                                  "Admin Dashboard",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                  onTap: () {
-                    Navigator.of(context)
-                        .pushReplacementNamed('storeselectionpage');
-                  },
-                ),
+                        onTap: () {
+                          Navigator.of(context).pushNamed(
+                            'storeselectionpage',
+                            arguments: null,
+                          );
+                        },
+                      )
+                    : GestureDetector(
+                        child: Container(
+                          padding: EdgeInsets.all(12.0),
+                          margin: EdgeInsets.only(left: 13.0),
+                          decoration: BoxDecoration(),
+                          child: Stack(
+                            alignment: Alignment.centerLeft,
+                            children: [
+                              SvgPicture.asset("images/Group 251.svg"),
+                              Positioned(
+                                left: 32.0,
+                                child: Text(
+                                  "Upload Video",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        onTap: () {
+                          Navigator.of(context).pushNamed(
+                            'storeselectionpage',
+                            arguments: null,
+                          );
+                        },
+                      ),
+
                 SizedBox(height: 10.0),
                 GestureDetector(
                   child: Container(
@@ -510,7 +573,7 @@ class SparklesDrawer extends StatelessWidget {
                   ),
                   onTap: () {
                     Navigator.of(context)
-                        .pushReplacementNamed('storeselectionpage');
+                        .pushNamed('storeselectionpage', arguments: null);
                   },
                 ),
                 SizedBox(height: 10.0),
@@ -539,7 +602,7 @@ class SparklesDrawer extends StatelessWidget {
                   ),
                   onTap: () {
                     Navigator.of(context)
-                        .pushReplacementNamed('helpsupportpage');
+                        .pushNamed('helpsupportpage', arguments: null);
                   },
                 ),
                 SizedBox(height: 140.0),
@@ -566,9 +629,11 @@ class SparklesDrawer extends StatelessWidget {
                       ],
                     ),
                   ),
-                  onTap: () {
-                    Navigator.of(context)
-                        .pushReplacementNamed('storeselectionpage');
+                  onTap: () async {
+                    await UserInfoOperate.whenLogout();
+
+                    Navigator.of(context).pushReplacementNamed('startpage');
+                    Navigator.pop(context);
                   },
                 ),
                 SizedBox(height: 24.0),

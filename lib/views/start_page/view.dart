@@ -1,8 +1,11 @@
+import 'dart:ui';
+
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
 import 'package:com.floridainc.dosparkles/widgets/keepalive_widget.dart';
 import 'package:com.floridainc.dosparkles/utils/colors.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../widgets/sparkles_drawer.dart';
 import 'action.dart';
@@ -21,53 +24,116 @@ Widget buildView(
 
   return Builder(builder: (BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Stack(
-          children: [
-            Positioned(
-              top: 0,
-              left: 0,
-              child: Image.asset(
-                "images/image 37.png",
-                fit: BoxFit.cover,
-              ),
-            ),
-            Positioned(
-              top: 0,
-              left: 0,
-              child: Image.asset(
-                "images/image 38.png",
-                fit: BoxFit.cover,
-              ),
-            ),
-            Container(
+      body: Stack(
+        children: [
+          Positioned(
+            top: 0,
+            left: 0,
+            child: Container(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SizedBox(height: 67.0),
-                    Image.asset(
-                      "images/The Perfect Gift.png",
-                      fit: BoxFit.cover,
-                    ),
-                    SizedBox(height: 12.0),
-                    Text(
-                      "made for you".toUpperCase(),
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
+              child: Image.asset(
+                "images/image 37.png",
+                width: double.infinity,
+                height: double.infinity,
+                fit: BoxFit.cover,
               ),
             ),
-          ],
+          ),
+          Positioned(
+            top: 0,
+            left: 0,
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              child: Image.asset(
+                "images/image 38.png",
+                width: double.infinity,
+                height: double.infinity,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(height: 67.0),
+                  SvgPicture.asset(
+                    "images/The Perfect Gift.svg",
+                    fit: BoxFit.cover,
+                  ),
+                  SizedBox(height: 12.0),
+                  Text(
+                    "made for you".toUpperCase(),
+                    strutStyle: StrutStyle(
+                      fontSize: 14.0,
+                    ),
+                    style: TextStyle(
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+      extendBody: true,
+      bottomNavigationBar: Container(
+        height: 100.0,
+        color: Colors.transparent,
+        padding: EdgeInsets.only(bottom: 26.0),
+        child: Center(
+          child: Container(
+            width: double.infinity,
+            height: 48.0,
+            constraints: BoxConstraints(maxWidth: 300.0),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(31.0),
+              color: Colors.white,
+            ),
+            child: ElevatedButton(
+              style: ButtonStyle(
+                elevation: MaterialStateProperty.all(8.0),
+                backgroundColor: MaterialStateProperty.all(Colors.white),
+                shadowColor: MaterialStateProperty.all(Colors.black),
+                shape: MaterialStateProperty.all(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(31.0),
+                  ),
+                ),
+              ),
+              child: Stack(
+                children: [
+                  Center(
+                    child: Text(
+                      'Start',
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.w700,
+                        color: HexColor("#6092DC"),
+                      ),
+                    ),
+                  ),
+                  Positioned.fill(
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: SvgPicture.asset("images/Vector.svg"),
+                    ),
+                  ),
+                ],
+              ),
+              onPressed: () {},
+            ),
+          ),
         ),
       ),
     );

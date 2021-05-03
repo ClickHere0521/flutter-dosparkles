@@ -50,6 +50,8 @@ class __FirstProductPageState extends State<_FirstProductPage> {
   int currentPage = 0;
 
   void _onItemTapped(int index) {
+    if (index == _selectedIndex) return;
+
     setState(() => _selectedIndex = index);
 
     if (index == 0) {
@@ -57,11 +59,13 @@ class __FirstProductPageState extends State<_FirstProductPage> {
       var storeFavorite = globalState.user.storeFavorite;
 
       if (storeFavorite != null)
-        Navigator.of(context).pushReplacementNamed('storepage');
+        Navigator.of(context).pushNamed('storepage', arguments: null);
       else
-        Navigator.of(context).pushReplacementNamed('storeselectionpage');
+        Navigator.of(context).pushNamed('storeselectionpage', arguments: null);
+    } else if (index == 1) {
+      Navigator.of(context).pushNamed('emptyscreenpage', arguments: null);
     } else if (index == 2) {
-      Navigator.of(context).pushReplacementNamed('invite_friendpage');
+      Navigator.of(context).pushNamed('invite_friendpage', arguments: null);
     }
   }
 
@@ -71,7 +75,6 @@ class __FirstProductPageState extends State<_FirstProductPage> {
       children: [
         Scaffold(
           body: _ProductView(
-            // animationController: state.animationController,
             dispatch: widget.dispatch,
             store: widget.state.selectedStore,
             productIndex: widget.state.productIndex,
@@ -188,9 +191,10 @@ class _FirstListPage extends StatefulWidget {
 
 class __FirstListPageState extends State<_FirstListPage> {
   int _selectedIndex = 0;
-  int currentPage = 0;
 
   void _onItemTapped(int index) {
+    if (index == _selectedIndex) return;
+
     setState(() => _selectedIndex = index);
 
     if (index == 0) {
@@ -198,11 +202,13 @@ class __FirstListPageState extends State<_FirstListPage> {
       var storeFavorite = globalState.user.storeFavorite;
 
       if (storeFavorite != null)
-        Navigator.of(context).pushReplacementNamed('storepage');
+        Navigator.of(context).pushNamed('storepage', arguments: null);
       else
-        Navigator.of(context).pushReplacementNamed('storeselectionpage');
+        Navigator.of(context).pushNamed('storeselectionpage', arguments: null);
+    } else if (index == 1) {
+      Navigator.of(context).pushNamed('emptyscreenpage', arguments: null);
     } else if (index == 2) {
-      Navigator.of(context).pushReplacementNamed('invite_friendpage');
+      Navigator.of(context).pushNamed('invite_friendpage', arguments: null);
     }
   }
 
@@ -276,18 +282,9 @@ class __FirstListPageState extends State<_FirstListPage> {
           ),
           drawer: SparklesDrawer(),
           bottomNavigationBar: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black12,
-                  offset: Offset(0.0, -0.2), // (x,y)
-                  blurRadius: 10.0,
-                ),
-              ],
-            ),
+            color: Colors.white,
             child: BottomNavigationBar(
-              backgroundColor: Colors.white,
+              backgroundColor: Colors.transparent,
               elevation: 0.0,
               showSelectedLabels: false,
               showUnselectedLabels: false,
@@ -295,34 +292,88 @@ class __FirstListPageState extends State<_FirstListPage> {
                 BottomNavigationBarItem(
                   label: "",
                   icon: SvgPicture.asset(
-                    'images/Group 121.svg',
-                    color: HexColor("#C4C6D2"),
-                  ),
-                  activeIcon: SvgPicture.asset(
                     'images/Vector (1)121.svg',
-                    color: HexColor("#C4C6D2"),
+                  ),
+                  activeIcon: Container(
+                    width: 60.0,
+                    height: 35.0,
+                    decoration: BoxDecoration(
+                      color: HexColor("#6092DC").withOpacity(.1),
+                      borderRadius: BorderRadius.circular(4.0),
+                    ),
+                    child: Center(
+                      child: SvgPicture.asset(
+                        'images/Vector (1)121.svg',
+                      ),
+                    ),
+                  ),
+                ),
+                BottomNavigationBarItem(
+                  label: "",
+                  icon: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      SvgPicture.asset(
+                        'images/0 notification.svg',
+                      ),
+                      Positioned.fill(
+                        top: -1.8,
+                        right: 2.0,
+                        child: Align(
+                          alignment: Alignment.topRight,
+                          child: Container(
+                            width: 10.0,
+                            height: 10.0,
+                            decoration: BoxDecoration(
+                              color: HexColor("#6092DC"),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Center(
+                              child: Text(
+                                "1",
+                                style: TextStyle(
+                                  fontSize: 7.0,
+                                  fontWeight: FontWeight.w900,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  activeIcon: Container(
+                    width: 60.0,
+                    height: 35.0,
+                    decoration: BoxDecoration(
+                      color: HexColor("#6092DC").withOpacity(.1),
+                      borderRadius: BorderRadius.circular(4.0),
+                    ),
+                    child: Center(
+                      child: SvgPicture.asset(
+                        'images/0 notification.svg',
+                      ),
+                    ),
                   ),
                 ),
                 BottomNavigationBarItem(
                   label: "",
                   icon: SvgPicture.asset(
-                    'images/Group 253.svg',
-                    // color: HexColor("#C4C6D2"),
+                    'images/Group 25324245.svg',
                   ),
-                  activeIcon: SvgPicture.asset(
-                    'images/Group 249.svg',
-                    // color: HexColor("#C4C6D2"),
-                  ),
-                ),
-                BottomNavigationBarItem(
-                  label: "",
-                  icon: SvgPicture.asset(
-                    'images/Group 255.svg',
-                    color: HexColor("#C4C6D2"),
-                  ),
-                  activeIcon: SvgPicture.asset(
-                    'images/Vector 1212.svg',
-                    color: HexColor("#C4C6D2"),
+                  activeIcon: Container(
+                    width: 60.0,
+                    height: 35.0,
+                    decoration: BoxDecoration(
+                      color: HexColor("#6092DC").withOpacity(.1),
+                      borderRadius: BorderRadius.circular(4.0),
+                    ),
+                    child: Center(
+                      child: SvgPicture.asset(
+                        'images/Group 25324245.svg',
+                      ),
+                    ),
                   ),
                 ),
               ],

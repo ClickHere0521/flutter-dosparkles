@@ -9,6 +9,7 @@ import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 class Routes {
   static final PageRoutes routes = PageRoutes(
     pages: <String, Page<Object, dynamic>>{
+      'emptyscreenpage': EmptyScreenPage(),
       'startpage': StartPage(),
       'loginpage': LoginPage(),
       'storeselectionpage': StoreSelectionPage(),
