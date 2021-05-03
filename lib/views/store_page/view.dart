@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -10,6 +11,7 @@ import 'package:com.floridainc.dosparkles/utils/colors.dart';
 import 'package:com.floridainc.dosparkles/views/profile_page/state.dart';
 import 'package:com.floridainc.dosparkles/views/store_page/action.dart';
 import 'package:com.floridainc.dosparkles/views/store_page/state.dart';
+import 'package:com.floridainc.dosparkles/widgets/bottom_nav_bar.dart';
 import 'package:com.floridainc.dosparkles/widgets/confirm_video.dart';
 import 'package:com.floridainc.dosparkles/widgets/custom_switch.dart';
 import 'package:com.floridainc.dosparkles/widgets/sparkles_drawer.dart';
@@ -19,6 +21,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 
 Widget buildView(
@@ -46,135 +49,61 @@ class _FirstProductPage extends StatefulWidget {
 }
 
 class __FirstProductPageState extends State<_FirstProductPage> {
-  int _selectedIndex = 0;
-  int currentPage = 0;
+  Future fetchData() async {
+    Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+    final SharedPreferences prefs = await _prefs;
+    String chatsRaw = prefs.getString('chatsMap') ?? '{}';
+    return json.decode(chatsRaw);
+  }
 
-  void _onItemTapped(int index) {
-    if (index == _selectedIndex) return;
-
-    setState(() => _selectedIndex = index);
-
-    if (index == 0) {
-      var globalState = GlobalStore.store.getState();
-      var storeFavorite = globalState.user.storeFavorite;
-
-      if (storeFavorite != null)
-        Navigator.of(context).pushNamed('storepage', arguments: null);
-      else
-        Navigator.of(context).pushNamed('storeselectionpage', arguments: null);
-    } else if (index == 1) {
-      Navigator.of(context).pushNamed('emptyscreenpage', arguments: null);
-    } else if (index == 2) {
-      Navigator.of(context).pushNamed('invite_friendpage', arguments: null);
+  Stream fetchDataProcess() async* {
+    while (true) {
+      yield await fetchData();
+      await Future<void>.delayed(Duration(seconds: 30));
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Scaffold(
-          body: _ProductView(
-            dispatch: widget.dispatch,
-            store: widget.state.selectedStore,
-            productIndex: widget.state.productIndex,
+    return Scaffold(
+      body: _ProductView(
+        dispatch: widget.dispatch,
+        store: widget.state.selectedStore,
+        productIndex: widget.state.productIndex,
+      ),
+      backgroundColor: Colors.transparent,
+      extendBodyBehindAppBar: true,
+      extendBody: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0.0,
+        automaticallyImplyLeading: false,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 16.0),
+            child: SvgPicture.asset("images/Share.svg"),
           ),
-          backgroundColor: Colors.transparent,
-          extendBodyBehindAppBar: true,
-          extendBody: true,
-          appBar: AppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0.0,
-            automaticallyImplyLeading: false,
-            actions: [
-              Padding(
-                padding: const EdgeInsets.only(right: 16.0),
-                child: SvgPicture.asset("images/Share.svg"),
-              ),
-            ],
-            leadingWidth: 70.0,
-            leading: Builder(
-              builder: (context) => IconButton(
-                highlightColor: Colors.transparent,
-                splashColor: Colors.transparent,
-                icon: Image.asset("images/offcanvas_icon.png"),
-                onPressed: () => Scaffold.of(context).openDrawer(),
-              ),
-            ),
-          ),
-          drawer: SparklesDrawer(),
-          bottomNavigationBar: Container(
-            color: Colors.transparent,
-            child: BottomNavigationBar(
-              backgroundColor: Colors.transparent,
-              elevation: 0.0,
-              showSelectedLabels: false,
-              showUnselectedLabels: false,
-              items: <BottomNavigationBarItem>[
-                BottomNavigationBarItem(
-                  label: "",
-                  icon: SvgPicture.asset(
-                    'images/Vector (1)121.svg',
-                  ),
-                  activeIcon: Container(
-                    width: 60.0,
-                    height: 35.0,
-                    decoration: BoxDecoration(
-                      color: HexColor("#6092DC").withOpacity(.1),
-                      borderRadius: BorderRadius.circular(4.0),
-                    ),
-                    child: Center(
-                      child: SvgPicture.asset(
-                        'images/Vector (1)121.svg',
-                      ),
-                    ),
-                  ),
-                ),
-                BottomNavigationBarItem(
-                  label: "",
-                  icon: SvgPicture.asset(
-                    'images/0 notification.svg',
-                  ),
-                  activeIcon: Container(
-                    width: 60.0,
-                    height: 35.0,
-                    decoration: BoxDecoration(
-                      color: HexColor("#6092DC").withOpacity(.1),
-                      borderRadius: BorderRadius.circular(4.0),
-                    ),
-                    child: Center(
-                      child: SvgPicture.asset(
-                        'images/0 notification.svg',
-                      ),
-                    ),
-                  ),
-                ),
-                BottomNavigationBarItem(
-                  label: "",
-                  icon: SvgPicture.asset(
-                    'images/Group 25324245.svg',
-                  ),
-                  activeIcon: Container(
-                    width: 60.0,
-                    height: 35.0,
-                    decoration: BoxDecoration(
-                      color: HexColor("#6092DC").withOpacity(.1),
-                      borderRadius: BorderRadius.circular(4.0),
-                    ),
-                    child: Center(
-                      child: SvgPicture.asset(
-                        'images/Group 25324245.svg',
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-              currentIndex: _selectedIndex,
-              onTap: _onItemTapped,
-            ),
+        ],
+        leadingWidth: 70.0,
+        leading: Builder(
+          builder: (context) => IconButton(
+            highlightColor: Colors.transparent,
+            splashColor: Colors.transparent,
+            icon: Image.asset("images/offcanvas_icon.png"),
+            onPressed: () => Scaffold.of(context).openDrawer(),
           ),
         ),
-      ],
+      ),
+      drawer: SparklesDrawer(),
+      bottomNavigationBar: StreamBuilder(
+        stream: fetchDataProcess(),
+        builder: (_, snapshot) {
+          return BottomNavBarWidget(
+            prefsData: snapshot.data,
+            initialIndex: 0,
+          );
+        },
+      ),
     );
   }
 }
@@ -190,25 +119,17 @@ class _FirstListPage extends StatefulWidget {
 }
 
 class __FirstListPageState extends State<_FirstListPage> {
-  int _selectedIndex = 0;
+  Future fetchData() async {
+    Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+    final SharedPreferences prefs = await _prefs;
+    String chatsRaw = prefs.getString('chatsMap') ?? '{}';
+    return json.decode(chatsRaw);
+  }
 
-  void _onItemTapped(int index) {
-    if (index == _selectedIndex) return;
-
-    setState(() => _selectedIndex = index);
-
-    if (index == 0) {
-      var globalState = GlobalStore.store.getState();
-      var storeFavorite = globalState.user.storeFavorite;
-
-      if (storeFavorite != null)
-        Navigator.of(context).pushNamed('storepage', arguments: null);
-      else
-        Navigator.of(context).pushNamed('storeselectionpage', arguments: null);
-    } else if (index == 1) {
-      Navigator.of(context).pushNamed('emptyscreenpage', arguments: null);
-    } else if (index == 2) {
-      Navigator.of(context).pushNamed('invite_friendpage', arguments: null);
+  Stream fetchDataProcess() async* {
+    while (true) {
+      yield await fetchData();
+      await Future<void>.delayed(Duration(seconds: 30));
     }
   }
 
@@ -281,105 +202,14 @@ class __FirstListPageState extends State<_FirstListPage> {
             ),
           ),
           drawer: SparklesDrawer(),
-          bottomNavigationBar: Container(
-            color: Colors.white,
-            child: BottomNavigationBar(
-              backgroundColor: Colors.transparent,
-              elevation: 0.0,
-              showSelectedLabels: false,
-              showUnselectedLabels: false,
-              items: <BottomNavigationBarItem>[
-                BottomNavigationBarItem(
-                  label: "",
-                  icon: SvgPicture.asset(
-                    'images/Vector (1)121.svg',
-                  ),
-                  activeIcon: Container(
-                    width: 60.0,
-                    height: 35.0,
-                    decoration: BoxDecoration(
-                      color: HexColor("#6092DC").withOpacity(.1),
-                      borderRadius: BorderRadius.circular(4.0),
-                    ),
-                    child: Center(
-                      child: SvgPicture.asset(
-                        'images/Vector (1)121.svg',
-                      ),
-                    ),
-                  ),
-                ),
-                BottomNavigationBarItem(
-                  label: "",
-                  icon: Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      SvgPicture.asset(
-                        'images/0 notification.svg',
-                      ),
-                      Positioned.fill(
-                        top: -1.8,
-                        right: 2.0,
-                        child: Align(
-                          alignment: Alignment.topRight,
-                          child: Container(
-                            width: 10.0,
-                            height: 10.0,
-                            decoration: BoxDecoration(
-                              color: HexColor("#6092DC"),
-                              shape: BoxShape.circle,
-                            ),
-                            child: Center(
-                              child: Text(
-                                "1",
-                                style: TextStyle(
-                                  fontSize: 7.0,
-                                  fontWeight: FontWeight.w900,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  activeIcon: Container(
-                    width: 60.0,
-                    height: 35.0,
-                    decoration: BoxDecoration(
-                      color: HexColor("#6092DC").withOpacity(.1),
-                      borderRadius: BorderRadius.circular(4.0),
-                    ),
-                    child: Center(
-                      child: SvgPicture.asset(
-                        'images/0 notification.svg',
-                      ),
-                    ),
-                  ),
-                ),
-                BottomNavigationBarItem(
-                  label: "",
-                  icon: SvgPicture.asset(
-                    'images/Group 25324245.svg',
-                  ),
-                  activeIcon: Container(
-                    width: 60.0,
-                    height: 35.0,
-                    decoration: BoxDecoration(
-                      color: HexColor("#6092DC").withOpacity(.1),
-                      borderRadius: BorderRadius.circular(4.0),
-                    ),
-                    child: Center(
-                      child: SvgPicture.asset(
-                        'images/Group 25324245.svg',
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-              currentIndex: _selectedIndex,
-              onTap: _onItemTapped,
-            ),
+          bottomNavigationBar: StreamBuilder(
+            stream: fetchDataProcess(),
+            builder: (_, snapshot) {
+              return BottomNavBarWidget(
+                prefsData: snapshot.data,
+                initialIndex: 0,
+              );
+            },
           ),
         ),
       ],

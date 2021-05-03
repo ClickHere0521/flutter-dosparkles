@@ -1,9 +1,11 @@
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/models/models.dart';
 import 'package:com.floridainc.dosparkles/views/store_selection_page/action.dart';
+import 'package:com.floridainc.dosparkles/widgets/bottom_nav_bar.dart';
 import 'package:com.floridainc.dosparkles/widgets/sparkles_drawer.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +13,7 @@ import 'package:com.floridainc.dosparkles/actions/adapt.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../actions/api/graphql_client.dart';
 import '../../utils/colors.dart';
 import '../../utils/general.dart';
@@ -38,25 +41,17 @@ class _MainBodyPage extends StatefulWidget {
 }
 
 class __MainBodyPageState extends State<_MainBodyPage> {
-  int _selectedIndex = 0;
+  Future fetchData() async {
+    Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+    final SharedPreferences prefs = await _prefs;
+    String chatsRaw = prefs.getString('chatsMap') ?? '{}';
+    return json.decode(chatsRaw);
+  }
 
-  void _onItemTapped(int index) {
-    if (index == _selectedIndex) return;
-
-    setState(() => _selectedIndex = index);
-
-    if (index == 0) {
-      var globalState = GlobalStore.store.getState();
-      var storeFavorite = globalState.user.storeFavorite;
-
-      if (storeFavorite != null)
-        Navigator.of(context).pushNamed('storepage', arguments: null);
-      else
-        Navigator.of(context).pushNamed('storeselectionpage', arguments: null);
-    } else if (index == 1) {
-      Navigator.of(context).pushNamed('emptyscreenpage', arguments: null);
-    } else if (index == 2) {
-      Navigator.of(context).pushNamed('invite_friendpage', arguments: null);
+  Stream fetchDataProcess() async* {
+    while (true) {
+      yield await fetchData();
+      await Future<void>.delayed(Duration(seconds: 30));
     }
   }
 
@@ -128,105 +123,14 @@ class __MainBodyPageState extends State<_MainBodyPage> {
             ),
           ),
           drawer: SparklesDrawer(),
-          bottomNavigationBar: Container(
-            color: Colors.white,
-            child: BottomNavigationBar(
-              backgroundColor: Colors.transparent,
-              elevation: 0.0,
-              showSelectedLabels: false,
-              showUnselectedLabels: false,
-              items: <BottomNavigationBarItem>[
-                BottomNavigationBarItem(
-                  label: "",
-                  icon: SvgPicture.asset(
-                    'images/Vector (1)121.svg',
-                  ),
-                  activeIcon: Container(
-                    width: 60.0,
-                    height: 35.0,
-                    decoration: BoxDecoration(
-                      color: HexColor("#6092DC").withOpacity(.1),
-                      borderRadius: BorderRadius.circular(4.0),
-                    ),
-                    child: Center(
-                      child: SvgPicture.asset(
-                        'images/Vector (1)121.svg',
-                      ),
-                    ),
-                  ),
-                ),
-                BottomNavigationBarItem(
-                  label: "",
-                  icon: Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      SvgPicture.asset(
-                        'images/0 notification.svg',
-                      ),
-                      Positioned.fill(
-                        top: -1.8,
-                        right: 2.0,
-                        child: Align(
-                          alignment: Alignment.topRight,
-                          child: Container(
-                            width: 10.0,
-                            height: 10.0,
-                            decoration: BoxDecoration(
-                              color: HexColor("#6092DC"),
-                              shape: BoxShape.circle,
-                            ),
-                            child: Center(
-                              child: Text(
-                                "1",
-                                style: TextStyle(
-                                  fontSize: 7.0,
-                                  fontWeight: FontWeight.w900,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  activeIcon: Container(
-                    width: 60.0,
-                    height: 35.0,
-                    decoration: BoxDecoration(
-                      color: HexColor("#6092DC").withOpacity(.1),
-                      borderRadius: BorderRadius.circular(4.0),
-                    ),
-                    child: Center(
-                      child: SvgPicture.asset(
-                        'images/0 notification.svg',
-                      ),
-                    ),
-                  ),
-                ),
-                BottomNavigationBarItem(
-                  label: "",
-                  icon: SvgPicture.asset(
-                    'images/Group 25324245.svg',
-                  ),
-                  activeIcon: Container(
-                    width: 60.0,
-                    height: 35.0,
-                    decoration: BoxDecoration(
-                      color: HexColor("#6092DC").withOpacity(.1),
-                      borderRadius: BorderRadius.circular(4.0),
-                    ),
-                    child: Center(
-                      child: SvgPicture.asset(
-                        'images/Group 25324245.svg',
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-              currentIndex: _selectedIndex,
-              onTap: _onItemTapped,
-            ),
+          bottomNavigationBar: StreamBuilder(
+            stream: fetchDataProcess(),
+            builder: (_, snapshot) {
+              return BottomNavBarWidget(
+                prefsData: snapshot.data,
+                initialIndex: 0,
+              );
+            },
           ),
         ),
       ],
