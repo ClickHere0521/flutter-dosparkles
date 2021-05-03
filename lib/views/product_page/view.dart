@@ -93,25 +93,6 @@ class _FirstPage extends StatefulWidget {
 }
 
 class __FirstPageState extends State<_FirstPage> {
-  int _selectedIndex = 0;
-  int currentPage = 0;
-
-  void _onItemTapped(int index) {
-    setState(() => _selectedIndex = index);
-
-    if (index == 0) {
-      var globalState = GlobalStore.store.getState();
-      var storeFavorite = globalState.user.storeFavorite;
-
-      if (storeFavorite != null)
-        Navigator.of(context).pushReplacementNamed('storepage');
-      else
-        Navigator.of(context).pushReplacementNamed('storeselectionpage');
-    } else if (index == 2) {
-      Navigator.of(context).pushReplacementNamed('invite_friendpage');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -367,8 +348,8 @@ class __MainBodyState extends State<_MainBody> {
           SizedBox(height: 20.0),
           Swiper(
             itemBuilder: (BuildContext context, int index) {
-              return Image.network(
-                widget.selectedProduct.mediaUrls[index],
+              return CachedNetworkImage(
+                imageUrl: widget.selectedProduct.mediaUrls[index],
                 fit: BoxFit.fill,
               );
             },
@@ -645,6 +626,7 @@ class __MainBodyState extends State<_MainBody> {
                     style: TextStyle(
                       fontSize: 11.0,
                       fontWeight: FontWeight.w300,
+                      height: 1.35,
                     ),
                   ),
                 ),
@@ -890,7 +872,6 @@ class _ProductCustomizationState extends State<_ProductCustomization> {
                           SizedBox(height: 9.0),
                           RichText(
                             text: TextSpan(
-                              style: DefaultTextStyle.of(context).style,
                               children: [
                                 TextSpan(
                                   text: "\$79,95",
@@ -1230,6 +1211,8 @@ class _ProductCustomizationState extends State<_ProductCustomization> {
                                         Container(
                                           width: double.infinity,
                                           height: 32.0,
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 14.0),
                                           constraints: BoxConstraints(
                                             maxWidth: 240.0,
                                           ),

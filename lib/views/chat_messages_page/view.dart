@@ -1651,6 +1651,7 @@ class __ChangeOrderState extends State<_ChangeOrder> {
                                 "Description",
                                 style: TextStyle(
                                   fontSize: 11.0,
+                                  height: 1.35,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -1658,6 +1659,7 @@ class __ChangeOrderState extends State<_ChangeOrder> {
                                 "Surprise someone you love with this unique and elegant jewelry item 🎁.",
                                 style: TextStyle(
                                   fontSize: 11.0,
+                                  height: 1.35,
                                   fontWeight: FontWeight.w300,
                                 ),
                               ),
@@ -1665,6 +1667,7 @@ class __ChangeOrderState extends State<_ChangeOrder> {
                                 "We say 'UNIQUE' because each piece is different when you provide your photo.",
                                 style: TextStyle(
                                   fontSize: 11.0,
+                                  height: 1.35,
                                   fontWeight: FontWeight.w300,
                                 ),
                               ),
@@ -1672,6 +1675,7 @@ class __ChangeOrderState extends State<_ChangeOrder> {
                                 "This hand-crafted piece will never fade and is built to last!",
                                 style: TextStyle(
                                   fontSize: 11.0,
+                                  height: 1.35,
                                   fontWeight: FontWeight.w300,
                                 ),
                               ),
@@ -1680,6 +1684,7 @@ class __ChangeOrderState extends State<_ChangeOrder> {
                                 "Specifics",
                                 style: TextStyle(
                                   fontSize: 11.0,
+                                  height: 1.35,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -1687,6 +1692,7 @@ class __ChangeOrderState extends State<_ChangeOrder> {
                                 "Made in the U.S.A",
                                 style: TextStyle(
                                   fontSize: 11.0,
+                                  height: 1.35,
                                   fontWeight: FontWeight.w300,
                                 ),
                               ),
@@ -1694,6 +1700,7 @@ class __ChangeOrderState extends State<_ChangeOrder> {
                                 "316 Steel or 18k Gold Finish",
                                 style: TextStyle(
                                   fontSize: 11.0,
+                                  height: 1.35,
                                   fontWeight: FontWeight.w300,
                                 ),
                               ),
@@ -1701,6 +1708,7 @@ class __ChangeOrderState extends State<_ChangeOrder> {
                                 "Adjustable Necklace Chain Measures 18'-22'",
                                 style: TextStyle(
                                   fontSize: 11.0,
+                                  height: 1.35,
                                   fontWeight: FontWeight.w300,
                                 ),
                               ),
@@ -1708,6 +1716,7 @@ class __ChangeOrderState extends State<_ChangeOrder> {
                                 "Water-Resistant",
                                 style: TextStyle(
                                   fontSize: 11.0,
+                                  height: 1.35,
                                   fontWeight: FontWeight.w300,
                                 ),
                               ),

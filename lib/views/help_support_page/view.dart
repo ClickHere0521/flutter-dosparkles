@@ -188,6 +188,12 @@ class __InnerPartState extends State<_InnerPart> {
                     keyboardType: TextInputType.text,
                     decoration: InputDecoration(
                       hintText: 'Enter your name',
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: HexColor("#C4C6D2")),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: HexColor("#C4C6D2")),
+                      ),
                       hintStyle: TextStyle(
                         fontSize: 16,
                         color: Colors.black26,
@@ -215,6 +221,12 @@ class __InnerPartState extends State<_InnerPart> {
                     keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
                       hintText: 'Enter your email',
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: HexColor("#C4C6D2")),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: HexColor("#C4C6D2")),
+                      ),
                       hintStyle: TextStyle(
                         fontSize: 16,
                         color: Colors.black26,
@@ -291,6 +303,12 @@ class __InnerPartState extends State<_InnerPart> {
                         keyboardType: TextInputType.multiline,
                         decoration: InputDecoration(
                           contentPadding: EdgeInsets.all(8.0),
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: HexColor("#C4C6D2")),
+                          ),
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: HexColor("#C4C6D2")),
+                          ),
                           border: OutlineInputBorder(
                             borderSide: BorderSide(
                               width: 1.0,

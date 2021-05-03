@@ -3,27 +3,18 @@ import 'dart:ui';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import '../../actions/api/graphql_client.dart';
 import '../../utils/colors.dart';
 import '../../utils/general.dart';
-import 'state.dart';
 
-Widget buildView(
-  ForgotPasswordPageState state,
-  Dispatch dispatch,
-  ViewService viewService,
-) {
-  Adapt.initContext(viewService.context);
-  return _MainBody();
-}
-
-class _MainBody extends StatefulWidget {
+class ConfirmEmail extends StatefulWidget {
   @override
-  __MainBodyState createState() => __MainBodyState();
+  _ConfirmEmailState createState() => _ConfirmEmailState();
 }
 
-class __MainBodyState extends State<_MainBody> {
+class _ConfirmEmailState extends State<ConfirmEmail> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -64,7 +55,7 @@ class __MainBodyState extends State<_MainBody> {
               ),
               backgroundColor: Colors.transparent,
               title: Text(
-                "Forgot Password?",
+                "Confirm Email",
                 style: TextStyle(
                   fontSize: 22,
                   color: HexColor("#53586F"),
@@ -100,62 +91,53 @@ class __InnerPartState extends State<_InnerPart> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Container(
-        height: MediaQuery.of(context).size.height -
-            Scaffold.of(context).appBarMaxHeight,
-        child: Form(
-          key: _formKey,
+    return Container(
+      height: MediaQuery.of(context).size.height -
+          Scaffold.of(context).appBarMaxHeight,
+      child: Form(
+        key: _formKey,
+        child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                "Enter your email to reset your password",
-                style: TextStyle(fontSize: 16),
-              ),
               Padding(
                 padding: EdgeInsets.only(
                   bottom: MediaQuery.of(context).size.height * 0.10,
                 ),
-                child: TextFormField(
-                  textAlign: TextAlign.left,
-                  keyboardType: TextInputType.emailAddress,
-                  onChanged: (value) {
-                    setState(() => emailValue = value);
-                  },
-                  decoration: InputDecoration(
-                    hintText: 'yourname@example.com',
-                    hintStyle: TextStyle(
-                      fontSize: 16,
-                      color: Colors.black26,
-                    ),
-                    contentPadding: EdgeInsets.symmetric(vertical: 5),
-                    floatingLabelBehavior: FloatingLabelBehavior.always,
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: HexColor("#C4C6D2")),
-                    ),
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: HexColor("#C4C6D2")),
-                    ),
-                    labelText: 'Email',
-                    labelStyle: TextStyle(
-                      color: Colors.black,
-                      height: 0.7,
-                      fontSize: 22,
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter some text';
-                    }
-                    return null;
-                  },
+                child: Text(
+                  "We sent it to the your email.",
+                  style: TextStyle(fontSize: 16),
                 ),
               ),
               Padding(
                 padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).size.height * 0.30,
+                  bottom: MediaQuery.of(context).size.height * 0.04,
+                ),
+                child: Image.asset(
+                  "images/Group 217.png",
+                  width: 148.0,
+                  height: 142.0,
+                  fit: BoxFit.contain,
+                ),
+              ),
+              Container(
+                constraints: BoxConstraints(maxWidth: 300.0),
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).size.height * 0.06,
+                ),
+                child: Text(
+                  "Please confirm your email before sign in.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 18.0,
+                    color: HexColor("#0F142B"),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).size.height * 0.15,
                 ),
                 child: Column(
                   children: [
@@ -167,40 +149,19 @@ class __InnerPartState extends State<_InnerPart> {
                         elevation: 0,
                         color: HexColor("#6092DC"),
                         child: Text(
-                          'Reset Password',
+                          'Open Email',
                           style: TextStyle(
                             fontSize: 17.0,
                             fontWeight: FontWeight.normal,
                           ),
                         ),
-                        onPressed: () {
-                          _onSubmit(_formKey, emailValue);
-                        },
+                        onPressed: () {},
                         shape: new RoundedRectangleBorder(
                           borderRadius: new BorderRadius.circular(31.0),
                         ),
                       ),
                     ),
                     SizedBox(height: 10),
-                    RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: "Back to ",
-                            style:
-                                TextStyle(color: Colors.black54, fontSize: 16),
-                          ),
-                          TextSpan(
-                            text: "Sign in",
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
                   ],
                 ),
               ),
@@ -209,17 +170,5 @@ class __InnerPartState extends State<_InnerPart> {
         ),
       ),
     );
-  }
-}
-
-void _onSubmit(formKey, emailValue) async {
-  if (formKey.currentState.validate()) {
-    try {
-      QueryResult result =
-          await BaseGraphQLClient.instance.forgotPassword(emailValue);
-      if (result.hasException) print(result.exception);
-    } catch (e) {
-      print(e);
-    }
   }
 }

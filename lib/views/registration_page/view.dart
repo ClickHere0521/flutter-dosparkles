@@ -130,6 +130,12 @@ class __InnerPartState extends State<_InnerPart> {
                           fontSize: 16,
                           color: Colors.black26,
                         ),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: HexColor("#C4C6D2")),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: HexColor("#C4C6D2")),
+                        ),
                         contentPadding: EdgeInsets.symmetric(vertical: 5),
                         floatingLabelBehavior: FloatingLabelBehavior.always,
                         labelText: 'First Name',
@@ -157,6 +163,12 @@ class __InnerPartState extends State<_InnerPart> {
                       },
                       decoration: InputDecoration(
                         hintText: 'Enter here',
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: HexColor("#C4C6D2")),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: HexColor("#C4C6D2")),
+                        ),
                         hintStyle: TextStyle(
                           fontSize: 16,
                           color: Colors.black26,
@@ -189,6 +201,12 @@ class __InnerPartState extends State<_InnerPart> {
                 },
                 decoration: InputDecoration(
                   hintText: 'yourname@example.com',
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: HexColor("#C4C6D2")),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: HexColor("#C4C6D2")),
+                  ),
                   hintStyle: TextStyle(
                     fontSize: 16,
                     color: Colors.black26,
@@ -222,6 +240,12 @@ class __InnerPartState extends State<_InnerPart> {
                   contentPadding: EdgeInsets.symmetric(vertical: 5),
                   floatingLabelBehavior: FloatingLabelBehavior.always,
                   labelText: 'Password',
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: HexColor("#C4C6D2")),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: HexColor("#C4C6D2")),
+                  ),
                   labelStyle: TextStyle(
                     color: Colors.black,
                     height: 0.7,

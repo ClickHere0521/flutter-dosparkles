@@ -109,7 +109,9 @@ class __InnerPartState extends State<_InnerPart> {
                 "Welcome to Sparkle!",
                 style: TextStyle(
                   fontSize: 22.0,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w900,
+                  fontFeatures: [FontFeature.enable('smcp')],
+                  color: HexColor("#53586F"),
                 ),
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 0.002),
@@ -132,6 +134,12 @@ class __InnerPartState extends State<_InnerPart> {
                       ),
                       contentPadding: EdgeInsets.symmetric(vertical: 5),
                       floatingLabelBehavior: FloatingLabelBehavior.always,
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: HexColor("#C4C6D2")),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: HexColor("#C4C6D2")),
+                      ),
                       labelText: 'Email',
                       labelStyle: TextStyle(
                         color: Colors.black,
@@ -160,6 +168,12 @@ class __InnerPartState extends State<_InnerPart> {
                       contentPadding: EdgeInsets.symmetric(vertical: 5),
                       floatingLabelBehavior: FloatingLabelBehavior.always,
                       labelText: 'Password',
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: HexColor("#C4C6D2")),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: HexColor("#C4C6D2")),
+                      ),
                       labelStyle: TextStyle(
                         color: Colors.black,
                         height: 0.7,
@@ -171,8 +185,8 @@ class __InnerPartState extends State<_InnerPart> {
                         child: InkWell(
                           child: Icon(
                             _hidePassword
-                                ? Icons.visibility
-                                : Icons.visibility_off,
+                                ? Icons.visibility_off
+                                : Icons.visibility,
                             color: Colors.black26,
                           ),
                           onTap: () {

@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
 import 'package:com.floridainc.dosparkles/actions/api/graphql_client.dart';
 import 'package:com.floridainc.dosparkles/actions/app_config.dart';
@@ -84,7 +85,7 @@ class __FirstPageState extends State<_FirstPage> {
                 topRight: Radius.circular(32.0),
               ),
             ),
-            child: _UserBody(), // _AdminBody(),
+            child: _AdminBody(), // _UserBody(),
           ),
           backgroundColor: Colors.transparent,
           resizeToAvoidBottomInset: true,
@@ -253,8 +254,8 @@ class __AdminBodyState extends State<_AdminBody> {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10.0),
               child: widget.globalUser.avatarUrl != null
-                  ? Image.network(
-                      widget.globalUser.avatarUrl,
+                  ? CachedNetworkImage(
+                      imageUrl: widget.globalUser.avatarUrl,
                       width: double.infinity,
                       height: double.infinity,
                     )
@@ -827,8 +828,8 @@ class __UserBodyState extends State<_UserBody> {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10.0),
               child: widget.globalUser.avatarUrl != null
-                  ? Image.network(
-                      widget.globalUser.avatarUrl,
+                  ? CachedNetworkImage(
+                      imageUrl: widget.globalUser.avatarUrl,
                       width: double.infinity,
                       height: double.infinity,
                     )

@@ -248,7 +248,10 @@ class __CountryPickerDropdownState extends State<_CountryPickerDropdown> {
                 color: Colors.black26,
               ),
               enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.black26),
+                borderSide: BorderSide(color: HexColor("#C4C6D2")),
+              ),
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: HexColor("#C4C6D2")),
               ),
               isDense: true,
               contentPadding: EdgeInsets.symmetric(vertical: 10),

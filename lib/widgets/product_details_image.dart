@@ -81,25 +81,6 @@ class ProductDetailsImage extends StatefulWidget {
 }
 
 class _ProductDetailsImageState extends State<ProductDetailsImage> {
-  int _selectedIndex = 0;
-  int currentPage = 0;
-
-  void _onItemTapped(int index) {
-    setState(() => _selectedIndex = index);
-
-    if (index == 0) {
-      var globalState = GlobalStore.store.getState();
-      var storeFavorite = globalState.user.storeFavorite;
-
-      if (storeFavorite != null)
-        Navigator.of(context).pushReplacementNamed('storepage');
-      else
-        Navigator.of(context).pushReplacementNamed('storeselectionpage');
-    } else if (index == 2) {
-      Navigator.of(context).pushReplacementNamed('invite_friendpage');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -450,7 +431,7 @@ class __MainBodyState extends State<_MainBody> {
                         fontWeight: FontWeight.w700,
                         foreground: Paint()
                           ..shader = LinearGradient(
-                            colors: [HexColor('#CBD3FD'), HexColor('#8DA3EA')],
+                            colors: [HexColor('#CBD3FD'), HexColor('#5d74bc')],
                             begin: const FractionalOffset(0.0, 0.0),
                             end: const FractionalOffset(1.0, 0.0),
                             stops: [0.0, 1.0],
@@ -482,8 +463,8 @@ class __MainBodyState extends State<_MainBody> {
           SizedBox(height: 20.0),
           Swiper(
             itemBuilder: (BuildContext context, int index) {
-              return Image.network(
-                widget.selectedProduct.mediaUrls[index],
+              return CachedNetworkImage(
+                imageUrl: widget.selectedProduct.mediaUrls[index],
                 fit: BoxFit.fill,
               );
             },
@@ -754,7 +735,6 @@ class __MainBodyState extends State<_MainBody> {
                   children: [
                     RichText(
                       text: TextSpan(
-                        style: DefaultTextStyle.of(context).style,
                         children: [
                           TextSpan(
                             text: "\$79,95",
@@ -870,6 +850,7 @@ class __MainBodyState extends State<_MainBody> {
                         "Description",
                         style: TextStyle(
                           fontSize: 11.0,
+                          height: 1.35,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -877,6 +858,7 @@ class __MainBodyState extends State<_MainBody> {
                         "Surprise someone you love with this unique and elegant jewelry item 🎁.",
                         style: TextStyle(
                           fontSize: 11.0,
+                          height: 1.35,
                           fontWeight: FontWeight.w300,
                         ),
                       ),
@@ -884,6 +866,7 @@ class __MainBodyState extends State<_MainBody> {
                         "We say 'UNIQUE' because each piece is different when you provide your photo.",
                         style: TextStyle(
                           fontSize: 11.0,
+                          height: 1.35,
                           fontWeight: FontWeight.w300,
                         ),
                       ),
@@ -891,6 +874,7 @@ class __MainBodyState extends State<_MainBody> {
                         "This hand-crafted piece will never fade and is built to last!",
                         style: TextStyle(
                           fontSize: 11.0,
+                          height: 1.35,
                           fontWeight: FontWeight.w300,
                         ),
                       ),
@@ -898,6 +882,7 @@ class __MainBodyState extends State<_MainBody> {
                       Text(
                         "Specifics",
                         style: TextStyle(
+                          height: 1.35,
                           fontSize: 11.0,
                           fontWeight: FontWeight.w600,
                         ),
@@ -906,6 +891,7 @@ class __MainBodyState extends State<_MainBody> {
                         "Made in the U.S.A",
                         style: TextStyle(
                           fontSize: 11.0,
+                          height: 1.35,
                           fontWeight: FontWeight.w300,
                         ),
                       ),
@@ -913,6 +899,7 @@ class __MainBodyState extends State<_MainBody> {
                         "316 Steel or 18k Gold Finish",
                         style: TextStyle(
                           fontSize: 11.0,
+                          height: 1.35,
                           fontWeight: FontWeight.w300,
                         ),
                       ),
@@ -920,6 +907,7 @@ class __MainBodyState extends State<_MainBody> {
                         "Adjustable Necklace Chain Measures 18'-22'",
                         style: TextStyle(
                           fontSize: 11.0,
+                          height: 1.35,
                           fontWeight: FontWeight.w300,
                         ),
                       ),
@@ -927,6 +915,7 @@ class __MainBodyState extends State<_MainBody> {
                         "Water-Resistant",
                         style: TextStyle(
                           fontSize: 11.0,
+                          height: 1.35,
                           fontWeight: FontWeight.w300,
                         ),
                       ),
@@ -1175,7 +1164,6 @@ class _ProductCustomizationState extends State<_ProductCustomization> {
                           SizedBox(height: 9.0),
                           RichText(
                             text: TextSpan(
-                              style: DefaultTextStyle.of(context).style,
                               children: [
                                 TextSpan(
                                   text: "\$79,95",
@@ -1515,6 +1503,8 @@ class _ProductCustomizationState extends State<_ProductCustomization> {
                                         Container(
                                           width: double.infinity,
                                           height: 32.0,
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 14.0),
                                           constraints: BoxConstraints(
                                             maxWidth: 240.0,
                                           ),

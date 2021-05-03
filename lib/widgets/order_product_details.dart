@@ -302,6 +302,7 @@ class __MainBodyState extends State<_MainBody> {
                         style: TextStyle(
                           fontSize: 11.0,
                           fontWeight: FontWeight.w300,
+                          height: 1.35,
                         ),
                       ),
                     ],
@@ -758,6 +759,7 @@ class __CustomBodyState extends State<_CustomBody> {
                         style: TextStyle(
                           fontSize: 11.0,
                           fontWeight: FontWeight.w600,
+                          height: 1.35,
                         ),
                       ),
                       Text(
@@ -765,6 +767,7 @@ class __CustomBodyState extends State<_CustomBody> {
                         style: TextStyle(
                           fontSize: 11.0,
                           fontWeight: FontWeight.w300,
+                          height: 1.35,
                         ),
                       ),
                       Text(
@@ -772,6 +775,7 @@ class __CustomBodyState extends State<_CustomBody> {
                         style: TextStyle(
                           fontSize: 11.0,
                           fontWeight: FontWeight.w300,
+                          height: 1.35,
                         ),
                       ),
                       Text(
@@ -779,6 +783,7 @@ class __CustomBodyState extends State<_CustomBody> {
                         style: TextStyle(
                           fontSize: 11.0,
                           fontWeight: FontWeight.w300,
+                          height: 1.35,
                         ),
                       ),
                       SizedBox(height: 8.0),
@@ -787,6 +792,7 @@ class __CustomBodyState extends State<_CustomBody> {
                         style: TextStyle(
                           fontSize: 11.0,
                           fontWeight: FontWeight.w600,
+                          height: 1.35,
                         ),
                       ),
                       Text(
@@ -794,6 +800,7 @@ class __CustomBodyState extends State<_CustomBody> {
                         style: TextStyle(
                           fontSize: 11.0,
                           fontWeight: FontWeight.w300,
+                          height: 1.35,
                         ),
                       ),
                       Text(
@@ -801,6 +808,7 @@ class __CustomBodyState extends State<_CustomBody> {
                         style: TextStyle(
                           fontSize: 11.0,
                           fontWeight: FontWeight.w300,
+                          height: 1.35,
                         ),
                       ),
                       Text(
@@ -808,6 +816,7 @@ class __CustomBodyState extends State<_CustomBody> {
                         style: TextStyle(
                           fontSize: 11.0,
                           fontWeight: FontWeight.w300,
+                          height: 1.35,
                         ),
                       ),
                       Text(
@@ -815,6 +824,7 @@ class __CustomBodyState extends State<_CustomBody> {
                         style: TextStyle(
                           fontSize: 11.0,
                           fontWeight: FontWeight.w300,
+                          height: 1.35,
                         ),
                       ),
                     ],

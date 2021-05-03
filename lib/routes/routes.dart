@@ -22,7 +22,6 @@ class Routes {
       'notificationspage': NotificationsPage(),
       'dashboardpage': DashboardPage(),
       'profilepage': ProfilePage(),
-      'helppage': HelpPage(),
       'forgot_passwordpage': ForgotPasswordPage(),
       'reset_passwordpage': ResetPasswordPage(),
       'customize_linkpage': CustomizeLinkPage(),

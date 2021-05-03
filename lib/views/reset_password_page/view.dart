@@ -131,6 +131,12 @@ class __InnerPartState extends State<_InnerPart> {
                       hintStyle: TextStyle(fontSize: 16, color: Colors.black26),
                       contentPadding: EdgeInsets.symmetric(vertical: 5),
                       floatingLabelBehavior: FloatingLabelBehavior.always,
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: HexColor("#C4C6D2")),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: HexColor("#C4C6D2")),
+                      ),
                       labelText: 'Old Password',
                       labelStyle: TextStyle(
                         color: Colors.black,
@@ -171,6 +177,12 @@ class __InnerPartState extends State<_InnerPart> {
                       contentPadding: EdgeInsets.symmetric(vertical: 5),
                       floatingLabelBehavior: FloatingLabelBehavior.always,
                       labelText: 'New Password',
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: HexColor("#C4C6D2")),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: HexColor("#C4C6D2")),
+                      ),
                       labelStyle: TextStyle(
                         color: Colors.black,
                         height: 0.7,
@@ -214,6 +226,12 @@ class __InnerPartState extends State<_InnerPart> {
                         color: Colors.black,
                         height: 0.7,
                         fontSize: 22,
+                      ),
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: HexColor("#C4C6D2")),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: HexColor("#C4C6D2")),
                       ),
                       suffixIcon: Padding(
                         padding:

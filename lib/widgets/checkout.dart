@@ -165,7 +165,7 @@ class __InnerPartState extends State<_InnerPart> {
                               ..shader = LinearGradient(
                                 colors: [
                                   HexColor('#CBD3FD'),
-                                  HexColor('#8DA3EA')
+                                  HexColor('#5d74bc')
                                 ],
                                 begin: const FractionalOffset(0.0, 0.0),
                                 end: const FractionalOffset(1.0, 0.0),
@@ -229,6 +229,14 @@ class __InnerPartState extends State<_InnerPart> {
                             },
                             decoration: InputDecoration(
                               hintText: 'Enter here',
+                              enabledBorder: UnderlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: HexColor("#C4C6D2")),
+                              ),
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: HexColor("#C4C6D2")),
+                              ),
                               hintStyle: TextStyle(
                                 fontSize: 16,
                                 color: Colors.black26,
@@ -261,6 +269,14 @@ class __InnerPartState extends State<_InnerPart> {
                             },
                             decoration: InputDecoration(
                               hintText: 'Enter here',
+                              enabledBorder: UnderlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: HexColor("#C4C6D2")),
+                              ),
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: HexColor("#C4C6D2")),
+                              ),
                               hintStyle: TextStyle(
                                 fontSize: 16,
                                 color: Colors.black26,
@@ -294,6 +310,12 @@ class __InnerPartState extends State<_InnerPart> {
                       },
                       decoration: InputDecoration(
                         hintText: 'Enter your address',
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: HexColor("#C4C6D2")),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: HexColor("#C4C6D2")),
+                        ),
                         hintStyle: TextStyle(
                           fontSize: 16,
                           color: Colors.black26,
@@ -361,6 +383,12 @@ class __InnerPartState extends State<_InnerPart> {
                       },
                       decoration: InputDecoration(
                         hintText: 'Enter your apartment',
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: HexColor("#C4C6D2")),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: HexColor("#C4C6D2")),
+                        ),
                         hintStyle: TextStyle(
                           fontSize: 16,
                           color: Colors.black26,
@@ -480,7 +508,7 @@ class __InnerCardPartState extends State<_InnerCardPart> {
                               ..shader = LinearGradient(
                                 colors: [
                                   HexColor('#CBD3FD'),
-                                  HexColor('#8DA3EA')
+                                  HexColor('#5d74bc')
                                 ],
                                 begin: const FractionalOffset(0.0, 0.0),
                                 end: const FractionalOffset(1.0, 0.0),
@@ -499,7 +527,7 @@ class __InnerCardPartState extends State<_InnerCardPart> {
                               ..shader = LinearGradient(
                                 colors: [
                                   HexColor('#CBD3FD'),
-                                  HexColor('#8DA3EA')
+                                  HexColor('#5d74bc')
                                 ],
                                 begin: const FractionalOffset(0.0, 0.0),
                                 end: const FractionalOffset(1.0, 0.0),
@@ -576,6 +604,12 @@ class __InnerCardPartState extends State<_InnerCardPart> {
                       },
                       decoration: InputDecoration(
                         hintText: 'Enter your cardholder name',
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: HexColor("#C4C6D2")),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: HexColor("#C4C6D2")),
+                        ),
                         hintStyle: TextStyle(
                           fontSize: 16,
                           color: Colors.black26,
@@ -613,6 +647,14 @@ class __InnerCardPartState extends State<_InnerCardPart> {
                           },
                           decoration: InputDecoration(
                             isDense: true,
+                            enabledBorder: UnderlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: HexColor("#C4C6D2")),
+                            ),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: HexColor("#C4C6D2")),
+                            ),
                             hintText: ' Enter',
                             hintStyle: TextStyle(
                               fontSize: 16,
@@ -649,6 +691,14 @@ class __InnerCardPartState extends State<_InnerCardPart> {
                             },
                             decoration: InputDecoration(
                               hintText: 'Enter date',
+                              enabledBorder: UnderlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: HexColor("#C4C6D2")),
+                              ),
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: HexColor("#C4C6D2")),
+                              ),
                               hintStyle: TextStyle(
                                 fontSize: 16,
                                 color: Colors.black26,
@@ -681,6 +731,14 @@ class __InnerCardPartState extends State<_InnerCardPart> {
                             },
                             decoration: InputDecoration(
                               hintText: 'Enter CVV',
+                              enabledBorder: UnderlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: HexColor("#C4C6D2")),
+                              ),
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: HexColor("#C4C6D2")),
+                              ),
                               hintStyle: TextStyle(
                                 fontSize: 16,
                                 color: Colors.black26,
