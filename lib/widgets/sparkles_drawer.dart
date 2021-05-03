@@ -24,28 +24,21 @@ import 'package:flutter_svg/svg.dart';
 
 import 'confirm_email.dart';
 
-class SparklesDrawer extends StatelessWidget {
+class SparklesDrawer extends StatefulWidget {
+  final String activeRoute;
+
+  SparklesDrawer({Key key, this.activeRoute}) : super(key: key);
+
+  @override
+  _SparklesDrawerState createState() => _SparklesDrawerState();
+}
+
+class _SparklesDrawerState extends State<SparklesDrawer> {
   final globalUser = GlobalStore.store.getState().user;
-
-  // String getCurrentRouteName(context) {
-  //   String currentRouteName;
-
-  //   Navigator.popUntil(context, (route) {
-  //     currentRouteName = route.settings.name;
-  //     return true;
-  //   });
-
-  //   return currentRouteName;
-  // }
 
   @override
   Widget build(BuildContext context) {
-    // String currentRoute = getCurrentRouteName(context);
-    // var pages = Routes.routes.pages['storeselectionpage'].name;
-
-    // var name = ModalRoute.of(context).settings;
-
-    // print("111___$pages");
+    print("111___${widget.activeRoute}");
 
     return ClipRRect(
       borderRadius: BorderRadius.only(
@@ -382,13 +375,15 @@ class SparklesDrawer extends StatelessWidget {
                   child: Container(
                     padding: EdgeInsets.all(12.0),
                     margin: EdgeInsets.only(left: 13.0),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(16.0),
-                        bottomLeft: Radius.circular(16.0),
-                      ),
-                    ),
+                    decoration: widget.activeRoute == 'storeselectionpage'
+                        ? BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(16.0),
+                              bottomLeft: Radius.circular(16.0),
+                            ),
+                          )
+                        : null,
                     child: Stack(
                       alignment: Alignment.centerLeft,
                       children: [
@@ -417,13 +412,15 @@ class SparklesDrawer extends StatelessWidget {
                   child: Container(
                     padding: EdgeInsets.all(12.0),
                     margin: EdgeInsets.only(left: 13.0),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(16.0),
-                        bottomLeft: Radius.circular(16.0),
-                      ),
-                    ),
+                    decoration: widget.activeRoute == 'profilepage'
+                        ? BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(16.0),
+                              bottomLeft: Radius.circular(16.0),
+                            ),
+                          )
+                        : null,
                     child: Stack(
                       alignment: Alignment.centerLeft,
                       children: [
@@ -452,7 +449,15 @@ class SparklesDrawer extends StatelessWidget {
                   child: Container(
                     padding: EdgeInsets.all(12.0),
                     margin: EdgeInsets.only(left: 13.0),
-                    decoration: BoxDecoration(),
+                    decoration: widget.activeRoute == 'chatpage'
+                        ? BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(16.0),
+                              bottomLeft: Radius.circular(16.0),
+                            ),
+                          )
+                        : null,
                     child: Stack(
                       alignment: Alignment.centerLeft,
                       children: [
@@ -603,7 +608,15 @@ class SparklesDrawer extends StatelessWidget {
                   child: Container(
                     padding: EdgeInsets.all(12.0),
                     margin: EdgeInsets.only(left: 13.0),
-                    decoration: BoxDecoration(),
+                    decoration: widget.activeRoute == 'helpsupportpage'
+                        ? BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(16.0),
+                              bottomLeft: Radius.circular(16.0),
+                            ),
+                          )
+                        : null,
                     child: Stack(
                       alignment: Alignment.centerLeft,
                       children: [

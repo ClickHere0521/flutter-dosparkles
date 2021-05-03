@@ -152,7 +152,7 @@ class __FirstPageState extends State<_FirstPage> {
               ),
             ),
           ),
-          drawer: SparklesDrawer(),
+          drawer: SparklesDrawer(activeRoute: "chatpage"),
           bottomNavigationBar: StreamBuilder(
             stream: fetchDataProcess(),
             builder: (_, snapshot) {

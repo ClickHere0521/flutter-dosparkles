@@ -122,7 +122,7 @@ class __MainBodyPageState extends State<_MainBodyPage> {
               ),
             ),
           ),
-          drawer: SparklesDrawer(),
+          drawer: SparklesDrawer(activeRoute: "storeselectionpage"),
           bottomNavigationBar: StreamBuilder(
             stream: fetchDataProcess(),
             builder: (_, snapshot) {

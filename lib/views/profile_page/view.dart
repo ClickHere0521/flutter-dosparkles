@@ -109,7 +109,7 @@ class __FirstPageState extends State<_FirstPage> {
               ),
             ),
           ),
-          drawer: SparklesDrawer(),
+          drawer: SparklesDrawer(activeRoute: "profilepage"),
           floatingActionButton: FloatingActionButton(
             child: CircleAvatar(
               radius: 50,

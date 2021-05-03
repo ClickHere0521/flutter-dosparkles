@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/models/models.dart';
 import 'package:com.floridainc.dosparkles/views/store_selection_page/action.dart';
+import 'package:com.floridainc.dosparkles/widgets/sparkles_drawer.dart';
 import 'package:com.floridainc.dosparkles/widgets/terms_and_conditions.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
@@ -90,12 +91,9 @@ class __MainBodyState extends State<_MainBody> {
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
               color: Colors.white,
-              // padding: EdgeInsets.only(
-              //   left: 16.0,
-              //   right: 16.0,
-              // ),
               child: _InnerPart(),
             ),
+            drawer: SparklesDrawer(activeRoute: "helpsupportpage"),
           ),
         ],
       ),
