@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/models/models.dart';
 import 'package:com.floridainc.dosparkles/views/store_selection_page/action.dart';
+import 'package:com.floridainc.dosparkles/widgets/terms_and_conditions.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
@@ -165,6 +166,96 @@ class __InnerPartState extends State<_InnerPart> {
               },
             ),
           ),
+          SizedBox(height: 19.0),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.0),
+            child: GestureDetector(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SvgPicture.asset("images/Group 2341.svg"),
+                  SizedBox(width: 11.33),
+                  Text(
+                    "Privacy Policy",
+                    style: TextStyle(
+                      fontSize: 18.0,
+                    ),
+                  ),
+                  Spacer(),
+                  Container(
+                    width: 34.0,
+                    height: 34.0,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10.0),
+                      boxShadow: [
+                        BoxShadow(
+                          spreadRadius: 3,
+                          color: Colors.grey[100],
+                          offset: Offset(0.0, 3.0),
+                          blurRadius: 3,
+                        )
+                      ],
+                    ),
+                    child: Center(
+                      child: SvgPicture.asset(
+                        "images/chevron_right.svg",
+                        width: 10.0,
+                        height: 18.0,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              onTap: () {},
+            ),
+          ),
+          SizedBox(height: 19.0),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.0),
+            child: GestureDetector(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SvgPicture.asset("images/Group 42342.svg"),
+                  SizedBox(width: 11.33),
+                  Text(
+                    "Terms and conditions",
+                    style: TextStyle(
+                      fontSize: 18.0,
+                    ),
+                  ),
+                  Spacer(),
+                  Container(
+                    width: 34.0,
+                    height: 34.0,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10.0),
+                      boxShadow: [
+                        BoxShadow(
+                          spreadRadius: 3,
+                          color: Colors.grey[100],
+                          offset: Offset(0.0, 3.0),
+                          blurRadius: 3,
+                        )
+                      ],
+                    ),
+                    child: Center(
+                      child: SvgPicture.asset(
+                        "images/chevron_right.svg",
+                        width: 10.0,
+                        height: 18.0,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              onTap: () {
+                termsDialog(context);
+              },
+            ),
+          ),
           SizedBox(height: 25.0),
           Container(
             width: double.infinity,
@@ -270,7 +361,10 @@ class __InnerPartState extends State<_InnerPart> {
                         ),
                         isDense: true,
                         isExpanded: true,
-                        underline: Container(height: 1, color: Colors.black26),
+                        underline: Container(
+                          height: 1,
+                          color: HexColor("#C4C6D2"),
+                        ),
                         onChanged: (String newValue) {
                           setState(() {
                             dropDownValue = newValue;
@@ -303,16 +397,10 @@ class __InnerPartState extends State<_InnerPart> {
                         keyboardType: TextInputType.multiline,
                         decoration: InputDecoration(
                           contentPadding: EdgeInsets.all(8.0),
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: HexColor("#C4C6D2")),
-                          ),
-                          focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: HexColor("#C4C6D2")),
-                          ),
-                          border: OutlineInputBorder(
+                          enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(
                               width: 1.0,
-                              color: Colors.black26,
+                              color: HexColor("#C4C6D2"),
                             ),
                             borderRadius: BorderRadius.circular(8.0),
                           ),

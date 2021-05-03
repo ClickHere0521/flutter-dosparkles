@@ -339,7 +339,7 @@ class __InnerPartState extends State<_InnerPart> {
                   return InkWell(
                     child: Card(
                       elevation: 5.0,
-                      shadowColor: Colors.grey[50],
+                      shadowColor: Colors.grey[50].withOpacity(.5),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16.0),
                       ),

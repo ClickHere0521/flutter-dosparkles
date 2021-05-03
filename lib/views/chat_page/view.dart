@@ -76,7 +76,7 @@ class _FirstPage extends StatefulWidget {
 }
 
 class __FirstPageState extends State<_FirstPage> {
-  int _selectedIndex = 0;
+  int _selectedIndex = 1;
 
   void _onItemTapped(int index) {
     if (index == _selectedIndex) return;

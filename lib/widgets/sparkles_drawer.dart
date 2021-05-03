@@ -49,8 +49,8 @@ class SparklesDrawer extends StatelessWidget {
 
     return ClipRRect(
       borderRadius: BorderRadius.only(
-        topRight: Radius.circular(32.0),
-        bottomRight: Radius.circular(32.0),
+        topRight: Radius.circular(16.0),
+        bottomRight: Radius.circular(16.0),
       ),
       child: Container(
         width: double.infinity,
@@ -62,12 +62,15 @@ class SparklesDrawer extends StatelessWidget {
               children: [
                 GestureDetector(
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ProductDetailsImage(),
-                      ),
-                    );
+                    Navigator.of(context)
+                        .pushNamed('uploadvideopage', arguments: null);
+
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //     builder: (context) => VideoPlayer(),
+                    //   ),
+                    // );
                   },
                   child: Container(
                     height: 218.0,
@@ -148,228 +151,228 @@ class SparklesDrawer extends StatelessWidget {
                     ),
                   ),
                 ),
-                ListTile(
-                  leading: const Icon(Icons.login),
-                  minLeadingWidth: 0.0,
-                  title: Text(
-                    'Register',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onTap: () {
-                    Navigator.of(context)
-                        .pushNamed('registerpage', arguments: null);
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.login),
-                  minLeadingWidth: 0.0,
-                  title: Text(
-                    'Registration',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onTap: () {
-                    Navigator.of(context)
-                        .pushNamed('registrationpage', arguments: null);
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.phone),
-                  minLeadingWidth: 0.0,
-                  title: Text(
-                    'Add Phone',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onTap: () {
-                    Navigator.of(context)
-                        .pushNamed('addphonepage', arguments: null);
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.money),
-                  minLeadingWidth: 0.0,
-                  title: Text(
-                    'Reset Password',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onTap: () {
-                    Navigator.of(context)
-                        .pushNamed('reset_passwordpage', arguments: null);
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.money),
-                  minLeadingWidth: 0.0,
-                  title: Text(
-                    'Sign Up',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onTap: () {
-                    Navigator.of(context)
-                        .pushNamed('registrationpage', arguments: null);
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.person),
-                  minLeadingWidth: 0.0,
-                  title: Text(
-                    'Invite Friends',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onTap: () {
-                    Navigator.of(context)
-                        .pushNamed('invite_friendpage', arguments: null);
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.person),
-                  minLeadingWidth: 0.0,
-                  title: Text(
-                    'Customize Link',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onTap: () {
-                    Navigator.of(context)
-                        .pushNamed('customize_linkpage', arguments: null);
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.person),
-                  minLeadingWidth: 0.0,
-                  title: Text(
-                    'Settings',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onTap: () {
-                    Navigator.of(context)
-                        .pushNamed('settings_page', arguments: null);
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.location_on),
-                  minLeadingWidth: 0.0,
-                  title: Text(
-                    'Location',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => GeolocatorWidget()),
-                    );
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.app_registration),
-                  minLeadingWidth: 0.0,
-                  title: Text(
-                    'Google Sign In',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => SignInDemo()),
-                    );
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.app_registration),
-                  minLeadingWidth: 0.0,
-                  title: Text(
-                    'Facebook Sign In',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => MyApp()),
-                    );
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.money_off),
-                  minLeadingWidth: 0.0,
-                  title: Text(
-                    'Stripe',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => MyStripeApp()),
-                    );
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.phone_iphone),
-                  minLeadingWidth: 0.0,
-                  title: Text(
-                    'Apple sign-in',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => MyAppleApp()),
-                    );
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.phone_iphone),
-                  minLeadingWidth: 0.0,
-                  title: Text(
-                    'Branch Routing',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => BranchApp()),
-                    );
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.chat),
-                  minLeadingWidth: 0.0,
-                  title: Text(
-                    'Chat',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onTap: () {
-                    Navigator.of(context).pushReplacementNamed('chatpage');
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.image),
-                  minLeadingWidth: 0.0,
-                  title: Text(
-                    'Image Picker',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => MyImagePickerPage()),
-                    );
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.flag),
-                  minLeadingWidth: 0.0,
-                  title: Text(
-                    'Country Code Picker',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => CountryPicker()),
-                    );
-                  },
-                ),
-                Divider(color: Colors.black),
+                // ListTile(
+                //   leading: const Icon(Icons.login),
+                //   minLeadingWidth: 0.0,
+                //   title: Text(
+                //     'Register',
+                //     style: TextStyle(color: Colors.white),
+                //   ),
+                //   onTap: () {
+                //     Navigator.of(context)
+                //         .pushNamed('registerpage', arguments: null);
+                //   },
+                // ),
+                // ListTile(
+                //   leading: const Icon(Icons.login),
+                //   minLeadingWidth: 0.0,
+                //   title: Text(
+                //     'Registration',
+                //     style: TextStyle(color: Colors.white),
+                //   ),
+                //   onTap: () {
+                //     Navigator.of(context)
+                //         .pushNamed('registrationpage', arguments: null);
+                //   },
+                // ),
+                // ListTile(
+                //   leading: const Icon(Icons.phone),
+                //   minLeadingWidth: 0.0,
+                //   title: Text(
+                //     'Add Phone',
+                //     style: TextStyle(color: Colors.white),
+                //   ),
+                //   onTap: () {
+                //     Navigator.of(context)
+                //         .pushNamed('addphonepage', arguments: null);
+                //   },
+                // ),
+                // ListTile(
+                //   leading: const Icon(Icons.money),
+                //   minLeadingWidth: 0.0,
+                //   title: Text(
+                //     'Reset Password',
+                //     style: TextStyle(color: Colors.white),
+                //   ),
+                //   onTap: () {
+                //     Navigator.of(context)
+                //         .pushNamed('reset_passwordpage', arguments: null);
+                //   },
+                // ),
+                // ListTile(
+                //   leading: const Icon(Icons.money),
+                //   minLeadingWidth: 0.0,
+                //   title: Text(
+                //     'Sign Up',
+                //     style: TextStyle(color: Colors.white),
+                //   ),
+                //   onTap: () {
+                //     Navigator.of(context)
+                //         .pushNamed('registrationpage', arguments: null);
+                //   },
+                // ),
+                // ListTile(
+                //   leading: const Icon(Icons.person),
+                //   minLeadingWidth: 0.0,
+                //   title: Text(
+                //     'Invite Friends',
+                //     style: TextStyle(color: Colors.white),
+                //   ),
+                //   onTap: () {
+                //     Navigator.of(context)
+                //         .pushNamed('invite_friendpage', arguments: null);
+                //   },
+                // ),
+                // ListTile(
+                //   leading: const Icon(Icons.person),
+                //   minLeadingWidth: 0.0,
+                //   title: Text(
+                //     'Customize Link',
+                //     style: TextStyle(color: Colors.white),
+                //   ),
+                //   onTap: () {
+                //     Navigator.of(context)
+                //         .pushNamed('customize_linkpage', arguments: null);
+                //   },
+                // ),
+                // ListTile(
+                //   leading: const Icon(Icons.person),
+                //   minLeadingWidth: 0.0,
+                //   title: Text(
+                //     'Settings',
+                //     style: TextStyle(color: Colors.white),
+                //   ),
+                //   onTap: () {
+                //     Navigator.of(context)
+                //         .pushNamed('settings_page', arguments: null);
+                //   },
+                // ),
+                // ListTile(
+                //   leading: const Icon(Icons.location_on),
+                //   minLeadingWidth: 0.0,
+                //   title: Text(
+                //     'Location',
+                //     style: TextStyle(color: Colors.white),
+                //   ),
+                //   onTap: () {
+                //     Navigator.push(
+                //       context,
+                //       MaterialPageRoute(
+                //           builder: (context) => GeolocatorWidget()),
+                //     );
+                //   },
+                // ),
+                // ListTile(
+                //   leading: const Icon(Icons.app_registration),
+                //   minLeadingWidth: 0.0,
+                //   title: Text(
+                //     'Google Sign In',
+                //     style: TextStyle(color: Colors.white),
+                //   ),
+                //   onTap: () {
+                //     Navigator.push(
+                //       context,
+                //       MaterialPageRoute(builder: (context) => SignInDemo()),
+                //     );
+                //   },
+                // ),
+                // ListTile(
+                //   leading: const Icon(Icons.app_registration),
+                //   minLeadingWidth: 0.0,
+                //   title: Text(
+                //     'Facebook Sign In',
+                //     style: TextStyle(color: Colors.white),
+                //   ),
+                //   onTap: () {
+                //     Navigator.push(
+                //       context,
+                //       MaterialPageRoute(builder: (context) => MyApp()),
+                //     );
+                //   },
+                // ),
+                // ListTile(
+                //   leading: const Icon(Icons.money_off),
+                //   minLeadingWidth: 0.0,
+                //   title: Text(
+                //     'Stripe',
+                //     style: TextStyle(color: Colors.white),
+                //   ),
+                //   onTap: () {
+                //     Navigator.push(
+                //       context,
+                //       MaterialPageRoute(builder: (context) => MyStripeApp()),
+                //     );
+                //   },
+                // ),
+                // ListTile(
+                //   leading: const Icon(Icons.phone_iphone),
+                //   minLeadingWidth: 0.0,
+                //   title: Text(
+                //     'Apple sign-in',
+                //     style: TextStyle(color: Colors.white),
+                //   ),
+                //   onTap: () {
+                //     Navigator.push(
+                //       context,
+                //       MaterialPageRoute(builder: (context) => MyAppleApp()),
+                //     );
+                //   },
+                // ),
+                // ListTile(
+                //   leading: const Icon(Icons.phone_iphone),
+                //   minLeadingWidth: 0.0,
+                //   title: Text(
+                //     'Branch Routing',
+                //     style: TextStyle(color: Colors.white),
+                //   ),
+                //   onTap: () {
+                //     Navigator.push(
+                //       context,
+                //       MaterialPageRoute(builder: (context) => BranchApp()),
+                //     );
+                //   },
+                // ),
+                // ListTile(
+                //   leading: const Icon(Icons.chat),
+                //   minLeadingWidth: 0.0,
+                //   title: Text(
+                //     'Chat',
+                //     style: TextStyle(color: Colors.white),
+                //   ),
+                //   onTap: () {
+                //     Navigator.of(context).pushReplacementNamed('chatpage');
+                //   },
+                // ),
+                // ListTile(
+                //   leading: const Icon(Icons.image),
+                //   minLeadingWidth: 0.0,
+                //   title: Text(
+                //     'Image Picker',
+                //     style: TextStyle(color: Colors.white),
+                //   ),
+                //   onTap: () {
+                //     Navigator.push(
+                //       context,
+                //       MaterialPageRoute(
+                //           builder: (context) => MyImagePickerPage()),
+                //     );
+                //   },
+                // ),
+                // ListTile(
+                //   leading: const Icon(Icons.flag),
+                //   minLeadingWidth: 0.0,
+                //   title: Text(
+                //     'Country Code Picker',
+                //     style: TextStyle(color: Colors.white),
+                //   ),
+                //   onTap: () {
+                //     Navigator.push(
+                //       context,
+                //       MaterialPageRoute(builder: (context) => CountryPicker()),
+                //     );
+                //   },
+                // ),
+                // Divider(color: Colors.black),
 
                 //
                 //

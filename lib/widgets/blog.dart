@@ -97,6 +97,7 @@ class __InnerPartState extends State<_InnerPart> {
               fontSize: 18.0,
               fontWeight: FontWeight.w700,
               color: Colors.black,
+              height: 1.35,
             ),
           ),
           SizedBox(height: 20.0),
@@ -106,6 +107,7 @@ class __InnerPartState extends State<_InnerPart> {
               fontSize: 18.0,
               fontWeight: FontWeight.w700,
               color: HexColor("#53586F"),
+              height: 1.35,
             ),
           ),
           SizedBox(height: 10.0),
@@ -114,6 +116,7 @@ class __InnerPartState extends State<_InnerPart> {
             style: TextStyle(
               fontSize: 16.0,
               color: HexColor("#53586F"),
+              height: 1.35,
             ),
           ),
           SizedBox(height: 12.0),
@@ -128,6 +131,7 @@ class __InnerPartState extends State<_InnerPart> {
             style: TextStyle(
               fontSize: 18.0,
               fontWeight: FontWeight.w700,
+              height: 1.35,
               color: HexColor("#53586F"),
             ),
           ),
@@ -137,6 +141,7 @@ class __InnerPartState extends State<_InnerPart> {
             style: TextStyle(
               fontSize: 16.0,
               color: HexColor("#53586F"),
+              height: 1.35,
             ),
           ),
           SizedBox(height: 12.0),
@@ -151,6 +156,7 @@ class __InnerPartState extends State<_InnerPart> {
             style: TextStyle(
               fontSize: 18.0,
               fontWeight: FontWeight.w700,
+              height: 1.35,
               color: Colors.black,
             ),
           ),
@@ -161,6 +167,7 @@ class __InnerPartState extends State<_InnerPart> {
               fontSize: 18.0,
               fontWeight: FontWeight.w700,
               color: HexColor("#53586F"),
+              height: 1.35,
             ),
           ),
           SizedBox(height: 10.0),
@@ -169,6 +176,7 @@ class __InnerPartState extends State<_InnerPart> {
             style: TextStyle(
               fontSize: 16.0,
               color: HexColor("#53586F"),
+              height: 1.35,
             ),
           ),
           SizedBox(height: 12.0),
@@ -182,6 +190,7 @@ class __InnerPartState extends State<_InnerPart> {
             "Tellus semper ",
             style: TextStyle(
               fontSize: 18.0,
+              height: 1.35,
               fontWeight: FontWeight.w700,
               color: HexColor("#53586F"),
             ),
@@ -191,6 +200,7 @@ class __InnerPartState extends State<_InnerPart> {
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Elementum proin id egestas elit, ac augue.",
             style: TextStyle(
               fontSize: 16.0,
+              height: 1.35,
               color: HexColor("#53586F"),
             ),
           ),
