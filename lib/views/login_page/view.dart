@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:email_validator/email_validator.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -152,8 +153,11 @@ class __InnerPartState extends State<_InnerPart> {
                     },
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter some text';
+                        return 'Field must not be empty';
+                      } else if (!EmailValidator.validate(value)) {
+                        return 'Please enter a valid Email address';
                       }
+
                       return null;
                     },
                   ),
@@ -202,7 +206,7 @@ class __InnerPartState extends State<_InnerPart> {
                     },
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter some text';
+                        return 'Field must not be empty';
                       }
                       return null;
                     },

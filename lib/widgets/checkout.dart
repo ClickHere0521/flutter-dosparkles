@@ -2,7 +2,6 @@ import 'dart:ui';
 
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/utils/colors.dart';
-import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dash/flutter_dash.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -13,6 +12,9 @@ class Checkout extends StatefulWidget {
 }
 
 class _CheckoutState extends State<Checkout> {
+  final _formKey1 = GlobalKey<FormState>();
+  final _formKey2 = GlobalKey<FormState>();
+
   bool isNextPage = false;
 
   @override
@@ -44,7 +46,9 @@ class _CheckoutState extends State<Checkout> {
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
         color: Colors.white,
-        child: isNextPage ? _InnerCardPart() : _InnerPart(),
+        child: isNextPage
+            ? _InnerCardPart(formKey: _formKey2)
+            : _InnerPart(formKey: _formKey1),
       ),
       bottomNavigationBar: Container(
         width: double.infinity,
@@ -91,9 +95,19 @@ class _CheckoutState extends State<Checkout> {
                 ),
               ),
               onPressed: () {
-                setState(() {
-                  isNextPage = true;
-                });
+                if (isNextPage == false) {
+                  if (_formKey1.currentState.validate()) {
+                    setState(() {
+                      isNextPage = true;
+                    });
+                  }
+                } else {
+                  if (_formKey2.currentState.validate()) {
+                    setState(() {
+                      isNextPage = false;
+                    });
+                  }
+                }
               },
             ),
           ),
@@ -104,12 +118,15 @@ class _CheckoutState extends State<Checkout> {
 }
 
 class _InnerPart extends StatefulWidget {
+  final formKey;
+
+  _InnerPart({this.formKey});
+
   @override
   __InnerPartState createState() => __InnerPartState();
 }
 
 class __InnerPartState extends State<_InnerPart> {
-  final _formKey = GlobalKey<FormState>();
   String addressValue = '';
   String apartmentValue = '';
   String firstNameValue = '';
@@ -212,7 +229,7 @@ class __InnerPartState extends State<_InnerPart> {
               ),
               padding: EdgeInsets.symmetric(horizontal: 16.0),
               child: Form(
-                key: _formKey,
+                key: widget.formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -253,7 +270,7 @@ class __InnerPartState extends State<_InnerPart> {
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Please enter some text';
+                                return 'Field must not be empty';
                               }
                               return null;
                             },
@@ -293,7 +310,7 @@ class __InnerPartState extends State<_InnerPart> {
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Please enter some text';
+                                return 'Field must not be empty';
                               }
                               return null;
                             },
@@ -331,7 +348,7 @@ class __InnerPartState extends State<_InnerPart> {
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter some text';
+                          return 'Field must not be empty';
                         }
                         return null;
                       },
@@ -404,7 +421,7 @@ class __InnerPartState extends State<_InnerPart> {
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter some text';
+                          return 'Field must not be empty';
                         }
                         return null;
                       },
@@ -444,12 +461,15 @@ class __InnerPartState extends State<_InnerPart> {
 }
 
 class _InnerCardPart extends StatefulWidget {
+  final formKey;
+
+  _InnerCardPart({this.formKey});
+
   @override
   __InnerCardPartState createState() => __InnerCardPartState();
 }
 
 class __InnerCardPartState extends State<_InnerCardPart> {
-  final _formKey = GlobalKey<FormState>();
   String addressValue = '';
   String apartmentValue = '';
   String firstNameValue = '';
@@ -567,7 +587,7 @@ class __InnerCardPartState extends State<_InnerCardPart> {
               ),
               padding: EdgeInsets.symmetric(horizontal: 16.0),
               child: Form(
-                key: _formKey,
+                key: widget.formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -625,7 +645,7 @@ class __InnerCardPartState extends State<_InnerCardPart> {
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter some text';
+                          return 'Field must not be empty';
                         }
                         return null;
                       },
@@ -672,7 +692,7 @@ class __InnerCardPartState extends State<_InnerCardPart> {
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please enter some text';
+                              return 'Field must not be empty';
                             }
                             return null;
                           },
@@ -715,7 +735,7 @@ class __InnerCardPartState extends State<_InnerCardPart> {
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Please enter some text';
+                                return 'Field must not be empty';
                               }
                               return null;
                             },
@@ -755,7 +775,7 @@ class __InnerCardPartState extends State<_InnerCardPart> {
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Please enter some text';
+                                return 'Field must not be empty';
                               }
                               return null;
                             },

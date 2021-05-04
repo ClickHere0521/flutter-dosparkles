@@ -101,11 +101,11 @@ class _InnerPart extends StatefulWidget {
 class __InnerPartState extends State<_InnerPart> {
   final _formKey = GlobalKey<FormState>();
   String oldValue = '';
-  bool oldHide = false;
+  bool oldHide = true;
   String newValue = '';
-  bool newHide = false;
+  bool newHide = true;
   String repeatValue = '';
-  bool repeatHide = false;
+  bool repeatHide = true;
 
   @override
   Widget build(BuildContext context) {
@@ -148,7 +148,7 @@ class __InnerPartState extends State<_InnerPart> {
                             EdgeInsetsDirectional.only(start: 12.0, top: 12.0),
                         child: InkWell(
                           child: Icon(
-                            oldHide ? Icons.visibility : Icons.visibility_off,
+                            oldHide ? Icons.visibility_off : Icons.visibility,
                             color: Colors.black26,
                           ),
                           onTap: () {
@@ -162,7 +162,7 @@ class __InnerPartState extends State<_InnerPart> {
                     onFieldSubmitted: (value) {},
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter some text';
+                        return 'Field must not be empty';
                       }
                       return null;
                     },
@@ -193,7 +193,7 @@ class __InnerPartState extends State<_InnerPart> {
                             EdgeInsetsDirectional.only(start: 12.0, top: 12.0),
                         child: InkWell(
                           child: Icon(
-                            newHide ? Icons.visibility : Icons.visibility_off,
+                            newHide ? Icons.visibility_off : Icons.visibility,
                             color: Colors.black26,
                           ),
                           onTap: () {
@@ -207,7 +207,7 @@ class __InnerPartState extends State<_InnerPart> {
                     onFieldSubmitted: (value) {},
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter some text';
+                        return 'Field must not be empty';
                       }
                       return null;
                     },
@@ -239,8 +239,8 @@ class __InnerPartState extends State<_InnerPart> {
                         child: InkWell(
                           child: Icon(
                             repeatHide
-                                ? Icons.visibility
-                                : Icons.visibility_off,
+                                ? Icons.visibility_off
+                                : Icons.visibility,
                             color: Colors.black26,
                           ),
                           onTap: () {
@@ -254,7 +254,9 @@ class __InnerPartState extends State<_InnerPart> {
                     onFieldSubmitted: (value) {},
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter some text';
+                        return 'Field must not be empty';
+                      } else if (value != newValue) {
+                        return 'Password are not matching';
                       }
                       return null;
                     },
@@ -301,8 +303,8 @@ class __InnerPartState extends State<_InnerPart> {
   }
 }
 
-void _onSubmit(formKey) async {
-  if (formKey.currentState.validate()) {
+void _onSubmit(_formKey) async {
+  if (_formKey.currentState.validate()) {
     try {
       // QueryResult result =
       //     await BaseGraphQLClient.instance.forgotPassword(emailValue);

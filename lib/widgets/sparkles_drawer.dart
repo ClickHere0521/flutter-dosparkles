@@ -60,13 +60,13 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
               children: [
                 GestureDetector(
                   onTap: () {
-                    // Navigator.of(context)
-                    //     .pushNamed('uploadvideopage', arguments: null);
+                    Navigator.of(context)
+                        .pushNamed('reset_passwordpage', arguments: null);
 
                     // Navigator.push(
                     //   context,
                     //   MaterialPageRoute(
-                    //     builder: (context) => VideoPlayer(),
+                    //     builder: (context) => Checkout(),
                     //   ),
                     // );
                   },

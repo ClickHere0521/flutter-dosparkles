@@ -258,7 +258,7 @@ class __CountryPickerDropdownState extends State<_CountryPickerDropdown> {
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Please enter some text';
+                return 'Field must not be empty';
               }
               return null;
             },
