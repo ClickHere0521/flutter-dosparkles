@@ -1,10 +1,16 @@
 import 'dart:ui';
 
+import 'package:com.floridainc.dosparkles/actions/api/graphql_client.dart';
 import 'package:com.floridainc.dosparkles/utils/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 
-String termsAndConditions =
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mi feugiat enim eu, ultrices vitae consequat proin pulvinar tempor. Felis pharetra, dui, tellus nullam. Nisl, congue pulvinar orci, volutpat adipiscing viverra tincidunt lacinia. Senectus faucibus tristique sociis malesuada. Non vel a ac amet massa. Pellentesque diam tristique fringilla odio aliquet cursus velit et. Augue ac ac eget amet eu. Aliquam, suscipit ornare massa sit dui, mauris, elementum tempor. Ipsum ut iaculis ultrices sit nam condimentum dapibus tincidunt.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mi feugiat enim eu, ultrices vitae consequat proin pulvinar tempor. Felis pharetra, dui, tellus nullam. Nisl, congue pulvinar orci, volutpat adipiscing viverra tincidunt lacinia. Senectus faucibus tristique sociis malesuada. Non vel a ac amet massa. Pellentesque diam tristique fringilla odio aliquet cursus velit et. Augue ac ac eget amet eu. Aliquam, suscipit ornare massa sit dui, mauris, elementum tempor. Ipsum ut iaculis ultrices sit nam condimentum dapibus tincidunt.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mi feugiat enim eu, ultrices vitae consequat proin pulvinar tempor. Felis pharetra, dui, tellus nullam. Nisl, congue pulvinar orci, volutpat adipiscing viverra tincidunt lacinia. Senectus faucibus tristique sociis malesuada. Non vel a ac amet massa. Pellentesque diam tristique fringilla odio aliquet cursus velit et. Augue ac ac eget amet eu. Aliquam, suscipit ornare massa sit dui, mauris, elementum tempor. Ipsum ut iaculis ultrices sit nam condimentum dapibus tincidunt.";
+Future _fetchData() async {
+  QueryResult result = await BaseGraphQLClient.instance.fetchAppContent();
+  if (result.hasException) print(result.exception);
+
+  return result.data['appContent']['termsAndConditions'];
+}
 
 Future<void> termsDialog(BuildContext context) async {
   return showDialog(
@@ -33,7 +39,6 @@ Future<void> termsDialog(BuildContext context) async {
                     child: GestureDetector(
                       child: Image.asset("images/close_button_terms.png"),
                       onTap: () {
-                        print("PRINT");
                         Navigator.of(context).pop();
                       },
                     ),
@@ -64,9 +69,19 @@ Future<void> termsDialog(BuildContext context) async {
                         child: SingleChildScrollView(
                           child: Container(
                             margin: EdgeInsets.only(left: 14.0, right: 14.0),
-                            child: Text(
-                              termsAndConditions,
-                              style: TextStyle(fontSize: 14.0),
+                            child: FutureBuilder(
+                              future: _fetchData(),
+                              builder: (_, snapshot) {
+                                if (snapshot.hasData && !snapshot.hasError) {
+                                  return Text(
+                                    snapshot.data,
+                                    style: TextStyle(fontSize: 14.0),
+                                  );
+                                }
+                                return Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              },
                             ),
                           ),
                         ),

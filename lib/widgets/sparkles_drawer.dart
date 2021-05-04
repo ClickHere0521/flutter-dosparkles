@@ -118,42 +118,34 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                                   ),
                                 ),
                                 SizedBox(height: 12.0),
-                                widget.globalUser.role != "Store Manager"
-                                    ? FutureBuilder(
-                                        future: getInitialData(),
-                                        builder: (context, snapshot) {
-                                          if (snapshot.hasData &&
-                                              !snapshot.hasError) {
-                                            return Text(
-                                              snapshot.data['name'] != null
-                                                  ? snapshot.data['name']
-                                                  : "Store",
-                                              style: TextStyle(
-                                                fontSize: 18.0,
-                                                fontWeight: FontWeight.w600,
-                                                color: Colors.white,
-                                                fontFeatures: [
-                                                  FontFeature.enable('smcp')
-                                                ],
-                                              ),
-                                            );
-                                          }
-                                          return SizedBox.shrink(child: null);
-                                        },
-                                      )
-                                    : Text(
-                                        widget.globalUser.name != null
-                                            ? widget.globalUser.name
-                                            : "User",
-                                        style: TextStyle(
-                                          fontSize: 18.0,
-                                          fontWeight: FontWeight.w600,
-                                          color: Colors.white,
-                                          fontFeatures: [
-                                            FontFeature.enable('smcp')
-                                          ],
-                                        ),
-                                      ),
+                                if (widget.globalUser.role == "Store Manager")
+                                  Text(
+                                    widget.globalUser.store != null
+                                        ? widget.globalUser.store['name']
+                                        : "Store",
+                                    style: TextStyle(
+                                      fontSize: 18.0,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white,
+                                      fontFeatures: [
+                                        FontFeature.enable('smcp')
+                                      ],
+                                    ),
+                                  )
+                                else
+                                  Text(
+                                    widget.globalUser.name != null
+                                        ? widget.globalUser.name
+                                        : "User",
+                                    style: TextStyle(
+                                      fontSize: 18.0,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white,
+                                      fontFeatures: [
+                                        FontFeature.enable('smcp')
+                                      ],
+                                    ),
+                                  ),
                               ],
                             ),
                           ),

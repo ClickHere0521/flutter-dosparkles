@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/models/models.dart';
 import 'package:com.floridainc.dosparkles/views/store_selection_page/action.dart';
+import 'package:com.floridainc.dosparkles/widgets/about_us.dart';
 import 'package:com.floridainc.dosparkles/widgets/sparkles_drawer.dart';
 import 'package:com.floridainc.dosparkles/widgets/terms_and_conditions.dart';
 import 'package:fish_redux/fish_redux.dart';
@@ -108,7 +109,10 @@ class _InnerPart extends StatefulWidget {
 
 class __InnerPartState extends State<_InnerPart> {
   final _formKey = GlobalKey<FormState>();
+  String nameValue = "";
+  String emailValue = "";
   String dropDownValue = "One";
+  String messageValue = "";
 
   @override
   Widget build(BuildContext context) {
@@ -159,7 +163,7 @@ class __InnerPartState extends State<_InnerPart> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => _AboutUs()),
+                  MaterialPageRoute(builder: (context) => AboutUs()),
                 );
               },
             ),
@@ -275,6 +279,9 @@ class __InnerPartState extends State<_InnerPart> {
                   TextFormField(
                     textAlign: TextAlign.left,
                     keyboardType: TextInputType.text,
+                    onChanged: (String value) {
+                      nameValue = value;
+                    },
                     decoration: InputDecoration(
                       hintText: 'Enter your name',
                       enabledBorder: UnderlineInputBorder(
@@ -308,6 +315,9 @@ class __InnerPartState extends State<_InnerPart> {
                   TextFormField(
                     textAlign: TextAlign.left,
                     keyboardType: TextInputType.emailAddress,
+                    onChanged: (String value) {
+                      emailValue = value;
+                    },
                     decoration: InputDecoration(
                       hintText: 'Enter your email',
                       enabledBorder: UnderlineInputBorder(
@@ -393,9 +403,19 @@ class __InnerPartState extends State<_InnerPart> {
                       TextField(
                         maxLines: 4,
                         keyboardType: TextInputType.multiline,
+                        onChanged: (String value) {
+                          messageValue = value;
+                        },
                         decoration: InputDecoration(
                           contentPadding: EdgeInsets.all(8.0),
                           enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              width: 1.0,
+                              color: HexColor("#C4C6D2"),
+                            ),
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(
                               width: 1.0,
                               color: HexColor("#C4C6D2"),
@@ -437,7 +457,10 @@ class __InnerPartState extends State<_InnerPart> {
                           color: Colors.white,
                         ),
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        _onSubmit(_formKey, nameValue, emailValue,
+                            dropDownValue, messageValue);
+                      },
                     ),
                   ),
                   SizedBox(height: 20.0),
@@ -451,126 +474,17 @@ class __InnerPartState extends State<_InnerPart> {
   }
 }
 
-class _AboutUs extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: HexColor("#F2F6FA"),
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height,
-      child: Stack(
-        children: [
-          Positioned(
-            top: 0,
-            left: 0,
-            width: MediaQuery.of(context).size.width,
-            child: Image.asset(
-              "images/background_lines_top.png",
-              fit: BoxFit.contain,
-            ),
-          ),
-          Positioned(
-            bottom: 0,
-            left: 0,
-            width: MediaQuery.of(context).size.width,
-            child: Image.asset(
-              "images/background_lines_bottom.png",
-              fit: BoxFit.contain,
-            ),
-          ),
-          Scaffold(
-            backgroundColor: Colors.transparent,
-            resizeToAvoidBottomInset: true,
-            appBar: AppBar(
-              centerTitle: true,
-              elevation: 0.0,
-              leadingWidth: 70.0,
-              automaticallyImplyLeading: true,
-              leading: InkWell(
-                child: Image.asset("images/back_button.png"),
-                onTap: () => Navigator.of(context).pop(),
-              ),
-              backgroundColor: Colors.transparent,
-              title: Text(
-                "About Us",
-                style: TextStyle(
-                  fontSize: 22,
-                  color: HexColor("#53586F"),
-                  fontWeight: FontWeight.w600,
-                  fontFeatures: [FontFeature.enable('smcp')],
-                ),
-              ),
-            ),
-            body: Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              color: Colors.white,
-              padding: EdgeInsets.only(
-                left: 16.0,
-                right: 16.0,
-              ),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 20.0),
-                    Center(
-                        child: Image.asset(
-                      "images/Group 319.png",
-                      width: 82.0,
-                      height: 82.0,
-                    )),
-                    SizedBox(height: 28.0),
-                    Text(
-                      "Purus interdum semper",
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    SizedBox(height: 10.0),
-                    Text(
-                      " Lorem ipsum dolor sit amet, consectetur adipiscing elit. Risus, viverra metus platea sapien, eu. Aenean ornare nisi morbi quis volutpat. Pulvinar nulla suspendisse nisl dictum. Viverra porttitor neque, cras aliquam.",
-                      style: TextStyle(fontSize: 16.0),
-                    ),
-                    Text(
-                      " Non aenean tristique ridiculus hendrerit mauris arcu, ac neque sem. In facilisis posuere fusce arcu ultrices viverra diam, ipsum, rhoncus. Quisque nulla commodo pellentesque tortor varius massa.",
-                      style: TextStyle(fontSize: 16.0),
-                    ),
-                    Text(
-                      " Metus hendrerit consectetur erat eget magna. Donec nec dignissim volutpat ut ut orci amet.",
-                      style: TextStyle(fontSize: 16.0),
-                    ),
-                    SizedBox(height: 30.0),
-                    Text(
-                      "Purus interdum semper",
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    SizedBox(height: 10.0),
-                    Text(
-                      " Lorem ipsum dolor sit amet, consectetur adipiscing elit. Risus, viverra metus platea sapien, eu. Aenean ornare nisi morbi quis volutpat. Pulvinar nulla suspendisse nisl dictum. Viverra porttitor neque, cras aliquam.",
-                      style: TextStyle(fontSize: 16.0),
-                    ),
-                    Text(
-                      " Non aenean tristique ridiculus hendrerit mauris arcu, ac neque sem. In facilisis posuere fusce arcu ultrices viverra diam, ipsum, rhoncus. Quisque nulla commodo pellentesque tortor varius massa.",
-                      style: TextStyle(fontSize: 16.0),
-                    ),
-                    Text(
-                      " Metus hendrerit consectetur erat eget magna. Donec nec dignissim volutpat ut ut orci amet.",
-                      style: TextStyle(fontSize: 16.0),
-                    ),
-                    SizedBox(height: 20.0),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
+void _onSubmit(
+    _formKey, nameValue, emailValue, dropDownValue, messageValue) async {
+  if (_formKey.currentState.validate()) {
+    QueryResult result = await BaseGraphQLClient.instance.createSupportRequest(
+      nameValue,
+      emailValue,
+      dropDownValue,
+      messageValue,
     );
+    if (result.hasException) print(result.exception);
+
+    print(result.data);
   }
 }

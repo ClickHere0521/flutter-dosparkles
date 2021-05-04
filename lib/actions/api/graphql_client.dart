@@ -72,6 +72,7 @@ class BaseGraphQLClient {
             }
             store {
               id
+              name
             }
             role {
               id
@@ -746,6 +747,50 @@ class BaseGraphQLClient {
     ''';
 
     // print("DEBUG________$_mutation");
+    return _service.mutate(_mutation);
+  }
+
+  Future<QueryResult> fetchAppContent() {
+    String _query = '''
+      query {
+        appContent {
+          id
+          privacyPolicy
+          termsAndConditions
+          aboutUs
+        }
+      }
+    ''';
+
+    return _service.query(_query);
+  }
+
+  Future<QueryResult> createSupportRequest(
+      name, email, subjectChoice, message) {
+    String _mutation = '''
+      mutation {
+        createSupportRequest (
+          input: {
+            data: {
+              name: "$name"
+              email: "$email"
+              subjectChoice: $subjectChoice
+              message: "$message"
+            }
+          }
+        )
+        {
+          supportRequest {
+            name
+            email
+            subjectChoice
+            message
+          }
+        }
+      }
+    ''';
+
+    print("DEBUG________$_mutation");
     return _service.mutate(_mutation);
   }
 
