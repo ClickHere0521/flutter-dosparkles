@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:com.floridainc.dosparkles/actions/api/graphql_client.dart';
 import 'package:com.floridainc.dosparkles/routes/routes.dart';
 import 'package:com.floridainc.dosparkles/actions/user_info_operate.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
@@ -21,10 +22,12 @@ import 'package:com.floridainc.dosparkles/widgets/upload_files.dart';
 import 'package:com.floridainc.dosparkles/widgets/video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 
 import 'confirm_email.dart';
 
 class SparklesDrawer extends StatefulWidget {
+  final globalUser = GlobalStore.store.getState().user;
   final String activeRoute;
 
   SparklesDrawer({Key key, this.activeRoute}) : super(key: key);
@@ -34,12 +37,14 @@ class SparklesDrawer extends StatefulWidget {
 }
 
 class _SparklesDrawerState extends State<SparklesDrawer> {
-  final globalUser = GlobalStore.store.getState().user;
+  Future getInitialData() async {
+    QueryResult result = await BaseGraphQLClient.instance
+        .fetchStoreById(widget.globalUser.store['id']);
+    return result.data['stores'][0];
+  }
 
   @override
   Widget build(BuildContext context) {
-    print("111___${widget.activeRoute}");
-
     return ClipRRect(
       borderRadius: BorderRadius.only(
         topRight: Radius.circular(16.0),
@@ -55,8 +60,8 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
               children: [
                 GestureDetector(
                   onTap: () {
-                    Navigator.of(context)
-                        .pushNamed('uploadvideopage', arguments: null);
+                    // Navigator.of(context)
+                    //     .pushNamed('uploadvideopage', arguments: null);
 
                     // Navigator.push(
                     //   context,
@@ -98,9 +103,10 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                                   ),
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(10.0),
-                                    child: globalUser.avatarUrl != null
+                                    child: widget.globalUser.avatarUrl != null
                                         ? CachedNetworkImage(
-                                            imageUrl: globalUser.avatarUrl,
+                                            imageUrl:
+                                                widget.globalUser.avatarUrl,
                                             width: double.infinity,
                                             height: double.infinity,
                                           )
@@ -112,17 +118,42 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                                   ),
                                 ),
                                 SizedBox(height: 12.0),
-                                Text(
-                                  globalUser.name != null
-                                      ? globalUser.name
-                                      : "User",
-                                  style: TextStyle(
-                                    fontSize: 18.0,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.white,
-                                    fontFeatures: [FontFeature.enable('smcp')],
-                                  ),
-                                ),
+                                widget.globalUser.role != "Store Manager"
+                                    ? FutureBuilder(
+                                        future: getInitialData(),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.hasData &&
+                                              !snapshot.hasError) {
+                                            return Text(
+                                              snapshot.data['name'] != null
+                                                  ? snapshot.data['name']
+                                                  : "Store",
+                                              style: TextStyle(
+                                                fontSize: 18.0,
+                                                fontWeight: FontWeight.w600,
+                                                color: Colors.white,
+                                                fontFeatures: [
+                                                  FontFeature.enable('smcp')
+                                                ],
+                                              ),
+                                            );
+                                          }
+                                          return SizedBox.shrink(child: null);
+                                        },
+                                      )
+                                    : Text(
+                                        widget.globalUser.name != null
+                                            ? widget.globalUser.name
+                                            : "User",
+                                        style: TextStyle(
+                                          fontSize: 18.0,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.white,
+                                          fontFeatures: [
+                                            FontFeature.enable('smcp')
+                                          ],
+                                        ),
+                                      ),
                               ],
                             ),
                           ),
@@ -511,8 +542,8 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                   },
                 ),
                 SizedBox(height: 10.0),
-                globalUser.role == "Store Manager" ||
-                        globalUser.role == "Authenticated"
+                widget.globalUser.role == "Store Manager" ||
+                        widget.globalUser.role == "Authenticated"
                     ? GestureDetector(
                         child: Container(
                           padding: EdgeInsets.all(12.0),
