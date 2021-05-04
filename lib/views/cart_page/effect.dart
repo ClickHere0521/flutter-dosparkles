@@ -132,13 +132,6 @@ String processCartItemForOrder(CartItem item) {
     }
   }
 
-  if (item.orderImageData != null) {
-    for (var i = 0; i < item.orderImageData.length; i++) {
-      properties +=
-          ', print_url_${i + 1}: "${url + item.orderImageData[i]['url']}"';
-    }
-  }
-
   properties += ' }';
 
   var result =
@@ -171,19 +164,10 @@ void _onProceedToCheckout(Action action, Context<CartPageState> ctx) async {
   GlobalStore.store.dispatch(GlobalActionCreator.setShoppingCart(
       List<CartItem>.empty(growable: true)));
 
-  List orderImageIds = [];
-  for (var i = 0; i < cart.length; i++) {
-    List orderImageData = cart[i].orderImageData;
-    for (var j = 0; j < orderImageData.length; j++) {
-      orderImageIds.add("\"${orderImageData[j]['id']}\"");
-    }
-  }
-
   QueryResult resultOrder = await BaseGraphQLClient.instance.createOrder(
     orderDetailsJson,
     totalPrice,
     productsIdsJson,
-    orderImageIds,
   );
   if (resultOrder.hasException) {
     printWrapped('Exception: ${resultOrder.exception}');

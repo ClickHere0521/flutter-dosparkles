@@ -21,9 +21,8 @@ class ProductPageActionCreator {
     return const Action(ProductPageAction.goToCart);
   }
 
-  static Action onAddToCart(ProductItem product, int count, orderImagesIds) {
-    return Action(ProductPageAction.addToCart,
-        payload: [product, count, orderImagesIds]);
+  static Action onAddToCart(ProductItem product, int count) {
+    return Action(ProductPageAction.addToCart, payload: [product, count]);
   }
 
   static Action onBackToProduct() {

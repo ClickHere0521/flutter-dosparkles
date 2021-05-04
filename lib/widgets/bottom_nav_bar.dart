@@ -6,11 +6,13 @@ import 'package:flutter_svg/flutter_svg.dart';
 class BottomNavBarWidget extends StatefulWidget {
   final prefsData;
   final initialIndex;
+  final isTransparentBackground;
 
   BottomNavBarWidget({
     Key key,
     this.prefsData,
     this.initialIndex = 0,
+    this.isTransparentBackground = false,
   }) : super(key: key);
 
   @override
@@ -83,7 +85,7 @@ class _BottomNavBarWidgetState extends State<BottomNavBarWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
+      color: widget.isTransparentBackground ? Colors.transparent : Colors.white,
       child: BottomNavigationBar(
         backgroundColor: Colors.transparent,
         elevation: 0.0,

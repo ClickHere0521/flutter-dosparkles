@@ -50,7 +50,6 @@ void _onGoToCart(Action action, Context<ProductPageState> ctx) async {
 void _onAddToCart(Action action, Context<ProductPageState> ctx) async {
   ProductItem product = action.payload[0];
   int count = action.payload[1];
-  List orderImageData = action.payload[2];
 
   double amount = product.price;
   if (ctx.state.optionalMaterialSelected) {
@@ -79,7 +78,6 @@ void _onAddToCart(Action action, Context<ProductPageState> ctx) async {
       amount,
       ctx.state.engraveInputs,
       ctx.state.optionalMaterialSelected,
-      orderImageData,
     ),
   );
 

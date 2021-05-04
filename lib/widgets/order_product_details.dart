@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
@@ -24,7 +25,7 @@ class _OrderProductDetailsWidgetState extends State<OrderProductDetailsWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _CustomBody(
+      body: _MainBody(
         product: widget.product,
       ),
       backgroundColor: Colors.white,
@@ -65,6 +66,7 @@ class _MainBody extends StatefulWidget {
 
 class __MainBodyState extends State<_MainBody> {
   var productMedia;
+  int currentTab = 0;
 
   @override
   void initState() {
@@ -122,8 +124,8 @@ class __MainBodyState extends State<_MainBody> {
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(16.0),
-                        child: Image.network(
-                          productMedia[index],
+                        child: CachedNetworkImage(
+                          imageUrl: productMedia[index],
                           width: double.infinity,
                           height: double.infinity,
                           fit: BoxFit.cover,
@@ -169,7 +171,7 @@ class __MainBodyState extends State<_MainBody> {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 37.0),
                   child: Text(
-                    "Modal Launch +22% Conversion",
+                    widget.product['name'],
                     style: TextStyle(
                       color: HexColor("#53586F"),
                       fontSize: 18.0,
@@ -188,7 +190,7 @@ class __MainBodyState extends State<_MainBody> {
                         style: DefaultTextStyle.of(context).style,
                         children: [
                           TextSpan(
-                            text: "\$39,95",
+                            text: "\$${widget.product['price']} ",
                             style: TextStyle(
                               color: HexColor("#53586F"),
                               fontSize: 24.0,
@@ -196,7 +198,7 @@ class __MainBodyState extends State<_MainBody> {
                             ),
                           ),
                           TextSpan(
-                            text: "\$79,95",
+                            text: "\$${widget.product['oldPrice']}",
                             style: TextStyle(
                               color: HexColor("#53586F").withOpacity(.5),
                               fontSize: 18.0,
@@ -222,70 +224,92 @@ class __MainBodyState extends State<_MainBody> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Expanded(
-                      child: Container(
-                        width: double.infinity,
-                        height: 36.0,
-                        constraints: BoxConstraints(
-                          maxWidth: 188.0,
-                        ),
-                        decoration: BoxDecoration(
-                          color: HexColor("#FAFCFF"),
-                          borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(16.0),
-                            bottomRight: Radius.circular(16.0),
+                      child: GestureDetector(
+                        child: Container(
+                          width: double.infinity,
+                          height: 36.0,
+                          constraints: BoxConstraints(
+                            maxWidth: 188.0,
                           ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey[300],
-                              offset: Offset(0.0, 5.0), // (x, y)
-                              blurRadius: 5.0,
-                            ),
-                          ],
-                        ),
-                        child: Center(
-                          child: Text(
-                            "Product Details",
-                            style: TextStyle(
-                              fontSize: 14.0,
-                              fontWeight: FontWeight.w700,
-                              color: HexColor("#53586F"),
+                          decoration: currentTab == 0
+                              ? BoxDecoration(
+                                  color: HexColor("#FAFCFF"),
+                                  borderRadius: BorderRadius.only(
+                                    topRight: Radius.circular(16.0),
+                                    bottomRight: Radius.circular(16.0),
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey[300],
+                                      offset: Offset(0.0, 5.0), // (x, y)
+                                      blurRadius: 5.0,
+                                    ),
+                                  ],
+                                )
+                              : null,
+                          child: Center(
+                            child: Text(
+                              "Product Details",
+                              style: TextStyle(
+                                fontSize: 14.0,
+                                fontWeight: FontWeight.w700,
+                                color: currentTab == 0
+                                    ? HexColor("#53586F")
+                                    : HexColor("#C4C6D2"),
+                              ),
                             ),
                           ),
                         ),
+                        onTap: () {
+                          setState(() {
+                            currentTab = 0;
+                          });
+                        },
                       ),
                     ),
                     SizedBox(width: 20.0),
                     Expanded(
-                      child: Container(
-                        width: double.infinity,
-                        height: 36.0,
-                        constraints: BoxConstraints(
-                          maxWidth: 188.0,
-                        ),
-                        decoration: BoxDecoration(
-                          color: HexColor("#FAFCFF"),
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(16.0),
-                            bottomLeft: Radius.circular(16.0),
+                      child: GestureDetector(
+                        child: Container(
+                          width: double.infinity,
+                          height: 36.0,
+                          constraints: BoxConstraints(
+                            maxWidth: 188.0,
                           ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey[300],
-                              offset: Offset(0.0, 5.0), // (x, y)
-                              blurRadius: 5.0,
-                            ),
-                          ],
-                        ),
-                        child: Center(
-                          child: Text(
-                            "Delivery Time",
-                            style: TextStyle(
-                              fontSize: 14.0,
-                              fontWeight: FontWeight.w700,
-                              color: HexColor("#53586F"),
+                          decoration: currentTab == 1
+                              ? BoxDecoration(
+                                  color: HexColor("#FAFCFF"),
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(16.0),
+                                    bottomLeft: Radius.circular(16.0),
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey[300],
+                                      offset: Offset(0.0, 5.0), // (x, y)
+                                      blurRadius: 5.0,
+                                    ),
+                                  ],
+                                )
+                              : null,
+                          child: Center(
+                            child: Text(
+                              "Delivery Time",
+                              style: TextStyle(
+                                fontSize: 14.0,
+                                fontWeight: FontWeight.w700,
+                                color: currentTab == 1
+                                    ? HexColor("#53586F")
+                                    : HexColor("#C4C6D2"),
+                              ),
                             ),
                           ),
                         ),
+                        onTap: () {
+                          setState(() {
+                            currentTab = 1;
+                          });
+                        },
                       ),
                     ),
                   ],
@@ -329,6 +353,7 @@ class _CustomBody extends StatefulWidget {
 
 class __CustomBodyState extends State<_CustomBody> {
   var productMedia;
+  int currentTab = 0;
 
   @override
   void initState() {
@@ -626,7 +651,7 @@ class __CustomBodyState extends State<_CustomBody> {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 37.0),
                   child: Text(
-                    "Modal Launch +22% Conversion",
+                    "${widget.product['name']} ",
                     style: TextStyle(
                       color: HexColor("#53586F"),
                       fontSize: 18.0,
@@ -645,7 +670,7 @@ class __CustomBodyState extends State<_CustomBody> {
                         style: DefaultTextStyle.of(context).style,
                         children: [
                           TextSpan(
-                            text: "\$39,95",
+                            text: "\$${widget.product['price']} ",
                             style: TextStyle(
                               color: HexColor("#53586F"),
                               fontSize: 24.0,
@@ -653,7 +678,7 @@ class __CustomBodyState extends State<_CustomBody> {
                             ),
                           ),
                           TextSpan(
-                            text: "\$79,95",
+                            text: "\$${widget.product['oldPrice']} ",
                             style: TextStyle(
                               color: HexColor("#53586F").withOpacity(.5),
                               fontSize: 18.0,
@@ -679,70 +704,92 @@ class __CustomBodyState extends State<_CustomBody> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Expanded(
-                      child: Container(
-                        width: double.infinity,
-                        height: 36.0,
-                        constraints: BoxConstraints(
-                          maxWidth: 188.0,
-                        ),
-                        decoration: BoxDecoration(
-                          color: HexColor("#FAFCFF"),
-                          borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(16.0),
-                            bottomRight: Radius.circular(16.0),
+                      child: GestureDetector(
+                        child: Container(
+                          width: double.infinity,
+                          height: 36.0,
+                          constraints: BoxConstraints(
+                            maxWidth: 188.0,
                           ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey[300],
-                              offset: Offset(0.0, 5.0), // (x, y)
-                              blurRadius: 5.0,
-                            ),
-                          ],
-                        ),
-                        child: Center(
-                          child: Text(
-                            "Product Details",
-                            style: TextStyle(
-                              fontSize: 14.0,
-                              fontWeight: FontWeight.w700,
-                              color: HexColor("#53586F"),
+                          decoration: currentTab == 0
+                              ? BoxDecoration(
+                                  color: HexColor("#FAFCFF"),
+                                  borderRadius: BorderRadius.only(
+                                    topRight: Radius.circular(16.0),
+                                    bottomRight: Radius.circular(16.0),
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey[300],
+                                      offset: Offset(0.0, 5.0), // (x, y)
+                                      blurRadius: 5.0,
+                                    ),
+                                  ],
+                                )
+                              : null,
+                          child: Center(
+                            child: Text(
+                              "Product Details",
+                              style: TextStyle(
+                                fontSize: 14.0,
+                                fontWeight: FontWeight.w700,
+                                color: currentTab == 0
+                                    ? HexColor("#53586F")
+                                    : HexColor("#C4C6D2"),
+                              ),
                             ),
                           ),
                         ),
+                        onTap: () {
+                          setState(() {
+                            currentTab = 0;
+                          });
+                        },
                       ),
                     ),
                     SizedBox(width: 20.0),
                     Expanded(
-                      child: Container(
-                        width: double.infinity,
-                        height: 36.0,
-                        constraints: BoxConstraints(
-                          maxWidth: 188.0,
-                        ),
-                        decoration: BoxDecoration(
-                          color: HexColor("#FAFCFF"),
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(16.0),
-                            bottomLeft: Radius.circular(16.0),
+                      child: GestureDetector(
+                        child: Container(
+                          width: double.infinity,
+                          height: 36.0,
+                          constraints: BoxConstraints(
+                            maxWidth: 188.0,
                           ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey[300],
-                              offset: Offset(0.0, 5.0), // (x, y)
-                              blurRadius: 5.0,
-                            ),
-                          ],
-                        ),
-                        child: Center(
-                          child: Text(
-                            "Delivery Time",
-                            style: TextStyle(
-                              fontSize: 14.0,
-                              fontWeight: FontWeight.w700,
-                              color: HexColor("#53586F"),
+                          decoration: currentTab == 1
+                              ? BoxDecoration(
+                                  color: HexColor("#FAFCFF"),
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(16.0),
+                                    bottomLeft: Radius.circular(16.0),
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey[300],
+                                      offset: Offset(0.0, 5.0), // (x, y)
+                                      blurRadius: 5.0,
+                                    ),
+                                  ],
+                                )
+                              : null,
+                          child: Center(
+                            child: Text(
+                              "Delivery Time",
+                              style: TextStyle(
+                                fontSize: 14.0,
+                                fontWeight: FontWeight.w700,
+                                color: currentTab == 1
+                                    ? HexColor("#53586F")
+                                    : HexColor("#C4C6D2"),
+                              ),
                             ),
                           ),
                         ),
+                        onTap: () {
+                          setState(() {
+                            currentTab = 1;
+                          });
+                        },
                       ),
                     ),
                   ],

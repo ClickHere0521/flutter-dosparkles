@@ -258,7 +258,6 @@ class BaseGraphQLClient {
     String orderDetailsJson,
     double totalPrice,
     String productsIdsJson,
-    List orderImageIds,
   ) {
     String _mutation = '''
       mutation CreateOrder {
@@ -268,7 +267,6 @@ class BaseGraphQLClient {
               orderDetails: $orderDetailsJson,
               totalPrice: $totalPrice,
               products: $productsIdsJson,
-              media: $orderImageIds
             }
           }
         ) 
@@ -398,6 +396,44 @@ class BaseGraphQLClient {
 
     // printWrapped('Debug _mutation: $_mutation');
     return _service.query(_query);
+  }
+
+  Future<QueryResult> rejectOrder(
+      String id, String status, String rejectedReason) {
+    String _mutation = '''
+      mutation UpdateOrder {
+        updateOrder (
+          input: {
+            where: {
+              id: "$id"
+            }
+            data:{
+              status: $status              
+              rejectedReason: "$rejectedReason"
+            }
+          }
+        ) 
+        {
+          order {
+            id
+            orderDetails
+            status
+            refunded
+            totalPrice
+            rejectedReason
+            media {
+              id
+            }
+            shipmentDetails
+            shineonId
+            cancelReason
+          }
+        }
+      }
+    ''';
+
+    // printWrapped('Debug _mutation: $_mutation');
+    return _service.query(_mutation);
   }
 
   Future<QueryResult> signUp(String identifier, String password) {

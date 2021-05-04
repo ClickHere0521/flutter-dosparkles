@@ -557,21 +557,25 @@ Widget _chatOrderBlock(orderId, createdAt) {
                   Bubble(
                     margin: BubbleEdges.only(top: 10),
                     elevation: 5.0,
-                    shadowColor: Colors.black26,
+                    shadowColor: Colors.grey[50].withOpacity(.5),
                     padding:
                         BubbleEdges.symmetric(vertical: 9.0, horizontal: 10.0),
+                    radius: Radius.circular(8.0),
                     borderColor: Colors.grey[50],
                     stick: true,
                     color: Colors.white,
                     nip: BubbleNip.leftBottom,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         GestureDetector(
                           child: Container(
+                            color: Colors.white,
                             width: double.infinity,
                             height: 86.0,
                             child: Row(
+                              mainAxisSize: MainAxisSize.min,
                               children: [
                                 Container(
                                   width: 85.0,
@@ -580,111 +584,123 @@ Widget _chatOrderBlock(orderId, createdAt) {
                                     borderRadius: BorderRadius.circular(8.0),
                                     child: order['media'] != null &&
                                             order['media'].length > 0
-                                        ? Image.network(
-                                            AppConfig.instance.baseApiHost +
-                                                order['media'][0]['url'],
+                                        ? CachedNetworkImage(
+                                            imageUrl:
+                                                AppConfig.instance.baseApiHost +
+                                                    order['media'][0]['url'],
                                             fit: BoxFit.cover,
                                             width: double.infinity,
                                             height: double.infinity,
                                           )
-                                        : Text(""),
+                                        : Image.asset(
+                                            "images/image-not-found.png",
+                                            width: double.infinity,
+                                            height: double.infinity,
+                                            fit: BoxFit.cover,
+                                          ),
                                   ),
                                 ),
                                 SizedBox(width: 10.0),
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    order['orderDetails'] != null &&
-                                            order['orderDetails'].length > 0
-                                        ? Text(
-                                            order['orderDetails'][0]['sku'],
-                                            style: TextStyle(
-                                              fontSize: 16.0,
-                                              fontWeight: FontWeight.bold,
-                                              color: HexColor("#0F142B"),
-                                            ),
-                                          )
-                                        : Text(""),
-                                    Text(
-                                      order['status'],
-                                      style: TextStyle(
-                                        fontSize: 12.0,
-                                        color: isStatusRejected
-                                            ? Colors.red
-                                            : Colors.orange,
-                                      ),
-                                    ),
-                                    SizedBox(height: 4),
-                                    order['orderDetails'] != null &&
-                                            order['orderDetails'].length > 0
-                                        ? SizedBox(
-                                            width: 100.0,
-                                            height: 15.0,
-                                            child: Stack(
-                                              children: [
-                                                Positioned(
-                                                  top: 0,
-                                                  left: 0,
-                                                  child: Text(
-                                                    "Number:",
-                                                    style: TextStyle(
-                                                      fontSize: 12.0,
-                                                      color:
-                                                          HexColor("#53586F"),
-                                                    ),
-                                                  ),
-                                                ),
-                                                Positioned(
-                                                  top: 0,
-                                                  left: 70.0,
-                                                  child: Text(
-                                                    "${order['orderDetails'][0]['quantity']}",
-                                                    style: TextStyle(
-                                                      fontSize: 12.0,
-                                                      color: Colors.black,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          )
-                                        : Text(""),
-                                    SizedBox(height: 4),
-                                    SizedBox(
-                                      width: 100.0,
-                                      height: 15.0,
-                                      child: Stack(
-                                        children: [
-                                          Positioned(
-                                            top: 0,
-                                            left: 0,
-                                            child: Text(
-                                              "Total price:",
+                                Container(
+                                  width: 170.0,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      order['id'] != null
+                                          ? Text(
+                                              order['id'],
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 1,
                                               style: TextStyle(
-                                                fontSize: 12.0,
-                                                color: HexColor("#53586F"),
-                                              ),
-                                            ),
-                                          ),
-                                          Positioned(
-                                            top: 0,
-                                            left: 70.0,
-                                            child: Text(
-                                              "\$${order['totalPrice']}",
-                                              style: TextStyle(
-                                                fontSize: 12.0,
-                                                color: Colors.black,
+                                                fontSize: 16.0,
                                                 fontWeight: FontWeight.bold,
+                                                color: HexColor("#0F142B"),
+                                              ),
+                                            )
+                                          : SizedBox.shrink(child: null),
+                                      Text(
+                                        order['status'],
+                                        style: TextStyle(
+                                          fontSize: 12.0,
+                                          color: isStatusRejected
+                                              ? Colors.red
+                                              : Colors.orange,
+                                        ),
+                                      ),
+                                      SizedBox(height: 4),
+                                      order['products'] != null &&
+                                              order['products'].length > 0
+                                          ? SizedBox(
+                                              width: 100.0,
+                                              height: 15.0,
+                                              child: Stack(
+                                                children: [
+                                                  Positioned(
+                                                    top: 0,
+                                                    left: 0,
+                                                    child: Text(
+                                                      "Number:",
+                                                      style: TextStyle(
+                                                        fontSize: 12.0,
+                                                        color:
+                                                            HexColor("#53586F"),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Positioned(
+                                                    top: 0,
+                                                    left: 70.0,
+                                                    child: Text(
+                                                      "${order['products'].length}",
+                                                      style: TextStyle(
+                                                        fontSize: 12.0,
+                                                        color: Colors.black,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            )
+                                          : SizedBox.shrink(child: null),
+                                      SizedBox(height: 4),
+                                      SizedBox(
+                                        width: 100.0,
+                                        height: 15.0,
+                                        child: Stack(
+                                          children: [
+                                            Positioned(
+                                              top: 0,
+                                              left: 0,
+                                              child: Text(
+                                                "Total price:",
+                                                style: TextStyle(
+                                                  fontSize: 12.0,
+                                                  color: HexColor("#53586F"),
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                        ],
+                                            Positioned(
+                                              top: 0,
+                                              left: 70.0,
+                                              child: Text(
+                                                "\$${order['totalPrice']}",
+                                                style: TextStyle(
+                                                  fontSize: 12.0,
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),
@@ -700,112 +716,108 @@ Widget _chatOrderBlock(orderId, createdAt) {
                             );
                           },
                         ),
-                        if (isAdmin)
-                          Expanded(
-                            child: Column(
-                              children: [
-                                SizedBox(height: 12.0),
-                                if (isStatusRejected)
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Reason why reject:",
-                                        style: TextStyle(
-                                          color: Colors.red,
-                                          fontSize: 14.0,
-                                        ),
-                                      ),
-                                      SizedBox(height: 6.0),
-                                      Container(
-                                        width: double.infinity,
-                                        height: 51.0,
-                                        padding: EdgeInsets.all(8.0),
-                                        decoration: BoxDecoration(
-                                          color: HexColor("#EDEEF2"),
-                                          borderRadius:
-                                              BorderRadius.circular(16.0),
+                        Expanded(
+                          child: Column(
+                            children: [
+                              SizedBox(height: 12.0),
+                              if (isAdmin && !isStatusRejected)
+                                Row(
+                                  children: [
+                                    Container(
+                                      width: 120.0,
+                                      height: 30.0,
+                                      child: OutlinedButton(
+                                        style: ButtonStyle(
+                                          side: MaterialStateProperty.all(
+                                            BorderSide(color: Colors.red),
+                                          ),
+                                          shape: MaterialStateProperty.all(
+                                            RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(27.0),
+                                            ),
+                                          ),
                                         ),
                                         child: Text(
-                                          order['rejectedReason'] != null
-                                              ? order['rejectedReason']
-                                              : "Lorem ipsum dolor sit amet, enim consectetur adipiscing elit."
-                                                  "Lorem ipsum dolor sit amet, enim consectetur adipiscing elit."
-                                                  "Lorem ipsum dolor sit amet, enim consectetur adipiscing elit.",
+                                          "Reject",
                                           style: TextStyle(
+                                            color: Colors.red,
                                             fontSize: 14.0,
+                                            fontWeight: FontWeight.w600,
                                           ),
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 2,
                                         ),
+                                        onPressed: () =>
+                                            _rejectDialog(context, orderId),
                                       ),
-                                    ],
-                                  )
-                                else
-                                  Row(
-                                    children: [
-                                      Container(
-                                        width: 120.0,
-                                        height: 30.0,
-                                        child: OutlinedButton(
-                                          style: ButtonStyle(
-                                            side: MaterialStateProperty.all(
-                                              BorderSide(color: Colors.red),
-                                            ),
-                                            shape: MaterialStateProperty.all(
-                                              RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(27.0),
-                                              ),
+                                    ),
+                                    SizedBox(width: 22.0),
+                                    Container(
+                                      width: 120.0,
+                                      height: 30.0,
+                                      child: ElevatedButton(
+                                        style: ButtonStyle(
+                                          backgroundColor:
+                                              MaterialStateProperty.all(
+                                                  HexColor("#27AE60")),
+                                          elevation:
+                                              MaterialStateProperty.all(0.0),
+                                          shape: MaterialStateProperty.all(
+                                            RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(27.0),
                                             ),
                                           ),
-                                          child: Text(
-                                            "Reject",
-                                            style: TextStyle(
-                                              color: Colors.red,
-                                              fontSize: 14.0,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                          onPressed: () =>
-                                              _rejectDialog(context),
                                         ),
-                                      ),
-                                      SizedBox(width: 22.0),
-                                      Container(
-                                        width: 120.0,
-                                        height: 30.0,
-                                        child: ElevatedButton(
-                                          style: ButtonStyle(
-                                            backgroundColor:
-                                                MaterialStateProperty.all(
-                                                    HexColor("#27AE60")),
-                                            elevation:
-                                                MaterialStateProperty.all(0.0),
-                                            shape: MaterialStateProperty.all(
-                                              RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(27.0),
-                                              ),
-                                            ),
+                                        child: Text(
+                                          "Approve",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 14.0,
+                                            fontWeight: FontWeight.w600,
                                           ),
-                                          child: Text(
-                                            "Approve",
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 14.0,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                          onPressed: () => null,
                                         ),
+                                        onPressed: () => null,
                                       ),
-                                    ],
-                                  ),
-                              ],
-                            ),
+                                    ),
+                                  ],
+                                ),
+                              if (isStatusRejected)
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Reason why reject:",
+                                      style: TextStyle(
+                                        color: Colors.red,
+                                        fontSize: 14.0,
+                                      ),
+                                    ),
+                                    SizedBox(height: 6.0),
+                                    Container(
+                                      width: double.infinity,
+                                      height: 51.0,
+                                      padding: EdgeInsets.all(8.0),
+                                      decoration: BoxDecoration(
+                                        color: HexColor("#EDEEF2"),
+                                        borderRadius:
+                                            BorderRadius.circular(16.0),
+                                      ),
+                                      child: Text(
+                                        order['rejectedReason'] != null
+                                            ? order['rejectedReason']
+                                            : "",
+                                        style: TextStyle(
+                                          fontSize: 14.0,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 2,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                            ],
                           ),
+                        ),
                       ],
                     ),
                   ),
@@ -819,7 +831,9 @@ Widget _chatOrderBlock(orderId, createdAt) {
       });
 }
 
-Future<void> _rejectDialog(BuildContext context) async {
+Future<void> _rejectDialog(BuildContext context, String orderId) async {
+  String inputValue = "";
+
   return showDialog(
     context: context,
     barrierDismissible: false,
@@ -863,7 +877,9 @@ Future<void> _rejectDialog(BuildContext context) async {
                     borderRadius: BorderRadius.circular(22.0),
                   ),
                   child: TextField(
-                    onChanged: (text) {},
+                    onChanged: (text) {
+                      inputValue = text;
+                    },
                     style: TextStyle(color: Colors.black, fontSize: 14),
                     decoration: InputDecoration(
                       isDense: true,
@@ -876,13 +892,13 @@ Future<void> _rejectDialog(BuildContext context) async {
                       hintStyle: TextStyle(color: Colors.grey),
                       labelStyle: TextStyle(color: Colors.white),
                       enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
+                        borderSide: BorderSide(color: Colors.transparent),
                       ),
                       focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
+                        borderSide: BorderSide(color: Colors.transparent),
                       ),
                       border: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
+                        borderSide: BorderSide(color: Colors.transparent),
                       ),
                     ),
                   ),
@@ -940,7 +956,11 @@ Future<void> _rejectDialog(BuildContext context) async {
                               ),
                             ),
                           ),
-                          onTap: () {
+                          onTap: () async {
+                            QueryResult result = await BaseGraphQLClient
+                                .instance
+                                .rejectOrder(orderId, "cancelled", inputValue);
+                            if (result.hasException) print(result.exception);
                             Navigator.of(context).pop();
                           },
                         ),
@@ -1101,8 +1121,9 @@ class _OrderWidgetState extends State<OrderWidget> {
                                                     BorderRadius.circular(16.0),
                                                 child: product['thumbnail'] !=
                                                         null
-                                                    ? Image.network(
-                                                        AppConfig.instance
+                                                    ? CachedNetworkImage(
+                                                        imageUrl: AppConfig
+                                                                .instance
                                                                 .baseApiHost +
                                                             product['thumbnail']
                                                                 ['url'],
@@ -1110,58 +1131,74 @@ class _OrderWidgetState extends State<OrderWidget> {
                                                         width: double.infinity,
                                                         height: double.infinity,
                                                       )
-                                                    : Text(""),
+                                                    : SizedBox.shrink(
+                                                        child: null),
                                               ),
                                             ),
                                             SizedBox(width: 10.0),
-                                            Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  product['name'],
-                                                  style: TextStyle(
-                                                    fontSize: 16.0,
-                                                    color: HexColor("#53586F"),
+                                            Expanded(
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    product['name'],
+                                                    maxLines: 2,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: TextStyle(
+                                                      fontSize: 16.0,
+                                                      color:
+                                                          HexColor("#53586F"),
+                                                    ),
                                                   ),
-                                                ),
-                                                SizedBox(height: 12.0),
-                                                RichText(
-                                                  text: TextSpan(
-                                                    style: DefaultTextStyle.of(
-                                                      context,
-                                                    ).style,
-                                                    children: [
-                                                      TextSpan(
-                                                        text: product[
-                                                                    'price'] !=
-                                                                null
-                                                            ? "\$${product['price']}"
-                                                            : '',
-                                                        style: TextStyle(
-                                                          fontSize: 22.0,
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                          color: HexColor(
-                                                              "#53586F"),
+                                                  SizedBox(height: 12.0),
+                                                  RichText(
+                                                    text: TextSpan(
+                                                      style:
+                                                          DefaultTextStyle.of(
+                                                        context,
+                                                      ).style,
+                                                      children: [
+                                                        TextSpan(
+                                                          text: product[
+                                                                      'price'] !=
+                                                                  null
+                                                              ? "\$${product['price']} "
+                                                              : ' ',
+                                                          style: TextStyle(
+                                                            fontSize: 22.0,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            color: HexColor(
+                                                                "#53586F"),
+                                                          ),
                                                         ),
-                                                      ),
-                                                      TextSpan(
-                                                        text: product['orderDetails'] !=
-                                                                    null &&
-                                                                product['orderDetails']
-                                                                        [
-                                                                        'quantity'] !=
-                                                                    null
-                                                            ? "x${product['orderDetails']['quantity']}"
-                                                            : '',
-                                                      )
-                                                    ],
+                                                        TextSpan(
+                                                          text: order['orderDetails'] !=
+                                                                      null &&
+                                                                  order['orderDetails']
+                                                                          .length >
+                                                                      0 &&
+                                                                  order['orderDetails']
+                                                                              [
+                                                                              index]
+                                                                          [
+                                                                          'quantity'] !=
+                                                                      null
+                                                              ? "x${order['orderDetails'][index]['quantity']}"
+                                                              : '',
+                                                          style: TextStyle(
+                                                            fontSize: 16.0,
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
                                                   ),
-                                                ),
-                                              ],
+                                                ],
+                                              ),
                                             ),
                                           ],
                                         ),
@@ -1263,6 +1300,8 @@ class _ChangeOrder extends StatefulWidget {
 }
 
 class __ChangeOrderState extends State<_ChangeOrder> {
+  int currentTab = 0;
+
   @override
   Widget build(BuildContext context) {
     var productMedia = widget.order['products'][0]['media'].map((item) {
@@ -1514,7 +1553,7 @@ class __ChangeOrderState extends State<_ChangeOrder> {
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 37.0),
                     child: Text(
-                      "Modal Launch +22% Conversion",
+                      "${widget.order['products'][0]['name']}",
                       style: TextStyle(
                         color: HexColor("#53586F"),
                         fontSize: 18.0,
@@ -1532,7 +1571,8 @@ class __ChangeOrderState extends State<_ChangeOrder> {
                         text: TextSpan(
                           children: [
                             TextSpan(
-                              text: "\$39,95",
+                              text:
+                                  "\$${widget.order['products'][0]['price']} ",
                               style: TextStyle(
                                 color: HexColor("#53586F"),
                                 fontSize: 24.0,
@@ -1540,7 +1580,8 @@ class __ChangeOrderState extends State<_ChangeOrder> {
                               ),
                             ),
                             TextSpan(
-                              text: "\$79,95",
+                              text:
+                                  "\$${widget.order['products'][0]['oldPrice']}",
                               style: TextStyle(
                                 color: HexColor("#53586F").withOpacity(.5),
                                 fontSize: 18.0,
@@ -1566,70 +1607,92 @@ class __ChangeOrderState extends State<_ChangeOrder> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Expanded(
-                        child: Container(
-                          width: double.infinity,
-                          height: 36.0,
-                          constraints: BoxConstraints(
-                            maxWidth: 188.0,
-                          ),
-                          decoration: BoxDecoration(
-                            color: HexColor("#FAFCFF"),
-                            borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(16.0),
-                              bottomRight: Radius.circular(16.0),
+                        child: InkWell(
+                          child: Container(
+                            width: double.infinity,
+                            height: 36.0,
+                            constraints: BoxConstraints(
+                              maxWidth: 188.0,
                             ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey[300],
-                                offset: Offset(0.0, 5.0), // (x, y)
-                                blurRadius: 5.0,
-                              ),
-                            ],
-                          ),
-                          child: Center(
-                            child: Text(
-                              "Product Details",
-                              style: TextStyle(
-                                fontSize: 14.0,
-                                fontWeight: FontWeight.w700,
-                                color: HexColor("#53586F"),
+                            decoration: currentTab == 0
+                                ? BoxDecoration(
+                                    color: HexColor("#FAFCFF"),
+                                    borderRadius: BorderRadius.only(
+                                      topRight: Radius.circular(16.0),
+                                      bottomRight: Radius.circular(16.0),
+                                    ),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey[300],
+                                        offset: Offset(0.0, 5.0), // (x, y)
+                                        blurRadius: 5.0,
+                                      ),
+                                    ],
+                                  )
+                                : null,
+                            child: Center(
+                              child: Text(
+                                "Product Details",
+                                style: TextStyle(
+                                  fontSize: 14.0,
+                                  fontWeight: FontWeight.w700,
+                                  color: currentTab == 0
+                                      ? HexColor("#53586F")
+                                      : HexColor("#C4C6D2"),
+                                ),
                               ),
                             ),
                           ),
+                          onTap: () {
+                            setState(() {
+                              currentTab = 0;
+                            });
+                          },
                         ),
                       ),
                       SizedBox(width: 20.0),
                       Expanded(
-                        child: Container(
-                          width: double.infinity,
-                          height: 36.0,
-                          constraints: BoxConstraints(
-                            maxWidth: 188.0,
-                          ),
-                          decoration: BoxDecoration(
-                            color: HexColor("#FAFCFF"),
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(16.0),
-                              bottomLeft: Radius.circular(16.0),
+                        child: InkWell(
+                          child: Container(
+                            width: double.infinity,
+                            height: 36.0,
+                            constraints: BoxConstraints(
+                              maxWidth: 188.0,
                             ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey[300],
-                                offset: Offset(0.0, 5.0), // (x, y)
-                                blurRadius: 5.0,
-                              ),
-                            ],
-                          ),
-                          child: Center(
-                            child: Text(
-                              "Delivery Time",
-                              style: TextStyle(
-                                fontSize: 14.0,
-                                fontWeight: FontWeight.w700,
-                                color: HexColor("#53586F"),
+                            decoration: currentTab == 1
+                                ? BoxDecoration(
+                                    color: HexColor("#FAFCFF"),
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(16.0),
+                                      bottomLeft: Radius.circular(16.0),
+                                    ),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey[300],
+                                        offset: Offset(0.0, 5.0), // (x, y)
+                                        blurRadius: 5.0,
+                                      ),
+                                    ],
+                                  )
+                                : null,
+                            child: Center(
+                              child: Text(
+                                "Delivery Time",
+                                style: TextStyle(
+                                  fontSize: 14.0,
+                                  fontWeight: FontWeight.w700,
+                                  color: currentTab == 1
+                                      ? HexColor("#53586F")
+                                      : HexColor("#C4C6D2"),
+                                ),
                               ),
                             ),
                           ),
+                          onTap: () {
+                            setState(() {
+                              currentTab = 1;
+                            });
+                          },
                         ),
                       ),
                     ],

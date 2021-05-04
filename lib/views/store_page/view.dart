@@ -101,6 +101,7 @@ class __FirstProductPageState extends State<_FirstProductPage> {
           return BottomNavBarWidget(
             prefsData: snapshot.data,
             initialIndex: 0,
+            isTransparentBackground: true,
           );
         },
       ),

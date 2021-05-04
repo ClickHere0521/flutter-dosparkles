@@ -25,7 +25,7 @@ import 'package:intl/intl.dart';
 import 'package:stripe_payment/stripe_payment.dart';
 import 'package:video_player/video_player.dart';
 
-Future<void> _addDialog(BuildContext context) async {
+Future<bool> _addDialog(BuildContext context) async {
   return showDialog(
     context: context,
     barrierDismissible: false,
@@ -168,14 +168,19 @@ Future<void> _addDialog(BuildContext context) async {
                           ),
                         ),
                         SizedBox(height: 13.0),
-                        Text(
-                          "No, thanks",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 14.0,
-                            fontWeight: FontWeight.w700,
-                            color: HexColor("#53586F"),
+                        GestureDetector(
+                          child: Text(
+                            "No, thanks",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.w700,
+                              color: HexColor("#53586F"),
+                            ),
                           ),
+                          onTap: () {
+                            Navigator.of(context).pop();
+                          },
                         ),
                         SizedBox(height: 14.0),
                       ],
@@ -685,24 +690,24 @@ class __MainBodyState extends State<_MainBody> {
                         ),
                       ),
                       onPressed: () {
-                        // StripePayment.paymentRequestWithCardForm(
-                        //   CardFormPaymentRequest(),
-                        // ).then((paymentMethod) {
-                        //   ScaffoldMessenger.of(context).showSnackBar(
-                        //     SnackBar(
-                        //       content: Text('Received ${paymentMethod.id}'),
-                        //     ),
-                        //   );
-                        //   setState(() {
-                        //     _paymentMethod = paymentMethod;
-                        //   });
-                        // }).catchError(setError);
+                        //  _addDialog(context);
 
-                        // widget.dispatch(
-                        //   CartPageActionCreator.onProceedToCheckout(),
-                        // );
+                        StripePayment.paymentRequestWithCardForm(
+                          CardFormPaymentRequest(),
+                        ).then((paymentMethod) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Received ${paymentMethod.id}'),
+                            ),
+                          );
+                          setState(() {
+                            _paymentMethod = paymentMethod;
+                          });
+                        }).catchError(setError);
 
-                        _addDialog(context);
+                        widget.dispatch(
+                          CartPageActionCreator.onProceedToCheckout(),
+                        );
                       },
                     ),
                   ),

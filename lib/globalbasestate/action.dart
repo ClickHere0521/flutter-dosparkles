@@ -44,7 +44,6 @@ class GlobalActionCreator {
     double amount,
     List<String> engraveInputs,
     bool optionalMaterialSelected,
-    List orderImageData,
   ) {
     return Action(GlobalAction.addProductToShoppingCart, payload: [
       product,
@@ -52,7 +51,6 @@ class GlobalActionCreator {
       amount,
       engraveInputs,
       optionalMaterialSelected,
-      orderImageData,
     ]);
   }
 }

@@ -65,7 +65,6 @@ GlobalState _addProductToShoppingCart(GlobalState state, Action action) {
       amount: action.payload[2],
       engraveInputs: action.payload[3],
       optionalMaterialSelected: action.payload[4],
-      orderImageData: action.payload[5],
     ),
   );
 

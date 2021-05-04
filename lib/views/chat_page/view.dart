@@ -279,6 +279,7 @@ Widget _buildCardZero(tabIndex, chat, context, userId) {
                                         chat['store']['thumbnail']['url'],
                                     fit: BoxFit.cover,
                                     height: double.infinity,
+                                    width: double.infinity,
                                   ),
                                   width: 57,
                                   height: 57,
