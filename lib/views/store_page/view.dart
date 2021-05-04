@@ -173,7 +173,7 @@ class __FirstListPageState extends State<_FirstListPage> {
                 store: widget.state.selectedStore,
               ),
             ),
-            padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
+            padding: EdgeInsets.only(left: 16.0, right: 16.0, top: 20.0),
           ),
           backgroundColor: Colors.transparent,
           resizeToAvoidBottomInset: true,
