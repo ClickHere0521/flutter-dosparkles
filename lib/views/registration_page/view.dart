@@ -1,11 +1,17 @@
 import 'dart:ui';
 
 import 'package:com.floridainc.dosparkles/actions/api/graphql_client.dart';
+import 'package:com.floridainc.dosparkles/actions/user_info_operate.dart';
+import 'package:com.floridainc.dosparkles/globalbasestate/action.dart';
+import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:toast/toast.dart';
 import '../../utils/colors.dart';
 import 'state.dart';
 
@@ -339,6 +345,7 @@ class __InnerPartState extends State<_InnerPart> {
                       : () {
                           if (_formKey.currentState.validate()) {
                             _onSubmit(
+                              context,
                               emailValue,
                               passwordValue,
                               firstNameValue,
@@ -357,6 +364,7 @@ class __InnerPartState extends State<_InnerPart> {
 }
 
 void _onSubmit(
+  context,
   emailValue,
   passwordValue,
   firstNameValue,
@@ -370,12 +378,12 @@ void _onSubmit(
   for (int i = 0; i < fetchResult.data['users'].length; i++) {
     var user = fetchResult.data['users'][i];
 
-    if (emailValue != user['email']) {
+    if (emailValue.trim() != user['email'].trim()) {
       try {
         QueryResult resultRegister =
             await BaseGraphQLClient.instance.registerUser({
-          'emailValue': emailValue,
-          'passwordValue': passwordValue,
+          'emailValue': emailValue.trim(),
+          'passwordValue': passwordValue.trim(),
         });
         if (resultRegister.hasException) print(resultRegister.exception);
 
@@ -384,7 +392,20 @@ void _onSubmit(
                 {'fullName': fullName});
         if (resultUpdate.hasException) print(resultUpdate.exception);
 
-        print(resultUpdate.data);
+        final _result = await _emailSignIn(
+            context, emailValue.trim(), passwordValue.trim());
+        if (_result == null) return;
+
+        if (_result['jwt'].toString().isNotEmpty) {
+          SharedPreferences.getInstance().then((_p) async {
+            _p.setString("jwt", _result['jwt']);
+            _p.setString("userId", _result['user']['id'].toString());
+            print('jwt: ${_result['jwt'].toString()}');
+
+            await UserInfoOperate.whenLogin(_result['jwt'].toString());
+            _goToMain(context);
+          });
+        }
       } catch (e) {
         print(e);
       }
@@ -392,4 +413,66 @@ void _onSubmit(
       break;
     }
   }
+}
+
+Future<Map<String, dynamic>> _emailSignIn(
+  BuildContext context,
+  String emailValue,
+  String passwordValue,
+) async {
+  if (emailValue != null && passwordValue != null) {
+    try {
+      final result = await BaseGraphQLClient.instance
+          .loginWithEmail(emailValue, passwordValue);
+      print('resultException: ${result.hasException}, ${result.exception}');
+
+      if (result.hasException) {
+        Toast.show("Error occurred", context,
+            duration: 3, gravity: Toast.BOTTOM);
+        return null;
+      }
+      return result.data['login'];
+    } on Exception catch (e) {
+      print(e);
+      if (e.toString() ==
+              'DioError [DioErrorType.RESPONSE]: Http status error [400]' ||
+          e.toString() ==
+              'DioError [DioErrorType.RESPONSE]: Http status error [403]') {
+        Toast.show("Wrong username or password", context,
+            duration: 3, gravity: Toast.BOTTOM);
+      } else {
+        Toast.show(e.toString(), context, duration: 3, gravity: Toast.BOTTOM);
+      }
+    }
+  }
+  return null;
+}
+
+void _goToMain(BuildContext context) async {
+  await FirebaseMessaging.instance.getToken().then((String token) async {
+    if (token != null) {
+      print("_goToMain Push Messaging token: $token");
+
+      await SharedPreferences.getInstance().then((_p) async {
+        var userId = _p.getString("userId");
+        await UserInfoOperate.savePushToken(userId, token);
+      });
+    }
+  });
+
+  var globalState = GlobalStore.store.getState();
+
+  for (var i = 0; i < globalState.storesList.length; i++) {
+    var store = globalState.storesList[i];
+    if (globalState.user.storeFavorite != null &&
+        globalState.user.storeFavorite['id'] == store.id) {
+      GlobalStore.store.dispatch(
+        GlobalActionCreator.setSelectedStore(store),
+      );
+      Navigator.of(context).pushReplacementNamed('storepage');
+      return null;
+    }
+  }
+
+  Navigator.of(context).pushReplacementNamed('storeselectionpage');
 }

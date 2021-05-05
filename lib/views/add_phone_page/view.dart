@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
@@ -13,11 +14,13 @@ import 'state.dart';
 import 'package:country_pickers/country.dart';
 import 'package:country_pickers/country_pickers.dart';
 
-void _onSubmit(emailValue) async {
+void _onSubmit(String fullValue) async {
+  String meId = GlobalStore.store.getState().user.id;
+
   try {
-    // QueryResult result =
-    //     await BaseGraphQLClient.instance.forgotPassword(emailValue);
-    // if (result.hasException) print(result.exception);
+    QueryResult result =
+        await BaseGraphQLClient.instance.setUserPhoneNumber(meId, fullValue);
+    if (result.hasException) print(result.exception);
   } catch (e) {
     print(e);
   }
@@ -118,8 +121,6 @@ class __InnerPartState extends State<_InnerPart> {
       phone = value;
       fullValue = "+$countryCode $value";
     });
-
-    print(fullValue);
   }
 
   @override

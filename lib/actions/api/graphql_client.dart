@@ -66,6 +66,7 @@ class BaseGraphQLClient {
             email
             username
             shippingAddress
+            phoneNumber
             storeFavorite {
               id
               name
@@ -145,6 +146,7 @@ class BaseGraphQLClient {
           id
           email
           username
+          phoneNumber
           shippingAddress
           storeFavorite {
             id
@@ -166,6 +168,41 @@ class BaseGraphQLClient {
 
     // printWrapped('Debug _mutation: $_mutation');
     return _service.query(_query);
+  }
+
+  Future<QueryResult> setUserPhoneNumber(String id, String phoneNumber) {
+    String _mutation = '''
+      mutation {
+        updateUser (
+          input: {
+            where: {
+              id: "$id"
+            }
+            data: {
+              phoneNumber: "$phoneNumber"
+            }
+          }
+        )
+        {
+          user {
+            id
+            email
+            username
+            phoneNumber
+            role {
+              id
+              name
+            }
+            storeFavorite {
+              id
+            }
+            pushToken
+          }
+        }
+      }
+    ''';
+
+    return _service.mutate(_mutation);
   }
 
   Future<QueryResult> registerUser(Map data) {
@@ -790,6 +827,7 @@ class BaseGraphQLClient {
             id
             email
             username
+            phoneNumber
             role {
               id
               name
