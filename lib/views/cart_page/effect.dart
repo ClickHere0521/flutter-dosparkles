@@ -63,6 +63,7 @@ void _onSetProductCount(Action action, Context<CartPageState> ctx) {
           ctx.state.shoppingCart[i].amount / ctx.state.shoppingCart[i].count;
       ctx.state.shoppingCart[i].count = count;
       ctx.state.shoppingCart[i].amount = basePrice * count;
+
       break;
     }
   }

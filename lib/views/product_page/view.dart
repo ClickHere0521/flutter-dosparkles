@@ -295,11 +295,18 @@ class _MainBody extends StatefulWidget {
 
 class __MainBodyState extends State<_MainBody> {
   int currentTab = 0;
+  int _touchSpinValue = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _touchSpinValue = widget.productQuantity;
+  }
 
   @override
   Widget build(BuildContext context) {
-    int _productQuantity =
-        widget.productQuantity == null ? 1 : widget.productQuantity;
+    // int _productQuantity =
+    //     widget.productQuantity == null ? 1 : widget.productQuantity;
 
     return SingleChildScrollView(
       child: Column(
@@ -476,29 +483,60 @@ class __MainBodyState extends State<_MainBody> {
                         ],
                       ),
                       Container(
-                        width: 120.0,
+                        width: 104.0,
                         height: 34.0,
-                        child: TouchSpin(
-                          value: _productQuantity,
-                          onChanged: (val) {
-                            print('TouchSpin val: $val');
-                            widget.dispatch(
-                              ProductPageActionCreator.onSetProductCount(
-                                val.toInt(),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16.0),
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            InkWell(
+                              child: Icon(
+                                Icons.remove,
+                                size: 22.0,
+                                color: HexColor("#53586F"),
                               ),
-                            );
-                          },
-                          min: 1,
-                          max: 100,
-                          step: 1,
-                          iconSize: 20.0,
-                          subtractIcon: Icon(Icons.remove),
-                          addIcon: Icon(Icons.add),
-                          iconPadding: EdgeInsets.all(0),
-                          textStyle: TextStyle(fontSize: 18),
-                          iconActiveColor: Colors.white,
-                          iconDisabledColor: Colors.grey,
-                          displayFormat: NumberFormat("###"),
+                              onTap: () {
+                                if (_touchSpinValue > 1) {
+                                  setState(() => _touchSpinValue--);
+
+                                  widget.dispatch(
+                                    ProductPageActionCreator.onSetProductCount(
+                                      _touchSpinValue.toInt(),
+                                    ),
+                                  );
+                                }
+                              },
+                            ),
+                            Text(
+                              "$_touchSpinValue",
+                              style: TextStyle(
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            InkWell(
+                              child: Icon(
+                                Icons.add,
+                                size: 22.0,
+                                color: HexColor("#53586F"),
+                              ),
+                              onTap: () {
+                                if (_touchSpinValue < 100) {
+                                  setState(() => _touchSpinValue++);
+
+                                  widget.dispatch(
+                                    ProductPageActionCreator.onSetProductCount(
+                                      _touchSpinValue.toInt(),
+                                    ),
+                                  );
+                                }
+                              },
+                            ),
+                          ],
                         ),
                       ),
                     ],

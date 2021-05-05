@@ -22,6 +22,8 @@ import 'dart:async';
 import 'state.dart';
 
 Widget _changeOrderButton(BuildContext context, String orderId) {
+  bool isPublic = GlobalStore.store.getState().user.role == 'Public';
+
   Future getInitialData() async {
     QueryResult result = await BaseGraphQLClient.instance.fetchOrder(orderId);
     return result.data['orders'][0];
@@ -32,42 +34,51 @@ Widget _changeOrderButton(BuildContext context, String orderId) {
       builder: (context, snapshot) {
         if (snapshot.hasData &&
             !snapshot.hasError &&
-            snapshot.data['status'] == 'cancelled') {
-          return Container(
-            width: 120.0,
-            height: 30.0,
-            child: ElevatedButton(
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(
-                  HexColor("#27AE60"),
-                ),
-                padding: MaterialStateProperty.all(EdgeInsets.zero),
-                elevation: MaterialStateProperty.all(0.0),
-                shape: MaterialStateProperty.all(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(27.0),
-                  ),
-                ),
-              ),
-              child: Text(
-                "Change order",
-                style: TextStyle(
-                  fontSize: 14.0,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
-              ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => _ChangeOrder(
-                      order: snapshot.data,
+            snapshot.data['status'] == 'cancelled' &&
+            snapshot.data['rejectedReason'] != null &&
+            snapshot.data['rejectedReason'] != "" &&
+            isPublic) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(height: 29.0),
+              Container(
+                width: 120.0,
+                height: 30.0,
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(
+                      HexColor("#27AE60"),
+                    ),
+                    padding: MaterialStateProperty.all(EdgeInsets.zero),
+                    elevation: MaterialStateProperty.all(0.0),
+                    shape: MaterialStateProperty.all(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(27.0),
+                      ),
                     ),
                   ),
-                );
-              },
-            ),
+                  child: Text(
+                    "Change order",
+                    style: TextStyle(
+                      fontSize: 14.0,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => _ChangeOrder(
+                          order: snapshot.data,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
           );
         }
         return SizedBox.shrink(child: null);
@@ -123,6 +134,7 @@ Future<double> _checkContextInit(Stream<double> source) async {
 
 Future fetchData(String chatId) async {
   QueryResult chat = await BaseGraphQLClient.instance.fetchChat(chatId);
+
   return chat.data['chats'][0];
 }
 
@@ -286,11 +298,11 @@ class _BubblePageState extends State<BubblePage> {
                                         alignment: Alignment.centerLeft,
                                         child: Column(
                                           children: [
-                                            _chatOrderBlock(
-                                              orderId,
-                                              chatMessage['createdAt'],
+                                            _ChatOrderBlock(
+                                              orderId: orderId,
+                                              createdAt:
+                                                  chatMessage['createdAt'],
                                             ),
-                                            SizedBox(height: 29.0),
                                             _changeOrderButton(
                                                 context, orderId),
                                           ],
@@ -514,31 +526,48 @@ class _BubblePageState extends State<BubblePage> {
   }
 }
 
-Widget _chatOrderBlock(orderId, createdAt) {
+class _ChatOrderBlock extends StatefulWidget {
   var formatter = new DateFormat.yMMMMd().add_jm();
-  bool isAdmin = GlobalStore.store.getState().user.role == 'Authenticated';
+  bool isAdmin = GlobalStore.store.getState().user.role == 'Store Manager';
 
+  final orderId;
+  final createdAt;
+
+  _ChatOrderBlock({this.orderId, this.createdAt});
+
+  @override
+  __ChatOrderBlockState createState() => __ChatOrderBlockState();
+}
+
+class __ChatOrderBlockState extends State<_ChatOrderBlock> {
+  bool isApproveClicked = false;
   Future getInitialData() async {
-    QueryResult result = await BaseGraphQLClient.instance.fetchOrder(orderId);
+    QueryResult result =
+        await BaseGraphQLClient.instance.fetchOrder(widget.orderId);
+    if (result.hasException) print(result.exception);
+
     return result.data['orders'][0];
   }
 
-  return FutureBuilder(
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
       future: getInitialData(),
       builder: (context, snapshot) {
         if (snapshot.hasData && !snapshot.hasError) {
           var order = snapshot.data;
           bool isStatusRejected = order['status'] == 'cancelled';
+          bool isStatusConfirmed = order['status'] == 'confirmed';
 
           return Align(
             alignment: Alignment.centerLeft,
             child: Container(
               width: 300.0,
-              height: isAdmin
-                  ? isStatusRejected
-                      ? 200.0
-                      : 160.0
-                  : 115.0,
+              height: isStatusRejected
+                  ? 200.0
+                  : widget.isAdmin && !isStatusConfirmed
+                      ? 160.0
+                      : 115.0,
               child: Stack(
                 clipBehavior: Clip.none,
                 fit: StackFit.passthrough,
@@ -547,7 +576,7 @@ Widget _chatOrderBlock(orderId, createdAt) {
                     bottom: -20.0,
                     left: 17.0,
                     child: Text(
-                      '${formatter.format(DateTime.parse(createdAt))}',
+                      '${widget.formatter.format(DateTime.parse(widget.createdAt))}',
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.black38,
@@ -627,7 +656,9 @@ Widget _chatOrderBlock(orderId, createdAt) {
                                           fontSize: 12.0,
                                           color: isStatusRejected
                                               ? Colors.red
-                                              : Colors.orange,
+                                              : isStatusConfirmed
+                                                  ? Colors.green
+                                                  : Colors.orange,
                                         ),
                                       ),
                                       SizedBox(height: 4),
@@ -710,7 +741,7 @@ Widget _chatOrderBlock(orderId, createdAt) {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => OrderWidget(
-                                  orderId: orderId,
+                                  orderId: widget.orderId,
                                 ),
                               ),
                             );
@@ -720,7 +751,9 @@ Widget _chatOrderBlock(orderId, createdAt) {
                           child: Column(
                             children: [
                               SizedBox(height: 12.0),
-                              if (isAdmin && !isStatusRejected)
+                              if (widget.isAdmin &&
+                                  !isStatusRejected &&
+                                  !isStatusConfirmed)
                                 Row(
                                   children: [
                                     Container(
@@ -746,8 +779,8 @@ Widget _chatOrderBlock(orderId, createdAt) {
                                             fontWeight: FontWeight.w600,
                                           ),
                                         ),
-                                        onPressed: () =>
-                                            _rejectDialog(context, orderId),
+                                        onPressed: () => _rejectDialog(
+                                            context, widget.orderId),
                                       ),
                                     ),
                                     SizedBox(width: 22.0),
@@ -756,9 +789,15 @@ Widget _chatOrderBlock(orderId, createdAt) {
                                       height: 30.0,
                                       child: ElevatedButton(
                                         style: ButtonStyle(
-                                          backgroundColor:
-                                              MaterialStateProperty.all(
-                                                  HexColor("#27AE60")),
+                                          backgroundColor: MaterialStateProperty
+                                              .resolveWith<Color>(
+                                            (Set<MaterialState> states) {
+                                              if (states.contains(
+                                                  MaterialState.disabled))
+                                                return HexColor("#C4C6D2");
+                                              return HexColor("#27AE60");
+                                            },
+                                          ),
                                           elevation:
                                               MaterialStateProperty.all(0.0),
                                           shape: MaterialStateProperty.all(
@@ -776,7 +815,22 @@ Widget _chatOrderBlock(orderId, createdAt) {
                                             fontWeight: FontWeight.w600,
                                           ),
                                         ),
-                                        onPressed: () => null,
+                                        onPressed: isApproveClicked
+                                            ? null
+                                            : () async {
+                                                setState(() {
+                                                  isApproveClicked = true;
+                                                });
+                                                QueryResult result =
+                                                    await BaseGraphQLClient
+                                                        .instance
+                                                        .changeOrder(
+                                                            widget.orderId,
+                                                            "confirmed",
+                                                            "");
+                                                if (result.hasException)
+                                                  print(result.exception);
+                                              },
                                       ),
                                     ),
                                   ],
@@ -814,7 +868,7 @@ Widget _chatOrderBlock(orderId, createdAt) {
                                       ),
                                     ),
                                   ],
-                                )
+                                ),
                             ],
                           ),
                         ),
@@ -828,7 +882,9 @@ Widget _chatOrderBlock(orderId, createdAt) {
         } else {
           return Container();
         }
-      });
+      },
+    );
+  }
 }
 
 Future<void> _rejectDialog(BuildContext context, String orderId) async {
@@ -959,7 +1015,7 @@ Future<void> _rejectDialog(BuildContext context, String orderId) async {
                           onTap: () async {
                             QueryResult result = await BaseGraphQLClient
                                 .instance
-                                .rejectOrder(orderId, "cancelled", inputValue);
+                                .changeOrder(orderId, "cancelled", inputValue);
                             if (result.hasException) print(result.exception);
                             Navigator.of(context).pop();
                           },

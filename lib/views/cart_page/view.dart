@@ -424,8 +424,8 @@ class __MainBodyState extends State<_MainBody> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: widget.shoppingCart
                   .asMap()
-                  .map(
-                    (index, value) => MapEntry(
+                  .map((index, value) {
+                    return MapEntry(
                       index,
                       Padding(
                         padding: EdgeInsets.only(
@@ -517,41 +517,81 @@ class __MainBodyState extends State<_MainBody> {
                                                 ),
                                               ),
                                               Container(
-                                                width: 120.0,
+                                                width: 104.0,
                                                 height: 34.0,
-                                                child: TouchSpin(
-                                                  value: widget
-                                                      .shoppingCart[index]
-                                                      .count,
-                                                  onChanged: (val) {
-                                                    print(
-                                                        'TouchSpin val: $val');
-
-                                                    widget.dispatch(
-                                                      CartPageActionCreator
-                                                          .onSetProductCount(
-                                                        widget.shoppingCart[
-                                                            index],
-                                                        val.toInt(),
+                                                decoration: BoxDecoration(
+                                                  color: HexColor("#FAFCFF"),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          16.0),
+                                                ),
+                                                child: Row(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceAround,
+                                                  children: [
+                                                    InkWell(
+                                                      child: Icon(
+                                                        Icons.remove,
+                                                        size: 22.0,
+                                                        color:
+                                                            HexColor("#53586F"),
                                                       ),
-                                                    );
-                                                  },
-                                                  min: 1,
-                                                  max: 100,
-                                                  step: 1,
-                                                  iconSize: 20.0,
-                                                  subtractIcon:
-                                                      Icon(Icons.remove),
-                                                  addIcon: Icon(Icons.add),
-                                                  iconPadding:
-                                                      EdgeInsets.all(0),
-                                                  textStyle:
-                                                      TextStyle(fontSize: 18),
-                                                  iconActiveColor: Colors.white,
-                                                  iconDisabledColor:
-                                                      Colors.grey,
-                                                  displayFormat:
-                                                      NumberFormat("###"),
+                                                      onTap: () {
+                                                        int count = widget
+                                                            .shoppingCart[index]
+                                                            .count;
+
+                                                        count--;
+
+                                                        if (count >= 1) {
+                                                          widget.dispatch(
+                                                            CartPageActionCreator
+                                                                .onSetProductCount(
+                                                              widget.shoppingCart[
+                                                                  index],
+                                                              count,
+                                                            ),
+                                                          );
+                                                        }
+                                                      },
+                                                    ),
+                                                    Text(
+                                                      "${widget.shoppingCart[index].count}",
+                                                      style: TextStyle(
+                                                        fontSize: 16.0,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                    InkWell(
+                                                      child: Icon(
+                                                        Icons.add,
+                                                        size: 22.0,
+                                                        color:
+                                                            HexColor("#53586F"),
+                                                      ),
+                                                      onTap: () {
+                                                        int count = widget
+                                                            .shoppingCart[index]
+                                                            .count;
+                                                        count++;
+                                                        if (count <= 100 &&
+                                                            count >= 1) {
+                                                          widget.dispatch(
+                                                            CartPageActionCreator
+                                                                .onSetProductCount(
+                                                              widget.shoppingCart[
+                                                                  index],
+                                                              count,
+                                                            ),
+                                                          );
+                                                        }
+                                                      },
+                                                    ),
+                                                  ],
                                                 ),
                                               ),
                                             ],
@@ -580,8 +620,8 @@ class __MainBodyState extends State<_MainBody> {
                           ],
                         ),
                       ),
-                    ),
-                  )
+                    );
+                  })
                   .values
                   .toList(),
             ),
@@ -646,7 +686,7 @@ class __MainBodyState extends State<_MainBody> {
                         ),
                       ),
                       Text(
-                        "\$79.90",
+                        "\$$totalAmount",
                         style: TextStyle(
                           fontSize: 26.0,
                           fontWeight: FontWeight.w900,

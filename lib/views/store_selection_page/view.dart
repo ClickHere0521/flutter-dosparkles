@@ -149,7 +149,7 @@ class _InnerPart extends StatefulWidget {
 }
 
 class __InnerPartState extends State<_InnerPart> {
-  List<StoreItem> filteredList;
+  List<StoreItem> filteredList = [];
   String searchValue = "";
 
   void _onSearch() {
@@ -172,7 +172,7 @@ class __InnerPartState extends State<_InnerPart> {
 
   @override
   Widget build(BuildContext context) {
-    var relevantList = filteredList != null || filteredList.length > 0
+    var relevantList = filteredList != null && filteredList.length > 0
         ? filteredList
         : widget.stores;
 

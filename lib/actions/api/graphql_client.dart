@@ -323,7 +323,6 @@ class BaseGraphQLClient {
             }
             shipmentDetails
             shineonId
-            cancelReason
           }
         }
       }
@@ -388,7 +387,6 @@ class BaseGraphQLClient {
           }
           shipmentDetails
           shineonId
-          cancelReason
           rejectedReason
         }
       }
@@ -398,7 +396,7 @@ class BaseGraphQLClient {
     return _service.query(_query);
   }
 
-  Future<QueryResult> rejectOrder(
+  Future<QueryResult> changeOrder(
       String id, String status, String rejectedReason) {
     String _mutation = '''
       mutation UpdateOrder {
@@ -426,7 +424,6 @@ class BaseGraphQLClient {
             }
             shipmentDetails
             shineonId
-            cancelReason
           }
         }
       }
