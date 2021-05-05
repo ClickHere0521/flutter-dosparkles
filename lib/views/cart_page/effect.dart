@@ -143,8 +143,10 @@ String processCartItemForOrder(CartItem item) {
 }
 
 void _onProceedToCheckout(Action action, Context<CartPageState> ctx) async {
+  var isMe = GlobalStore.store.getState().user.role == 'Store Manager';
+
   List<CartItem> cart = ctx.state.shoppingCart;
-  if (cart == null || cart.length == 0) return;
+  if (cart == null || cart.length == 0 || isMe) return;
 
   String orderDetailsJson;
   double totalPrice = 0;
@@ -179,15 +181,16 @@ void _onProceedToCheckout(Action action, Context<CartPageState> ctx) async {
   if (storeResult.hasException) {
     printWrapped('Exception: ${storeResult.exception}');
   }
+  var foundStore = storeResult.data['stores'][0];
 
-  List storeChats = storeResult.data['stores'][0]['chats'];
+  List storeChats = foundStore['chats'];
 
   String myId = GlobalStore.store.getState().user.id;
   bool isExistUser;
 
-  for (var i = 0; i < storeChats.length; i++) {
+  for (int i = 0; i < storeChats.length; i++) {
     var chatUsers = storeChats[i]['users'];
-    for (var j = 0; j < chatUsers.length; j++) {
+    for (int j = 0; j < chatUsers.length; j++) {
       var chatId = chatUsers[j]['id'];
 
       if (chatId == myId) {
@@ -196,6 +199,27 @@ void _onProceedToCheckout(Action action, Context<CartPageState> ctx) async {
         isExistUser = false;
       }
     }
+  }
+
+  if (foundStore['orders'] != null && foundStore['orders'].length > 0) {
+    List<String> orderIds = [];
+
+    for (int i = 0; i < foundStore['orders']; i++) {
+      var order = foundStore['orders'][i];
+      orderIds.add("\"${order['id']}\"");
+    }
+
+    orderIds.add("\"${resultOrder.data['createOrder']['order']['id']}\"");
+    QueryResult storeOrderResult = await BaseGraphQLClient.instance
+        .updateStoreOrder(foundStore['id'], orderIds);
+    if (storeOrderResult.hasException) print(storeOrderResult.exception);
+  } else {
+    QueryResult storeOrderResult =
+        await BaseGraphQLClient.instance.updateStoreOrder(
+      foundStore['id'],
+      ["\"${resultOrder.data['createOrder']['order']['id']}\""],
+    );
+    if (storeOrderResult.hasException) print(storeOrderResult.exception);
   }
 
   if (isExistUser == false || storeChats == null || storeChats.length == 0) {

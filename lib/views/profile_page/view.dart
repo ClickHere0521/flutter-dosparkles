@@ -843,7 +843,9 @@ class __UserBodyState extends State<_UserBody> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => _OrderHistory()),
+                  MaterialPageRoute(
+                    builder: (context) => _OrderHistory(),
+                  ),
                 );
               },
             ),
@@ -994,15 +996,19 @@ class __UserBodyState extends State<_UserBody> {
 }
 
 class _OrderHistory extends StatefulWidget {
+  final globalOrders = GlobalStore.store.getState().user.orders;
+
   @override
   __OrderHistoryState createState() => __OrderHistoryState();
 }
 
 class __OrderHistoryState extends State<_OrderHistory> {
-  String selectedDate = '';
+  String selectedDate = DateTime.now().toString();
 
   @override
   Widget build(BuildContext context) {
+    selectedDate = DateFormat('LLLL yyyy').format(DateTime.parse(selectedDate));
+
     return Container(
       color: Colors.white,
       width: MediaQuery.of(context).size.width,
@@ -1129,9 +1135,7 @@ class __OrderHistoryState extends State<_OrderHistory> {
                                   lastDate: DateTime(2100),
                                 ).then((date) {
                                   setState(() {
-                                    selectedDate = DateFormat('LLLL yyyy')
-                                        .format(
-                                            DateTime.parse(date.toString()));
+                                    selectedDate = date.toString();
                                   });
                                 });
                               },
@@ -1141,201 +1145,259 @@ class __OrderHistoryState extends State<_OrderHistory> {
                       ],
                     ),
                     SizedBox(height: 17.0),
-                    Flexible(
-                      fit: FlexFit.loose,
-                      child: ListView.separated(
-                        itemCount: 15,
-                        shrinkWrap: true,
-                        separatorBuilder: (context, index) =>
-                            SizedBox(height: 12.0),
-                        itemBuilder: (context, index) {
-                          return Card(
-                            elevation: 4.0,
-                            shadowColor: Colors.grey[50].withOpacity(.5),
-                            color: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(6.0),
-                            ),
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 10.0),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SizedBox(height: 13.0),
-                                  Stack(
-                                    clipBehavior: Clip.none,
-                                    children: [
-                                      Text(
-                                        "Order ID:",
-                                        style: TextStyle(
-                                          fontSize: 12.0,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                      Positioned(
-                                        left: 104.0,
-                                        child: Container(
-                                          child: Text(
-                                            "GY5678WEJ909211",
-                                            style: TextStyle(
-                                              fontSize: 16.0,
-                                              fontWeight: FontWeight.w600,
-                                            ),
+                    if (widget.globalOrders != null &&
+                        widget.globalOrders.length > 0)
+                      Flexible(
+                        fit: FlexFit.loose,
+                        child: ListView.separated(
+                          itemCount: widget.globalOrders.length,
+                          shrinkWrap: true,
+                          separatorBuilder: (context, index) =>
+                              SizedBox(height: 12.0),
+                          itemBuilder: (context, index) {
+                            var order = widget.globalOrders[index];
+
+                            return Card(
+                              elevation: 4.0,
+                              shadowColor: Colors.grey[50].withOpacity(.5),
+                              color: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(6.0),
+                              ),
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 10.0),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(height: 13.0),
+                                    Stack(
+                                      clipBehavior: Clip.none,
+                                      children: [
+                                        Text(
+                                          "Order ID:",
+                                          style: TextStyle(
+                                            fontSize: 12.0,
+                                            fontWeight: FontWeight.w500,
                                           ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 6.0),
-                                  Stack(
-                                    clipBehavior: Clip.none,
-                                    children: [
-                                      Text(
-                                        "Status:",
-                                        style: TextStyle(
-                                          fontSize: 12.0,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                      Positioned(
-                                        left: 104.0,
-                                        child: Container(
-                                          child: Text(
-                                            "In Progress",
-                                            style: TextStyle(
-                                              fontSize: 12.0,
-                                              fontWeight: FontWeight.w600,
-                                              color: Colors.orange,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 11.0),
-                                  Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      for (int i = 0; i < 2; i++)
-                                        Padding(
-                                          padding:
-                                              EdgeInsets.only(bottom: 11.0),
+                                        Positioned(
+                                          left: 104.0,
                                           child: Container(
-                                            width: double.infinity,
-                                            height: 60.0,
-                                            child: Row(
-                                              children: [
-                                                Container(
-                                                  width: 60.0,
-                                                  height: double.infinity,
-                                                  child: ClipRRect(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            16.0),
-                                                    child: Image.asset(
-                                                      i == 0
-                                                          ? "images/Image 9.png"
-                                                          : "images/Image 11.png",
-                                                      fit: BoxFit.cover,
-                                                      width: double.infinity,
-                                                      height: double.infinity,
-                                                    ),
-                                                  ),
-                                                ),
-                                                SizedBox(width: 8.0),
-                                                Expanded(
+                                            width: 180.0,
+                                            child: Text(
+                                              order['id'],
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                fontSize: 16.0,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 6.0),
+                                    Stack(
+                                      clipBehavior: Clip.none,
+                                      children: [
+                                        Text(
+                                          "Status:",
+                                          style: TextStyle(
+                                            fontSize: 12.0,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                        Positioned(
+                                          left: 104.0,
+                                          child: Container(
+                                            child: Text(
+                                              order['status'],
+                                              style: TextStyle(
+                                                fontSize: 12.0,
+                                                fontWeight: FontWeight.w600,
+                                                color: order['status'] ==
+                                                        'cancelled'
+                                                    ? Colors.red
+                                                    : order['status'] ==
+                                                            'confirmed'
+                                                        ? Colors.green
+                                                        : Colors.orange,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 11.0),
+                                    order['products'] != null &&
+                                            order['products'].length > 0
+                                        ? Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              for (int i = 0;
+                                                  i < order['products'].length;
+                                                  i++)
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      bottom: 11.0),
                                                   child: Container(
-                                                    height: double.infinity,
-                                                    child: Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      mainAxisSize:
-                                                          MainAxisSize.min,
+                                                    width: double.infinity,
+                                                    height: 60.0,
+                                                    child: Row(
                                                       children: [
-                                                        Text(
-                                                          "Modal Launch +22% Conversion",
-                                                          style: TextStyle(
-                                                            fontSize: 14.0,
-                                                            color: HexColor(
-                                                                "#53586F"),
+                                                        Container(
+                                                          width: 60.0,
+                                                          height:
+                                                              double.infinity,
+                                                          child: ClipRRect(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        16.0),
+                                                            child: order['products']
+                                                                            [i][
+                                                                        'thumbnail'] !=
+                                                                    null
+                                                                ? CachedNetworkImage(
+                                                                    imageUrl: AppConfig
+                                                                            .instance
+                                                                            .baseApiHost +
+                                                                        order['products'][i]['thumbnail']
+                                                                            [
+                                                                            'url'],
+                                                                    fit: BoxFit
+                                                                        .cover,
+                                                                    width: double
+                                                                        .infinity,
+                                                                    height: double
+                                                                        .infinity,
+                                                                  )
+                                                                : Image.asset(
+                                                                    "images/image-not-found.png",
+                                                                    fit: BoxFit
+                                                                        .cover,
+                                                                    width: double
+                                                                        .infinity,
+                                                                    height: double
+                                                                        .infinity,
+                                                                  ),
                                                           ),
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
                                                         ),
-                                                        SizedBox(height: 7.0),
-                                                        RichText(
-                                                          text: TextSpan(
-                                                            style:
-                                                                DefaultTextStyle
-                                                                    .of(
-                                                              context,
-                                                            ).style,
-                                                            children: [
-                                                              TextSpan(
-                                                                text:
-                                                                    "\$39.95 ",
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontSize:
-                                                                      20.0,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w600,
-                                                                  color: HexColor(
-                                                                      "#53586F"),
+                                                        SizedBox(width: 8.0),
+                                                        Expanded(
+                                                          child: Container(
+                                                            height:
+                                                                double.infinity,
+                                                            child: Column(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              mainAxisSize:
+                                                                  MainAxisSize
+                                                                      .min,
+                                                              children: [
+                                                                Text(
+                                                                  order['products']
+                                                                          [i]
+                                                                      ['name'],
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontSize:
+                                                                        14.0,
+                                                                    color: HexColor(
+                                                                        "#53586F"),
+                                                                  ),
+                                                                  overflow:
+                                                                      TextOverflow
+                                                                          .ellipsis,
                                                                 ),
-                                                              ),
-                                                              TextSpan(
-                                                                  text: "x2")
-                                                            ],
+                                                                SizedBox(
+                                                                    height:
+                                                                        7.0),
+                                                                RichText(
+                                                                  text:
+                                                                      TextSpan(
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text: order['products'][i]['price'] !=
+                                                                                null
+                                                                            ? "\$${order['products'][i]['price']} "
+                                                                            : '',
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontSize:
+                                                                              20.0,
+                                                                          fontWeight:
+                                                                              FontWeight.w600,
+                                                                          color:
+                                                                              HexColor("#53586F"),
+                                                                        ),
+                                                                      ),
+                                                                      TextSpan(
+                                                                        text: order['orderDetails'] != null &&
+                                                                                order['orderDetails'].length > 0 &&
+                                                                                order['orderDetails'][i]['quantity'] != null
+                                                                            ? "x${order['orderDetails'][i]['quantity']}"
+                                                                            : '',
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontSize:
+                                                                              16.0,
+                                                                          color:
+                                                                              HexColor("#53586F"),
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
                                                           ),
                                                         ),
                                                       ],
                                                     ),
                                                   ),
                                                 ),
-                                              ],
-                                            ),
+                                            ],
+                                          )
+                                        : SizedBox.shrink(child: null),
+                                    SizedBox(height: 11.0),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          "TOTAL PRICE:",
+                                          style: TextStyle(
+                                            fontSize: 14.0,
+                                            fontWeight: FontWeight.w600,
                                           ),
                                         ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 11.0),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        "TOTAL PRICE:",
-                                        style: TextStyle(
-                                          fontSize: 14.0,
-                                          fontWeight: FontWeight.w600,
+                                        Text(
+                                          "\$${order['totalPrice']}",
+                                          style: TextStyle(
+                                            fontSize: 22.0,
+                                            fontWeight: FontWeight.w600,
+                                          ),
                                         ),
-                                      ),
-                                      Text(
-                                        "\$79.90",
-                                        style: TextStyle(
-                                          fontSize: 22.0,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 13.0),
-                                ],
+                                      ],
+                                    ),
+                                    SizedBox(height: 13.0),
+                                  ],
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
+                            );
+                          },
+                        ),
+                      )
+                    else
+                      Center(child: Text("No Data")),
                   ],
                 ),
               );

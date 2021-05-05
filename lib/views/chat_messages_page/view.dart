@@ -225,7 +225,9 @@ class _BubblePageState extends State<BubblePage> {
                                           color: Colors.white,
                                           nip: BubbleNip.rightBottom,
                                           child: Text(
-                                            chatMessage['text'],
+                                            chatMessage['text'] != null
+                                                ? chatMessage['text']
+                                                : "",
                                             style: TextStyle(
                                               fontSize: 16,
                                               color: HexColor("#53586F"),
@@ -1213,10 +1215,6 @@ class _OrderWidgetState extends State<OrderWidget> {
                                                   SizedBox(height: 12.0),
                                                   RichText(
                                                     text: TextSpan(
-                                                      style:
-                                                          DefaultTextStyle.of(
-                                                        context,
-                                                      ).style,
                                                       children: [
                                                         TextSpan(
                                                           text: product[

@@ -691,7 +691,7 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                     await UserInfoOperate.whenLogout();
 
                     Navigator.of(context).pushReplacementNamed('startpage');
-                    Navigator.pop(context);
+                    //  Navigator.pop(context);
                   },
                 ),
                 SizedBox(height: 24.0),

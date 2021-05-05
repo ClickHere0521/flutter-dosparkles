@@ -18,6 +18,8 @@ class AppUser {
 
   Map store;
 
+  List orders;
+
   String role;
 
   AppUser.fromParams({
@@ -30,6 +32,7 @@ class AppUser {
     this.storeFavorite,
     this.store,
     this.role,
+    this.orders,
   });
 
   factory AppUser(jsonStr) => jsonStr == null
@@ -46,6 +49,7 @@ class AppUser {
     shippingAddress = jsonRes['shippingAddress'];
     storeFavorite = jsonRes['storeFavorite'];
     store = jsonRes['store'];
+    orders = jsonRes['orders'];
 
     avatarUrl = jsonRes['avatar'] != null
         ? AppConfig.instance.baseApiHost + jsonRes['avatar']['url']

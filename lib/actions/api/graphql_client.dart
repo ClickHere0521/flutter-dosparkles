@@ -82,8 +82,49 @@ class BaseGraphQLClient {
             country
             orders {
               id
+              status
+              orderDetails
+              totalPrice
               products {
+              id
+              shineonImportId
+              thumbnail {
+                url
+              }
+              video {
+                url
+              }
+              engraveExample {
+                url
+                name
+              }
+              optionalMaterialExample {
+                url
+              }
+              orders {
                 id
+              }
+              oldPrice
+              price
+              showOldPrice
+              engraveAvailable
+              properties
+              shineonIds
+              engraveOldPrice
+              engravePrice
+              showOldEngravePrice
+              defaultFinishMaterial
+              optionalFinishMaterial
+              optionalFinishMaterialPrice
+              optionalFinishMaterialEnabled
+              media {
+                url
+              }
+              deliveryInformation
+              name
+              uploadsAvailable
+              sizeOptionsAvailable
+              isActive
               }
             }
             avatar {
@@ -252,6 +293,111 @@ class BaseGraphQLClient {
     ''';
 
     return _service.query(_query);
+  }
+
+  Future<QueryResult> updateStoreOrder(String id, List<String> orderIds) {
+    String _mutation = '''
+      mutation UpdateStore {
+        updateStore (
+          input: {
+            where: {
+              id: "$id"
+            }
+            data:{
+              orders: $orderIds      
+            }
+          }
+        ) 
+        {
+          store {
+            id
+            name
+            address
+            phone
+            orders {
+              id
+            }
+            lat
+            lng
+            thumbnail {
+              url
+            }
+            chats {
+              id
+              users {
+                id
+                email
+                name
+              }
+              store {
+                id
+                name
+              }
+              chat_messages {
+                id
+                text
+                createdAt
+                messageType
+                order {
+                  id
+                }
+                chat {
+                  id
+                }
+                user {
+                  id
+                  name
+                }
+              }
+            }
+            products {
+              id
+              shineonImportId
+              thumbnail {
+                url
+              }
+              video {
+                url
+              }
+              engraveExample {
+                url
+                name
+              }
+              optionalMaterialExample {
+                url
+              }
+              orders {
+                id
+              }
+              oldPrice
+              price
+              showOldPrice
+              engraveAvailable
+              properties
+              shineonIds
+              engraveOldPrice
+              engravePrice
+              showOldEngravePrice
+              defaultFinishMaterial
+              optionalFinishMaterial
+              optionalFinishMaterialPrice
+              optionalFinishMaterialEnabled
+              media {
+                url
+              }
+              deliveryInformation
+              name
+              uploadsAvailable
+              sizeOptionsAvailable
+              isActive
+            }
+          }
+        }
+      }
+    ''';
+
+    //  printWrapped('Debug _mutation: $_mutation');
+    return _service.mutate(_mutation);
   }
 
   Future<QueryResult> createOrder(
