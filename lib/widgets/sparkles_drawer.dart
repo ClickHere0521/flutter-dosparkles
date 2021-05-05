@@ -61,7 +61,7 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                 GestureDetector(
                   onTap: () {
                     Navigator.of(context)
-                        .pushNamed('reset_passwordpage', arguments: null);
+                        .pushNamed('addphonepage', arguments: null);
 
                     // Navigator.push(
                     //   context,

@@ -214,8 +214,16 @@ class __InnerPartState extends State<_InnerPart> {
                   SizedBox(height: 16),
                   Align(
                     alignment: Alignment.centerRight,
-                    child: Text("Forgot password?",
-                        style: TextStyle(fontSize: 15)),
+                    child: GestureDetector(
+                      child: Text(
+                        "Forgot password?",
+                        style: TextStyle(fontSize: 15),
+                      ),
+                      onTap: () {
+                        Navigator.of(context)
+                            .pushNamed('forgot_passwordpage', arguments: null);
+                      },
+                    ),
                   ),
                 ],
               ),
@@ -256,23 +264,30 @@ class __InnerPartState extends State<_InnerPart> {
                     ),
                   ),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.018),
-                  RichText(
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: "Don't have account yet? ",
-                          style: TextStyle(color: Colors.black54, fontSize: 16),
-                        ),
-                        TextSpan(
-                          text: "Sign Up",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
+                  GestureDetector(
+                    child: RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: "Don't have account yet? ",
+                            style:
+                                TextStyle(color: Colors.black54, fontSize: 16),
                           ),
-                        ),
-                      ],
+                          TextSpan(
+                            text: "Sign Up",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
+                    onTap: () {
+                      Navigator.of(context)
+                          .pushNamed('registrationpage', arguments: null);
+                    },
                   ),
                 ],
               ),

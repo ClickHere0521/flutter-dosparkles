@@ -1,9 +1,11 @@
 import 'dart:ui';
 
+import 'package:com.floridainc.dosparkles/actions/api/graphql_client.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 import '../../utils/colors.dart';
 import 'state.dart';
 
@@ -302,26 +304,48 @@ class __InnerPartState extends State<_InnerPart> {
                 ],
               ),
               SizedBox(height: 18),
-              ButtonTheme(
-                minWidth: 300.0,
+              Container(
+                width: 300.0,
                 height: 48.0,
-                child: RaisedButton(
-                  textColor: Colors.white,
-                  elevation: 0,
-                  color: HexColor("#6092DC"),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(31.0),
+                ),
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                    elevation: MaterialStateProperty.all(0),
+                    backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                      (Set<MaterialState> states) {
+                        if (states.contains(MaterialState.disabled))
+                          return HexColor("#C4C6D2");
+                        return HexColor("#6092DC");
+                      },
+                    ),
+                    shape: MaterialStateProperty.all(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(31.0),
+                      ),
+                    ),
+                  ),
                   child: Text(
-                    'Next',
+                    'Sign in',
                     style: TextStyle(
                       fontSize: 17.0,
                       fontWeight: FontWeight.normal,
+                      color: Colors.white,
                     ),
                   ),
-                  onPressed: () {
-                    _onSubmit(_formKey, emailValue);
-                  },
-                  shape: new RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(31.0),
-                  ),
+                  onPressed: !checkboxValue
+                      ? null
+                      : () {
+                          if (_formKey.currentState.validate()) {
+                            _onSubmit(
+                              emailValue,
+                              passwordValue,
+                              firstNameValue,
+                              lastNameValue,
+                            );
+                          }
+                        },
                 ),
               ),
             ],
@@ -332,14 +356,40 @@ class __InnerPartState extends State<_InnerPart> {
   }
 }
 
-void _onSubmit(formKey, emailValue) async {
-  if (formKey.currentState.validate()) {
-    try {
-      // QueryResult result =
-      //     await BaseGraphQLClient.instance.forgotPassword(emailValue);
-      // if (result.hasException) print(result.exception);
-    } catch (e) {
-      print(e);
+void _onSubmit(
+  emailValue,
+  passwordValue,
+  firstNameValue,
+  lastNameValue,
+) async {
+  String fullName = "$firstNameValue $lastNameValue";
+
+  QueryResult fetchResult = await BaseGraphQLClient.instance.fetchUsers();
+  if (fetchResult.hasException) print(fetchResult.exception);
+
+  for (int i = 0; i < fetchResult.data['users'].length; i++) {
+    var user = fetchResult.data['users'][i];
+
+    if (emailValue != user['email']) {
+      try {
+        QueryResult resultRegister =
+            await BaseGraphQLClient.instance.registerUser({
+          'emailValue': emailValue,
+          'passwordValue': passwordValue,
+        });
+        if (resultRegister.hasException) print(resultRegister.exception);
+
+        QueryResult resultUpdate = await BaseGraphQLClient.instance
+            .updateUserOnCreate(resultRegister.data['register']['user']['id'],
+                {'fullName': fullName});
+        if (resultUpdate.hasException) print(resultUpdate.exception);
+
+        print(resultUpdate.data);
+      } catch (e) {
+        print(e);
+      }
+
+      break;
     }
   }
 }

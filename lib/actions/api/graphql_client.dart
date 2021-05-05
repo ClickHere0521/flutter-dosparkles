@@ -138,6 +138,106 @@ class BaseGraphQLClient {
     return _service.query(_query);
   }
 
+  Future<QueryResult> fetchUsers() {
+    String _query = '''
+      query {
+        users {
+          id
+          email
+          username
+          shippingAddress
+          storeFavorite {
+            id
+            name
+          }
+          store {
+            id
+            name
+          }
+          role {
+            id
+            name
+          }
+          name
+          country
+        }
+      }
+    ''';
+
+    // printWrapped('Debug _mutation: $_mutation');
+    return _service.query(_query);
+  }
+
+  Future<QueryResult> registerUser(Map data) {
+    String _mutation = '''
+      mutation {
+        register (
+          input: { 
+            email: "${data['emailValue']}"
+            username: "${data['emailValue']}"
+            password: "${data['passwordValue']}"
+          }
+        ) 
+        {
+          jwt
+          user {
+            id
+            username
+            email
+            role {
+              id
+              name
+            }
+          }
+        }
+      }
+    ''';
+
+    // printWrapped('Debug _mutation: $_mutation');
+    return _service.query(_mutation);
+  }
+
+  Future<QueryResult> updateUserOnCreate(String id, Map data) {
+    String _mutation = '''
+      mutation UpdateUser {
+        updateUser (
+          input: {
+            where: {
+              id: "$id"
+            },
+            data: {
+              name: "${data['fullName']}"
+            }
+          }
+        ) 
+        {
+          user {
+            id
+            email
+            username
+            shippingAddress
+            storeFavorite {
+              id
+              name
+            }
+            store {
+              id
+              name
+            }
+            role {
+              id
+              name
+            }
+            name
+            country
+          }
+        }
+      }
+    ''';
+
+    return _service.query(_mutation);
+  }
+
   Future<QueryResult> storesWithProductsList() {
     String _query = '''
       query {

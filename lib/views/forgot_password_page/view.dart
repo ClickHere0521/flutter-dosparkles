@@ -185,24 +185,30 @@ class __InnerPartState extends State<_InnerPart> {
                       ),
                     ),
                     SizedBox(height: 10),
-                    RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: "Back to ",
-                            style:
-                                TextStyle(color: Colors.black54, fontSize: 16),
-                          ),
-                          TextSpan(
-                            text: "Sign in",
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
+                    GestureDetector(
+                      child: RichText(
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: "Back to ",
+                              style: TextStyle(
+                                  color: Colors.black54, fontSize: 16),
                             ),
-                          ),
-                        ],
+                            TextSpan(
+                              text: "Sign in",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
+                      onTap: () {
+                        Navigator.of(context)
+                            .pushNamed('loginpage', arguments: null);
+                      },
                     ),
                   ],
                 ),

@@ -13,6 +13,16 @@ import 'state.dart';
 import 'package:country_pickers/country.dart';
 import 'package:country_pickers/country_pickers.dart';
 
+void _onSubmit(emailValue) async {
+  try {
+    // QueryResult result =
+    //     await BaseGraphQLClient.instance.forgotPassword(emailValue);
+    // if (result.hasException) print(result.exception);
+  } catch (e) {
+    print(e);
+  }
+}
+
 Widget buildView(
   AddPhonePageState state,
   Dispatch dispatch,
@@ -100,7 +110,17 @@ class _InnerPart extends StatefulWidget {
 
 class __InnerPartState extends State<_InnerPart> {
   final _formKey = GlobalKey<FormState>();
-  String emailValue = '';
+  String fullValue = '';
+  String phone = '';
+
+  _setPhoneValue(value, countryCode) {
+    setState(() {
+      phone = value;
+      fullValue = "+$countryCode $value";
+    });
+
+    print(fullValue);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -131,32 +151,52 @@ class __InnerPartState extends State<_InnerPart> {
                 padding: EdgeInsets.only(
                   bottom: MediaQuery.of(context).size.height * 0.10,
                 ),
-                child: _CountryPickerDropdown(context: context),
+                child: _CountryPickerDropdown(
+                    context: context,
+                    setPhoneValue: (val, countryCode) =>
+                        _setPhoneValue(val, countryCode)),
               ),
               Padding(
                 padding: EdgeInsets.only(
                   bottom: MediaQuery.of(context).size.height * 0.30,
                 ),
-                child: ButtonTheme(
-                  minWidth: 300.0,
+                child: Container(
+                  width: 300.0,
                   height: 48.0,
-                  child: RaisedButton(
-                    textColor: Colors.white,
-                    elevation: 0,
-                    color: HexColor("#6092DC"),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(31.0),
+                  ),
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                      elevation: MaterialStateProperty.all(0),
+                      backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                        (Set<MaterialState> states) {
+                          if (states.contains(MaterialState.disabled))
+                            return HexColor("#C4C6D2");
+                          return HexColor("#6092DC");
+                        },
+                      ),
+                      shape: MaterialStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(31.0),
+                        ),
+                      ),
+                    ),
                     child: Text(
                       'Next',
                       style: TextStyle(
                         fontSize: 17.0,
                         fontWeight: FontWeight.normal,
+                        color: Colors.white,
                       ),
                     ),
-                    onPressed: () {
-                      _onSubmit(_formKey, emailValue);
-                    },
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(31.0),
-                    ),
+                    onPressed: phone.length == 0
+                        ? null
+                        : () {
+                            if (_formKey.currentState.validate()) {
+                              _onSubmit(fullValue);
+                            }
+                          },
                   ),
                 ),
               ),
@@ -168,22 +208,12 @@ class __InnerPartState extends State<_InnerPart> {
   }
 }
 
-void _onSubmit(formKey, emailValue) async {
-  if (formKey.currentState.validate()) {
-    try {
-      // QueryResult result =
-      //     await BaseGraphQLClient.instance.forgotPassword(emailValue);
-      // if (result.hasException) print(result.exception);
-    } catch (e) {
-      print(e);
-    }
-  }
-}
-
 class _CountryPickerDropdown extends StatefulWidget {
   final BuildContext context;
+  final Function setPhoneValue;
 
-  _CountryPickerDropdown({Key key, this.context}) : super(key: key);
+  _CountryPickerDropdown({Key key, this.context, this.setPhoneValue})
+      : super(key: key);
 
   @override
   __CountryPickerDropdownState createState() => __CountryPickerDropdownState();
@@ -192,7 +222,7 @@ class _CountryPickerDropdown extends StatefulWidget {
 class __CountryPickerDropdownState extends State<_CountryPickerDropdown> {
   double dropdownButtonWidth;
   double dropdownItemWidth;
-  String phoneValue = "";
+  String countryCode = '1';
 
   @override
   void initState() {
@@ -228,7 +258,9 @@ class __CountryPickerDropdownState extends State<_CountryPickerDropdown> {
                 _buildDropdownItem(country, dropdownItemWidth),
             initialValue: 'US',
             onValuePicked: (Country country) {
-              print("${country.name}");
+              setState(() {
+                countryCode = country.phoneCode;
+              });
             },
           ),
         ),
@@ -237,9 +269,7 @@ class __CountryPickerDropdownState extends State<_CountryPickerDropdown> {
             keyboardType: TextInputType.numberWithOptions(decimal: true),
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             onChanged: (String value) {
-              setState(() {
-                phoneValue = value;
-              });
+              widget.setPhoneValue(value, countryCode);
             },
             decoration: InputDecoration(
               hintText: "Add Phone",
