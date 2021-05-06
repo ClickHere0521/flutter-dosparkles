@@ -258,10 +258,15 @@ class _MainBody extends StatelessWidget {
                       children: [
                         ClipRRect(
                           borderRadius: BorderRadius.circular(16.0),
-                          child: CachedNetworkImage(
-                            imageUrl: store.products[index].thumbnailUrl,
-                            fit: BoxFit.cover,
-                          ),
+                          child: store.products[index].thumbnailUrl != null
+                              ? CachedNetworkImage(
+                                  imageUrl: store.products[index].thumbnailUrl,
+                                  fit: BoxFit.cover,
+                                )
+                              : Image.asset(
+                                  "images/image-not-found.png",
+                                  fit: BoxFit.cover,
+                                ),
                         ),
                         Positioned.fill(
                           child: Align(
@@ -568,10 +573,15 @@ class LeftPanel extends StatelessWidget {
             height: 40.0,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              image: DecorationImage(
-                image: NetworkImage(globalUser.avatarUrl),
-                fit: BoxFit.cover,
-              ),
+              image: globalUser.avatarUrl != null
+                  ? DecorationImage(
+                      image: NetworkImage(globalUser.avatarUrl),
+                      fit: BoxFit.cover,
+                    )
+                  : DecorationImage(
+                      image: AssetImage("images/user-male-circle.png"),
+                      fit: BoxFit.cover,
+                    ),
             ),
           ),
           SizedBox(height: 30.0),

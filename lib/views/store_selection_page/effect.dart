@@ -49,9 +49,8 @@ void _onStoreSelected(
   StoreItem store = action.payload;
   GlobalStore.store.dispatch(GlobalActionCreator.setSelectedStore(store));
 
-  var result = await BaseGraphQLClient.instance.me();
-  await BaseGraphQLClient.instance
-      .setUsersFavoriteStore(result.data['me']['id'], store.id);
+  var meId = GlobalStore.store.getState().user.id;
+  await BaseGraphQLClient.instance.setUsersFavoriteStore(meId, store.id);
 
   await Navigator.of(ctx.context).pushReplacementNamed('storepage');
 }

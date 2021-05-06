@@ -639,17 +639,33 @@ class __MainBodyState extends State<_MainBody> {
                   ],
                 ),
                 SizedBox(height: 16.0),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Text(
-                    "Purchase This  Best - Seller and We Guarantee it will Exceed Your Highest Expectations. Purchase This Best - Seller and We Guarantee it will Exceed Your Highest Expectations! Purchase This  Best - Seller and We Guarantee it will Exceed Your Highest Expectations !",
-                    style: TextStyle(
-                      fontSize: 11.0,
-                      fontWeight: FontWeight.w300,
-                      height: 1.35,
-                    ),
-                  ),
-                ),
+                currentTab == 1
+                    ? Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Text(
+                          widget.selectedProduct.productDetails != null
+                              ? widget.selectedProduct.productDetails
+                              : "",
+                          style: TextStyle(
+                            fontSize: 11.0,
+                            fontWeight: FontWeight.w300,
+                            height: 1.35,
+                          ),
+                        ),
+                      )
+                    : Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Text(
+                          widget.selectedProduct.deliveryTime != null
+                              ? widget.selectedProduct.deliveryTime
+                              : "",
+                          style: TextStyle(
+                            fontSize: 11.0,
+                            fontWeight: FontWeight.w300,
+                            height: 1.35,
+                          ),
+                        ),
+                      ),
                 SizedBox(height: 35.0),
               ],
             ),

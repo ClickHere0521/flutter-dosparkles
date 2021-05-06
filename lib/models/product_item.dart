@@ -42,8 +42,6 @@ class ProductItem {
 
   List<dynamic> mediaUrls;
 
-  String deliveryInformation;
-
   bool uploadsAvailable;
 
   bool sizeOptionsAvailable;
@@ -55,6 +53,14 @@ class ProductItem {
   String optionalMaterialExampleUrl;
 
   List orders;
+
+  String productDetails;
+
+  String deliveryTime;
+
+  double optionalFinishMaterialOldPrice;
+
+  bool showOptionalFinishMaterialOldPrice;
 
   ProductItem.fromParams({
     this.id,
@@ -75,13 +81,16 @@ class ProductItem {
     this.optionalFinishMaterialPrice,
     this.optionalFinishMaterialEnabled,
     this.mediaUrls,
-    this.deliveryInformation,
     this.uploadsAvailable,
     this.sizeOptionsAvailable,
     this.isActive,
     this.engraveExampleUrl,
     this.optionalMaterialExampleUrl,
     this.orders,
+    this.productDetails,
+    this.deliveryTime,
+    this.optionalFinishMaterialOldPrice,
+    this.showOptionalFinishMaterialOldPrice,
   });
 
   factory ProductItem(jsonStr) => jsonStr == null
@@ -139,11 +148,17 @@ class ProductItem {
       mediaUrls = List.empty();
     }
 
-    deliveryInformation = jsonRes['deliveryInformation'];
     uploadsAvailable = jsonRes['uploadsAvailable'];
     sizeOptionsAvailable = jsonRes['sizeOptionsAvailable'];
     isActive = jsonRes['isActive'];
     orders = jsonRes['orders'];
+    productDetails = jsonRes['productDetails'];
+    deliveryTime = jsonRes['deliveryTime'];
+    optionalFinishMaterialOldPrice =
+        checkDouble(jsonRes['optionalFinishMaterialOldPrice']);
+
+    showOptionalFinishMaterialOldPrice =
+        jsonRes['showOptionalFinishMaterialOldPrice'];
   }
   @override
   String toString() {

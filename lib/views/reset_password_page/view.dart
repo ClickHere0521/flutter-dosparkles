@@ -126,6 +126,11 @@ class __InnerPartState extends State<_InnerPart> {
                   TextFormField(
                     textAlign: TextAlign.left,
                     obscureText: oldHide,
+                    onChanged: (value) {
+                      setState(() {
+                        oldValue = value;
+                      });
+                    },
                     decoration: InputDecoration(
                       hintText: 'Enter here',
                       hintStyle: TextStyle(fontSize: 16, color: Colors.black26),
@@ -171,6 +176,11 @@ class __InnerPartState extends State<_InnerPart> {
                   TextFormField(
                     textAlign: TextAlign.left,
                     obscureText: newHide,
+                    onChanged: (value) {
+                      setState(() {
+                        newValue = value;
+                      });
+                    },
                     decoration: InputDecoration(
                       hintText: 'Enter here',
                       hintStyle: TextStyle(fontSize: 16, color: Colors.black26),
@@ -216,6 +226,11 @@ class __InnerPartState extends State<_InnerPart> {
                   TextFormField(
                     textAlign: TextAlign.left,
                     obscureText: repeatHide,
+                    onChanged: (value) {
+                      setState(() {
+                        repeatValue = value;
+                      });
+                    },
                     decoration: InputDecoration(
                       hintText: 'Enter here',
                       hintStyle: TextStyle(fontSize: 16, color: Colors.black26),
@@ -274,7 +289,11 @@ class __InnerPartState extends State<_InnerPart> {
                   style: ButtonStyle(
                     elevation: MaterialStateProperty.all(0),
                     backgroundColor:
-                        MaterialStateProperty.all(HexColor("#6092DC")),
+                        MaterialStateProperty.resolveWith<Color>((states) {
+                      if (states.contains(MaterialState.disabled))
+                        return HexColor("#C4C6D2");
+                      return HexColor("#6092DC");
+                    }),
                     shape: MaterialStateProperty.all(
                       RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(31.0),
@@ -289,9 +308,16 @@ class __InnerPartState extends State<_InnerPart> {
                       color: Colors.white,
                     ),
                   ),
-                  onPressed: () {
-                    _onSubmit(_formKey);
-                  },
+                  onPressed: repeatValue != newValue ||
+                          repeatValue.length == 0 ||
+                          newValue.length == 0 ||
+                          oldValue.length == 0
+                      ? null
+                      : () {
+                          if (_formKey.currentState.validate()) {
+                            _onSubmit(oldValue, newValue, repeatValue);
+                          }
+                        },
                 ),
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 0.20),
@@ -303,14 +329,12 @@ class __InnerPartState extends State<_InnerPart> {
   }
 }
 
-void _onSubmit(_formKey) async {
-  if (_formKey.currentState.validate()) {
-    try {
-      // QueryResult result =
-      //     await BaseGraphQLClient.instance.forgotPassword(emailValue);
-      // if (result.hasException) print(result.exception);
-    } catch (e) {
-      print(e);
-    }
+void _onSubmit(oldValue, newValue, repeatValue) async {
+  try {
+    // QueryResult result =
+    //     await BaseGraphQLClient.instance.forgotPassword(emailValue);
+    // if (result.hasException) print(result.exception);
+  } catch (e) {
+    print(e);
   }
 }

@@ -1752,88 +1752,33 @@ class __ChangeOrderState extends State<_ChangeOrder> {
                     ],
                   ),
                   SizedBox(height: 16.0),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Description",
-                          style: TextStyle(
-                            fontSize: 11.0,
-                            height: 1.35,
-                            fontWeight: FontWeight.w600,
+                  currentTab == 1
+                      ? Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Text(
+                            widget.order['products'][0] != null
+                                ? widget.order['products'][0].productDetails
+                                : "",
+                            style: TextStyle(
+                              fontSize: 11.0,
+                              fontWeight: FontWeight.w300,
+                              height: 1.35,
+                            ),
+                          ),
+                        )
+                      : Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Text(
+                            widget.order['products'][0].deliveryTime != null
+                                ? widget.order['products'][0].deliveryTime
+                                : "",
+                            style: TextStyle(
+                              fontSize: 11.0,
+                              fontWeight: FontWeight.w300,
+                              height: 1.35,
+                            ),
                           ),
                         ),
-                        Text(
-                          "Surprise someone you love with this unique and elegant jewelry item 🎁.",
-                          style: TextStyle(
-                            fontSize: 11.0,
-                            height: 1.35,
-                            fontWeight: FontWeight.w300,
-                          ),
-                        ),
-                        Text(
-                          "We say 'UNIQUE' because each piece is different when you provide your photo.",
-                          style: TextStyle(
-                            fontSize: 11.0,
-                            height: 1.35,
-                            fontWeight: FontWeight.w300,
-                          ),
-                        ),
-                        Text(
-                          "This hand-crafted piece will never fade and is built to last!",
-                          style: TextStyle(
-                            fontSize: 11.0,
-                            height: 1.35,
-                            fontWeight: FontWeight.w300,
-                          ),
-                        ),
-                        SizedBox(height: 8.0),
-                        Text(
-                          "Specifics",
-                          style: TextStyle(
-                            fontSize: 11.0,
-                            height: 1.35,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        Text(
-                          "Made in the U.S.A",
-                          style: TextStyle(
-                            fontSize: 11.0,
-                            height: 1.35,
-                            fontWeight: FontWeight.w300,
-                          ),
-                        ),
-                        Text(
-                          "316 Steel or 18k Gold Finish",
-                          style: TextStyle(
-                            fontSize: 11.0,
-                            height: 1.35,
-                            fontWeight: FontWeight.w300,
-                          ),
-                        ),
-                        Text(
-                          "Adjustable Necklace Chain Measures 18'-22'",
-                          style: TextStyle(
-                            fontSize: 11.0,
-                            height: 1.35,
-                            fontWeight: FontWeight.w300,
-                          ),
-                        ),
-                        Text(
-                          "Water-Resistant",
-                          style: TextStyle(
-                            fontSize: 11.0,
-                            height: 1.35,
-                            fontWeight: FontWeight.w300,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
                   SizedBox(height: 20.0),
                 ],
               ),

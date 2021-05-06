@@ -89,6 +89,8 @@ class BaseGraphQLClient {
               products {
               id
               shineonImportId
+              optionalFinishMaterialOldPrice
+              showOptionalFinishMaterialOldPrice
               thumbnail {
                 url
               }
@@ -106,6 +108,8 @@ class BaseGraphQLClient {
                 id
               }
               oldPrice
+              productDetails
+              deliveryTime
               price
               showOldPrice
               engraveAvailable
@@ -121,7 +125,6 @@ class BaseGraphQLClient {
               media {
                 url
               }
-              deliveryInformation
               name
               uploadsAvailable
               sizeOptionsAvailable
@@ -298,6 +301,8 @@ class BaseGraphQLClient {
           products {
             id
             shineonImportId
+                          optionalFinishMaterialOldPrice
+              showOptionalFinishMaterialOldPrice
             thumbnail {
               url
             }
@@ -316,6 +321,8 @@ class BaseGraphQLClient {
             }
             oldPrice
             price
+            productDetails
+            deliveryTime
             showOldPrice
             engraveAvailable
             properties
@@ -330,7 +337,6 @@ class BaseGraphQLClient {
             media {
               url
             }
-            deliveryInformation
             name
             uploadsAvailable
             sizeOptionsAvailable
@@ -387,6 +393,8 @@ class BaseGraphQLClient {
           products {
             id
             shineonImportId
+                          optionalFinishMaterialOldPrice
+              showOptionalFinishMaterialOldPrice
             thumbnail {
               url
             }
@@ -405,6 +413,8 @@ class BaseGraphQLClient {
             }
             oldPrice
             price
+            productDetails
+              deliveryTime
             showOldPrice
             engraveAvailable
             properties
@@ -419,7 +429,6 @@ class BaseGraphQLClient {
             media {
               url
             }
-            deliveryInformation
             name
             uploadsAvailable
             sizeOptionsAvailable
@@ -490,6 +499,8 @@ class BaseGraphQLClient {
             products {
               id
               shineonImportId
+                            optionalFinishMaterialOldPrice
+              showOptionalFinishMaterialOldPrice
               thumbnail {
                 url
               }
@@ -508,6 +519,8 @@ class BaseGraphQLClient {
               }
               oldPrice
               price
+              productDetails
+              deliveryTime
               showOldPrice
               engraveAvailable
               properties
@@ -522,7 +535,6 @@ class BaseGraphQLClient {
               media {
                 url
               }
-              deliveryInformation
               name
               uploadsAvailable
               sizeOptionsAvailable
@@ -563,6 +575,8 @@ class BaseGraphQLClient {
             products {
               id
               shineonImportId
+                            optionalFinishMaterialOldPrice
+              showOptionalFinishMaterialOldPrice
               thumbnail {
                 url
               }
@@ -581,6 +595,8 @@ class BaseGraphQLClient {
               }
               oldPrice
               price
+              productDetails
+              deliveryTime
               showOldPrice
               engraveAvailable
               properties
@@ -595,7 +611,7 @@ class BaseGraphQLClient {
               media {
                 url
               }
-              deliveryInformation
+
               name
               uploadsAvailable
               sizeOptionsAvailable
@@ -627,6 +643,8 @@ class BaseGraphQLClient {
           products {
             id
             shineonImportId
+                          optionalFinishMaterialOldPrice
+              showOptionalFinishMaterialOldPrice
             thumbnail {
               url
             }
@@ -645,6 +663,8 @@ class BaseGraphQLClient {
             oldPrice
             price
             showOldPrice
+            productDetails
+              deliveryTime
             engraveAvailable
             properties
             shineonIds
@@ -658,7 +678,6 @@ class BaseGraphQLClient {
             media {
               url
             }
-            deliveryInformation
             name
             uploadsAvailable
             sizeOptionsAvailable

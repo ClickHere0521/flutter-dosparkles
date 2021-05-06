@@ -315,23 +315,33 @@ class __MainBodyState extends State<_MainBody> {
                   ],
                 ),
                 SizedBox(height: 16.0),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Purchase This  Best - Seller and We Guarantee it will Exceed Your Highest Expectations. Purchase This Best - Seller and We Guarantee it will Exceed Your Highest Expectations! Purchase This  Best - Seller and We Guarantee it will Exceed Your Highest Expectations !",
-                        style: TextStyle(
-                          fontSize: 11.0,
-                          fontWeight: FontWeight.w300,
-                          height: 1.35,
+                currentTab == 1
+                    ? Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Text(
+                          widget.product.roductDetails != null
+                              ? widget.product.productDetails
+                              : "",
+                          style: TextStyle(
+                            fontSize: 11.0,
+                            fontWeight: FontWeight.w300,
+                            height: 1.35,
+                          ),
+                        ),
+                      )
+                    : Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Text(
+                          widget.product.deliveryTime != null
+                              ? widget.product.deliveryTime
+                              : "",
+                          style: TextStyle(
+                            fontSize: 11.0,
+                            fontWeight: FontWeight.w300,
+                            height: 1.35,
+                          ),
                         ),
                       ),
-                    ],
-                  ),
-                ),
                 SizedBox(height: 20.0),
               ],
             ),
@@ -795,88 +805,33 @@ class __CustomBodyState extends State<_CustomBody> {
                   ],
                 ),
                 SizedBox(height: 16.0),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Description",
-                        style: TextStyle(
-                          fontSize: 11.0,
-                          fontWeight: FontWeight.w600,
-                          height: 1.35,
+                currentTab == 1
+                    ? Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Text(
+                          widget.product.productDetails != null
+                              ? widget.product.productDetails
+                              : "",
+                          style: TextStyle(
+                            fontSize: 11.0,
+                            fontWeight: FontWeight.w300,
+                            height: 1.35,
+                          ),
+                        ),
+                      )
+                    : Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Text(
+                          widget.product.deliveryTime != null
+                              ? widget.product.deliveryTime
+                              : "",
+                          style: TextStyle(
+                            fontSize: 11.0,
+                            fontWeight: FontWeight.w300,
+                            height: 1.35,
+                          ),
                         ),
                       ),
-                      Text(
-                        "Surprise someone you love with this unique and elegant jewelry item 🎁.",
-                        style: TextStyle(
-                          fontSize: 11.0,
-                          fontWeight: FontWeight.w300,
-                          height: 1.35,
-                        ),
-                      ),
-                      Text(
-                        "We say 'UNIQUE' because each piece is different when you provide your photo.",
-                        style: TextStyle(
-                          fontSize: 11.0,
-                          fontWeight: FontWeight.w300,
-                          height: 1.35,
-                        ),
-                      ),
-                      Text(
-                        "This hand-crafted piece will never fade and is built to last!",
-                        style: TextStyle(
-                          fontSize: 11.0,
-                          fontWeight: FontWeight.w300,
-                          height: 1.35,
-                        ),
-                      ),
-                      SizedBox(height: 8.0),
-                      Text(
-                        "Specifics",
-                        style: TextStyle(
-                          fontSize: 11.0,
-                          fontWeight: FontWeight.w600,
-                          height: 1.35,
-                        ),
-                      ),
-                      Text(
-                        "Made in the U.S.A",
-                        style: TextStyle(
-                          fontSize: 11.0,
-                          fontWeight: FontWeight.w300,
-                          height: 1.35,
-                        ),
-                      ),
-                      Text(
-                        "316 Steel or 18k Gold Finish",
-                        style: TextStyle(
-                          fontSize: 11.0,
-                          fontWeight: FontWeight.w300,
-                          height: 1.35,
-                        ),
-                      ),
-                      Text(
-                        "Adjustable Necklace Chain Measures 18'-22'",
-                        style: TextStyle(
-                          fontSize: 11.0,
-                          fontWeight: FontWeight.w300,
-                          height: 1.35,
-                        ),
-                      ),
-                      Text(
-                        "Water-Resistant",
-                        style: TextStyle(
-                          fontSize: 11.0,
-                          fontWeight: FontWeight.w300,
-                          height: 1.35,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
                 SizedBox(height: 20.0),
               ],
             ),
