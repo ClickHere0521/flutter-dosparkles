@@ -18,6 +18,7 @@ import 'package:com.floridainc.dosparkles/widgets/test_google_signin.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_image_picker.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_share_module.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_stripe_payment.dart';
+import 'package:com.floridainc.dosparkles/widgets/test_swiper_folder/test_swiper_widget.dart';
 import 'package:com.floridainc.dosparkles/widgets/upload_files.dart';
 import 'package:com.floridainc.dosparkles/widgets/video_player.dart';
 import 'package:flutter/material.dart';
@@ -60,15 +61,15 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
               children: [
                 GestureDetector(
                   onTap: () {
-                    Navigator.of(context)
-                        .pushNamed('reset_passwordpage', arguments: null);
+                    // Navigator.of(context)
+                    //     .pushNamed('reset_passwordpage', arguments: null);
 
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (context) => Checkout(),
-                    //   ),
-                    // );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SwiperTestApp(),
+                      ),
+                    );
                   },
                   child: Container(
                     height: 218.0,
@@ -99,7 +100,9 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                                   height: 82.0,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10.0),
-                                    border: Border.all(color: Colors.white),
+                                    border: widget.globalUser.avatarUrl != null
+                                        ? Border.all(color: Colors.white)
+                                        : null,
                                   ),
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(10.0),
@@ -111,9 +114,10 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                                             height: double.infinity,
                                           )
                                         : Image.asset(
-                                            "images/image-not-found.png",
+                                            "images/user-male-circle.png",
                                             width: double.infinity,
                                             height: double.infinity,
+                                            color: Colors.white,
                                           ),
                                   ),
                                 ),

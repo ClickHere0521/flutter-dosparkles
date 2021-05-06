@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:com.floridainc.dosparkles/widgets/swiper_widget.dart';
 import 'package:flutter_dash/flutter_dash.dart';
 import 'package:http/http.dart' as http;
 
@@ -390,25 +391,7 @@ class __MainBodyState extends State<_MainBody> {
             ],
           ),
           SizedBox(height: 20.0),
-          Swiper(
-            itemBuilder: (BuildContext context, int index) {
-              return CachedNetworkImage(
-                imageUrl: widget.selectedProduct.mediaUrls[index],
-                fit: BoxFit.fill,
-              );
-            },
-            itemCount: widget.selectedProduct.mediaUrls.length,
-            itemWidth: Adapt.screenW() * 0.6,
-            itemHeight: Adapt.screenW() * 0.6,
-            layout: SwiperLayout.STACK,
-            pagination: SwiperPagination(
-              margin: EdgeInsets.only(top: Adapt.screenW() * 0.6 + 20),
-              builder: DotSwiperPaginationBuilder(
-                color: Colors.grey,
-                activeColor: HexColor('#3D9FB0'),
-              ),
-            ),
-          ),
+          SwiperWidget(productMedia: widget.selectedProduct.mediaUrls),
           SizedBox(height: 21.0),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),

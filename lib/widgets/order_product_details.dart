@@ -1,12 +1,12 @@
 import 'dart:ui';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:http/http.dart' as http;
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
 import 'package:com.floridainc.dosparkles/actions/app_config.dart';
 import 'package:com.floridainc.dosparkles/utils/colors.dart';
 import 'package:com.floridainc.dosparkles/widgets/sparkles_drawer.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:com.floridainc.dosparkles/widgets/swiper_widget.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
@@ -67,6 +67,7 @@ class _MainBody extends StatefulWidget {
 class __MainBodyState extends State<_MainBody> {
   var productMedia;
   int currentTab = 0;
+  String selectedImage = '';
 
   @override
   void initState() {
@@ -86,24 +87,9 @@ class __MainBodyState extends State<_MainBody> {
         mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(height: 20.0),
-          Swiper(
-            itemBuilder: (BuildContext context, int index) {
-              return Image.network(
-                productMedia[index],
-                fit: BoxFit.fill,
-              );
-            },
-            itemCount: productMedia.length,
-            itemWidth: Adapt.screenW() * 0.6,
-            itemHeight: Adapt.screenW() * 0.6,
-            layout: SwiperLayout.STACK,
-            pagination: SwiperPagination(
-              margin: EdgeInsets.only(top: Adapt.screenW() * 0.6 + 20),
-              builder: DotSwiperPaginationBuilder(
-                color: Colors.grey,
-                activeColor: HexColor('#3D9FB0'),
-              ),
-            ),
+          SwiperWidget(
+            productMedia: productMedia,
+            selectedImage: selectedImage,
           ),
           SizedBox(height: 21.0),
           Container(
@@ -116,23 +102,38 @@ class __MainBodyState extends State<_MainBody> {
               itemBuilder: (context, index) {
                 return Stack(
                   children: [
-                    Container(
-                      width: 70.0,
-                      height: 70.0,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16.0),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(16.0),
-                        child: CachedNetworkImage(
-                          imageUrl: productMedia[index],
-                          width: double.infinity,
-                          height: double.infinity,
-                          fit: BoxFit.cover,
+                    InkWell(
+                      child: Container(
+                        width: 70.0,
+                        height: 70.0,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16.0),
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey[300],
+                              offset: Offset(0.0, 4.0), // (x, y)
+                              blurRadius: 10.0,
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(16.0),
+                          child: CachedNetworkImage(
+                            imageUrl: productMedia[index],
+                            width: double.infinity,
+                            height: double.infinity,
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
+                      onTap: () {
+                        setState(() {
+                          selectedImage = productMedia[index];
+                        });
+                      },
                     ),
-                    index == 2
+                    productMedia[index] == selectedImage
                         ? Positioned.fill(
                             child: Container(
                               width: 70.0,
@@ -319,8 +320,8 @@ class __MainBodyState extends State<_MainBody> {
                     ? Padding(
                         padding: EdgeInsets.symmetric(horizontal: 16.0),
                         child: Text(
-                          widget.product.roductDetails != null
-                              ? widget.product.productDetails
+                          widget.product['productDetails'] != null
+                              ? widget.product['productDetails']
                               : "",
                           style: TextStyle(
                             fontSize: 11.0,
@@ -332,8 +333,8 @@ class __MainBodyState extends State<_MainBody> {
                     : Padding(
                         padding: EdgeInsets.symmetric(horizontal: 16.0),
                         child: Text(
-                          widget.product.deliveryTime != null
-                              ? widget.product.deliveryTime
+                          widget.product['deliveryTime'] != null
+                              ? widget.product['deliveryTime']
                               : "",
                           style: TextStyle(
                             fontSize: 11.0,
@@ -383,25 +384,7 @@ class __CustomBodyState extends State<_CustomBody> {
         mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(height: 20.0),
-          Swiper(
-            itemBuilder: (BuildContext context, int index) {
-              return Image.network(
-                productMedia[index],
-                fit: BoxFit.fill,
-              );
-            },
-            itemCount: productMedia.length,
-            itemWidth: Adapt.screenW() * 0.6,
-            itemHeight: Adapt.screenW() * 0.6,
-            layout: SwiperLayout.STACK,
-            pagination: SwiperPagination(
-              margin: EdgeInsets.only(top: Adapt.screenW() * 0.6 + 20),
-              builder: DotSwiperPaginationBuilder(
-                color: Colors.grey,
-                activeColor: HexColor('#3D9FB0'),
-              ),
-            ),
-          ),
+          SwiperWidget(productMedia: productMedia),
           SizedBox(height: 16.0),
           Container(
             height: 71.0,

@@ -1130,6 +1130,195 @@ class BaseGraphQLClient {
     return _service.mutate(_mutation);
   }
 
+  Future<QueryResult> updateProductMedia(String id, List<String> productIds) {
+    String _mutation = '''
+      mutation UpdateProduct {
+        updateProduct (
+          input: {
+            where: {
+              id: "$id"
+            }
+            data:{
+              media: $productIds      
+            }
+          }
+        ) 
+        {
+					product {
+              id
+              shineonImportId
+              optionalFinishMaterialOldPrice
+              showOptionalFinishMaterialOldPrice
+              thumbnail {
+                url
+              }
+              video {
+                url
+              }
+              engraveExample {
+                url
+                name
+              }
+              optionalMaterialExample {
+                url
+              }
+              orders {
+                id
+              }
+              oldPrice
+              price
+              productDetails
+              deliveryTime
+              showOldPrice
+              engraveAvailable
+              properties
+              shineonIds
+              engraveOldPrice
+              engravePrice
+              showOldEngravePrice
+              defaultFinishMaterial
+              optionalFinishMaterial
+              optionalFinishMaterialPrice
+              optionalFinishMaterialEnabled
+              media {
+                id
+                url
+              }
+              name
+              uploadsAvailable
+              sizeOptionsAvailable
+              isActive
+            }
+        }
+      }
+    ''';
+
+    //  printWrapped('Debug _mutation: $_mutation');
+    return _service.mutate(_mutation);
+  }
+
+  Future<QueryResult> updateProductEngravingName(String id, String name) {
+    String _mutation = '''
+      mutation UpdateProduct {
+        updateProduct (
+          input: {
+            where: {
+              id: "$id"
+            }
+            data:{
+              """""""": $name      
+            }
+          }
+        ) 
+        {
+					product {
+              id
+              shineonImportId
+              optionalFinishMaterialOldPrice
+              showOptionalFinishMaterialOldPrice
+              thumbnail {
+                url
+              }
+              video {
+                url
+              }
+              engraveExample {
+                url
+                name
+              }
+              optionalMaterialExample {
+                url
+              }
+              orders {
+                id
+              }
+              oldPrice
+              price
+              productDetails
+              deliveryTime
+              showOldPrice
+              engraveAvailable
+              properties
+              shineonIds
+              engraveOldPrice
+              engravePrice
+              showOldEngravePrice
+              defaultFinishMaterial
+              optionalFinishMaterial
+              optionalFinishMaterialPrice
+              optionalFinishMaterialEnabled
+              media {
+                id
+                url
+              }
+              name
+              uploadsAvailable
+              sizeOptionsAvailable
+              isActive
+            }
+        }
+      }
+    ''';
+
+    //  printWrapped('Debug _mutation: $_mutation');
+    return _service.mutate(_mutation);
+  }
+
+  Future<QueryResult> fetchProductById(String id) {
+    String _query = '''
+      query {
+        products (where: { id: "$id" }) {
+              id
+              shineonImportId
+              optionalFinishMaterialOldPrice
+              showOptionalFinishMaterialOldPrice
+              thumbnail {
+                url
+              }
+              video {
+                url
+              }
+              engraveExample {
+                url
+                name
+              }
+              optionalMaterialExample {
+                url
+              }
+              orders {
+                id
+              }
+              oldPrice
+              price
+              productDetails
+              deliveryTime
+              showOldPrice
+              engraveAvailable
+              properties
+              shineonIds
+              engraveOldPrice
+              engravePrice
+              showOldEngravePrice
+              defaultFinishMaterial
+              optionalFinishMaterial
+              optionalFinishMaterialPrice
+              optionalFinishMaterialEnabled
+              media {
+                id
+                url
+              }
+              name
+              uploadsAvailable
+              sizeOptionsAvailable
+              isActive
+            }
+        }
+      
+    ''';
+
+    return _service.query(_query);
+  }
+
   // Stream<FetchResult> tvShowCommentSubscription(int id) {
   //   String _sub = '''
   //   subscription tvComment{
