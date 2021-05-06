@@ -1086,332 +1086,381 @@ class _ProductCustomizationState extends State<_ProductCustomization> {
                             ),
                           ),
                           SizedBox(height: 45.0),
-                          Container(
-                            height: 145.0,
-                            width: double.infinity,
-                            constraints: BoxConstraints(maxWidth: 343.0),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12.0),
-                              color: Colors.white,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey[300],
-                                  offset: Offset(0.0, 2.0), // (x,y)
-                                  blurRadius: 5.0,
-                                ),
-                              ],
-                            ),
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: 75.0,
-                                  height: double.infinity,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(12.0),
+                          if (widget.selectedProduct.engraveAvailable &&
+                              engravingsCount > 0)
+                            Container(
+                              height: 145.0,
+                              width: double.infinity,
+                              constraints: BoxConstraints(maxWidth: 343.0),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12.0),
+                                color: Colors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey[300],
+                                    offset: Offset(0.0, 2.0), // (x,y)
+                                    blurRadius: 5.0,
                                   ),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(12.0),
-                                      bottomLeft: Radius.circular(12.0),
+                                ],
+                              ),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 75.0,
+                                    height: double.infinity,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(12.0),
                                     ),
-                                    child: Image.asset(
-                                      "images/Image 11.png",
-                                      fit: BoxFit.cover,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(12.0),
+                                        bottomLeft: Radius.circular(12.0),
+                                      ),
+                                      child: widget.selectedProduct
+                                                  .engraveExampleUrl !=
+                                              null
+                                          ? CachedNetworkImage(
+                                              imageUrl: selectedProduct
+                                                  .engraveExampleUrl,
+                                              width: double.infinity,
+                                              height: double.infinity,
+                                              fit: BoxFit.cover,
+                                            )
+                                          : Image.asset(
+                                              "images/image-not-found.png",
+                                              width: double.infinity,
+                                              height: double.infinity,
+                                              fit: BoxFit.cover,
+                                            ),
                                     ),
                                   ),
-                                ),
-                                Expanded(
-                                  child: Container(
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          "Engrave Personal Message",
-                                          style: TextStyle(
-                                            fontSize: 16.0,
-                                            fontWeight: FontWeight.w600,
-                                            color: HexColor("#53586F"),
-                                          ),
-                                        ),
-                                        SizedBox(height: 8.0),
-                                        Text(
-                                          "50% Off - One - Time Offer !",
-                                          style: TextStyle(
-                                            fontSize: 14.0,
-                                            color: HexColor("#EB5757"),
-                                          ),
-                                        ),
-                                        SizedBox(height: 10.0),
-                                        RichText(
-                                          textAlign: TextAlign.center,
-                                          text: TextSpan(
-                                            children: [
-                                              TextSpan(
-                                                text:
-                                                    "\$${widget.selectedProduct.engraveOldPrice} ",
-                                                style: TextStyle(
-                                                  fontSize: 18.0,
-                                                  color: HexColor("#53586F")
-                                                      .withOpacity(.5),
-                                                  decoration: TextDecoration
-                                                      .lineThrough,
-                                                ),
-                                              ),
-                                              TextSpan(
-                                                text:
-                                                    "\$${widget.selectedProduct.engravePrice}",
-                                                style: TextStyle(
-                                                  fontSize: 22.0,
-                                                  fontWeight: FontWeight.w800,
-                                                  color: HexColor("#53586F"),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        SizedBox(height: 9.0),
-                                        Container(
-                                          width: double.infinity,
-                                          height: 32.0,
-                                          constraints: BoxConstraints(
-                                            maxWidth: 240.0,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: HexColor("#FAFCFF"),
-                                            borderRadius:
-                                                BorderRadius.circular(22.0),
-                                          ),
-                                          child: TextField(
-                                            onChanged: (text) {},
+                                  Expanded(
+                                    child: Container(
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            "Engrave Personal Message",
                                             style: TextStyle(
-                                              color: Colors.black,
+                                              fontSize: 16.0,
+                                              fontWeight: FontWeight.w600,
+                                              color: HexColor("#53586F"),
+                                            ),
+                                          ),
+                                          SizedBox(height: 8.0),
+                                          Text(
+                                            "50% Off - One - Time Offer !",
+                                            style: TextStyle(
                                               fontSize: 14.0,
-                                            ),
-                                            // onChanged: (content) {
-                                            //     var engravingListActual =
-                                            //         List<String>.empty(
-                                            //             growable: true);
-                                            //     for (var i = 0;
-                                            //         i <
-                                            //             engravingControllers
-                                            //                 .length;
-                                            //         i++) {
-                                            //       engravingListActual.add(
-                                            //           engravingControllers[i]
-                                            //               .text);
-                                            //     }
-                                            //     dispatch(ProductPageActionCreator
-                                            //         .onSetEngravingInputs(
-                                            //             engravingListActual));
-                                            //   },
-                                            // controller:
-                                            //     engravingControllers[index],
-                                            decoration: InputDecoration(
-                                              isDense: true,
-                                              hintText: 'Enter your words here',
-                                              contentPadding: EdgeInsets.only(
-                                                top: 7.0,
-                                                bottom: 7.0,
-                                                left: 12.0,
-                                              ),
-                                              hintStyle: TextStyle(
-                                                color: HexColor("#C4C6D2"),
-                                                fontSize: 14.0,
-                                              ),
-                                              enabledBorder:
-                                                  UnderlineInputBorder(
-                                                borderSide: BorderSide(
-                                                    color: Colors.white),
-                                              ),
-                                              focusedBorder:
-                                                  UnderlineInputBorder(
-                                                borderSide: BorderSide(
-                                                    color: Colors.white),
-                                              ),
-                                              border: UnderlineInputBorder(
-                                                borderSide: BorderSide(
-                                                    color: Colors.white),
-                                              ),
+                                              color: HexColor("#EB5757"),
                                             ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: 20.0),
-                          Container(
-                            height: 145.0,
-                            width: double.infinity,
-                            constraints: BoxConstraints(maxWidth: 343.0),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(12.0),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey[300],
-                                  offset: Offset(0.0, 2.0), // (x,y)
-                                  blurRadius: 5.0,
-                                ),
-                              ],
-                            ),
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: 75.0,
-                                  height: double.infinity,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(12.0),
-                                  ),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(12.0),
-                                      bottomLeft: Radius.circular(12.0),
-                                    ),
-                                    child: Image.asset(
-                                      "images/Image 9.png",
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Container(
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          "Engrave Personal Message",
-                                          style: TextStyle(
-                                            fontSize: 16.0,
-                                            fontWeight: FontWeight.w600,
-                                            color: HexColor("#53586F"),
-                                          ),
-                                        ),
-                                        SizedBox(height: 8.0),
-                                        Text(
-                                          "50% Off - One - Time Offer !",
-                                          style: TextStyle(
-                                            fontSize: 14.0,
-                                            color: HexColor("#EB5757"),
-                                          ),
-                                        ),
-                                        SizedBox(height: 10.0),
-                                        RichText(
-                                          textAlign: TextAlign.center,
-                                          text: TextSpan(
-                                            children: [
-                                              TextSpan(
-                                                text:
-                                                    "\$${widget.selectedProduct.optionalFinishMaterialOldPrice} ",
-                                                style: TextStyle(
-                                                  fontSize: 18.0,
-                                                  color: HexColor("#53586F")
-                                                      .withOpacity(.5),
-                                                  decoration: TextDecoration
-                                                      .lineThrough,
-                                                ),
-                                              ),
-                                              TextSpan(
-                                                text:
-                                                    "\$${widget.selectedProduct.optionalFinishMaterialPrice}",
-                                                style: TextStyle(
-                                                  fontSize: 22.0,
-                                                  fontWeight: FontWeight.w800,
-                                                  color: HexColor("#53586F"),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        SizedBox(height: 9.0),
-                                        Container(
-                                          width: double.infinity,
-                                          height: 32.0,
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 14.0),
-                                          constraints: BoxConstraints(
-                                            maxWidth: 240.0,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: HexColor("#FAFCFF"),
-                                            borderRadius:
-                                                BorderRadius.circular(22.0),
-                                          ),
-                                          child: InkWell(
-                                            child: Row(
+                                          SizedBox(height: 10.0),
+                                          RichText(
+                                            textAlign: TextAlign.center,
+                                            text: TextSpan(
                                               children: [
-                                                Container(
-                                                  width: 32,
-                                                  height: double.infinity,
-                                                  child:
-                                                      !optionalMaterialSelected
-                                                          ? SvgPicture.asset(
-                                                              "images/Vector5.svg",
-                                                            )
-                                                          : SvgPicture.asset(
-                                                              "images/Group 170.svg",
-                                                            ),
+                                                TextSpan(
+                                                  text:
+                                                      "\$${widget.selectedProduct.engraveOldPrice} ",
+                                                  style: TextStyle(
+                                                    fontSize: 18.0,
+                                                    color: HexColor("#53586F")
+                                                        .withOpacity(.5),
+                                                    decoration: TextDecoration
+                                                        .lineThrough,
+                                                  ),
                                                 ),
-                                                Expanded(
-                                                  child: Center(
-                                                    child: Text(
-                                                      "Add 18K Gold Finish ",
-                                                      style: TextStyle(
-                                                        fontSize: 14.0,
-                                                        color:
-                                                            HexColor("#53586F"),
-                                                      ),
-                                                    ),
+                                                TextSpan(
+                                                  text:
+                                                      "\$${widget.selectedProduct.engravePrice}",
+                                                  style: TextStyle(
+                                                    fontSize: 22.0,
+                                                    fontWeight: FontWeight.w800,
+                                                    color: HexColor("#53586F"),
                                                   ),
                                                 ),
                                               ],
                                             ),
-                                            onTap: () {
-                                              print(
-                                                  'optionalMaterialSelected: $optionalMaterialSelected !optionalMaterialSelected: ${!optionalMaterialSelected}');
-                                              dispatch(ProductPageActionCreator
-                                                  .onSetOptionMaterialSelected(
-                                                      !optionalMaterialSelected));
-
-                                              var engravingListActual =
-                                                  List<String>.empty(
-                                                      growable: true);
-                                              for (var i = 0;
-                                                  i <
-                                                      engravingControllers
-                                                          .length;
-                                                  i++) {
-                                                engravingListActual.add(
-                                                    engravingControllers[i]
-                                                        .text);
-                                              }
-                                              setState(() {
-                                                optionalMaterialSelected =
-                                                    !optionalMaterialSelected;
-                                                engraveInputs =
-                                                    engravingListActual;
-                                              });
-                                            },
                                           ),
-                                        ),
-                                      ],
+                                          SizedBox(height: 9.0),
+                                          Container(
+                                            height: 55.0,
+                                            child: ListView.separated(
+                                              itemCount: engravingsCount,
+                                              shrinkWrap: true,
+                                              padding: EdgeInsets.zero,
+                                              separatorBuilder: (_, __) {
+                                                return SizedBox(height: 5.0);
+                                              },
+                                              itemBuilder: (context, index) {
+                                                return Container(
+                                                  width: double.infinity,
+                                                  constraints: BoxConstraints(
+                                                    maxWidth: 240.0,
+                                                  ),
+                                                  decoration: BoxDecoration(
+                                                    color: HexColor("#FAFCFF"),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            22.0),
+                                                  ),
+                                                  child: TextField(
+                                                    style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 14.0,
+                                                    ),
+                                                    onChanged: (content) {
+                                                      var engravingListActual =
+                                                          List<String>.empty(
+                                                              growable: true);
+                                                      for (var i = 0;
+                                                          i <
+                                                              engravingControllers
+                                                                  .length;
+                                                          i++) {
+                                                        engravingListActual.add(
+                                                            engravingControllers[
+                                                                    i]
+                                                                .text);
+                                                      }
+                                                      dispatch(ProductPageActionCreator
+                                                          .onSetEngravingInputs(
+                                                              engravingListActual));
+                                                    },
+                                                    controller:
+                                                        engravingControllers[
+                                                            index],
+                                                    decoration: InputDecoration(
+                                                      isDense: true,
+                                                      hintText:
+                                                          'Enter your words here',
+                                                      contentPadding:
+                                                          EdgeInsets.only(
+                                                        top: 7.0,
+                                                        bottom: 7.0,
+                                                        left: 12.0,
+                                                      ),
+                                                      hintStyle: TextStyle(
+                                                        color:
+                                                            HexColor("#C4C6D2"),
+                                                        fontSize: 14.0,
+                                                      ),
+                                                      enabledBorder:
+                                                          UnderlineInputBorder(
+                                                        borderSide: BorderSide(
+                                                            color:
+                                                                Colors.white),
+                                                      ),
+                                                      focusedBorder:
+                                                          UnderlineInputBorder(
+                                                        borderSide: BorderSide(
+                                                            color:
+                                                                Colors.white),
+                                                      ),
+                                                      border:
+                                                          UnderlineInputBorder(
+                                                        borderSide: BorderSide(
+                                                            color:
+                                                                Colors.white),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
+                          SizedBox(height: 20.0),
+                          if (widget
+                              .selectedProduct.optionalFinishMaterialEnabled)
+                            Container(
+                              height: 145.0,
+                              width: double.infinity,
+                              constraints: BoxConstraints(maxWidth: 343.0),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12.0),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey[300],
+                                    offset: Offset(0.0, 2.0), // (x,y)
+                                    blurRadius: 5.0,
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 75.0,
+                                    height: double.infinity,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(12.0),
+                                    ),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(12.0),
+                                        bottomLeft: Radius.circular(12.0),
+                                      ),
+                                      child: widget.selectedProduct
+                                                  .optionalMaterialExampleUrl !=
+                                              null
+                                          ? CachedNetworkImage(
+                                              imageUrl: widget.selectedProduct
+                                                  .optionalMaterialExampleUrl,
+                                              width: double.infinity,
+                                              height: double.infinity,
+                                              fit: BoxFit.cover,
+                                            )
+                                          : Image.asset(
+                                              "images/image-not-found.png",
+                                              width: double.infinity,
+                                              height: double.infinity,
+                                              fit: BoxFit.cover,
+                                            ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Container(
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            "2.18K Gold Finish",
+                                            style: TextStyle(
+                                              fontSize: 16.0,
+                                              fontWeight: FontWeight.w600,
+                                              color: HexColor("#53586F"),
+                                            ),
+                                          ),
+                                          SizedBox(height: 8.0),
+                                          Text(
+                                            "50% Off - One - Time Offer !",
+                                            style: TextStyle(
+                                              fontSize: 14.0,
+                                              color: HexColor("#EB5757"),
+                                            ),
+                                          ),
+                                          SizedBox(height: 10.0),
+                                          RichText(
+                                            textAlign: TextAlign.center,
+                                            text: TextSpan(
+                                              children: [
+                                                TextSpan(
+                                                  text:
+                                                      "\$${widget.selectedProduct.optionalFinishMaterialOldPrice} ",
+                                                  style: TextStyle(
+                                                    fontSize: 18.0,
+                                                    color: HexColor("#53586F")
+                                                        .withOpacity(.5),
+                                                    decoration: TextDecoration
+                                                        .lineThrough,
+                                                  ),
+                                                ),
+                                                TextSpan(
+                                                  text:
+                                                      "\$${widget.selectedProduct.optionalFinishMaterialPrice}",
+                                                  style: TextStyle(
+                                                    fontSize: 22.0,
+                                                    fontWeight: FontWeight.w800,
+                                                    color: HexColor("#53586F"),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          SizedBox(height: 9.0),
+                                          Container(
+                                            width: double.infinity,
+                                            height: 32.0,
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 14.0),
+                                            constraints: BoxConstraints(
+                                              maxWidth: 240.0,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: HexColor("#FAFCFF"),
+                                              borderRadius:
+                                                  BorderRadius.circular(22.0),
+                                            ),
+                                            child: InkWell(
+                                              child: Row(
+                                                children: [
+                                                  Container(
+                                                    width: 32,
+                                                    height: double.infinity,
+                                                    child:
+                                                        !optionalMaterialSelected
+                                                            ? SvgPicture.asset(
+                                                                "images/Vector5.svg",
+                                                              )
+                                                            : SvgPicture.asset(
+                                                                "images/Group 170.svg",
+                                                              ),
+                                                  ),
+                                                  Expanded(
+                                                    child: Center(
+                                                      child: Text(
+                                                        "Add 18K Gold Finish ",
+                                                        style: TextStyle(
+                                                          fontSize: 14.0,
+                                                          color: HexColor(
+                                                              "#53586F"),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              onTap: () {
+                                                print(
+                                                    'optionalMaterialSelected: $optionalMaterialSelected !optionalMaterialSelected: ${!optionalMaterialSelected}');
+                                                dispatch(ProductPageActionCreator
+                                                    .onSetOptionMaterialSelected(
+                                                        !optionalMaterialSelected));
+
+                                                var engravingListActual =
+                                                    List<String>.empty(
+                                                        growable: true);
+                                                for (var i = 0;
+                                                    i <
+                                                        engravingControllers
+                                                            .length;
+                                                    i++) {
+                                                  engravingListActual.add(
+                                                      engravingControllers[i]
+                                                          .text);
+                                                }
+                                                setState(() {
+                                                  optionalMaterialSelected =
+                                                      !optionalMaterialSelected;
+                                                  engraveInputs =
+                                                      engravingListActual;
+                                                });
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           SizedBox(height: 20.0),
                         ],
                       ),

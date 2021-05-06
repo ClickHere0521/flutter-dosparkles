@@ -346,6 +346,13 @@ class __ChangeOrderState extends State<_ChangeOrder> {
   int currentTab = 0;
   List<Asset> pickedImages = <Asset>[];
   String engravingName = '';
+  bool isLoading = false;
+
+  void _setLoading(bool value) {
+    setState(() {
+      isLoading = value;
+    });
+  }
 
   Future<void> loadAssets() async {
     List<Asset> resultList = <Asset>[];
@@ -579,30 +586,44 @@ class __ChangeOrderState extends State<_ChangeOrder> {
                 child: ElevatedButton(
                   style: ButtonStyle(
                     elevation: MaterialStateProperty.all(0),
-                    backgroundColor:
-                        MaterialStateProperty.all(HexColor("#6092DC")),
+                    backgroundColor: MaterialStateProperty.resolveWith(
+                      (states) {
+                        if (states.contains(MaterialState.disabled))
+                          return HexColor("#C4C6D2");
+                        return HexColor("#6092DC");
+                      },
+                    ),
                     shape: MaterialStateProperty.all(
                       RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(31.0),
                       ),
                     ),
                   ),
-                  child: Text(
-                    'Save',
-                    style: TextStyle(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.normal,
-                      color: Colors.white,
-                    ),
-                  ),
-                  onPressed: () {
-                    _onSaveClicked(
-                      widget.product['id'],
-                      pickedImages,
-                      engravingName,
-                      widget.product['properties']['buyer_uploads'],
-                    );
-                  },
+                  child: isLoading
+                      ? Container(
+                          width: 25.0,
+                          height: 25.0,
+                          child: CircularProgressIndicator(),
+                        )
+                      : Text(
+                          'Save',
+                          style: TextStyle(
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.normal,
+                            color: Colors.white,
+                          ),
+                        ),
+                  onPressed: isLoading
+                      ? null
+                      : () {
+                          _onSaveClicked(
+                            widget.product['id'],
+                            pickedImages,
+                            engravingName,
+                            widget.product['properties']['buyer_uploads'],
+                            _setLoading,
+                          );
+                        },
                 ),
               ),
             ),
@@ -857,11 +878,40 @@ Widget buildGridView(List<Asset> images, int buyUploads, Function loadAssets) {
           Container(
             width: 70.0,
             height: double.infinity,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16.0),
+            ),
             child: Card(
               clipBehavior: Clip.antiAlias,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16.0),
+              ),
               child: Stack(
+                clipBehavior: Clip.none,
                 children: [
                   AssetThumb(asset: asset, width: 300, height: 300),
+                  Positioned.fill(
+                    top: -7.0,
+                    child: Align(
+                      alignment: Alignment.topRight,
+                      child: Container(
+                        width: 18.0,
+                        height: 18.0,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                        ),
+                        child: Center(
+                          child: SvgPicture.asset(
+                            "images/checed_icon.svg",
+                            width: 11.0,
+                            height: 8.0,
+                            color: HexColor("#6092DC"),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -870,8 +920,14 @@ Widget buildGridView(List<Asset> images, int buyUploads, Function loadAssets) {
           Container(
             width: 70.0,
             height: double.infinity,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16.0),
+            ),
             child: Card(
               color: Colors.grey[300],
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16.0),
+              ),
               child: Icon(Icons.add),
             ),
           ),
@@ -888,8 +944,10 @@ void _onSaveClicked(
   pickedImages,
   engravingName,
   buyerUploads,
+  Function _setLoading,
 ) async {
   if (pickedImages != null && pickedImages.length > 0) {
+    _setLoading(true);
     try {
       List<String> listOfIds = await _sendRequest(pickedImages);
 
@@ -907,18 +965,23 @@ void _onSaveClicked(
       QueryResult resultUpdate = await BaseGraphQLClient.instance
           .updateProductMedia(productId, [...listOfMediaIds, ...listOfIds]);
       if (resultUpdate.hasException) print(resultUpdate.exception);
+
+      _setLoading(false);
     } catch (e) {
       print(e);
     }
   }
 
   if (buyerUploads != null && buyerUploads != '') {
+    _setLoading(true);
     try {
       // QueryResult result = await BaseGraphQLClient.instance
       //     .updateProductEngravingName(productId, engravingName);
       // if (result.hasException) print(result.exception);
 
       // print("111___${result.data}");
+
+      _setLoading(false);
     } catch (e) {
       print(e);
     }
