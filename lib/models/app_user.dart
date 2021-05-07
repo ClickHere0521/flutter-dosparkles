@@ -20,6 +20,8 @@ class AppUser {
 
   List orders;
 
+  List invitesSent;
+
   String role;
 
   AppUser.fromParams({
@@ -33,6 +35,7 @@ class AppUser {
     this.store,
     this.role,
     this.orders,
+    this.invitesSent,
   });
 
   factory AppUser(jsonStr) => jsonStr == null
@@ -50,6 +53,7 @@ class AppUser {
     storeFavorite = jsonRes['storeFavorite'];
     store = jsonRes['store'];
     orders = jsonRes['orders'];
+    invitesSent = jsonRes['invitesSent'];
 
     avatarUrl = jsonRes['avatar'] != null
         ? AppConfig.instance.baseApiHost + jsonRes['avatar']['url']

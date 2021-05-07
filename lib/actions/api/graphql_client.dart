@@ -66,6 +66,7 @@ class BaseGraphQLClient {
             email
             username
             shippingAddress
+            invitesSent
             phoneNumber
             storeFavorite {
               id
@@ -151,6 +152,39 @@ class BaseGraphQLClient {
           username
           phoneNumber
           shippingAddress
+          invitesSent
+          storeFavorite {
+            id
+            name
+          }
+          store {
+            id
+            name
+          }
+          role {
+            id
+            name
+          }
+          name
+          country
+        }
+      }
+    ''';
+
+    // printWrapped('Debug _mutation: $_mutation');
+    return _service.query(_query);
+  }
+
+  Future<QueryResult> fetchUserById(String id) {
+    String _query = '''
+      query {
+        users ( where: { id: "$id" } ) {
+          id
+          email
+          username
+          phoneNumber
+          shippingAddress
+          invitesSent
           storeFavorite {
             id
             name
@@ -192,6 +226,43 @@ class BaseGraphQLClient {
             email
             username
             phoneNumber
+            invitesSent
+            role {
+              id
+              name
+            }
+            storeFavorite {
+              id
+            }
+            pushToken
+          }
+        }
+      }
+    ''';
+
+    return _service.mutate(_mutation);
+  }
+
+  Future<QueryResult> setUserInvitesSent(String id, List data) {
+    String _mutation = '''
+      mutation {
+        updateUser (
+          input: {
+            where: {
+              id: "$id"
+            }
+            data: {
+              invitesSent: $data
+            }
+          }
+        )
+        {
+          user {
+            id
+            email
+            username
+            phoneNumber
+            invitesSent
             role {
               id
               name

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:ui';
 
+import 'package:com.floridainc.dosparkles/actions/api/graphql_client.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/widgets/bottom_nav_bar.dart';
 import 'package:com.floridainc.dosparkles/widgets/sparkles_drawer.dart';
@@ -13,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -980,6 +982,13 @@ class __ContactsPageState extends State<_ContactsPage> {
   List<Map<String, dynamic>> filteredList;
   List<Map<String, dynamic>> checkedList;
   String searchValue = '';
+  bool _isLoading = false;
+
+  void _setLoading(bool value) {
+    setState(() {
+      _isLoading = value;
+    });
+  }
 
   @override
   void initState() {
@@ -987,17 +996,29 @@ class __ContactsPageState extends State<_ContactsPage> {
 
     _askPermissions().then((value) {
       if (value) {
-        ContactsService.getContacts().then((Iterable<Contact> contacts) {
+        ContactsService.getContacts().then((Iterable<Contact> contacts) async {
+          String meId = GlobalStore.store.getState().user.id;
+          QueryResult result =
+              await BaseGraphQLClient.instance.fetchUserById(meId);
+          if (result.hasException) print(result.exception);
+
+          List invitesSent = result.data['users'][0]['invitesSent'];
+
           for (var contact in contacts) {
             if (contact.phones.isEmpty && contact.displayName == null) continue;
+            String phoneValue = contact.phones.isNotEmpty
+                ? contact.phones.elementAt(0).value
+                : '';
+
+            List invitesPresent = invitesSent != null && invitesSent.length > 0
+                ? invitesSent.where((phone) => phone == phoneValue).toList()
+                : [];
 
             contactsList.add({
-              "phone": contact.phones.isNotEmpty
-                  ? contact.phones.elementAt(0).value
-                  : '',
+              "phone": phoneValue,
               "name": contact.displayName != null ? contact.displayName : '',
-              "checked": false,
-              "invited": false,
+              "checked": invitesPresent.length > 0 ? true : false,
+              "invited": invitesPresent.length > 0 ? true : false,
             });
             setState(() {});
           }
@@ -1283,38 +1304,42 @@ class __ContactsPageState extends State<_ContactsPage> {
                 child: ElevatedButton(
                   style: ButtonStyle(
                     elevation: MaterialStateProperty.all(0),
-                    backgroundColor:
-                        MaterialStateProperty.all(HexColor("#6092DC")),
+                    backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                      (Set<MaterialState> states) {
+                        if (states.contains(MaterialState.disabled))
+                          return HexColor("#C4C6D2");
+                        return HexColor("#6092DC");
+                      },
+                    ),
                     shape: MaterialStateProperty.all(
                       RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(31.0),
                       ),
                     ),
                   ),
-                  child: Text(
-                    _checkIsInvited(checkedList) == 0
-                        ? 'Invite Friends'
-                        : 'Invite Friends (${_checkIsInvited(checkedList)})',
-                    style: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.normal,
-                      color: Colors.white,
-                    ),
-                  ),
-                  onPressed: () {
-                    if (checkedList.isNotEmpty) {
-                      for (var i = 0; i < filteredList.length; i++) {
-                        var contact = filteredList[i];
-
-                        if (contact['checked'] == true &&
-                            contact['invited'] == false) {
-                          setState(() {
-                            contact['invited'] = true;
-                          });
-                        }
-                      }
-                    }
-                  },
+                  child: _isLoading
+                      ? Container(
+                          width: 25.0,
+                          height: 25.0,
+                          child: CircularProgressIndicator(),
+                        )
+                      : Text(
+                          _checkIsInvited(checkedList) == 0
+                              ? 'Invite Friends'
+                              : 'Invite Friends (${_checkIsInvited(checkedList)})',
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.normal,
+                            color: Colors.white,
+                          ),
+                        ),
+                  onPressed: _isLoading
+                      ? null
+                      : () {
+                          if (checkedList.isNotEmpty) {
+                            _onSubmit(checkedList, _setLoading);
+                          }
+                        },
                 ),
               ),
             ),
@@ -1322,5 +1347,28 @@ class __ContactsPageState extends State<_ContactsPage> {
         ),
       ],
     );
+  }
+}
+
+void _onSubmit(List filteredList, Function _setLoading) async {
+  String meId = GlobalStore.store.getState().user.id;
+
+  List<String> phones = [];
+  for (int i = 0; i < filteredList.length; i++) {
+    var contact = filteredList[i];
+    phones.add("\"${contact['phone']}\"");
+  }
+
+  jsonEncode(phones);
+
+  try {
+    _setLoading(true);
+    QueryResult result =
+        await BaseGraphQLClient.instance.setUserInvitesSent(meId, phones);
+    if (result.hasException) print(result.exception);
+
+    _setLoading(false);
+  } catch (e) {
+    print(e);
   }
 }
