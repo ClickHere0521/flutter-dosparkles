@@ -1197,71 +1197,82 @@ class BaseGraphQLClient {
     return _service.mutate(_mutation);
   }
 
-  Future<QueryResult> updateProductEngravingName(String id, String name) {
+  Future<QueryResult> updateOrderEngravingName(String id, List data) {
     String _mutation = '''
-      mutation UpdateProduct {
-        updateProduct (
-          input: {
-            where: {
-              id: "$id"
-            }
-            data:{
-              """""""": $name      
-            }
-          }
-        ) 
-        {
-					product {
-              id
-              shineonImportId
-              optionalFinishMaterialOldPrice
-              showOptionalFinishMaterialOldPrice
-              thumbnail {
-                url
-              }
-              video {
-                url
-              }
-              engraveExample {
-                url
-                name
-              }
-              optionalMaterialExample {
-                url
-              }
-              orders {
-                id
-              }
-              oldPrice
-              price
-              productDetails
-              deliveryTime
-              showOldPrice
-              engraveAvailable
-              properties
-              shineonIds
-              engraveOldPrice
-              engravePrice
-              showOldEngravePrice
-              defaultFinishMaterial
-              optionalFinishMaterial
-              optionalFinishMaterialPrice
-              optionalFinishMaterialEnabled
-              media {
-                id
-                url
-              }
-              name
-              uploadsAvailable
-              sizeOptionsAvailable
-              isActive
-            }
-        }
-      }
+      mutation UpdateOrder(\$input: updateOrderInput) {
+         updateOrder (input: \$input)
+         {
+          order {
+           id
+           orderDetails
+           status
+           refunded
+           totalPrice
+           products {
+             id
+             shineonImportId
+             optionalFinishMaterialOldPrice
+             showOptionalFinishMaterialOldPrice
+             thumbnail {
+               url
+             }
+             video {
+               url
+             }
+             engraveExample {
+               url
+             }
+             optionalMaterialExample {
+               url
+             }
+             orders {
+               id
+             }
+             oldPrice
+             price
+             showOldPrice
+             productDetails
+               deliveryTime
+             engraveAvailable
+             properties
+             shineonIds
+             engraveOldPrice
+             engravePrice
+             showOldEngravePrice
+             defaultFinishMaterial
+             optionalFinishMaterial
+             optionalFinishMaterialPrice
+             optionalFinishMaterialEnabled
+             media {
+               url
+             }
+             name
+             uploadsAvailable
+             sizeOptionsAvailable
+             isActive
+           }
+           media {
+             id
+             url
+           }
+           shipmentDetails
+           shineonId
+           rejectedReason
+         }
+       }
+}
     ''';
 
-    //  printWrapped('Debug _mutation: $_mutation');
-    return _service.mutate(_mutation);
+    //   printWrapped('Debug _mutation: $_mutation');
+    return _service.mutate(
+      _mutation,
+      variables: {
+        "input": {
+          "where": {"id": "$id"},
+          "data": {"orderDetails": data}
+        }
+      },
+    );
   }
 
   Future<QueryResult> fetchProductById(String id) {

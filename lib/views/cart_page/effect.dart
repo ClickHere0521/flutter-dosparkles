@@ -161,7 +161,7 @@ void _onProceedToCheckout(Action action, Context<CartPageState> ctx) async {
 
   productsIdsJson = "[${cart.map((item) => '"${item.product.id}"').join(',')}]";
 
-  // printWrapped('orderDetailsJson: $orderDetailsJson');
+  printWrapped('orderDetailsJson: $orderDetailsJson');
   // printWrapped('productsIdsJson: $productsIdsJson');
 
   GlobalStore.store.dispatch(GlobalActionCreator.setShoppingCart(

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:ui';
 
+import 'package:com.floridainc.dosparkles/utils/general.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -247,16 +248,21 @@ class _OrderWidgetState extends State<OrderWidget> {
                                   onTap: () {
                                     Navigator.push(
                                       context,
-                                      MaterialPageRoute(builder: (context) {
-                                        if (order['status'] == 'cancelled') {
-                                          return _ChangeOrder(
+                                      MaterialPageRoute(
+                                        builder: (context) {
+                                          if (order['status'] == 'cancelled') {
+                                            return _ChangeOrder(
+                                              product: product,
+                                              orderDetail: order['orderDetails']
+                                                  [index],
+                                              order: order,
+                                            );
+                                          }
+                                          return OrderProductDetailsWidget(
                                             product: product,
                                           );
-                                        }
-                                        return OrderProductDetailsWidget(
-                                          product: product,
-                                        );
-                                      }),
+                                        },
+                                      ),
                                     );
                                   },
                                 );
@@ -335,8 +341,15 @@ class _OrderWidgetState extends State<OrderWidget> {
 
 class _ChangeOrder extends StatefulWidget {
   final product;
+  final orderDetail;
+  final order;
 
-  const _ChangeOrder({Key key, this.product}) : super(key: key);
+  const _ChangeOrder({
+    Key key,
+    this.product,
+    this.orderDetail,
+    this.order,
+  }) : super(key: key);
 
   @override
   __ChangeOrderState createState() => __ChangeOrderState();
@@ -622,6 +635,8 @@ class __ChangeOrderState extends State<_ChangeOrder> {
                             engravingName,
                             widget.product['properties']['buyer_uploads'],
                             _setLoading,
+                            widget.order,
+                            widget.orderDetail,
                           );
                         },
                 ),
@@ -942,9 +957,11 @@ Widget buildGridView(List<Asset> images, int buyUploads, Function loadAssets) {
 void _onSaveClicked(
   productId,
   pickedImages,
-  engravingName,
+  String engravingName,
   buyerUploads,
   Function _setLoading,
+  order,
+  Map orderDetail,
 ) async {
   if (pickedImages != null && pickedImages.length > 0) {
     _setLoading(true);
@@ -972,14 +989,23 @@ void _onSaveClicked(
     }
   }
 
-  if (buyerUploads != null && buyerUploads != '') {
+  if (engravingName != null && engravingName != '') {
     _setLoading(true);
     try {
-      // QueryResult result = await BaseGraphQLClient.instance
-      //     .updateProductEngravingName(productId, engravingName);
-      // if (result.hasException) print(result.exception);
+      // List orderDetails = [];
 
-      // print("111___${result.data}");
+      // for (int i = 0; i < order['orderDetails'].length; i++) {
+      //   orderDetails.add(order['orderDetails'][i]);
+      // }
+      orderDetail['properties']['Custom_Engraving'] = engravingName;
+
+      List mergedList = [orderDetail];
+
+      jsonEncode(mergedList);
+
+      QueryResult result = await BaseGraphQLClient.instance
+          .updateOrderEngravingName(order['id'], mergedList);
+      if (result.hasException) print(result.exception);
 
       _setLoading(false);
     } catch (e) {
