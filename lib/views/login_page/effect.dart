@@ -1,9 +1,14 @@
+import 'dart:async';
+
 import 'package:com.floridainc.dosparkles/actions/api/graphql_client.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/action.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
+import 'package:com.floridainc.dosparkles/models/app_user.dart';
+import 'package:com.floridainc.dosparkles/models/model_factory.dart';
 import 'package:com.floridainc.dosparkles/routes/routes.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/widgets.dart' hide Action;
+import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 // import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -96,6 +101,8 @@ void _goToMain(Context<LoginPageState> ctx) async {
 
   var globalState = GlobalStore.store.getState();
 
+  await checkUserReferralLink(globalState.user);
+
   for (var i = 0; i < globalState.storesList.length; i++) {
     var store = globalState.storesList[i];
     if (globalState.user.storeFavorite != null &&
@@ -111,6 +118,7 @@ void _goToMain(Context<LoginPageState> ctx) async {
   Navigator.of(ctx.context).pushReplacementNamed('storeselectionpage');
 
   // Navigator.of(ctx.context).pushReplacement(PageRouteBuilder(
+
   //     pageBuilder: (_, __, ___) {
   //       return Routes.routes.buildPage('mainpage', {
   //         'pages': List<Widget>.unmodifiable([
@@ -121,6 +129,51 @@ void _goToMain(Context<LoginPageState> ctx) async {
   //       });
   //     },
   //     settings: RouteSettings(name: 'mainpage')));
+}
+
+Future checkUserReferralLink(AppUser globalUser) async {
+  if (globalUser.referralLink == null || globalUser.referralLink == '') {
+    BranchUniversalObject buo = BranchUniversalObject(
+      canonicalIdentifier: 'flutter/branch',
+      //canonicalUrl: '',
+      title: 'Example Branch Flutter Link',
+      imageUrl: 'https://miro.medium.com/max/1000/1*ilC2Aqp5sZd1wi0CopD1Hw.png',
+      contentDescription:
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+      contentMetadata: BranchContentMetaData()
+        ..addCustomMetadata('custom_string', 'abc')
+        ..addCustomMetadata('custom_number', 12345)
+        ..addCustomMetadata('custom_bool', true)
+        ..addCustomMetadata('custom_list_number', [1, 2, 3, 4, 5])
+        ..addCustomMetadata('custom_list_string', ['a', 'b', 'c']),
+      keywords: ['Plugin', 'Branch', 'Flutter'],
+      publiclyIndex: true,
+      locallyIndex: true,
+      expirationDateInMilliSec:
+          DateTime.now().add(Duration(days: 365)).millisecondsSinceEpoch,
+    );
+    FlutterBranchSdk.registerView(buo: buo);
+
+    BranchLinkProperties lp = BranchLinkProperties(
+        channel: 'google',
+        feature: 'sharing',
+        //alias: 'flutterplugin' //define link url,
+        stage: 'new share',
+        campaign: 'xxxxx',
+        tags: ['one', 'two', 'three']);
+    lp.addControlParam('url', 'http://www.google.com');
+    lp.addControlParam('url2', 'http://flutter.dev');
+
+    BranchResponse response =
+        await FlutterBranchSdk.getShortUrl(buo: buo, linkProperties: lp);
+    if (response.success) {
+      print("referral link : ${response.result}");
+      globalUser.referralLink = response.result;
+      GlobalStore.store.dispatch(GlobalActionCreator.setUser(globalUser));
+    } else {
+      print('Error : ${response.errorCode} - ${response.errorMessage}');
+    }
+  }
 }
 
 Future<Map<String, dynamic>> _emailSignIn(

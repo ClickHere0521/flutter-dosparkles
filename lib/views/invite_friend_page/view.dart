@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:com.floridainc.dosparkles/actions/api/graphql_client.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
+import 'package:com.floridainc.dosparkles/models/models.dart';
 import 'package:com.floridainc.dosparkles/widgets/bottom_nav_bar.dart';
 import 'package:com.floridainc.dosparkles/widgets/sparkles_drawer.dart';
 import 'package:com.floridainc.dosparkles/widgets/terms_and_conditions.dart';
@@ -262,7 +263,7 @@ class _MainBody extends StatefulWidget {
 }
 
 class __MainBodyState extends State<_MainBody> {
-  String referralLink = "https://2deg.rs/DOVID";
+  final AppUser globalUser = GlobalStore.store.getState().user;
 
   @override
   Widget build(BuildContext context) {
@@ -399,7 +400,7 @@ class __MainBodyState extends State<_MainBody> {
                         borderRadius: BorderRadius.circular(22.0),
                       ),
                       child: Text(
-                        referralLink,
+                        globalUser.referralLink,
                         style: TextStyle(
                           fontSize: 14.0,
                           fontWeight: FontWeight.w500,
@@ -445,7 +446,7 @@ class __MainBodyState extends State<_MainBody> {
                             ),
                           ),
                           onPressed: () async {
-                            await Share.share(referralLink);
+                            await Share.share(globalUser.referralLink);
                           },
                         ),
                       ),

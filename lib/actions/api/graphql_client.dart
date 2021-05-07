@@ -68,6 +68,7 @@ class BaseGraphQLClient {
             shippingAddress
             invitesSent
             phoneNumber
+            referralLink
             storeFavorite {
               id
               name
@@ -153,6 +154,7 @@ class BaseGraphQLClient {
           phoneNumber
           shippingAddress
           invitesSent
+          referralLink
           storeFavorite {
             id
             name
@@ -184,6 +186,7 @@ class BaseGraphQLClient {
           username
           phoneNumber
           shippingAddress
+          referralLink
           invitesSent
           storeFavorite {
             id
@@ -227,6 +230,7 @@ class BaseGraphQLClient {
             username
             phoneNumber
             invitesSent
+            referralLink
             role {
               id
               name
@@ -263,6 +267,7 @@ class BaseGraphQLClient {
             username
             phoneNumber
             invitesSent
+            referralLink
             role {
               id
               name

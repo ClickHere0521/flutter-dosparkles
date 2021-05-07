@@ -113,7 +113,7 @@ class _BranchAppState extends State<BranchApp> {
         imageUrl:
             'https://miro.medium.com/max/1000/1*ilC2Aqp5sZd1wi0CopD1Hw.png',
         contentDescription:
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Luctus venenatis lectus magna fringilla urna porttitor rhoncus dolor purus. Euismod nisi porta lorem mollis. Morbi leo urna molestie at elementum eu. Morbi tristique senectus et netus et malesuada fames. Sapien nec sagittis aliquam malesuada bibendum arcu vitae elementum. Fermentum posuere urna nec tincidunt praesent. Magna etiam tempor orci eu lobortis elementum nibh tellus molestie. Platea dictumst quisque sagittis purus. Senectus et netus et malesuada fames ac turpis. Elit ut aliquam purus sit amet luctus venenatis lectus.',
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
         contentMetadata: BranchContentMetaData()
           ..addCustomMetadata('custom_string', 'abc')
           ..addCustomMetadata('custom_number', 12345)
