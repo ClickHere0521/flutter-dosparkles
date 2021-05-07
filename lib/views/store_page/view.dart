@@ -6,6 +6,7 @@ import 'package:com.floridainc.dosparkles/actions/adapt.dart';
 import 'package:com.floridainc.dosparkles/actions/api/graphql_client.dart';
 import 'package:com.floridainc.dosparkles/actions/app_config.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
+import 'package:com.floridainc.dosparkles/models/date_formatter.dart';
 import 'package:com.floridainc.dosparkles/models/models.dart';
 import 'package:com.floridainc.dosparkles/utils/colors.dart';
 import 'package:com.floridainc.dosparkles/views/profile_page/state.dart';
@@ -27,6 +28,7 @@ import 'package:video_player/video_player.dart';
 Widget buildView(
     StorePageState state, Dispatch dispatch, ViewService viewService) {
   Adapt.initContext(viewService.context);
+
   return state.listView
       ? _FirstListPage(
           dispatch: dispatch,

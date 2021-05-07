@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:com.floridainc.dosparkles/globalbasestate/action.dart';
 import 'package:com.floridainc.dosparkles/models/cart_item_model.dart';
+import 'package:com.floridainc.dosparkles/models/date_formatter.dart';
 import 'package:com.floridainc.dosparkles/utils/general.dart';
 import 'package:com.floridainc.dosparkles/widgets/bottom_nav_bar.dart';
 import 'package:fish_redux/fish_redux.dart';
@@ -230,7 +231,7 @@ Widget _buildCardZero(tabIndex, chat, context, userId) {
 
           if (dateTimeRaw != null && dateTimeRaw != '') {
             DateTime dateTimeFormatted = DateTime.parse(dateTimeRaw);
-            time = DateFormat.jm().format(dateTimeFormatted);
+            time = DateFormatter().getFormattedChatDateTime(dateTimeFormatted);
           }
 
           if (chat['store'] != null && chat['store']['thumbnail'] != null) {
@@ -304,58 +305,71 @@ Widget _buildCardZero(tabIndex, chat, context, userId) {
                             ),
                           ),
                           Positioned.fill(
-                            top: 15.0,
+                            top: 14.0,
                             left: 85.0,
                             child: Container(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Container(
                                     width: double.infinity,
-                                    child: Wrap(
-                                      alignment: WrapAlignment.spaceBetween,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        Container(
-                                          constraints:
-                                              BoxConstraints(maxWidth: 180.0),
-                                          child: FutureBuilder<String>(
-                                            future: getConversationName(
-                                                tabIndex, chat, userId),
-                                            builder: (BuildContext context,
-                                                AsyncSnapshot<String>
-                                                    snapshot) {
-                                              if (snapshot.hasData) {
-                                                return Text(
-                                                  "${snapshot.data}",
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 16.0,
-                                                  ),
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  softWrap: false,
-                                                );
-                                              }
-                                              return SizedBox.shrink(
-                                                  child: null);
-                                            },
+                                        Expanded(
+                                          child: Container(
+                                            constraints:
+                                                BoxConstraints(maxWidth: 180.0),
+                                            child: FutureBuilder<String>(
+                                              future: getConversationName(
+                                                  tabIndex, chat, userId),
+                                              builder: (BuildContext context,
+                                                  AsyncSnapshot<String>
+                                                      snapshot) {
+                                                if (snapshot.hasData) {
+                                                  return Text(
+                                                    "${snapshot.data}",
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      fontSize: 16.0,
+                                                      height: 1.0,
+                                                    ),
+                                                    maxLines: 2,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    softWrap: false,
+                                                  );
+                                                }
+                                                return SizedBox.shrink(
+                                                    child: null);
+                                              },
+                                            ),
                                           ),
                                         ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                            right: 16.0,
-                                            top: 5.0,
+                                        Container(
+                                          padding: EdgeInsets.only(
+                                            right: 10.0,
+                                            left: 10.0,
+                                            top: 3.0,
                                           ),
                                           child: Text(
                                             time,
-                                            style: TextStyle(fontSize: 12.0),
+                                            style: TextStyle(
+                                              fontSize: 12.0,
+                                              color: HexColor("#53586F"),
+                                              fontWeight: FontWeight.w600,
+                                            ),
                                           ),
                                         ),
                                       ],
                                     ),
                                   ),
-                                  SizedBox(height: 7),
+                                  SizedBox(height: 3.0),
                                   Container(
                                     constraints:
                                         BoxConstraints(maxWidth: 242.0),
