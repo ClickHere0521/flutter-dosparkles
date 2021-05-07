@@ -227,6 +227,8 @@ void _onSubmit(formKey, emailValue) async {
       QueryResult result =
           await BaseGraphQLClient.instance.forgotPassword(emailValue);
       if (result.hasException) print(result.exception);
+
+      print(result.data);
     } catch (e) {
       print(e);
     }
