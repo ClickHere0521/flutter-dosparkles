@@ -164,179 +164,8 @@ class BubblePage extends StatefulWidget {
 }
 
 class _BubblePageState extends State<BubblePage> {
-  var formatter = new DateFormat.yMMMMd().add_jm();
   String inputData = "";
   var _controller = TextEditingController();
-
-  Widget _buildBubbleContent(double maxWidth, context) {
-    Widget insetV = SizedBox(height: 36);
-    Widget insetVSmall = SizedBox(height: 10);
-    Widget insetH = SizedBox(width: 4);
-    double tWidth = maxWidth - 160;
-
-    return StreamBuilder(
-      stream: fetchDataProcess(widget.chatId),
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if (snapshot.hasData && !snapshot.hasError) {
-          return snapshot.data['chat_messages'] == null
-              ? Text('No Data', textAlign: TextAlign.center)
-              : Expanded(
-                  child: ListView(
-                    children: snapshot.data['chat_messages']
-                        .map<Widget>((chatMessage) {
-                      var orderId = chatMessage['order'] != null
-                          ? chatMessage['order']['id']
-                          : '';
-
-                      return chatMessage['user'] != null &&
-                              widget.userId == chatMessage['user']['id']
-                          ? Column(
-                              children: [
-                                Align(
-                                  alignment: Alignment.centerRight,
-                                  child: Stack(
-                                    clipBehavior: Clip.none,
-                                    children: [
-                                      Positioned(
-                                        bottom: -20.0,
-                                        left: 28.0,
-                                        child: Text(
-                                          '${formatter.format(DateTime.parse(chatMessage['createdAt']))}',
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            color: Colors.black38,
-                                          ),
-                                        ),
-                                      ),
-                                      Container(
-                                        width: double.infinity,
-                                        constraints: BoxConstraints(
-                                            minHeight: 38.0, maxWidth: 300.0),
-                                        child: Bubble(
-                                          margin: BubbleEdges.only(top: 10),
-                                          elevation: 5.0,
-                                          shadowColor: Colors.black26,
-                                          padding: BubbleEdges.only(
-                                            top: 9.0,
-                                            bottom: 9.0,
-                                            right: 15.0,
-                                            left: 20.0,
-                                          ),
-                                          borderColor: Colors.grey[50],
-                                          stick: true,
-                                          color: Colors.white,
-                                          nip: BubbleNip.rightBottom,
-                                          child: Text(
-                                            chatMessage['text'] != null
-                                                ? chatMessage['text']
-                                                : "",
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              color: HexColor("#53586F"),
-                                            ),
-                                            softWrap: true,
-                                            textAlign: TextAlign.right,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                insetV,
-                              ],
-                            )
-                          : Column(
-                              children: [
-                                chatMessage['messageType'] == 'text'
-                                    ? Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Stack(
-                                          clipBehavior: Clip.none,
-                                          children: [
-                                            Positioned(
-                                              bottom: -20.0,
-                                              left: 28.0,
-                                              child: Text(
-                                                '${formatter.format(DateTime.parse(chatMessage['createdAt']))}',
-                                                style: TextStyle(
-                                                  fontSize: 12,
-                                                  color: Colors.black38,
-                                                ),
-                                              ),
-                                            ),
-                                            Container(
-                                              width: double.infinity,
-                                              constraints: BoxConstraints(
-                                                  minHeight: 38.0,
-                                                  maxWidth: 300.0),
-                                              child: Bubble(
-                                                margin:
-                                                    BubbleEdges.only(top: 10),
-                                                stick: true,
-                                                elevation: 5.0,
-                                                shadowColor: Colors.black26,
-                                                padding: BubbleEdges.only(
-                                                  top: 9.0,
-                                                  bottom: 9.0,
-                                                  left: 15.0,
-                                                  right: 20.0,
-                                                ),
-                                                borderColor: Colors.grey[50],
-                                                color: Colors.white,
-                                                nip: BubbleNip.leftBottom,
-                                                child: Text(
-                                                  chatMessage['text'],
-                                                  style: TextStyle(
-                                                    fontSize: 16,
-                                                    color: HexColor("#53586F"),
-                                                  ),
-                                                  softWrap: true,
-                                                  textAlign: TextAlign.left,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      )
-                                    : Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Column(
-                                          children: [
-                                            _ChatOrderBlock(
-                                              orderId: orderId,
-                                              createdAt:
-                                                  chatMessage['createdAt'],
-                                            ),
-                                            _changeOrderButton(
-                                                context, orderId),
-                                          ],
-                                        ),
-                                      ),
-                                insetV,
-                              ],
-                            );
-                    }).toList(),
-                  ),
-                );
-        } else {
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(height: Adapt.screenH() / 4),
-              SizedBox(
-                  width: Adapt.screenW(),
-                  height: Adapt.screenH() / 4,
-                  child: Container(
-                    child: CircularProgressIndicator(),
-                    alignment: Alignment.center,
-                  ))
-            ],
-          );
-        }
-      },
-    );
-  }
 
   getConversationName(conversation, userId) {
     var chatNames = [];
@@ -356,9 +185,6 @@ class _BubblePageState extends State<BubblePage> {
 
   @override
   Widget build(BuildContext context) {
-    final MediaQueryData queryData = MediaQuery.of(context);
-    final double width = queryData.size.width;
-
     return Stack(
       children: [
         Positioned(
@@ -403,7 +229,7 @@ class _BubblePageState extends State<BubblePage> {
           resizeToAvoidBottomInset: true,
           body: Container(
             width: MediaQuery.of(context).size.width,
-            padding: EdgeInsets.only(top: 10, left: 8.0, right: 8.0),
+            padding: EdgeInsets.only(top: 10.0, left: 8.0, right: 8.0),
             decoration: BoxDecoration(
               color: HexColor("#FAFCFF"),
               borderRadius: BorderRadius.only(
@@ -413,24 +239,10 @@ class _BubblePageState extends State<BubblePage> {
             ),
             child: Column(
               children: [
-                Container(
-                  width: 136.0,
-                  height: 28.0,
-                  decoration: BoxDecoration(
-                    color: HexColor("#EAECF2"),
-                    borderRadius: BorderRadius.circular(17.0),
-                  ),
-                  child: Center(
-                      child: Text(
-                    "November 16",
-                    style: TextStyle(
-                      fontSize: 12.0,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  )),
+                _BubbleContentWidget(
+                  chatId: widget.chatId,
+                  userId: widget.userId,
                 ),
-                SizedBox(height: 18.0),
-                _buildBubbleContent(width, context),
               ],
             ),
           ),
@@ -1035,4 +847,243 @@ Future<void> _rejectDialog(BuildContext context, String orderId) async {
       );
     },
   );
+}
+
+class _BubbleContentWidget extends StatefulWidget {
+  final chatId;
+  final userId;
+  final formatter = new DateFormat.yMMMMd().add_jm();
+
+  _BubbleContentWidget({this.chatId, this.userId});
+
+  @override
+  __BubbleContentWidgetState createState() => __BubbleContentWidgetState();
+}
+
+class __BubbleContentWidgetState extends State<_BubbleContentWidget> {
+  Widget insetV = SizedBox(height: 36.0);
+  bool _buttonShowing = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder(
+      stream: fetchDataProcess(widget.chatId),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.hasData && !snapshot.hasError) {
+          return snapshot.data['chat_messages'] == null
+              ? Text('No Data', textAlign: TextAlign.center)
+              : Expanded(
+                  child: Stack(
+                    children: [
+                      NotificationListener<ScrollNotification>(
+                        onNotification: (scrollNotification) {
+                          if (scrollNotification is ScrollStartNotification) {
+                            if (!_buttonShowing) {
+                              setState(() => _buttonShowing = true);
+                            }
+                          } else if (scrollNotification
+                              is ScrollEndNotification) {
+                            if (_buttonShowing) {
+                              Future.delayed(Duration(seconds: 5)).then(
+                                (_) => setState(() {
+                                  _buttonShowing = false;
+                                }),
+                              );
+                            }
+                          }
+                          return false;
+                        },
+                        child: ListView(
+                          children: snapshot.data['chat_messages']
+                              .map<Widget>((chatMessage) {
+                            var orderId = chatMessage['order'] != null
+                                ? chatMessage['order']['id']
+                                : '';
+
+                            return chatMessage['user'] != null &&
+                                    widget.userId == chatMessage['user']['id']
+                                ? Column(
+                                    children: [
+                                      Align(
+                                        alignment: Alignment.centerRight,
+                                        child: Stack(
+                                          clipBehavior: Clip.none,
+                                          children: [
+                                            Positioned(
+                                              bottom: -20.0,
+                                              left: 28.0,
+                                              child: Text(
+                                                '${widget.formatter.format(DateTime.parse(chatMessage['createdAt']))}',
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.black38,
+                                                ),
+                                              ),
+                                            ),
+                                            Container(
+                                              width: double.infinity,
+                                              constraints: BoxConstraints(
+                                                  minHeight: 38.0,
+                                                  maxWidth: 300.0),
+                                              child: Bubble(
+                                                margin:
+                                                    BubbleEdges.only(top: 10),
+                                                elevation: 5.0,
+                                                shadowColor: Colors.black26,
+                                                padding: BubbleEdges.only(
+                                                  top: 9.0,
+                                                  bottom: 9.0,
+                                                  right: 15.0,
+                                                  left: 20.0,
+                                                ),
+                                                borderColor: Colors.grey[50],
+                                                stick: true,
+                                                color: Colors.white,
+                                                nip: BubbleNip.rightBottom,
+                                                child: Text(
+                                                  chatMessage['text'] != null
+                                                      ? chatMessage['text']
+                                                      : "",
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    color: HexColor("#53586F"),
+                                                  ),
+                                                  softWrap: true,
+                                                  textAlign: TextAlign.right,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      insetV,
+                                    ],
+                                  )
+                                : Column(
+                                    children: [
+                                      chatMessage['messageType'] == 'text'
+                                          ? Align(
+                                              alignment: Alignment.centerLeft,
+                                              child: Stack(
+                                                clipBehavior: Clip.none,
+                                                children: [
+                                                  Positioned(
+                                                    bottom: -20.0,
+                                                    left: 28.0,
+                                                    child: Text(
+                                                      '${widget.formatter.format(DateTime.parse(chatMessage['createdAt']))}',
+                                                      style: TextStyle(
+                                                        fontSize: 12,
+                                                        color: Colors.black38,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Container(
+                                                    width: double.infinity,
+                                                    constraints: BoxConstraints(
+                                                        minHeight: 38.0,
+                                                        maxWidth: 300.0),
+                                                    child: Bubble(
+                                                      margin: BubbleEdges.only(
+                                                          top: 10),
+                                                      stick: true,
+                                                      elevation: 5.0,
+                                                      shadowColor:
+                                                          Colors.black26,
+                                                      padding: BubbleEdges.only(
+                                                        top: 9.0,
+                                                        bottom: 9.0,
+                                                        left: 15.0,
+                                                        right: 20.0,
+                                                      ),
+                                                      borderColor:
+                                                          Colors.grey[50],
+                                                      color: Colors.white,
+                                                      nip: BubbleNip.leftBottom,
+                                                      child: Text(
+                                                        chatMessage['text'],
+                                                        style: TextStyle(
+                                                          fontSize: 16,
+                                                          color: HexColor(
+                                                              "#53586F"),
+                                                        ),
+                                                        softWrap: true,
+                                                        textAlign:
+                                                            TextAlign.left,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            )
+                                          : Align(
+                                              alignment: Alignment.centerLeft,
+                                              child: Column(
+                                                children: [
+                                                  _ChatOrderBlock(
+                                                    orderId: orderId,
+                                                    createdAt: chatMessage[
+                                                        'createdAt'],
+                                                  ),
+                                                  _changeOrderButton(
+                                                      context, orderId),
+                                                ],
+                                              ),
+                                            ),
+                                      insetV,
+                                    ],
+                                  );
+                          }).toList(),
+                        ),
+                      ),
+                      Positioned.fill(
+                        child: Align(
+                          alignment: Alignment.topCenter,
+                          child: AnimatedCrossFade(
+                            duration: Duration(milliseconds: 200),
+                            crossFadeState: !_buttonShowing
+                                ? CrossFadeState.showFirst
+                                : CrossFadeState.showSecond,
+                            firstChild: SizedBox.shrink(child: null),
+                            secondChild: Container(
+                              width: 136.0,
+                              height: 28.0,
+                              decoration: BoxDecoration(
+                                color: HexColor("#EAECF2"),
+                                borderRadius: BorderRadius.circular(17.0),
+                              ),
+                              child: Center(
+                                  child: Text(
+                                "November 16",
+                                style: TextStyle(
+                                  fontSize: 12.0,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              )),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+        } else {
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(height: Adapt.screenH() / 4),
+              SizedBox(
+                  width: Adapt.screenW(),
+                  height: Adapt.screenH() / 4,
+                  child: Container(
+                    child: CircularProgressIndicator(),
+                    alignment: Alignment.center,
+                  ))
+            ],
+          );
+        }
+      },
+    );
+  }
 }
