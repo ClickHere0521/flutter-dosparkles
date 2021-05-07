@@ -623,29 +623,41 @@ class __ChatOrderBlockState extends State<_ChatOrderBlock> {
                                             ),
                                           ),
                                         ),
-                                        child: Text(
-                                          "Approve",
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 14.0,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
+                                        child: isApproveClicked
+                                            ? SizedBox(
+                                                width: 15.0,
+                                                height: 15.0,
+                                                child:
+                                                    CircularProgressIndicator(),
+                                              )
+                                            : Text(
+                                                "Approve",
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 14.0,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
                                         onPressed: isApproveClicked
                                             ? null
                                             : () async {
                                                 setState(() {
                                                   isApproveClicked = true;
                                                 });
-                                                QueryResult result =
-                                                    await BaseGraphQLClient
-                                                        .instance
-                                                        .changeOrder(
-                                                            widget.orderId,
-                                                            "confirmed",
-                                                            "");
-                                                if (result.hasException)
-                                                  print(result.exception);
+                                                try {
+                                                  QueryResult result =
+                                                      await BaseGraphQLClient
+                                                          .instance
+                                                          .changeOrder(
+                                                              widget.orderId,
+                                                              "confirmed",
+                                                              "");
+                                                  if (result.hasException) {
+                                                    print(result.exception);
+                                                  }
+                                                } catch (e) {
+                                                  print(e);
+                                                }
                                               },
                                       ),
                                     ),

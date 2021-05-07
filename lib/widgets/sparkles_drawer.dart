@@ -24,6 +24,7 @@ import 'package:com.floridainc.dosparkles/widgets/video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'confirm_email.dart';
 
@@ -61,15 +62,15 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
               children: [
                 GestureDetector(
                   onTap: () {
-                    // Navigator.of(context)
-                    //     .pushNamed('reset_passwordpage', arguments: null);
+                    Navigator.of(context)
+                        .pushNamed('forgot_passwordpage', arguments: null);
 
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => SwiperTestApp(),
-                      ),
-                    );
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //     builder: (context) => SwiperTestApp(),
+                    //   ),
+                    // );
                   },
                   child: Container(
                     height: 218.0,

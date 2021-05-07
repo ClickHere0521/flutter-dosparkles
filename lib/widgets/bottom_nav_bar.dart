@@ -23,6 +23,7 @@ class _BottomNavBarWidgetState extends State<BottomNavBarWidget> {
   int _selectedIndex = 0;
   List _valuesList = [];
   bool _isUpdated = false;
+  int _updatedChatsCount = 0;
 
   void _onItemTapped(int index) {
     if (index == _selectedIndex) return;
@@ -53,15 +54,19 @@ class _BottomNavBarWidgetState extends State<BottomNavBarWidget> {
       }
 
       if (_valuesList.length > 0) {
-        bool result = _valuesList.every((element) => element == true);
+        bool isNotUpdated = _valuesList.every((element) => element == true);
+        int count =
+            _valuesList.where((element) => element == false).toList().length;
 
-        if (result) {
+        if (isNotUpdated) {
           setState(() {
             _isUpdated = false;
+            _updatedChatsCount = 0;
           });
         } else {
           setState(() {
             _isUpdated = true;
+            _updatedChatsCount = count;
           });
         }
       }
@@ -117,7 +122,7 @@ class _BottomNavBarWidgetState extends State<BottomNavBarWidget> {
               clipBehavior: Clip.none,
               children: [
                 SvgPicture.asset('images/0 notification.svg'),
-                _isUpdated == true
+                _isUpdated == true && _updatedChatsCount != 0
                     ? Positioned.fill(
                         top: -1.8,
                         right: 2.0,
@@ -132,7 +137,7 @@ class _BottomNavBarWidgetState extends State<BottomNavBarWidget> {
                             ),
                             child: Center(
                               child: Text(
-                                "1",
+                                "$_updatedChatsCount",
                                 style: TextStyle(
                                   fontSize: 7.0,
                                   fontWeight: FontWeight.w900,

@@ -10,6 +10,8 @@ import '../../utils/colors.dart';
 import '../../utils/general.dart';
 import 'state.dart';
 
+import 'package:http/http.dart' as http;
+
 Widget buildView(
   ForgotPasswordPageState state,
   Dispatch dispatch,
@@ -223,14 +225,31 @@ class __InnerPartState extends State<_InnerPart> {
 
 void _onSubmit(formKey, emailValue) async {
   if (formKey.currentState.validate()) {
-    try {
-      QueryResult result =
-          await BaseGraphQLClient.instance.forgotPassword(emailValue);
-      if (result.hasException) print(result.exception);
+    // http.post('https://backend.dosparkles.com/admin/auth/forgot-password',
+    //     body: {
+    //       'email': 'user@strapi.io',
+    //       'url':
+    //           'https://backend.dosparkles.com/admin/plugins/users-permissions/auth/reset-password',
+    //     }).then((response) {
+    //   // Handle success.
 
-      print(result.data);
-    } catch (e) {
-      print(e);
-    }
+    //   print(response.statusCode);
+
+    //   print('Your user received an email : ' + response.body);
+    // }).catchError((error) {
+    //   // Handle error.
+
+    //   print('An error occurred:' + error);
+    // });
+
+    // try {
+    //   QueryResult result =
+    //       await BaseGraphQLClient.instance.forgotPassword(emailValue);
+    //   if (result.hasException) print(result.exception);
+
+    //   print(result.data);
+    // } catch (e) {
+    //   print(e);
+    // }
   }
 }
