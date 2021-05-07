@@ -64,7 +64,7 @@ dependencies:
   contacts_service: ^0.4.6
   google_sign_in:
   flutter_facebook_login: ^3.0.0
-  stripe_payment: ^1.0.6
+  stripe_payment: ^1.1.0
   sign_in_with_apple: ^2.5.4
   flutter_branch_sdk: ^1.4.0
   country_pickers: ^2.0.0
