@@ -90,7 +90,19 @@ class _BottomNavBarWidgetState extends State<BottomNavBarWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: widget.isTransparentBackground ? Colors.transparent : Colors.white,
+      decoration: BoxDecoration(
+        color:
+            widget.isTransparentBackground ? Colors.transparent : Colors.white,
+        boxShadow: widget.isTransparentBackground
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.grey[200],
+                  offset: Offset(0.0, -2.0),
+                  blurRadius: 10.0,
+                )
+              ],
+      ),
       child: BottomNavigationBar(
         backgroundColor: Colors.transparent,
         elevation: 0.0,

@@ -141,7 +141,12 @@ class _AdminBody extends StatefulWidget {
 }
 
 class __AdminBodyState extends State<_AdminBody> {
-  String selectedDate = "";
+  String selectedDate = DateTime.now().toString();
+  List filteredList;
+
+  String formatDateTimeToMY(String date) {
+    return DateFormat('LLLL yyyy').format(DateTime.parse(date));
+  }
 
   Future getInitialData() async {
     QueryResult result = await BaseGraphQLClient.instance
@@ -151,6 +156,7 @@ class __AdminBodyState extends State<_AdminBody> {
 
   @override
   Widget build(BuildContext context) {
+    selectedDate = formatDateTimeToMY(selectedDate);
     return FutureBuilder(
         future: getInitialData(),
         builder: (context, snapshot) {
@@ -259,8 +265,7 @@ class __AdminBodyState extends State<_AdminBody> {
                               lastDate: DateTime(2100),
                             ).then((date) {
                               setState(() {
-                                selectedDate = DateFormat('LLLL yyyy')
-                                    .format(DateTime.parse(date.toString()));
+                                selectedDate = date.toString();
                               });
                             });
                           },
@@ -1004,10 +1009,25 @@ class _OrderHistory extends StatefulWidget {
 
 class __OrderHistoryState extends State<_OrderHistory> {
   String selectedDate = DateTime.now().toString();
+  List filteredList;
+
+  String formatDateTimeToMY(String date) {
+    return DateFormat('LLLL yyyy').format(DateTime.parse(date));
+  }
 
   @override
   Widget build(BuildContext context) {
-    selectedDate = DateFormat('LLLL yyyy').format(DateTime.parse(selectedDate));
+    if (widget.globalOrders != null && widget.globalOrders.length > 0) {
+      filteredList = widget.globalOrders.where((order) {
+        String orderformatted = formatDateTimeToMY(order['createdAt']);
+        String selectedformatted = formatDateTimeToMY(selectedDate);
+        return orderformatted == selectedformatted;
+      }).toList();
+    } else {
+      filteredList = [];
+    }
+
+    selectedDate = formatDateTimeToMY(selectedDate);
 
     return Container(
       color: Colors.white,
@@ -1145,17 +1165,16 @@ class __OrderHistoryState extends State<_OrderHistory> {
                       ],
                     ),
                     SizedBox(height: 17.0),
-                    if (widget.globalOrders != null &&
-                        widget.globalOrders.length > 0)
+                    if (filteredList != null && filteredList.length > 0)
                       Flexible(
                         fit: FlexFit.loose,
                         child: ListView.separated(
-                          itemCount: widget.globalOrders.length,
+                          itemCount: filteredList.length,
                           shrinkWrap: true,
                           separatorBuilder: (context, index) =>
                               SizedBox(height: 12.0),
                           itemBuilder: (context, index) {
-                            var order = widget.globalOrders[index];
+                            var order = filteredList[index];
 
                             return Card(
                               elevation: 4.0,

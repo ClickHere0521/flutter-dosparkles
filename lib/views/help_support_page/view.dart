@@ -4,6 +4,7 @@ import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/models/models.dart';
 import 'package:com.floridainc.dosparkles/views/store_selection_page/action.dart';
 import 'package:com.floridainc.dosparkles/widgets/about_us.dart';
+import 'package:com.floridainc.dosparkles/widgets/privacy_policy.dart';
 import 'package:com.floridainc.dosparkles/widgets/sparkles_drawer.dart';
 import 'package:com.floridainc.dosparkles/widgets/terms_and_conditions.dart';
 import 'package:fish_redux/fish_redux.dart';
@@ -109,10 +110,22 @@ class _InnerPart extends StatefulWidget {
 
 class __InnerPartState extends State<_InnerPart> {
   final _formKey = GlobalKey<FormState>();
-  String nameValue = "";
-  String emailValue = "";
+  AppUser globalUser = GlobalStore.store.getState().user;
+
+  TextEditingController nameController;
+  TextEditingController emailController;
+  TextEditingController messageController;
+
   String dropDownValue = "One";
-  String messageValue = "";
+
+  @override
+  void initState() {
+    super.initState();
+
+    nameController = TextEditingController(text: globalUser.name);
+    emailController = TextEditingController(text: globalUser.email);
+    messageController = TextEditingController(text: '');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -209,7 +222,12 @@ class __InnerPartState extends State<_InnerPart> {
                   ),
                 ],
               ),
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => PrivacyPolicy()),
+                );
+              },
             ),
           ),
           SizedBox(height: 19.0),
@@ -277,11 +295,11 @@ class __InnerPartState extends State<_InnerPart> {
                 children: [
                   SizedBox(height: 20.0),
                   TextFormField(
+                    //  initialValue: globalUser.name,
                     textAlign: TextAlign.left,
                     keyboardType: TextInputType.text,
-                    onChanged: (String value) {
-                      nameValue = value;
-                    },
+
+                    onChanged: (String value) {},
                     decoration: InputDecoration(
                       hintText: 'Enter your name',
                       enabledBorder: UnderlineInputBorder(
@@ -304,6 +322,7 @@ class __InnerPartState extends State<_InnerPart> {
                       ),
                     ),
                     onFieldSubmitted: (value) {},
+                    controller: nameController,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter some text';
@@ -313,11 +332,11 @@ class __InnerPartState extends State<_InnerPart> {
                   ),
                   SizedBox(height: 20.0),
                   TextFormField(
+                    // initialValue: globalUser.email,
                     textAlign: TextAlign.left,
                     keyboardType: TextInputType.emailAddress,
-                    onChanged: (String value) {
-                      emailValue = value;
-                    },
+                    controller: emailController,
+                    onChanged: (String value) {},
                     decoration: InputDecoration(
                       hintText: 'Enter your email',
                       enabledBorder: UnderlineInputBorder(
@@ -403,9 +422,8 @@ class __InnerPartState extends State<_InnerPart> {
                       TextField(
                         maxLines: 4,
                         keyboardType: TextInputType.multiline,
-                        onChanged: (String value) {
-                          messageValue = value;
-                        },
+                        onChanged: (String value) {},
+                        controller: messageController,
                         decoration: InputDecoration(
                           contentPadding: EdgeInsets.all(8.0),
                           enabledBorder: OutlineInputBorder(
@@ -458,8 +476,21 @@ class __InnerPartState extends State<_InnerPart> {
                         ),
                       ),
                       onPressed: () {
-                        _onSubmit(_formKey, nameValue, emailValue,
-                            dropDownValue, messageValue);
+                        if (_formKey.currentState.validate()) {
+                          _onSubmit(
+                            nameController.text,
+                            emailController.text,
+                            dropDownValue,
+                            messageController.text,
+                            //  messageValue,
+                          );
+                          setState(() {
+                            nameController.clear();
+                            emailController.clear();
+                            dropDownValue = 'One';
+                            messageController.clear();
+                          });
+                        }
                       },
                     ),
                   ),
@@ -474,17 +505,14 @@ class __InnerPartState extends State<_InnerPart> {
   }
 }
 
-void _onSubmit(
-    _formKey, nameValue, emailValue, dropDownValue, messageValue) async {
-  if (_formKey.currentState.validate()) {
-    QueryResult result = await BaseGraphQLClient.instance.createSupportRequest(
-      nameValue,
-      emailValue,
-      dropDownValue,
-      messageValue,
-    );
-    if (result.hasException) print(result.exception);
+void _onSubmit(nameValue, emailValue, dropDownValue, messageValue) async {
+  QueryResult result = await BaseGraphQLClient.instance.createSupportRequest(
+    nameValue,
+    emailValue,
+    dropDownValue,
+    messageValue,
+  );
+  if (result.hasException) print(result.exception);
 
-    print(result.data);
-  }
+  print(result.data);
 }

@@ -25,6 +25,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'confirm_email.dart';
 
@@ -533,9 +534,10 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                       ],
                     ),
                   ),
-                  onTap: () {
-                    Navigator.of(context)
-                        .pushNamed('storeselectionpage', arguments: null);
+                  onTap: () async {
+                    await canLaunch("http://dosparkles.com/")
+                        ? await launch("http://dosparkles.com/")
+                        : throw 'Could not launch "http://dosparkles.com/"';
                   },
                 ),
                 SizedBox(height: 10.0),
@@ -668,7 +670,7 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                         .pushNamed('helpsupportpage', arguments: null);
                   },
                 ),
-                SizedBox(height: 140.0),
+                SizedBox(height: 40.0),
                 GestureDetector(
                   child: Container(
                     padding: EdgeInsets.all(12.0),

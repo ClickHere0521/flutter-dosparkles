@@ -88,9 +88,11 @@ class BaseGraphQLClient {
               status
               orderDetails
               totalPrice
+              createdAt
               products {
               id
               shineonImportId
+              new
               optionalFinishMaterialOldPrice
               showOptionalFinishMaterialOldPrice
               thumbnail {
@@ -376,8 +378,9 @@ class BaseGraphQLClient {
           }
           products {
             id
+            new
             shineonImportId
-                          optionalFinishMaterialOldPrice
+             optionalFinishMaterialOldPrice
               showOptionalFinishMaterialOldPrice
             thumbnail {
               url
@@ -468,6 +471,7 @@ class BaseGraphQLClient {
           }
           products {
             id
+            new
             shineonImportId
                           optionalFinishMaterialOldPrice
               showOptionalFinishMaterialOldPrice
@@ -574,6 +578,7 @@ class BaseGraphQLClient {
             }
             products {
               id
+              new
               shineonImportId
                             optionalFinishMaterialOldPrice
               showOptionalFinishMaterialOldPrice
@@ -650,8 +655,9 @@ class BaseGraphQLClient {
             totalPrice
             products {
               id
+              new
               shineonImportId
-                            optionalFinishMaterialOldPrice
+               optionalFinishMaterialOldPrice
               showOptionalFinishMaterialOldPrice
               thumbnail {
                 url
@@ -718,8 +724,9 @@ class BaseGraphQLClient {
           totalPrice
           products {
             id
+            new
             shineonImportId
-                          optionalFinishMaterialOldPrice
+              optionalFinishMaterialOldPrice
               showOptionalFinishMaterialOldPrice
             thumbnail {
               url
@@ -1286,6 +1293,7 @@ class BaseGraphQLClient {
            totalPrice
            products {
              id
+             new
              shineonImportId
              optionalFinishMaterialOldPrice
              showOptionalFinishMaterialOldPrice
@@ -1356,6 +1364,7 @@ class BaseGraphQLClient {
       query {
         products (where: { id: "$id" }) {
               id
+              new
               shineonImportId
               optionalFinishMaterialOldPrice
               showOptionalFinishMaterialOldPrice

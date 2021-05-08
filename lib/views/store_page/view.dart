@@ -80,12 +80,12 @@ class __FirstProductPageState extends State<_FirstProductPage> {
         backgroundColor: Colors.transparent,
         elevation: 0.0,
         automaticallyImplyLeading: false,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: SvgPicture.asset("images/Share.svg"),
-          ),
-        ],
+        // actions: [
+        //   Padding(
+        //     padding: const EdgeInsets.only(right: 16.0),
+        //     child: SvgPicture.asset("images/Share.svg"),
+        //   ),
+        // ],
         leadingWidth: 70.0,
         leading: Builder(
           builder: (context) => IconButton(
@@ -97,16 +97,16 @@ class __FirstProductPageState extends State<_FirstProductPage> {
         ),
       ),
       drawer: SparklesDrawer(),
-      bottomNavigationBar: StreamBuilder(
-        stream: fetchDataProcess(),
-        builder: (_, snapshot) {
-          return BottomNavBarWidget(
-            prefsData: snapshot.data,
-            initialIndex: 0,
-            isTransparentBackground: true,
-          );
-        },
-      ),
+      // bottomNavigationBar: StreamBuilder(
+      //   stream: fetchDataProcess(),
+      //   builder: (_, snapshot) {
+      //     return BottomNavBarWidget(
+      //       prefsData: snapshot.data,
+      //       initialIndex: 0,
+      //       isTransparentBackground: true,
+      //     );
+      //   },
+      // ),
     );
   }
 }
@@ -240,6 +240,8 @@ class _MainBody extends StatelessWidget {
             ),
             delegate: SliverChildBuilderDelegate(
               (BuildContext context, int index) {
+                ProductItem product = store.products[index];
+
                 return InkWell(
                   child: Container(
                     // color: HexColor('#dfdada'),
@@ -260,9 +262,9 @@ class _MainBody extends StatelessWidget {
                       children: [
                         ClipRRect(
                           borderRadius: BorderRadius.circular(16.0),
-                          child: store.products[index].thumbnailUrl != null
+                          child: product.thumbnailUrl != null
                               ? CachedNetworkImage(
-                                  imageUrl: store.products[index].thumbnailUrl,
+                                  imageUrl: product.thumbnailUrl,
                                   fit: BoxFit.cover,
                                 )
                               : Image.asset(
@@ -270,32 +272,33 @@ class _MainBody extends StatelessWidget {
                                   fit: BoxFit.cover,
                                 ),
                         ),
-                        Positioned.fill(
-                          child: Align(
-                            alignment: Alignment.topCenter,
-                            child: Container(
-                              width: double.infinity,
-                              height: 20.0,
-                              decoration: BoxDecoration(
-                                color: HexColor("#EB5757"),
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(16.0),
-                                  topRight: Radius.circular(16.0),
+                        if (product.isNew)
+                          Positioned.fill(
+                            child: Align(
+                              alignment: Alignment.topCenter,
+                              child: Container(
+                                width: double.infinity,
+                                height: 20.0,
+                                decoration: BoxDecoration(
+                                  color: HexColor("#EB5757"),
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(16.0),
+                                    topRight: Radius.circular(16.0),
+                                  ),
                                 ),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  index.isEven ? "NEW" : "10% off",
-                                  style: TextStyle(
-                                    fontSize: 14.0,
-                                    fontWeight: FontWeight.w700,
-                                    color: Colors.white,
+                                child: Center(
+                                  child: Text(
+                                    "NEW",
+                                    style: TextStyle(
+                                      fontSize: 14.0,
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
                         Positioned.fill(
                           child: Align(
                             alignment: Alignment.bottomCenter,
@@ -316,7 +319,7 @@ class _MainBody extends StatelessWidget {
                                 ),
                               ),
                               child: Text(
-                                store.products[index].name,
+                                product.name,
                                 style: TextStyle(
                                   fontSize: 14.0,
                                   fontWeight: FontWeight.w600,
@@ -409,11 +412,14 @@ class _ProductViewState extends State<_ProductView>
           controller: _tabController,
           children: List.generate(items.length, (index) {
             return VideoPlayerItem(
-              videoUrl: items[index].videoUrl,
-              size: size,
-              // name: items[index].name,
-              // price: '\$${items[index].price}',
-            );
+                videoUrl: items[index].videoUrl,
+                size: size,
+                tabSelectedIndex: _tabSelectedIndex,
+                dispatch: widget.dispatch,
+                store: widget.store
+                // name: items[index].name,
+                // price: '\$${items[index].price}',
+                );
           }),
         ),
       ),
@@ -427,9 +433,16 @@ class VideoPlayerItem extends StatefulWidget {
   // final String price;
   final Size size;
 
+  final int tabSelectedIndex;
+  final Dispatch dispatch;
+  final StoreItem store;
+
   VideoPlayerItem({
     Key key,
     @required this.size,
+    this.tabSelectedIndex,
+    this.dispatch,
+    this.store,
     // this.name, this.price,
     this.videoUrl,
   }) : super(key: key);
@@ -532,10 +545,13 @@ class _VideoPlayerItemState extends State<VideoPlayerItem> {
                           children: [
                             Expanded(
                               child: LeftPanel(
-                                size: widget.size,
-                                // name: "${widget.name}",
-                                // price: "${widget.price}",
-                              ),
+                                  size: widget.size,
+                                  tabSelectedIndex: widget.tabSelectedIndex,
+                                  dispatch: widget.dispatch,
+                                  store: widget.store
+                                  // name: "${widget.name}",
+                                  // price: "${widget.price}",
+                                  ),
                             ),
                           ],
                         ),
@@ -552,12 +568,18 @@ class LeftPanel extends StatelessWidget {
   // final String name;
   // final String price;
   final Size size;
+  final int tabSelectedIndex;
+  final Dispatch dispatch;
+  final StoreItem store;
 
   final globalUser = GlobalStore.store.getState().user;
 
   LeftPanel({
     Key key,
     @required this.size,
+    this.tabSelectedIndex,
+    this.dispatch,
+    this.store,
     // this.name,
     // this.price,
   }) : super(key: key);
@@ -587,36 +609,60 @@ class LeftPanel extends StatelessWidget {
             ),
           ),
           SizedBox(height: 30.0),
-          Image.asset("images/Vector 23423432.png"),
-          SizedBox(height: 6.5),
-          Text(
-            "4020",
-            style: TextStyle(
-              fontSize: 10.0,
-              fontWeight: FontWeight.w600,
-              color: Colors.white,
-            ),
-          ),
-          SizedBox(height: 25.0),
-          Image.asset("images/Group 2342342.png"),
-          SizedBox(height: 6.5),
-          Text(
-            "234",
-            style: TextStyle(
-              fontSize: 10.0,
-              fontWeight: FontWeight.w600,
-              color: Colors.white,
-            ),
-          ),
-          SizedBox(height: 15.0),
-          Image.asset("images/Vector (1)4234234.png"),
-          SizedBox(height: 6.5),
-          Text(
-            "BUY",
-            style: TextStyle(
-              fontSize: 10.0,
-              fontWeight: FontWeight.w600,
-              color: Colors.white,
+          // Column(
+          //   crossAxisAlignment: CrossAxisAlignment.center,
+          //   mainAxisSize: MainAxisSize.min,
+          //   children: [
+          //     Image.asset("images/Vector 23423432.png"),
+          //     SizedBox(height: 6.5),
+          //     Text(
+          //       "4020",
+          //       style: TextStyle(
+          //         fontSize: 10.0,
+          //         fontWeight: FontWeight.w600,
+          //         color: Colors.white,
+          //       ),
+          //     ),
+          //   ],
+          // ),
+          // SizedBox(height: 25.0),
+          // Column(
+          //   crossAxisAlignment: CrossAxisAlignment.center,
+          //   mainAxisSize: MainAxisSize.min,
+          //   children: [
+          //     Image.asset("images/Group 2342342.png"),
+          //     SizedBox(height: 6.5),
+          //     Text(
+          //       "234",
+          //       style: TextStyle(
+          //         fontSize: 10.0,
+          //         fontWeight: FontWeight.w600,
+          //         color: Colors.white,
+          //       ),
+          //     ),
+          //   ],
+          // ),
+          //  SizedBox(height: 15.0),
+          GestureDetector(
+            onTap: () {
+              dispatch(StorePageActionCreator.onGoToProductPage(
+                  store.products[tabSelectedIndex]));
+            },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset("images/Vector (1)4234234.png"),
+                SizedBox(height: 6.5),
+                Text(
+                  "BUY",
+                  style: TextStyle(
+                    fontSize: 10.0,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
