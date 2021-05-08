@@ -9,6 +9,7 @@ import 'package:com.floridainc.dosparkles/utils/colors.dart';
 import 'package:com.floridainc.dosparkles/widgets/blog.dart';
 import 'package:com.floridainc.dosparkles/widgets/branch/branch_two.dart';
 import 'package:com.floridainc.dosparkles/widgets/checkout.dart';
+import 'package:com.floridainc.dosparkles/widgets/connectivity.dart';
 import 'package:com.floridainc.dosparkles/widgets/product_details_image.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_apple_signin.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_country_code_picker.dart';
@@ -287,6 +288,21 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                 //     );
                 //   },
                 // ),
+                ListTile(
+                  leading: const Icon(Icons.location_on),
+                  minLeadingWidth: 0.0,
+                  title: Text(
+                    'Location',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ConncetivityExample()),
+                    );
+                  },
+                ),
                 // ListTile(
                 //   leading: const Icon(Icons.app_registration),
                 //   minLeadingWidth: 0.0,

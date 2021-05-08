@@ -10,7 +10,7 @@ class CartPageState implements GlobalBaseState, Cloneable<CartPageState> {
   @override
   CartPageState clone() {
     return CartPageState()
-      ..animationController = animationController 
+      ..animationController = animationController
       //
       ..locale = locale
       ..user = user
@@ -36,7 +36,10 @@ class CartPageState implements GlobalBaseState, Cloneable<CartPageState> {
   ProductItem selectedProduct;
 
   @override
-   List<CartItem> shoppingCart;
+  List<CartItem> shoppingCart;
+
+  @override
+  String connectionStatus;
 }
 
 CartPageState initState(Map<String, dynamic> args) {

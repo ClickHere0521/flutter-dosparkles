@@ -23,6 +23,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:toast/toast.dart';
 import 'package:video_player/video_player.dart';
 
 Widget buildView(
@@ -51,6 +52,8 @@ class _FirstProductPage extends StatefulWidget {
 }
 
 class __FirstProductPageState extends State<_FirstProductPage> {
+  bool _isLostConnection = false;
+
   Future fetchData() async {
     Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
     final SharedPreferences prefs = await _prefs;
@@ -65,48 +68,104 @@ class __FirstProductPageState extends State<_FirstProductPage> {
     }
   }
 
+  checkInternetConnectivity() {
+    String _connectionStatus = GlobalStore.store.getState().connectionStatus;
+    if (_connectionStatus == 'ConnectivityResult.none') {
+      setState(() {
+        _isLostConnection = true;
+      });
+    } else {
+      setState(() {
+        _isLostConnection = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _ProductView(
-        dispatch: widget.dispatch,
-        store: widget.state.selectedStore,
-        productIndex: widget.state.productIndex,
-      ),
-      backgroundColor: Colors.transparent,
-      extendBodyBehindAppBar: true,
-      extendBody: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0.0,
-        automaticallyImplyLeading: false,
-        // actions: [
-        //   Padding(
-        //     padding: const EdgeInsets.only(right: 16.0),
-        //     child: SvgPicture.asset("images/Share.svg"),
-        //   ),
-        // ],
-        leadingWidth: 70.0,
-        leading: Builder(
-          builder: (context) => IconButton(
-            highlightColor: Colors.transparent,
-            splashColor: Colors.transparent,
-            icon: Image.asset("images/offcanvas_icon.png"),
-            onPressed: () => Scaffold.of(context).openDrawer(),
+    checkInternetConnectivity();
+
+    return Stack(
+      children: [
+        Scaffold(
+          body: _ProductView(
+            dispatch: widget.dispatch,
+            store: widget.state.selectedStore,
+            productIndex: widget.state.productIndex,
           ),
+          backgroundColor: Colors.transparent,
+          extendBodyBehindAppBar: true,
+          extendBody: true,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0.0,
+            automaticallyImplyLeading: false,
+            // actions: [
+            //   Padding(
+            //     padding: const EdgeInsets.only(right: 16.0),
+            //     child: SvgPicture.asset("images/Share.svg"),
+            //   ),
+            // ],
+            leadingWidth: 70.0,
+            leading: Builder(
+              builder: (context) => IconButton(
+                highlightColor: Colors.transparent,
+                splashColor: Colors.transparent,
+                icon: Image.asset("images/offcanvas_icon.png"),
+                onPressed: () => Scaffold.of(context).openDrawer(),
+              ),
+            ),
+          ),
+          drawer: SparklesDrawer(),
+          // bottomNavigationBar: StreamBuilder(
+          //   stream: fetchDataProcess(),
+          //   builder: (_, snapshot) {
+          //     return BottomNavBarWidget(
+          //       prefsData: snapshot.data,
+          //       initialIndex: 0,
+          //       isTransparentBackground: true,
+          //     );
+          //   },
+          // ),
         ),
-      ),
-      drawer: SparklesDrawer(),
-      // bottomNavigationBar: StreamBuilder(
-      //   stream: fetchDataProcess(),
-      //   builder: (_, snapshot) {
-      //     return BottomNavBarWidget(
-      //       prefsData: snapshot.data,
-      //       initialIndex: 0,
-      //       isTransparentBackground: true,
-      //     );
-      //   },
-      // ),
+        if (_isLostConnection)
+          Positioned.fill(
+            child: SafeArea(
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: 25.0,
+                  color: Colors.black.withOpacity(.8),
+                  child: Center(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.cloud_off,
+                          color: Colors.white,
+                          size: 14.0,
+                        ),
+                        SizedBox(width: 10.0),
+                        Text(
+                          "No internet connection",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 13.0,
+                            decoration: TextDecoration.none,
+                            wordSpacing: -4.0,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 }
@@ -122,6 +181,8 @@ class _FirstListPage extends StatefulWidget {
 }
 
 class __FirstListPageState extends State<_FirstListPage> {
+  bool _isLostConnection = false;
+
   Future fetchData() async {
     Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
     final SharedPreferences prefs = await _prefs;
@@ -136,8 +197,23 @@ class __FirstListPageState extends State<_FirstListPage> {
     }
   }
 
+  checkInternetConnectivity() {
+    String _connectionStatus = GlobalStore.store.getState().connectionStatus;
+    if (_connectionStatus == 'ConnectivityResult.none') {
+      setState(() {
+        _isLostConnection = true;
+      });
+    } else {
+      setState(() {
+        _isLostConnection = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    checkInternetConnectivity();
+
     return Stack(
       children: [
         Positioned(
@@ -169,12 +245,9 @@ class __FirstListPageState extends State<_FirstListPage> {
                 topRight: Radius.circular(32.0),
               ),
             ),
-            child: AnimatedSwitcher(
-              duration: Duration(milliseconds: 300),
-              child: _MainBody(
-                dispatch: widget.dispatch,
-                store: widget.state.selectedStore,
-              ),
+            child: _MainBody(
+              dispatch: widget.dispatch,
+              store: widget.state.selectedStore,
             ),
             padding: EdgeInsets.only(left: 16.0, right: 16.0, top: 20.0),
           ),
@@ -215,6 +288,43 @@ class __FirstListPageState extends State<_FirstListPage> {
             },
           ),
         ),
+        if (_isLostConnection)
+          Positioned.fill(
+            child: SafeArea(
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: 25.0,
+                  color: Colors.black.withOpacity(.8),
+                  child: Center(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.cloud_off,
+                          color: Colors.white,
+                          size: 14.0,
+                        ),
+                        SizedBox(width: 10.0),
+                        Text(
+                          "No internet connection",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 13.0,
+                            decoration: TextDecoration.none,
+                            wordSpacing: -4.0,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
       ],
     );
   }

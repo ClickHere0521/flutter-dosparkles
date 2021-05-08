@@ -1,5 +1,9 @@
 import 'dart:convert';
 
+import 'package:com.floridainc.dosparkles/globalbasestate/action.dart';
+import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
+import 'package:connectivity/connectivity.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 import 'dart:async';
@@ -11,6 +15,7 @@ import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:toast/toast.dart';
 
 import 'message.dart';
 
@@ -88,6 +93,10 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
+  String _connectionStatus = 'Unknown';
+  final Connectivity _connectivity = Connectivity();
+  StreamSubscription<ConnectivityResult> _connectivitySubscription;
+
   // String _token;
   // final i18n = AppLocalizations.delegate;
 
@@ -117,6 +126,10 @@ class _AppState extends State<App> {
     // await AppConfig.instance.init(context);
 
     _getCurrentGeoPosition();
+
+    initConnectivity();
+    _connectivitySubscription =
+        _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
   }
 
   @override
@@ -163,7 +176,17 @@ class _AppState extends State<App> {
   }
 
   @override
+  void dispose() {
+    _connectivitySubscription.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    GlobalStore.store.dispatch(
+      GlobalActionCreator.setConnectionStatus(_connectionStatus),
+    );
+
     return MaterialApp(
       localeResolutionCallback:
           (Locale locale, Iterable<Locale> supportedLocales) {
@@ -185,6 +208,7 @@ class _AppState extends State<App> {
       navigatorObservers: [
         FirebaseAnalyticsObserver(analytics: analytics),
       ],
+
       home: routes.buildPage('startpage', null),
       onGenerateRoute: (RouteSettings settings) {
         return MaterialPageRoute<Object>(builder: (BuildContext context) {
@@ -192,6 +216,98 @@ class _AppState extends State<App> {
         });
       },
     );
+  }
+
+  Future<void> initConnectivity() async {
+    ConnectivityResult result;
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    try {
+      result = await _connectivity.checkConnectivity();
+    } on PlatformException catch (e) {
+      print(e.toString());
+    }
+
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
+    if (!mounted) {
+      return Future.value(null);
+    }
+
+    return _updateConnectionStatus(result);
+  }
+
+  Future<void> _updateConnectionStatus(ConnectivityResult result) async {
+    switch (result) {
+      case ConnectivityResult.wifi:
+        String wifiName, wifiBSSID, wifiIP;
+
+        try {
+          if (!kIsWeb && Platform.isIOS) {
+            LocationAuthorizationStatus status =
+                await _connectivity.getLocationServiceAuthorization();
+            if (status == LocationAuthorizationStatus.notDetermined) {
+              status =
+                  await _connectivity.requestLocationServiceAuthorization();
+            }
+            if (status == LocationAuthorizationStatus.authorizedAlways ||
+                status == LocationAuthorizationStatus.authorizedWhenInUse) {
+              wifiName = await _connectivity.getWifiName();
+            } else {
+              wifiName = await _connectivity.getWifiName();
+            }
+          } else {
+            wifiName = await _connectivity.getWifiName();
+          }
+        } on PlatformException catch (e) {
+          print(e.toString());
+          wifiName = "Failed to get Wifi Name";
+        }
+
+        try {
+          if (!kIsWeb && Platform.isIOS) {
+            LocationAuthorizationStatus status =
+                await _connectivity.getLocationServiceAuthorization();
+            if (status == LocationAuthorizationStatus.notDetermined) {
+              status =
+                  await _connectivity.requestLocationServiceAuthorization();
+            }
+            if (status == LocationAuthorizationStatus.authorizedAlways ||
+                status == LocationAuthorizationStatus.authorizedWhenInUse) {
+              wifiBSSID = await _connectivity.getWifiBSSID();
+            } else {
+              wifiBSSID = await _connectivity.getWifiBSSID();
+            }
+          } else {
+            wifiBSSID = await _connectivity.getWifiBSSID();
+          }
+        } on PlatformException catch (e) {
+          print(e.toString());
+          wifiBSSID = "Failed to get Wifi BSSID";
+        }
+
+        try {
+          wifiIP = await _connectivity.getWifiIP();
+        } on PlatformException catch (e) {
+          print(e.toString());
+          wifiIP = "Failed to get Wifi IP";
+        }
+
+        setState(() {
+          _connectionStatus = '$result\n'
+              'Wifi Name: $wifiName\n'
+              'Wifi BSSID: $wifiBSSID\n'
+              'Wifi IP: $wifiIP\n';
+        });
+        break;
+      case ConnectivityResult.mobile:
+      case ConnectivityResult.none:
+        setState(() => _connectionStatus = result.toString());
+        break;
+      default:
+        setState(() => _connectionStatus = 'Failed to get connectivity.');
+        break;
+    }
   }
 }
 
@@ -212,3 +328,5 @@ void _getCurrentGeoPosition() async {
     );
   });
 }
+
+void _checkInternetConnection() async {}

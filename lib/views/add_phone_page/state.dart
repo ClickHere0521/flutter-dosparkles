@@ -28,6 +28,9 @@ class AddPhonePageState
 
   @override
   List<CartItem> shoppingCart;
+
+  @override
+  String connectionStatus;
 }
 
 AddPhonePageState initState(Map<String, dynamic> args) {

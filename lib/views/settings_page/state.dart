@@ -28,6 +28,9 @@ class SettingsPageState
 
   @override
   List<CartItem> shoppingCart;
+
+  @override
+  String connectionStatus;
 }
 
 SettingsPageState initState(Map<String, dynamic> args) {

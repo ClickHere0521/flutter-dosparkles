@@ -28,6 +28,9 @@ class RegisterPageState
 
   @override
   List<CartItem> shoppingCart;
+
+  @override
+  String connectionStatus;
 }
 
 RegisterPageState initState(Map<String, dynamic> args) {

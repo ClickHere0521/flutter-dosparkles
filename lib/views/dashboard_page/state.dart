@@ -28,6 +28,9 @@ class DashboardPageState
 
   @override
   List<CartItem> shoppingCart;
+
+  @override
+  String connectionStatus;
 }
 
 DashboardPageState initState(Map<String, dynamic> args) {

@@ -28,6 +28,9 @@ class EmptyScreenPageState
 
   @override
   List<CartItem> shoppingCart;
+
+  @override
+  String connectionStatus;
 }
 
 EmptyScreenPageState initState(Map<String, dynamic> args) {

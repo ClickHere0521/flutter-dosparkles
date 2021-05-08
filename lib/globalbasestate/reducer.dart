@@ -18,6 +18,7 @@ Reducer<GlobalState> buildReducer() {
       GlobalAction.setSelectedProduct: _setSelectedProduct,
       GlobalAction.setShoppingCart: _setShoppingCart,
       GlobalAction.addProductToShoppingCart: _addProductToShoppingCart,
+      GlobalAction.setConnectionStatus: _setConnectionStatus,
     },
   );
 }
@@ -71,4 +72,9 @@ GlobalState _addProductToShoppingCart(GlobalState state, Action action) {
   // printWrapped('newState.shoppingCart ${newState.shoppingCart.toString()}');
 
   return newState;
+}
+
+GlobalState _setConnectionStatus(GlobalState state, Action action) {
+  final String status = action.payload;
+  return state.clone()..connectionStatus = status;
 }

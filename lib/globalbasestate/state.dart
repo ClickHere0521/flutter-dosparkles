@@ -20,6 +20,9 @@ abstract class GlobalBaseState {
 
   List<CartItem> get shoppingCart;
   set shoppingCart(List<CartItem> s);
+
+  String get connectionStatus;
+  set connectionStatus(String s);
 }
 
 class GlobalState implements GlobalBaseState, Cloneable<GlobalState> {
@@ -42,6 +45,9 @@ class GlobalState implements GlobalBaseState, Cloneable<GlobalState> {
   List<CartItem> shoppingCart;
 
   @override
+  String connectionStatus;
+
+  @override
   GlobalState clone() {
     return GlobalState()
       ..locale = locale
@@ -49,6 +55,7 @@ class GlobalState implements GlobalBaseState, Cloneable<GlobalState> {
       ..storesList = storesList
       ..selectedStore = selectedStore
       ..selectedProduct = selectedProduct
-      ..shoppingCart = shoppingCart;
+      ..shoppingCart = shoppingCart
+      ..connectionStatus = connectionStatus;
   }
 }

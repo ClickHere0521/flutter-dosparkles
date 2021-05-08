@@ -28,6 +28,9 @@ class CustomizeLinkPageState
 
   @override
   List<CartItem> shoppingCart;
+
+  @override
+  String connectionStatus;
 }
 
 CustomizeLinkPageState initState(Map<String, dynamic> args) {

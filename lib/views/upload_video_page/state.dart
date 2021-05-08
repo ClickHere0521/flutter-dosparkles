@@ -27,6 +27,9 @@ class UploadVideoState implements GlobalBaseState, Cloneable<UploadVideoState> {
 
   @override
   List<CartItem> shoppingCart;
+
+  @override
+  String connectionStatus;
 }
 
 UploadVideoState initState(Map<String, dynamic> args) {

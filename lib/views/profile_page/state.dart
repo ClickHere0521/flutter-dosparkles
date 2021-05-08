@@ -27,6 +27,9 @@ class ProfilePageState implements GlobalBaseState, Cloneable<ProfilePageState> {
 
   @override
   List<CartItem> shoppingCart;
+
+  @override
+  String connectionStatus;
 }
 
 ProfilePageState initState(Map<String, dynamic> args) {

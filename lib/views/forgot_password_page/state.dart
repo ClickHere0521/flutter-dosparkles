@@ -28,6 +28,9 @@ class ForgotPasswordPageState
 
   @override
   List<CartItem> shoppingCart;
+
+  @override
+  String connectionStatus;
 }
 
 ForgotPasswordPageState initState(Map<String, dynamic> args) {

@@ -28,6 +28,9 @@ class InviteFriendPageState
 
   @override
   List<CartItem> shoppingCart;
+
+  @override
+  String connectionStatus;
 }
 
 InviteFriendPageState initState(Map<String, dynamic> args) {

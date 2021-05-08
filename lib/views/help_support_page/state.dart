@@ -38,6 +38,9 @@ class HelpSupportPageState
 
   @override
   List<CartItem> shoppingCart;
+
+  @override
+  String connectionStatus;
 }
 
 HelpSupportPageState initState(Map<String, dynamic> args) {

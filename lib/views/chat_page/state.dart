@@ -36,6 +36,9 @@ class ChatPageState implements Cloneable<ChatPageState> {
 
   @override
   List<CartItem> shoppingCart;
+
+  @override
+  String connectionStatus;
 }
 
 ChatPageState initState(Map<String, dynamic> args) {

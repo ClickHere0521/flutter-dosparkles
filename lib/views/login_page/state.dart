@@ -27,7 +27,6 @@ class LoginPageState implements GlobalBaseState, Cloneable<LoginPageState> {
       ..passWordTextController = passWordTextController;
   }
 
-
   @override
   Locale locale;
 
@@ -43,8 +42,11 @@ class LoginPageState implements GlobalBaseState, Cloneable<LoginPageState> {
   @override
   ProductItem selectedProduct;
 
- @override
-   List<CartItem> shoppingCart;
+  @override
+  List<CartItem> shoppingCart;
+
+  @override
+  String connectionStatus;
 }
 
 LoginPageState initState(Map<String, dynamic> args) {

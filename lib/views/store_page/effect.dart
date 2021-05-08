@@ -29,6 +29,7 @@ void _onInit(Action action, Context<StorePageState> ctx) async {
   ctx.state.selectedProduct = GlobalStore.store.getState().selectedProduct;
   ctx.state.selectedStore = GlobalStore.store.getState().selectedStore;
   ctx.state.shoppingCart = GlobalStore.store.getState().shoppingCart;
+  ctx.state.connectionStatus = GlobalStore.store.getState().connectionStatus;
 
   if (ctx.state.productIndex == null) {
     if (ctx.state.selectedStore != null && ctx.state.selectedProduct != null) {

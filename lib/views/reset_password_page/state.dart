@@ -28,6 +28,9 @@ class ResetPasswordPageState
 
   @override
   List<CartItem> shoppingCart;
+
+  @override
+  String connectionStatus;
 }
 
 ResetPasswordPageState initState(Map<String, dynamic> args) {

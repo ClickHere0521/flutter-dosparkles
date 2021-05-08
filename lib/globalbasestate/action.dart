@@ -10,7 +10,8 @@ enum GlobalAction {
   setSelectedStore,
   setSelectedProduct,
   setShoppingCart,
-  addProductToShoppingCart
+  addProductToShoppingCart,
+  setConnectionStatus
 }
 
 class GlobalActionCreator {
@@ -52,5 +53,9 @@ class GlobalActionCreator {
       engraveInputs,
       optionalMaterialSelected,
     ]);
+  }
+
+  static Action setConnectionStatus(String status) {
+    return Action(GlobalAction.setConnectionStatus, payload: status);
   }
 }

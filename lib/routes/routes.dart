@@ -38,7 +38,9 @@ class Routes {
         page.connectExtraStore<GlobalState>(GlobalStore.store,
             (Object pagestate, GlobalState appState) {
           final GlobalBaseState p = pagestate;
-          if (p.locale != appState.locale || p.user != appState.user) {
+          if (p.locale != appState.locale ||
+              p.user != appState.user ||
+              p.connectionStatus != appState.connectionStatus) {
             if (pagestate is Cloneable) {
               final Object copy = pagestate.clone();
               final GlobalBaseState newState = copy;
@@ -48,6 +50,7 @@ class Routes {
               newState.selectedStore = appState.selectedStore;
               newState.selectedProduct = appState.selectedProduct;
               newState.shoppingCart = appState.shoppingCart;
+              newState.connectionStatus = appState.connectionStatus;
               return newState;
             }
           }

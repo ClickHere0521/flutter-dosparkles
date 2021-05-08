@@ -36,8 +36,11 @@ class StoreSelectionPageState
   @override
   ProductItem selectedProduct;
 
- @override
-   List<CartItem> shoppingCart;
+  @override
+  List<CartItem> shoppingCart;
+
+  @override
+  String connectionStatus;
 }
 
 StoreSelectionPageState initState(Map<String, dynamic> args) {

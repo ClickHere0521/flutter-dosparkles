@@ -28,6 +28,9 @@ class NotificationsPageState
 
   @override
   List<CartItem> shoppingCart;
+
+  @override
+  String connectionStatus;
 }
 
 NotificationsPageState initState(Map<String, dynamic> args) {
