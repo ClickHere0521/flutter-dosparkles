@@ -15,6 +15,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:social_share/social_share.dart';
 import '../../actions/api/graphql_client.dart';
 import '../../utils/colors.dart';
 import '../../utils/general.dart';
@@ -200,6 +201,7 @@ class __InnerPartState extends State<_InnerPart> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          SizedBox(height: 20.0),
           SizedBox(height: 20.0),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,

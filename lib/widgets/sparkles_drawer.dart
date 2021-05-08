@@ -11,6 +11,7 @@ import 'package:com.floridainc.dosparkles/widgets/branch/branch_two.dart';
 import 'package:com.floridainc.dosparkles/widgets/checkout.dart';
 import 'package:com.floridainc.dosparkles/widgets/connectivity.dart';
 import 'package:com.floridainc.dosparkles/widgets/product_details_image.dart';
+import 'package:com.floridainc.dosparkles/widgets/test_social_share.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_apple_signin.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_country_code_picker.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_facebook_signin.dart';
@@ -26,6 +27,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:social_share/social_share.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'confirm_email.dart';
@@ -304,6 +306,22 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                 //   },
                 // ),
                 // ListTile(
+                //   leading: const Icon(Icons.location_on),
+                //   minLeadingWidth: 0.0,
+                //   title: Text(
+                //     'SocialShare',
+                //     style: TextStyle(color: Colors.white),
+                //   ),
+                //   onTap: () {
+                //     Navigator.push(
+                //       context,
+                //       MaterialPageRoute(
+                //           builder: (context) => SocialShareWidget()),
+                //     );
+                //   },
+                // ),
+
+                // ListTile(
                 //   leading: const Icon(Icons.app_registration),
                 //   minLeadingWidth: 0.0,
                 //   title: Text(
@@ -557,7 +575,11 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                       ],
                     ),
                   ),
-                  onTap: () {},
+                  onTap: () {
+                    SocialShare.shareOptions("Hello world").then((data) {
+                      print(data);
+                    });
+                  },
                 ),
                 SizedBox(height: 10.0),
                 widget.globalUser.role == "Store Manager" ||

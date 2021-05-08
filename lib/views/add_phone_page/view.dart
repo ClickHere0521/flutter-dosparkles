@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
 import 'package:flutter/services.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:social_share/social_share.dart';
 import '../../actions/api/graphql_client.dart';
 import '../../utils/colors.dart';
 import '../../utils/general.dart';
