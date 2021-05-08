@@ -16,28 +16,22 @@ class ChatPageState implements Cloneable<ChatPageState> {
       ..storesList = storesList
       ..selectedStore = selectedStore
       ..selectedProduct = selectedProduct
-      ..shoppingCart = shoppingCart;
+      ..shoppingCart = shoppingCart
+      ..connectionStatus = connectionStatus;
   }
 
-  @override
   Locale locale;
 
-  @override
   AppUser user;
 
-  @override
   List<StoreItem> storesList;
 
-  @override
   StoreItem selectedStore;
 
-  @override
   ProductItem selectedProduct;
 
-  @override
   List<CartItem> shoppingCart;
 
-  @override
   String connectionStatus;
 }
 

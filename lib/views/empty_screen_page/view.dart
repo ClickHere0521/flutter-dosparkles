@@ -1,3 +1,5 @@
+import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
+import 'package:com.floridainc.dosparkles/widgets/connection_lost.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
 import 'state.dart';
@@ -13,10 +15,32 @@ class _MainBody extends StatefulWidget {
 }
 
 class __MainBodyState extends State<_MainBody> {
+  bool _isLostConnection = false;
+
+  checkInternetConnectivity() {
+    String _connectionStatus = GlobalStore.store.getState().connectionStatus;
+    if (_connectionStatus == 'ConnectivityResult.none') {
+      setState(() {
+        _isLostConnection = true;
+      });
+    } else {
+      setState(() {
+        _isLostConnection = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(),
+    checkInternetConnectivity();
+
+    return Stack(
+      children: [
+        Scaffold(
+          body: Container(),
+        ),
+        if (_isLostConnection) ConnectionLost(),
+      ],
     );
   }
 }

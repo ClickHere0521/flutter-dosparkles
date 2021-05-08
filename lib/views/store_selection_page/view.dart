@@ -6,6 +6,7 @@ import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/models/models.dart';
 import 'package:com.floridainc.dosparkles/views/store_selection_page/action.dart';
 import 'package:com.floridainc.dosparkles/widgets/bottom_nav_bar.dart';
+import 'package:com.floridainc.dosparkles/widgets/connection_lost.dart';
 import 'package:com.floridainc.dosparkles/widgets/sparkles_drawer.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
@@ -41,6 +42,21 @@ class _MainBodyPage extends StatefulWidget {
 }
 
 class __MainBodyPageState extends State<_MainBodyPage> {
+  bool _isLostConnection = false;
+
+  checkInternetConnectivity() {
+    String _connectionStatus = GlobalStore.store.getState().connectionStatus;
+    if (_connectionStatus == 'ConnectivityResult.none') {
+      setState(() {
+        _isLostConnection = true;
+      });
+    } else {
+      setState(() {
+        _isLostConnection = false;
+      });
+    }
+  }
+
   Future fetchData() async {
     Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
     final SharedPreferences prefs = await _prefs;
@@ -57,6 +73,8 @@ class __MainBodyPageState extends State<_MainBodyPage> {
 
   @override
   Widget build(BuildContext context) {
+    checkInternetConnectivity();
+
     return Stack(
       children: [
         Positioned(
@@ -133,6 +151,7 @@ class __MainBodyPageState extends State<_MainBodyPage> {
             },
           ),
         ),
+        if (_isLostConnection) ConnectionLost(),
       ],
     );
   }

@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
+import 'package:com.floridainc.dosparkles/widgets/connection_lost.dart';
 import 'package:com.floridainc.dosparkles/widgets/product_details_image.dart';
 import 'package:com.floridainc.dosparkles/widgets/swiper_widget.dart';
 import 'package:http/http.dart' as http;
@@ -52,225 +54,247 @@ class _FirstPage extends StatefulWidget {
 }
 
 class __FirstPageState extends State<_FirstPage> {
+  bool _isLostConnection = false;
+
+  checkInternetConnectivity() {
+    String _connectionStatus = GlobalStore.store.getState().connectionStatus;
+    if (_connectionStatus == 'ConnectivityResult.none') {
+      setState(() {
+        _isLostConnection = true;
+      });
+    } else {
+      setState(() {
+        _isLostConnection = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _MainBody(
-        dispatch: widget.dispatch,
-        selectedProduct: widget.selectedProduct,
-        optionalMaterialSelected: widget.optionalMaterialSelected,
-        engraveInputs: widget.engraveInputs,
-        productQuantity: widget.productQuantity,
-      ),
-      backgroundColor: Colors.white,
-      resizeToAvoidBottomInset: true,
-      appBar: AppBar(
-        title: GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ProductDetailsImage(
-                  dispatch: widget.dispatch,
-                  selectedProduct: widget.selectedProduct,
-                  optionalMaterialSelected: widget.optionalMaterialSelected,
-                  engraveInputs: widget.engraveInputs,
-                  productQuantity: widget.productQuantity,
+    checkInternetConnectivity();
+
+    return Stack(
+      children: [
+        Scaffold(
+          body: _MainBody(
+            dispatch: widget.dispatch,
+            selectedProduct: widget.selectedProduct,
+            optionalMaterialSelected: widget.optionalMaterialSelected,
+            engraveInputs: widget.engraveInputs,
+            productQuantity: widget.productQuantity,
+          ),
+          backgroundColor: Colors.white,
+          resizeToAvoidBottomInset: true,
+          appBar: AppBar(
+            title: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProductDetailsImage(
+                      dispatch: widget.dispatch,
+                      selectedProduct: widget.selectedProduct,
+                      optionalMaterialSelected: widget.optionalMaterialSelected,
+                      engraveInputs: widget.engraveInputs,
+                      productQuantity: widget.productQuantity,
+                    ),
+                  ),
+                );
+              },
+              child: Text(
+                "Product Details",
+                style: TextStyle(
+                  fontSize: 22,
+                  color: HexColor("#53586F"),
+                  fontWeight: FontWeight.w600,
+                  fontFeatures: [FontFeature.enable('smcp')],
                 ),
               ),
-            );
-          },
-          child: Text(
-            "Product Details",
-            style: TextStyle(
-              fontSize: 22,
-              color: HexColor("#53586F"),
-              fontWeight: FontWeight.w600,
-              fontFeatures: [FontFeature.enable('smcp')],
             ),
-          ),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        elevation: 0.0,
-        leadingWidth: 70.0,
-        automaticallyImplyLeading: false,
-        actions: [
-          Center(
-            child: Container(
-              width: 34.0,
-              height: 34.0,
-              margin: EdgeInsets.only(right: 16.0),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey[200],
-                    offset: Offset(0.0, 0.0), // (x, y)
-                    blurRadius: 10.0,
+            centerTitle: true,
+            backgroundColor: Colors.white,
+            elevation: 0.0,
+            leadingWidth: 70.0,
+            automaticallyImplyLeading: false,
+            actions: [
+              Center(
+                child: Container(
+                  width: 34.0,
+                  height: 34.0,
+                  margin: EdgeInsets.only(right: 16.0),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey[200],
+                        offset: Offset(0.0, 0.0), // (x, y)
+                        blurRadius: 10.0,
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              child: Center(
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    SvgPicture.asset(
-                      "images/Group 2424.svg",
-                      color: HexColor("#B3C1F2"),
-                    ),
-                    Positioned.fill(
-                      top: -2.5,
-                      child: Align(
-                        alignment: Alignment.topRight,
-                        child: Container(
-                          width: 10.0,
-                          height: 10.0,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Center(
-                            child: Text(
-                              widget.productQuantity.toString(),
-                              style: TextStyle(
-                                fontSize: 6.0,
-                                fontWeight: FontWeight.w900,
-                                color: HexColor("#6092DC"),
+                  child: Center(
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        SvgPicture.asset(
+                          "images/Group 2424.svg",
+                          color: HexColor("#B3C1F2"),
+                        ),
+                        Positioned.fill(
+                          top: -2.5,
+                          child: Align(
+                            alignment: Alignment.topRight,
+                            child: Container(
+                              width: 10.0,
+                              height: 10.0,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  widget.productQuantity.toString(),
+                                  style: TextStyle(
+                                    fontSize: 6.0,
+                                    fontWeight: FontWeight.w900,
+                                    color: HexColor("#6092DC"),
+                                  ),
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
-        leading: Builder(
-          builder: (context) => IconButton(
-            highlightColor: Colors.transparent,
-            splashColor: Colors.transparent,
-            icon: Container(
-              width: 34.0,
-              height: 34.0,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey[200],
-                    offset: Offset(0.0, 0.0), // (x, y)
-                    blurRadius: 10.0,
-                  ),
-                ],
-              ),
-              child: Center(
-                child: SvgPicture.asset(
-                  "images/Group 934534.svg",
-                  color: HexColor("#B3C1F2"),
-                ),
-              ),
-            ),
-            onPressed: () => Scaffold.of(context).openDrawer(),
-          ),
-        ),
-      ),
-      drawer: SparklesDrawer(),
-      bottomNavigationBar: Container(
-        width: double.infinity,
-        height: double.infinity,
-        constraints: BoxConstraints(maxHeight: 75.0),
-        padding: EdgeInsets.symmetric(horizontal: 16.0),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(.9),
-          borderRadius: BorderRadius.only(
-            topRight: Radius.circular(32.0),
-            topLeft: Radius.circular(32.0),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey[300],
-              offset: Offset(0.0, -0.2), // (x,y)
-              blurRadius: 10.0,
-            ),
-          ],
-        ),
-        child: Center(
-          child: Row(
-            children: [
-              Container(
-                width: 163.0,
-                height: 42.0,
-                child: Center(
-                  child: Text(
-                    "\$${widget.productQuantity * widget.selectedProduct.price}",
-                    style: TextStyle(
-                      color: HexColor("#53586F"),
-                      fontSize: 22.0,
-                      fontWeight: FontWeight.w700,
+                      ],
                     ),
                   ),
-                ),
-              ),
-              Container(
-                width: 163.0,
-                height: 42.0,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(31.0),
-                ),
-                child: ElevatedButton(
-                  style: ButtonStyle(
-                    elevation: MaterialStateProperty.all(0.0),
-                    backgroundColor:
-                        MaterialStateProperty.all(HexColor("#6092DC")),
-                    shape: MaterialStateProperty.all(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(31.0),
-                      ),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      SvgPicture.asset("images/Group 423423.svg"),
-                      SizedBox(width: 4.0),
-                      Text(
-                        'Add to cart',
-                        style: TextStyle(
-                          fontSize: 17.0,
-                          fontWeight: FontWeight.normal,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ProductDetailsImage(
-                          dispatch: widget.dispatch,
-                          selectedProduct: widget.selectedProduct,
-                          productQuantity: widget.productQuantity,
-                          engraveInputs: widget.engraveInputs,
-                          optionalMaterialSelected:
-                              widget.optionalMaterialSelected,
-                        ),
-                      ),
-                    );
-                  },
                 ),
               ),
             ],
+            leading: Builder(
+              builder: (context) => IconButton(
+                highlightColor: Colors.transparent,
+                splashColor: Colors.transparent,
+                icon: Container(
+                  width: 34.0,
+                  height: 34.0,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey[200],
+                        offset: Offset(0.0, 0.0), // (x, y)
+                        blurRadius: 10.0,
+                      ),
+                    ],
+                  ),
+                  child: Center(
+                    child: SvgPicture.asset(
+                      "images/Group 934534.svg",
+                      color: HexColor("#B3C1F2"),
+                    ),
+                  ),
+                ),
+                onPressed: () => Scaffold.of(context).openDrawer(),
+              ),
+            ),
+          ),
+          drawer: SparklesDrawer(),
+          bottomNavigationBar: Container(
+            width: double.infinity,
+            height: double.infinity,
+            constraints: BoxConstraints(maxHeight: 75.0),
+            padding: EdgeInsets.symmetric(horizontal: 16.0),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(.9),
+              borderRadius: BorderRadius.only(
+                topRight: Radius.circular(32.0),
+                topLeft: Radius.circular(32.0),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey[300],
+                  offset: Offset(0.0, -0.2), // (x,y)
+                  blurRadius: 10.0,
+                ),
+              ],
+            ),
+            child: Center(
+              child: Row(
+                children: [
+                  Container(
+                    width: 163.0,
+                    height: 42.0,
+                    child: Center(
+                      child: Text(
+                        "\$${widget.productQuantity * widget.selectedProduct.price}",
+                        style: TextStyle(
+                          color: HexColor("#53586F"),
+                          fontSize: 22.0,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: 163.0,
+                    height: 42.0,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(31.0),
+                    ),
+                    child: ElevatedButton(
+                      style: ButtonStyle(
+                        elevation: MaterialStateProperty.all(0.0),
+                        backgroundColor:
+                            MaterialStateProperty.all(HexColor("#6092DC")),
+                        shape: MaterialStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(31.0),
+                          ),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SvgPicture.asset("images/Group 423423.svg"),
+                          SizedBox(width: 4.0),
+                          Text(
+                            'Add to cart',
+                            style: TextStyle(
+                              fontSize: 17.0,
+                              fontWeight: FontWeight.normal,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProductDetailsImage(
+                              dispatch: widget.dispatch,
+                              selectedProduct: widget.selectedProduct,
+                              productQuantity: widget.productQuantity,
+                              engraveInputs: widget.engraveInputs,
+                              optionalMaterialSelected:
+                                  widget.optionalMaterialSelected,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
-      ),
+        if (_isLostConnection) ConnectionLost(),
+      ],
     );
   }
 }

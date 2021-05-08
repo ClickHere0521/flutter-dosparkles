@@ -5,6 +5,7 @@ import 'package:com.floridainc.dosparkles/models/cart_item_model.dart';
 import 'package:com.floridainc.dosparkles/models/date_formatter.dart';
 import 'package:com.floridainc.dosparkles/utils/general.dart';
 import 'package:com.floridainc.dosparkles/widgets/bottom_nav_bar.dart';
+import 'package:com.floridainc.dosparkles/widgets/connection_lost.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -78,6 +79,8 @@ class _FirstPage extends StatefulWidget {
 }
 
 class __FirstPageState extends State<_FirstPage> {
+  bool _isLostConnection = false;
+
   Future fetchData() async {
     Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
     final SharedPreferences prefs = await _prefs;
@@ -92,8 +95,23 @@ class __FirstPageState extends State<_FirstPage> {
     }
   }
 
+  checkInternetConnectivity() {
+    String _connectionStatus = GlobalStore.store.getState().connectionStatus;
+    if (_connectionStatus == 'ConnectivityResult.none') {
+      setState(() {
+        _isLostConnection = true;
+      });
+    } else {
+      setState(() {
+        _isLostConnection = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    checkInternetConnectivity();
+
     return Stack(
       children: [
         Positioned(
@@ -164,6 +182,7 @@ class __FirstPageState extends State<_FirstPage> {
             },
           ),
         ),
+        if (_isLostConnection) ConnectionLost(),
       ],
     );
   }

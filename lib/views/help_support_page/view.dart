@@ -4,6 +4,7 @@ import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/models/models.dart';
 import 'package:com.floridainc.dosparkles/views/store_selection_page/action.dart';
 import 'package:com.floridainc.dosparkles/widgets/about_us.dart';
+import 'package:com.floridainc.dosparkles/widgets/connection_lost.dart';
 import 'package:com.floridainc.dosparkles/widgets/privacy_policy.dart';
 import 'package:com.floridainc.dosparkles/widgets/sparkles_drawer.dart';
 import 'package:com.floridainc.dosparkles/widgets/terms_and_conditions.dart';
@@ -40,8 +41,25 @@ class _MainBody extends StatefulWidget {
 }
 
 class __MainBodyState extends State<_MainBody> {
+  bool _isLostConnection = false;
+
+  checkInternetConnectivity() {
+    String _connectionStatus = GlobalStore.store.getState().connectionStatus;
+    if (_connectionStatus == 'ConnectivityResult.none') {
+      setState(() {
+        _isLostConnection = true;
+      });
+    } else {
+      setState(() {
+        _isLostConnection = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    checkInternetConnectivity();
+
     return Container(
       color: HexColor("#F2F6FA"),
       width: MediaQuery.of(context).size.width,
@@ -97,6 +115,7 @@ class __MainBodyState extends State<_MainBody> {
             ),
             drawer: SparklesDrawer(activeRoute: "helpsupportpage"),
           ),
+          if (_isLostConnection) ConnectionLost(),
         ],
       ),
     );

@@ -5,6 +5,7 @@ import 'package:com.floridainc.dosparkles/actions/api/graphql_client.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/models/models.dart';
 import 'package:com.floridainc.dosparkles/widgets/bottom_nav_bar.dart';
+import 'package:com.floridainc.dosparkles/widgets/connection_lost.dart';
 import 'package:com.floridainc.dosparkles/widgets/sparkles_drawer.dart';
 import 'package:com.floridainc.dosparkles/widgets/terms_and_conditions.dart';
 import 'package:contacts_service/contacts_service.dart';
@@ -136,6 +137,7 @@ class _FirstPage extends StatefulWidget {
 
 class __FirstPageState extends State<_FirstPage> {
   int currentPage = 0;
+  bool _isLostConnection = false;
 
   Future fetchData() async {
     Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
@@ -157,8 +159,23 @@ class __FirstPageState extends State<_FirstPage> {
     });
   }
 
+  checkInternetConnectivity() {
+    String _connectionStatus = GlobalStore.store.getState().connectionStatus;
+    if (_connectionStatus == 'ConnectivityResult.none') {
+      setState(() {
+        _isLostConnection = true;
+      });
+    } else {
+      setState(() {
+        _isLostConnection = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    checkInternetConnectivity();
+
     return Stack(
       children: [
         Positioned(
@@ -247,6 +264,7 @@ class __FirstPageState extends State<_FirstPage> {
             },
           ),
         ),
+        if (_isLostConnection) ConnectionLost(),
       ],
     );
   }
@@ -984,6 +1002,7 @@ class __ContactsPageState extends State<_ContactsPage> {
   List<Map<String, dynamic>> checkedList;
   String searchValue = '';
   bool _isLoading = false;
+  bool _isLostConnection = false;
 
   void _setLoading(bool value) {
     setState(() {
@@ -1028,8 +1047,23 @@ class __ContactsPageState extends State<_ContactsPage> {
     });
   }
 
+  checkInternetConnectivity() {
+    String _connectionStatus = GlobalStore.store.getState().connectionStatus;
+    if (_connectionStatus == 'ConnectivityResult.none') {
+      setState(() {
+        _isLostConnection = true;
+      });
+    } else {
+      setState(() {
+        _isLostConnection = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    checkInternetConnectivity();
+
     setState(() {
       filteredList = contactsList.where((contact) {
         String name = contact['name'].toLowerCase();
@@ -1346,6 +1380,7 @@ class __ContactsPageState extends State<_ContactsPage> {
             ),
           ),
         ),
+        if (_isLostConnection) ConnectionLost(),
       ],
     );
   }

@@ -13,6 +13,7 @@ import 'package:com.floridainc.dosparkles/views/profile_page/state.dart';
 import 'package:com.floridainc.dosparkles/views/store_page/action.dart';
 import 'package:com.floridainc.dosparkles/views/store_page/state.dart';
 import 'package:com.floridainc.dosparkles/widgets/confirm_video.dart';
+import 'package:com.floridainc.dosparkles/widgets/connection_lost.dart';
 import 'package:com.floridainc.dosparkles/widgets/custom_switch.dart';
 import 'package:com.floridainc.dosparkles/widgets/sparkles_drawer.dart';
 import 'package:com.floridainc.dosparkles/widgets/touch_spin.dart';
@@ -235,8 +236,25 @@ class _FirstPage extends StatefulWidget {
 }
 
 class __FirstPageState extends State<_FirstPage> {
+  bool _isLostConnection = false;
+
+  checkInternetConnectivity() {
+    String _connectionStatus = GlobalStore.store.getState().connectionStatus;
+    if (_connectionStatus == 'ConnectivityResult.none') {
+      setState(() {
+        _isLostConnection = true;
+      });
+    } else {
+      setState(() {
+        _isLostConnection = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    checkInternetConnectivity();
+
     return Stack(
       children: [
         Positioned(
@@ -359,6 +377,7 @@ class __FirstPageState extends State<_FirstPage> {
           ),
           drawer: SparklesDrawer(),
         ),
+        if (_isLostConnection) ConnectionLost(),
       ],
     );
   }

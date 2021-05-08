@@ -32,4 +32,5 @@ void _onDispose(Action action, Context<ChatPageState> ctx) {
 }
 
 void _onBuild(Action action, Context<ChatPageState> ctx) {}
+
 void _onStart(Action action, Context<ChatPageState> ctx) async {}

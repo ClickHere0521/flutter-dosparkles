@@ -8,6 +8,7 @@ import 'package:com.floridainc.dosparkles/actions/app_config.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/models/models.dart';
 import 'package:com.floridainc.dosparkles/utils/colors.dart';
+import 'package:com.floridainc.dosparkles/widgets/connection_lost.dart';
 import 'package:com.floridainc.dosparkles/widgets/details_of_order.dart';
 import 'package:com.floridainc.dosparkles/widgets/order_product_details.dart';
 import 'package:com.floridainc.dosparkles/widgets/sparkles_drawer.dart';
@@ -166,6 +167,7 @@ class BubblePage extends StatefulWidget {
 class _BubblePageState extends State<BubblePage> {
   String inputData = "";
   var _controller = TextEditingController();
+  bool _isLostConnection = false;
 
   getConversationName(conversation, userId) {
     var chatNames = [];
@@ -183,8 +185,23 @@ class _BubblePageState extends State<BubblePage> {
         .createMessage({'text': text, 'chat': chatId, 'user': userId});
   }
 
+  checkInternetConnectivity() {
+    String _connectionStatus = GlobalStore.store.getState().connectionStatus;
+    if (_connectionStatus == 'ConnectivityResult.none') {
+      setState(() {
+        _isLostConnection = true;
+      });
+    } else {
+      setState(() {
+        _isLostConnection = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    checkInternetConnectivity();
+
     return Stack(
       children: [
         Positioned(
@@ -337,6 +354,7 @@ class _BubblePageState extends State<BubblePage> {
             ),
           ),
         ),
+        if (_isLostConnection) ConnectionLost(),
       ],
     );
   }

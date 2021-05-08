@@ -4,6 +4,7 @@ import 'package:com.floridainc.dosparkles/actions/api/graphql_client.dart';
 import 'package:com.floridainc.dosparkles/actions/user_info_operate.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/action.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
+import 'package:com.floridainc.dosparkles/widgets/connection_lost.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:fish_redux/fish_redux.dart';
@@ -30,8 +31,25 @@ class _MainBody extends StatefulWidget {
 }
 
 class __MainBodyState extends State<_MainBody> {
+  bool _isLostConnection = false;
+
+  checkInternetConnectivity() {
+    String _connectionStatus = GlobalStore.store.getState().connectionStatus;
+    if (_connectionStatus == 'ConnectivityResult.none') {
+      setState(() {
+        _isLostConnection = true;
+      });
+    } else {
+      setState(() {
+        _isLostConnection = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    checkInternetConnectivity();
+
     return Container(
       color: HexColor("#F2F6FA"),
       width: MediaQuery.of(context).size.width,
@@ -89,6 +107,7 @@ class __MainBodyState extends State<_MainBody> {
               child: _InnerPart(),
             ),
           ),
+          if (_isLostConnection) ConnectionLost(),
         ],
       ),
     );

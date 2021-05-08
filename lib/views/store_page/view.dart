@@ -14,6 +14,7 @@ import 'package:com.floridainc.dosparkles/views/store_page/action.dart';
 import 'package:com.floridainc.dosparkles/views/store_page/state.dart';
 import 'package:com.floridainc.dosparkles/widgets/bottom_nav_bar.dart';
 import 'package:com.floridainc.dosparkles/widgets/confirm_video.dart';
+import 'package:com.floridainc.dosparkles/widgets/connection_lost.dart';
 import 'package:com.floridainc.dosparkles/widgets/custom_switch.dart';
 import 'package:com.floridainc.dosparkles/widgets/sparkles_drawer.dart';
 import 'package:fish_redux/fish_redux.dart';
@@ -128,43 +129,7 @@ class __FirstProductPageState extends State<_FirstProductPage> {
           //   },
           // ),
         ),
-        if (_isLostConnection)
-          Positioned.fill(
-            child: SafeArea(
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: 25.0,
-                  color: Colors.black.withOpacity(.8),
-                  child: Center(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.cloud_off,
-                          color: Colors.white,
-                          size: 14.0,
-                        ),
-                        SizedBox(width: 10.0),
-                        Text(
-                          "No internet connection",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 13.0,
-                            decoration: TextDecoration.none,
-                            wordSpacing: -4.0,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
+        if (_isLostConnection) ConnectionLost(),
       ],
     );
   }
@@ -288,43 +253,7 @@ class __FirstListPageState extends State<_FirstListPage> {
             },
           ),
         ),
-        if (_isLostConnection)
-          Positioned.fill(
-            child: SafeArea(
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: 25.0,
-                  color: Colors.black.withOpacity(.8),
-                  child: Center(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.cloud_off,
-                          color: Colors.white,
-                          size: 14.0,
-                        ),
-                        SizedBox(width: 10.0),
-                        Text(
-                          "No internet connection",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 13.0,
-                            decoration: TextDecoration.none,
-                            wordSpacing: -4.0,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
+        if (_isLostConnection) ConnectionLost(),
       ],
     );
   }
