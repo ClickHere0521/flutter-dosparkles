@@ -44,6 +44,12 @@ void _onInit(Action action, Context<StartPageState> ctx) async {
   await _loadData(ctx.context);
 
   SharedPreferences.getInstance().then((_p) async {
+    final savedToken = _p.getString('jwt') ?? '';
+    if (savedToken.isEmpty) {
+      ctx.dispatch(StartPageActionCreator.setIsFirst(true));
+      return null;
+    }
+
     final _isFirst = _p.getBool('firstStart') ?? true;
     if (!_isFirst) {
       await _pushToSignInPage(ctx.context);
