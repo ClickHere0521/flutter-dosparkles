@@ -115,12 +115,14 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                                                 widget.globalUser.avatarUrl,
                                             width: double.infinity,
                                             height: double.infinity,
+                                            fit: BoxFit.cover,
                                           )
                                         : Image.asset(
                                             "images/user-male-circle.png",
                                             width: double.infinity,
                                             height: double.infinity,
                                             color: Colors.white,
+                                            fit: BoxFit.cover,
                                           ),
                                   ),
                                 ),
@@ -433,8 +435,12 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                     ),
                   ),
                   onTap: () {
-                    Navigator.of(context)
-                        .pushNamed('storeselectionpage', arguments: null);
+                    if (GlobalStore.store.getState().user.storeFavorite != null)
+                      Navigator.of(context)
+                          .pushNamed('storepage', arguments: null);
+                    else
+                      Navigator.of(context)
+                          .pushNamed('storeselectionpage', arguments: null);
                   },
                 ),
                 SizedBox(height: 10.0),

@@ -1038,7 +1038,7 @@ class BaseGraphQLClient {
     return _service.mutate(_mutation);
   }
 
-  Future<QueryResult> updateUser(id, Map<String, dynamic> data) {
+  Future<QueryResult> updateUser(id, String data) {
     String _mutation = '''
       mutation UserUpdate(\$input: updateUserInput!) {
         updateUser(input: \$input) {
@@ -1059,8 +1059,13 @@ class BaseGraphQLClient {
       }
     ''';
 
-    print("$data");
-    return _service.mutate(_mutation, variables: data);
+    print("token :  $data");
+    return _service.mutate(_mutation, variables: {
+      "input": {
+        "where": {"id": "$id"},
+        "data": {"pushToken": "$data"}
+      }
+    });
   }
 
   Future<QueryResult> setUsersFavoriteStore(String id, String storeFavorite) {
