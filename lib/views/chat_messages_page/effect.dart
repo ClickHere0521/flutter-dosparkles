@@ -17,6 +17,14 @@ Effect<ChatMessagesPageState> buildEffect() {
 void _onAction(Action action, Context<ChatMessagesPageState> ctx) {}
 void _onInit(Action action, Context<ChatMessagesPageState> ctx) async {
   ctx.state.pageController = PageController();
+
+  ctx.state.user = GlobalStore.store.getState().user;
+  ctx.state.locale = GlobalStore.store.getState().locale;
+  ctx.state.storesList = GlobalStore.store.getState().storesList;
+  ctx.state.selectedProduct = GlobalStore.store.getState().selectedProduct;
+  ctx.state.selectedStore = GlobalStore.store.getState().selectedStore;
+  ctx.state.shoppingCart = GlobalStore.store.getState().shoppingCart;
+  ctx.state.connectionStatus = GlobalStore.store.getState().connectionStatus;
 }
 
 void _onDispose(Action action, Context<ChatMessagesPageState> ctx) {

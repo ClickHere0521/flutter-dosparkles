@@ -288,21 +288,21 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                 //     );
                 //   },
                 // ),
-                ListTile(
-                  leading: const Icon(Icons.location_on),
-                  minLeadingWidth: 0.0,
-                  title: Text(
-                    'Location',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ConncetivityExample()),
-                    );
-                  },
-                ),
+                // ListTile(
+                //   leading: const Icon(Icons.location_on),
+                //   minLeadingWidth: 0.0,
+                //   title: Text(
+                //     'Connectivity',
+                //     style: TextStyle(color: Colors.white),
+                //   ),
+                //   onTap: () {
+                //     Navigator.push(
+                //       context,
+                //       MaterialPageRoute(
+                //           builder: (context) => ConncetivityExample()),
+                //     );
+                //   },
+                // ),
                 // ListTile(
                 //   leading: const Icon(Icons.app_registration),
                 //   minLeadingWidth: 0.0,

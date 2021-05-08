@@ -1,8 +1,9 @@
+import 'package:com.floridainc.dosparkles/globalbasestate/state.dart';
 import 'package:com.floridainc.dosparkles/models/models.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
 
-class ChatPageState implements Cloneable<ChatPageState> {
+class ChatPageState implements GlobalBaseState, Cloneable<ChatPageState> {
   PageController pageController;
   bool isFirstTime;
   @override
@@ -20,18 +21,25 @@ class ChatPageState implements Cloneable<ChatPageState> {
       ..connectionStatus = connectionStatus;
   }
 
+  @override
   Locale locale;
 
+  @override
   AppUser user;
 
+  @override
   List<StoreItem> storesList;
 
+  @override
   StoreItem selectedStore;
 
+  @override
   ProductItem selectedProduct;
 
+  @override
   List<CartItem> shoppingCart;
 
+  @override
   String connectionStatus;
 }
 

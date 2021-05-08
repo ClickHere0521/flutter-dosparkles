@@ -224,7 +224,7 @@ class _BubblePageState extends State<BubblePage> {
         Scaffold(
           appBar: AppBar(
             title: Text(
-              widget.conversationName,
+              widget.conversationName != null ? widget.conversationName : '',
               style: TextStyle(
                 fontSize: 22,
                 color: Colors.white,
@@ -406,17 +406,19 @@ class __ChatOrderBlockState extends State<_ChatOrderBlock> {
                 clipBehavior: Clip.none,
                 fit: StackFit.passthrough,
                 children: [
-                  Positioned(
-                    bottom: -20.0,
-                    left: 17.0,
-                    child: Text(
-                      '${widget.formatter.format(DateTime.parse(widget.createdAt))}',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.black38,
-                      ),
-                    ),
-                  ),
+                  widget.createdAt != null
+                      ? Positioned(
+                          bottom: -20.0,
+                          left: 17.0,
+                          child: Text(
+                            '${widget.formatter.format(DateTime.parse(widget.createdAt))}',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.black38,
+                            ),
+                          ),
+                        )
+                      : '',
                   Bubble(
                     margin: BubbleEdges.only(top: 10),
                     elevation: 5.0,
@@ -484,17 +486,19 @@ class __ChatOrderBlockState extends State<_ChatOrderBlock> {
                                               ),
                                             )
                                           : SizedBox.shrink(child: null),
-                                      Text(
-                                        order['status'],
-                                        style: TextStyle(
-                                          fontSize: 12.0,
-                                          color: isStatusRejected
-                                              ? Colors.red
-                                              : isStatusConfirmed
-                                                  ? Colors.green
-                                                  : Colors.orange,
-                                        ),
-                                      ),
+                                      order['status'] != null
+                                          ? Text(
+                                              order['status'],
+                                              style: TextStyle(
+                                                fontSize: 12.0,
+                                                color: isStatusRejected
+                                                    ? Colors.red
+                                                    : isStatusConfirmed
+                                                        ? Colors.green
+                                                        : Colors.orange,
+                                              ),
+                                            )
+                                          : SizedBox.shrink(child: null),
                                       SizedBox(height: 4),
                                       order['products'] != null &&
                                               order['products'].length > 0
@@ -549,18 +553,21 @@ class __ChatOrderBlockState extends State<_ChatOrderBlock> {
                                                 ),
                                               ),
                                             ),
-                                            Positioned(
-                                              top: 0,
-                                              left: 70.0,
-                                              child: Text(
-                                                "\$${order['totalPrice']}",
-                                                style: TextStyle(
-                                                  fontSize: 12.0,
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ),
+                                            order['totalPrice'] != null
+                                                ? Positioned(
+                                                    top: 0,
+                                                    left: 70.0,
+                                                    child: Text(
+                                                      "\$${order['totalPrice']}",
+                                                      style: TextStyle(
+                                                        fontSize: 12.0,
+                                                        color: Colors.black,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                  )
+                                                : SizedBox.shrink(child: null),
                                           ],
                                         ),
                                       ),
@@ -939,17 +946,19 @@ class __BubbleContentWidgetState extends State<_BubbleContentWidget> {
                                         child: Stack(
                                           clipBehavior: Clip.none,
                                           children: [
-                                            Positioned(
-                                              bottom: -20.0,
-                                              left: 28.0,
-                                              child: Text(
-                                                '${widget.formatter.format(DateTime.parse(chatMessage['createdAt']))}',
-                                                style: TextStyle(
-                                                  fontSize: 12,
-                                                  color: Colors.black38,
-                                                ),
-                                              ),
-                                            ),
+                                            chatMessage['createdAt'] != null
+                                                ? Positioned(
+                                                    bottom: -20.0,
+                                                    left: 28.0,
+                                                    child: Text(
+                                                      '${widget.formatter.format(DateTime.parse(chatMessage['createdAt']))}',
+                                                      style: TextStyle(
+                                                        fontSize: 12,
+                                                        color: Colors.black38,
+                                                      ),
+                                                    ),
+                                                  )
+                                                : SizedBox.shrink(child: null),
                                             Container(
                                               width: double.infinity,
                                               constraints: BoxConstraints(
@@ -997,17 +1006,22 @@ class __BubbleContentWidgetState extends State<_BubbleContentWidget> {
                                               child: Stack(
                                                 clipBehavior: Clip.none,
                                                 children: [
-                                                  Positioned(
-                                                    bottom: -20.0,
-                                                    left: 28.0,
-                                                    child: Text(
-                                                      '${widget.formatter.format(DateTime.parse(chatMessage['createdAt']))}',
-                                                      style: TextStyle(
-                                                        fontSize: 12,
-                                                        color: Colors.black38,
-                                                      ),
-                                                    ),
-                                                  ),
+                                                  chatMessage['createdAt'] !=
+                                                          null
+                                                      ? Positioned(
+                                                          bottom: -20.0,
+                                                          left: 28.0,
+                                                          child: Text(
+                                                            '${widget.formatter.format(DateTime.parse(chatMessage['createdAt']))}',
+                                                            style: TextStyle(
+                                                              fontSize: 12,
+                                                              color: Colors
+                                                                  .black38,
+                                                            ),
+                                                          ),
+                                                        )
+                                                      : SizedBox.shrink(
+                                                          child: null),
                                                   Container(
                                                     width: double.infinity,
                                                     constraints: BoxConstraints(
@@ -1031,7 +1045,11 @@ class __BubbleContentWidgetState extends State<_BubbleContentWidget> {
                                                       color: Colors.white,
                                                       nip: BubbleNip.leftBottom,
                                                       child: Text(
-                                                        chatMessage['text'],
+                                                        chatMessage['text'] !=
+                                                                null
+                                                            ? chatMessage[
+                                                                'text']
+                                                            : '',
                                                         style: TextStyle(
                                                           fontSize: 16,
                                                           color: HexColor(
