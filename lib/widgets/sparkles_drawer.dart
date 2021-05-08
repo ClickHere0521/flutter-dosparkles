@@ -441,7 +441,7 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                   child: Container(
                     padding: EdgeInsets.all(12.0),
                     margin: EdgeInsets.only(left: 13.0),
-                    decoration: widget.activeRoute == 'storeselectionpage'
+                    decoration: widget.activeRoute == 'homepage'
                         ? BoxDecoration(
                             color: Colors.white.withOpacity(0.2),
                             borderRadius: BorderRadius.only(

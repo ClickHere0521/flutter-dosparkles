@@ -242,7 +242,7 @@ class __FirstListPageState extends State<_FirstListPage> {
               ),
             ),
           ),
-          drawer: SparklesDrawer(),
+          drawer: SparklesDrawer(activeRoute: "homepage"),
           bottomNavigationBar: StreamBuilder(
             stream: fetchDataProcess(),
             builder: (_, snapshot) {
