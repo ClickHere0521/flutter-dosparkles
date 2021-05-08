@@ -5,7 +5,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
 import 'package:com.floridainc.dosparkles/actions/api/graphql_client.dart';
 import 'package:com.floridainc.dosparkles/actions/app_config.dart';
+import 'package:com.floridainc.dosparkles/globalbasestate/action.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
+import 'package:com.floridainc.dosparkles/models/model_factory.dart';
+import 'package:com.floridainc.dosparkles/models/models.dart';
 import 'package:com.floridainc.dosparkles/utils/colors.dart';
 import 'package:com.floridainc.dosparkles/views/profile_page/state.dart';
 import 'package:com.floridainc.dosparkles/widgets/bottom_nav_bar.dart';
@@ -15,10 +18,82 @@ import 'package:com.floridainc.dosparkles/widgets/sparkles_drawer.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'package:intl/intl.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+void _changeProfileMainImage(
+    String root, List<Asset> pickedImages, Function setLoading) async {
+  AppUser globalUser = GlobalStore.store.getState().user;
+
+  if (root == 'user') {
+    setLoading(true);
+    List<String> listOfIds = await _sendRequest(pickedImages);
+
+    QueryResult result = await BaseGraphQLClient.instance
+        .setUserAvatar(globalUser.id, listOfIds[0]);
+    if (result.hasException) print(result.exception);
+
+    globalUser.avatarUrl = AppConfig.instance.baseApiHost +
+        result.data['updateUser']['user']['avatar']['url'];
+    GlobalStore.store.dispatch(GlobalActionCreator.setUser(globalUser));
+
+    setLoading(false);
+  } else {
+    setLoading(true);
+    List<String> listOfIds = await _sendRequest(pickedImages);
+
+    QueryResult result = await BaseGraphQLClient.instance
+        .setStoreThumbnail(globalUser.store['id'], listOfIds[0]);
+    if (result.hasException) print(result.exception);
+
+    // globalUser.avatarUrl = AppConfig.instance.baseApiHost +
+    //     result.data['updateStore']['store']['thumbnail']['url'];
+    // GlobalStore.store.dispatch(GlobalActionCreator.setUser(globalUser));
+
+    setLoading(false);
+  }
+}
+
+Future _sendRequest(imagesList) async {
+  Uri uri = Uri.parse('https://backend.dosparkles.com/upload');
+
+  MultipartRequest request = http.MultipartRequest("POST", uri);
+
+  for (var i = 0; i < imagesList.length; i++) {
+    var asset = imagesList[i];
+
+    ByteData byteData = await asset.getByteData();
+    List<int> imageData = byteData.buffer.asUint8List();
+
+    MultipartFile multipartFile = MultipartFile.fromBytes(
+      'files',
+      imageData,
+      filename: '${asset.name}',
+      contentType: MediaType("image", "jpg"),
+    );
+
+    request.files.add(multipartFile);
+  }
+
+  http.Response response = await http.Response.fromStream(await request.send());
+  print(response.statusCode);
+  List imagesResponse = json.decode(response.body);
+  List<String> listOfIds =
+      imagesResponse.map((image) => "\"${image['id']}\"").toList();
+
+  // List<Map<String, String>> imagesData = imagesResponse
+  //     .map((image) => {'url': "${image['url']}", 'id': "${image['id']}"})
+  //     .toList();
+
+  return listOfIds;
+}
 
 Widget buildView(
     ProfilePageState state, Dispatch dispatch, ViewService viewService) {
@@ -116,7 +191,10 @@ class __FirstPageState extends State<_FirstPage> {
               backgroundImage: AssetImage("images/Group 266.png"),
             ),
             backgroundColor: Colors.transparent,
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context)
+                  .pushNamed('helpsupportpage', arguments: null);
+            },
           ),
           bottomNavigationBar: StreamBuilder(
             stream: fetchDataProcess(),
@@ -143,6 +221,42 @@ class _AdminBody extends StatefulWidget {
 class __AdminBodyState extends State<_AdminBody> {
   String selectedDate = DateTime.now().toString();
   List filteredList;
+  List<Asset> pickedImages = <Asset>[];
+  bool _isLoading = false;
+
+  void _setLoading(bool value) {
+    setState(() {
+      _isLoading = value;
+    });
+  }
+
+  Future<void> loadAssets() async {
+    List<Asset> resultList = <Asset>[];
+
+    try {
+      resultList = await MultiImagePicker.pickImages(
+        maxImages: 1,
+        enableCamera: true,
+        selectedAssets: pickedImages,
+        cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
+        materialOptions: MaterialOptions(
+          actionBarColor: "#abcdef",
+          actionBarTitle: "Gallery",
+          allViewTitle: "All Photos",
+          useDetailsView: false,
+          selectCircleStrokeColor: "#000000",
+        ),
+      );
+    } on Exception catch (e) {
+      print(e);
+    }
+
+    if (!mounted) return;
+
+    setState(() {
+      pickedImages = resultList;
+    });
+  }
 
   String formatDateTimeToMY(String date) {
     return DateFormat('LLLL yyyy').format(DateTime.parse(date));
@@ -156,7 +270,8 @@ class __AdminBodyState extends State<_AdminBody> {
 
   @override
   Widget build(BuildContext context) {
-    selectedDate = formatDateTimeToMY(selectedDate);
+    selectedDate = formatDateTimeToMY(
+        selectedDate.length < 15 ? DateTime.now().toString() : selectedDate);
     return FutureBuilder(
         future: getInitialData(),
         builder: (context, snapshot) {
@@ -167,29 +282,59 @@ class __AdminBodyState extends State<_AdminBody> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 SizedBox(height: 30.0),
-                Container(
-                  width: 82.0,
-                  height: 82.0,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10.0),
-                    child: store != null && store['thumbnail'] != null
-                        ? CachedNetworkImage(
-                            imageUrl: AppConfig.instance.baseApiHost +
-                                store['thumbnail']['url'],
+                GestureDetector(
+                  child: Stack(
+                    children: [
+                      Container(
+                        width: 82.0,
+                        height: 82.0,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10.0),
+                          child: store != null && store['thumbnail'] != null
+                              ? CachedNetworkImage(
+                                  imageUrl: AppConfig.instance.baseApiHost +
+                                      store['thumbnail']['url'],
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                  fit: BoxFit.cover,
+                                )
+                              : Image.asset(
+                                  "images/image-not-found.png",
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                  fit: BoxFit.cover,
+                                ),
+                        ),
+                      ),
+                      if (_isLoading)
+                        Positioned.fill(
+                          child: Container(
                             width: double.infinity,
                             height: double.infinity,
-                            fit: BoxFit.cover,
-                          )
-                        : Image.asset(
-                            "images/image-not-found.png",
-                            width: double.infinity,
-                            height: double.infinity,
-                            fit: BoxFit.cover,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(.4),
+                            ),
+                            child: Center(
+                              child: SizedBox(
+                                width: 20.0,
+                                height: 20.0,
+                                child: CircularProgressIndicator(),
+                              ),
+                            ),
                           ),
+                        ),
+                    ],
                   ),
+                  onTap: () async {
+                    await loadAssets();
+                    if (pickedImages != null && pickedImages.length > 0) {
+                      _changeProfileMainImage(
+                          'store', pickedImages, _setLoading);
+                    }
+                  },
                 ),
                 SizedBox(height: 12.0),
                 Text(
@@ -741,6 +886,42 @@ class _UserBody extends StatefulWidget {
 
 class __UserBodyState extends State<_UserBody> {
   bool _switchValue = false;
+  List<Asset> pickedImages = <Asset>[];
+  bool _isLoading = false;
+
+  void _setLoading(bool value) {
+    setState(() {
+      _isLoading = value;
+    });
+  }
+
+  Future<void> loadAssets() async {
+    List<Asset> resultList = <Asset>[];
+
+    try {
+      resultList = await MultiImagePicker.pickImages(
+        maxImages: 1,
+        enableCamera: true,
+        selectedAssets: pickedImages,
+        cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
+        materialOptions: MaterialOptions(
+          actionBarColor: "#abcdef",
+          actionBarTitle: "Gallery",
+          allViewTitle: "All Photos",
+          useDetailsView: false,
+          selectCircleStrokeColor: "#000000",
+        ),
+      );
+    } on Exception catch (e) {
+      print(e);
+    }
+
+    if (!mounted) return;
+
+    setState(() {
+      pickedImages = resultList;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -749,26 +930,57 @@ class __UserBodyState extends State<_UserBody> {
         mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(height: 30.0),
-          Container(
-            width: 82.0,
-            height: 82.0,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(10.0),
-              child: widget.globalUser.avatarUrl != null
-                  ? CachedNetworkImage(
-                      imageUrl: widget.globalUser.avatarUrl,
+          GestureDetector(
+            child: Stack(
+              children: [
+                Container(
+                  width: 82.0,
+                  height: 82.0,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10.0),
+                    child: widget.globalUser.avatarUrl != null
+                        ? CachedNetworkImage(
+                            imageUrl: widget.globalUser.avatarUrl,
+                            width: double.infinity,
+                            height: double.infinity,
+                            fit: BoxFit.cover,
+                          )
+                        : Image.asset(
+                            "images/image-not-found.png",
+                            width: double.infinity,
+                            height: double.infinity,
+                            fit: BoxFit.cover,
+                          ),
+                  ),
+                ),
+                if (_isLoading)
+                  Positioned.fill(
+                    child: Container(
                       width: double.infinity,
                       height: double.infinity,
-                    )
-                  : Image.asset(
-                      "images/image-not-found.png",
-                      width: double.infinity,
-                      height: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(.4),
+                      ),
+                      child: Center(
+                        child: SizedBox(
+                          width: 20.0,
+                          height: 20.0,
+                          child: CircularProgressIndicator(),
+                        ),
+                      ),
                     ),
+                  ),
+              ],
             ),
+            onTap: () async {
+              await loadAssets();
+              if (pickedImages != null && pickedImages.length > 0) {
+                _changeProfileMainImage('user', pickedImages, _setLoading);
+              }
+            },
           ),
           SizedBox(height: 12.0),
           Text(

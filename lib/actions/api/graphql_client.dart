@@ -286,6 +286,48 @@ class BaseGraphQLClient {
     return _service.mutate(_mutation);
   }
 
+  Future<QueryResult> setUserAvatar(String id, String imageId) {
+    String _mutation = '''
+      mutation {
+        updateUser (
+          input: {
+            where: {
+              id: "$id"
+            }
+            data: {
+              avatar: $imageId
+            }
+          }
+        )
+        {
+          user {
+            id
+            email
+            username
+            phoneNumber
+            avatar {
+              id
+              url
+            }
+            invitesSent
+            referralLink
+            role {
+              id
+              name
+            }
+            storeFavorite {
+              id
+            }
+            pushToken
+          }
+        }
+      }
+    ''';
+
+    // printWrapped('Debug _mutation: $_mutation');
+    return _service.mutate(_mutation);
+  }
+
   Future<QueryResult> registerUser(Map data) {
     String _mutation = '''
       mutation {
@@ -627,6 +669,116 @@ class BaseGraphQLClient {
     ''';
 
     //  printWrapped('Debug _mutation: $_mutation');
+    return _service.mutate(_mutation);
+  }
+
+  Future<QueryResult> setStoreThumbnail(String id, String imageId) {
+    String _mutation = '''
+      mutation UpdateStore {
+        updateStore (
+          input: {
+            where: {
+              id: "$id"
+            }
+            data: {
+              thumbnail: $imageId
+            }
+          }
+        )
+        {
+          store {
+            id
+            name
+            address
+            phone
+            orders {
+              id
+            }
+            lat
+            lng
+            thumbnail {
+              id
+              url
+            }
+            chats {
+              id
+              users {
+                id
+                email
+                name
+              }
+              store {
+                id
+                name
+              }
+              chat_messages {
+                id
+                text
+                createdAt
+                messageType
+                order {
+                  id
+                }
+                chat {
+                  id
+                }
+                user {
+                  id
+                  name
+                }
+              }
+            }
+            products {
+              id
+              new
+              shineonImportId
+                            optionalFinishMaterialOldPrice
+              showOptionalFinishMaterialOldPrice
+              thumbnail {
+                url
+              }
+              video {
+                url
+              }
+              engraveExample {
+                url
+                name
+              }
+              optionalMaterialExample {
+                url
+              }
+              orders {
+                id
+              }
+              oldPrice
+              price
+              productDetails
+              deliveryTime
+              showOldPrice
+              engraveAvailable
+              properties
+              shineonIds
+              engraveOldPrice
+              engravePrice
+              showOldEngravePrice
+              defaultFinishMaterial
+              optionalFinishMaterial
+              optionalFinishMaterialPrice
+              optionalFinishMaterialEnabled
+              media {
+                url
+              }
+              name
+              uploadsAvailable
+              sizeOptionsAvailable
+              isActive
+            }
+          }
+        }
+      }
+    ''';
+
+    // printWrapped('Debug _mutation: $_mutation');
     return _service.mutate(_mutation);
   }
 

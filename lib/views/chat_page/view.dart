@@ -590,7 +590,7 @@ Widget _buildCardOne(tabIndex, chat, context, userId) {
 
         if (dateTimeRaw != null && dateTimeRaw != '') {
           DateTime dateTimeFormatted = DateTime.parse(dateTimeRaw);
-          time = DateFormat.jm().format(dateTimeFormatted);
+          time = DateFormatter().getFormattedChatDateTime(dateTimeFormatted);
         }
 
         if (chat != null && chat['users'] != null && chat['users'].length > 0) {

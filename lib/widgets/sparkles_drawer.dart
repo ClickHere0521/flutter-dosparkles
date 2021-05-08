@@ -102,7 +102,8 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                                   height: 82.0,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10.0),
-                                    border: widget.globalUser.avatarUrl != null
+                                    border: widget.globalUser != null &&
+                                            widget.globalUser.avatarUrl != null
                                         ? Border.all(color: Colors.white)
                                         : null,
                                   ),
@@ -534,11 +535,7 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                       ],
                     ),
                   ),
-                  onTap: () async {
-                    await canLaunch("http://dosparkles.com/")
-                        ? await launch("http://dosparkles.com/")
-                        : throw 'Could not launch "http://dosparkles.com/"';
-                  },
+                  onTap: () {},
                 ),
                 SizedBox(height: 10.0),
                 widget.globalUser.role == "Store Manager" ||
@@ -628,9 +625,10 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                       ],
                     ),
                   ),
-                  onTap: () {
-                    Navigator.of(context)
-                        .pushNamed('storeselectionpage', arguments: null);
+                  onTap: () async {
+                    await canLaunch("http://dosparkles.com/")
+                        ? await launch("http://dosparkles.com/")
+                        : throw 'Could not launch "http://dosparkles.com/"';
                   },
                 ),
                 SizedBox(height: 10.0),
