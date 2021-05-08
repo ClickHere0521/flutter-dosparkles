@@ -29,6 +29,29 @@ import 'package:intl/intl.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+void _switchNotifications(
+  bool value,
+  Function setSwitchLoading,
+  Function setSwitchValue,
+) async {
+  AppUser globalUser = GlobalStore.store.getState().user;
+  setSwitchLoading(true);
+
+  try {
+    QueryResult result = await BaseGraphQLClient.instance
+        .setUserNotifications(globalUser.id, value);
+    if (result.hasException) print(result.exception);
+
+    if (result.data != null) {
+      setSwitchValue(value);
+    }
+
+    setSwitchLoading(false);
+  } catch (e) {
+    print(e);
+  }
+}
+
 void _changeProfileMainImage(
     String root, List<Asset> pickedImages, Function setLoading) async {
   AppUser globalUser = GlobalStore.store.getState().user;
@@ -219,7 +242,7 @@ class __FirstPageState extends State<_FirstPage> {
             builder: (_, snapshot) {
               return BottomNavBarWidget(
                 prefsData: snapshot.data,
-                initialIndex: 0,
+                initialIndex: 1,
               );
             },
           ),
@@ -907,10 +930,23 @@ class __UserBodyState extends State<_UserBody> {
   bool _switchValue = false;
   List<Asset> pickedImages = <Asset>[];
   bool _isLoading = false;
+  bool _isSwitchLoading = false;
 
   void _setLoading(bool value) {
     setState(() {
       _isLoading = value;
+    });
+  }
+
+  void _setSwitchLoading(bool value) {
+    setState(() {
+      _isSwitchLoading = value;
+    });
+  }
+
+  void _setSwitchValue(bool value) {
+    setState(() {
+      _switchValue = value;
     });
   }
 
@@ -1024,13 +1060,24 @@ class __UserBodyState extends State<_UserBody> {
                   ),
                 ),
                 Spacer(),
-                CustomSwitch(
-                  value: _switchValue,
-                  onChanged: (bool value) {
-                    setState(() {
-                      _switchValue = value;
-                    });
-                  },
+                Stack(
+                  children: [
+                    CustomSwitch(
+                      value: _switchValue,
+                      onChanged: (bool value) {
+                        _switchNotifications(
+                            value, _setSwitchLoading, _setSwitchValue);
+                      },
+                    ),
+                    if (_isSwitchLoading)
+                      Positioned.fill(
+                        child: Container(
+                          width: 54.0,
+                          height: 26.0,
+                          color: Colors.white.withOpacity(.8),
+                        ),
+                      ),
+                  ],
                 ),
               ],
             ),

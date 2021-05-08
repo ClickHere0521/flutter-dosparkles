@@ -168,8 +168,17 @@ Future checkUserReferralLink(AppUser globalUser) async {
         await FlutterBranchSdk.getShortUrl(buo: buo, linkProperties: lp);
     if (response.success) {
       print("referral link : ${response.result}");
-      globalUser.referralLink = response.result;
-      GlobalStore.store.dispatch(GlobalActionCreator.setUser(globalUser));
+
+      try {
+        QueryResult result = await BaseGraphQLClient.instance
+            .setUserReferralLink(globalUser.id, response.result);
+        if (result.hasException) print(result.exception);
+
+        globalUser.referralLink = response.result;
+        GlobalStore.store.dispatch(GlobalActionCreator.setUser(globalUser));
+      } catch (e) {
+        print(e);
+      }
     } else {
       print('Error : ${response.errorCode} - ${response.errorMessage}');
     }

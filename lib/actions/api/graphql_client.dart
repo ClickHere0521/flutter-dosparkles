@@ -66,6 +66,7 @@ class BaseGraphQLClient {
             email
             username
             shippingAddress
+            enableNotifications
             invitesSent
             phoneNumber
             referralLink
@@ -153,6 +154,7 @@ class BaseGraphQLClient {
           id
           email
           username
+          enableNotifications
           phoneNumber
           shippingAddress
           invitesSent
@@ -186,6 +188,7 @@ class BaseGraphQLClient {
           id
           email
           username
+          enableNotifications
           phoneNumber
           shippingAddress
           referralLink
@@ -230,6 +233,45 @@ class BaseGraphQLClient {
             id
             email
             username
+            enableNotifications
+            phoneNumber
+            invitesSent
+            referralLink
+            role {
+              id
+              name
+            }
+            storeFavorite {
+              id
+            }
+            pushToken
+          }
+        }
+      }
+    ''';
+
+    return _service.mutate(_mutation);
+  }
+
+  Future<QueryResult> setUserReferralLink(String id, String link) {
+    String _mutation = '''
+      mutation {
+        updateUser (
+          input: {
+            where: {
+              id: "$id"
+            }
+            data: {
+              referralLink: "$link"
+            }
+          }
+        )
+        {
+          user {
+            id
+            email
+            username
+            enableNotifications
             phoneNumber
             invitesSent
             referralLink
@@ -267,6 +309,7 @@ class BaseGraphQLClient {
             id
             email
             username
+            enableNotifications
             phoneNumber
             invitesSent
             referralLink
@@ -304,6 +347,50 @@ class BaseGraphQLClient {
             id
             email
             username
+            enableNotifications
+            phoneNumber
+            avatar {
+              id
+              url
+            }
+            invitesSent
+            referralLink
+            role {
+              id
+              name
+            }
+            storeFavorite {
+              id
+            }
+            pushToken
+          }
+        }
+      }
+    ''';
+
+    // printWrapped('Debug _mutation: $_mutation');
+    return _service.mutate(_mutation);
+  }
+
+  Future<QueryResult> setUserNotifications(String id, bool value) {
+    String _mutation = '''
+      mutation {
+        updateUser (
+          input: {
+            where: {
+              id: "$id"
+            }
+            data: {
+              enableNotifications: $value
+            }
+          }
+        )
+        {
+          user {
+            id
+            email
+            username
+            enableNotifications
             phoneNumber
             avatar {
               id
@@ -374,6 +461,7 @@ class BaseGraphQLClient {
           user {
             id
             email
+            enableNotifications
             username
             shippingAddress
             storeFavorite {
@@ -1045,6 +1133,7 @@ class BaseGraphQLClient {
           user {
             id
             email
+            enableNotifications
             name
             role {
               id
@@ -1087,6 +1176,7 @@ class BaseGraphQLClient {
             email
             username
             phoneNumber
+            enableNotifications
             role {
               id
               name
@@ -1111,6 +1201,7 @@ class BaseGraphQLClient {
           users {
             id
             email
+            enableNotifications
             name
             avatar {
               url
@@ -1157,6 +1248,7 @@ class BaseGraphQLClient {
             id
             email
             name
+            enableNotifications
             avatar {
               url
             }
@@ -1219,6 +1311,7 @@ class BaseGraphQLClient {
             users {
               id
               email
+              enableNotifications
               name
               avatar {
               url

@@ -94,6 +94,7 @@ class __MainBodyState extends State<_MainBody> {
           SizedBox(height: 21.0),
           Container(
             height: 70.0,
+            padding: EdgeInsets.symmetric(horizontal: 16.0),
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               shrinkWrap: true,
