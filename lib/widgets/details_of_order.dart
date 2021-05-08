@@ -22,8 +22,13 @@ import 'package:multi_image_picker/multi_image_picker.dart';
 
 class OrderWidget extends StatefulWidget {
   final orderId;
+  final Function setOrderChanged;
 
-  const OrderWidget({Key key, this.orderId}) : super(key: key);
+  const OrderWidget({
+    Key key,
+    this.orderId,
+    this.setOrderChanged,
+  }) : super(key: key);
 
   @override
   _OrderWidgetState createState() => _OrderWidgetState();
@@ -256,6 +261,8 @@ class _OrderWidgetState extends State<OrderWidget> {
                                               orderDetail: order['orderDetails']
                                                   [index],
                                               order: order,
+                                              setOrderChanged:
+                                                  widget.setOrderChanged,
                                             );
                                           }
                                           return OrderProductDetailsWidget(
@@ -343,12 +350,14 @@ class _ChangeOrder extends StatefulWidget {
   final product;
   final orderDetail;
   final order;
+  final Function setOrderChanged;
 
   const _ChangeOrder({
     Key key,
     this.product,
     this.orderDetail,
     this.order,
+    this.setOrderChanged,
   }) : super(key: key);
 
   @override
@@ -628,8 +637,9 @@ class __ChangeOrderState extends State<_ChangeOrder> {
                         ),
                   onPressed: isLoading
                       ? null
-                      : () {
-                          _onSaveClicked(
+                      : () async {
+                          await _onSaveClicked(
+                            context,
                             widget.product['id'],
                             pickedImages,
                             engravingName,
@@ -637,6 +647,7 @@ class __ChangeOrderState extends State<_ChangeOrder> {
                             _setLoading,
                             widget.order,
                             widget.orderDetail,
+                            widget.setOrderChanged,
                           );
                         },
                 ),
@@ -954,7 +965,8 @@ Widget buildGridView(List<Asset> images, int buyUploads, Function loadAssets) {
   );
 }
 
-void _onSaveClicked(
+Future<void> _onSaveClicked(
+  BuildContext context,
   productId,
   pickedImages,
   String engravingName,
@@ -962,6 +974,7 @@ void _onSaveClicked(
   Function _setLoading,
   order,
   Map orderDetail,
+  Function setOrderChanged,
 ) async {
   if (pickedImages != null && pickedImages.length > 0) {
     _setLoading(true);
@@ -982,6 +995,11 @@ void _onSaveClicked(
       QueryResult resultUpdate = await BaseGraphQLClient.instance
           .updateProductMedia(productId, [...listOfMediaIds, ...listOfIds]);
       if (resultUpdate.hasException) print(resultUpdate.exception);
+
+      setOrderChanged(true);
+
+      int count = 2;
+      Navigator.of(context).popUntil((_) => count-- <= 0);
 
       _setLoading(false);
     } catch (e) {
@@ -1006,6 +1024,11 @@ void _onSaveClicked(
       QueryResult result = await BaseGraphQLClient.instance
           .updateOrderEngravingName(order['id'], mergedList);
       if (result.hasException) print(result.exception);
+
+      setOrderChanged(true);
+
+      int count = 2;
+      Navigator.of(context).popUntil((_) => count-- <= 0);
 
       _setLoading(false);
     } catch (e) {

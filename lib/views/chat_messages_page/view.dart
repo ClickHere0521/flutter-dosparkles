@@ -24,15 +24,39 @@ import 'package:flui/flui.dart';
 import 'dart:async';
 import 'state.dart';
 
-Widget _changeOrderButton(BuildContext context, String orderId) {
+class _ChangeOrderButton extends StatefulWidget {
+  final BuildContext context;
+  final String orderId;
+
+  _ChangeOrderButton({this.context, this.orderId});
+
+  @override
+  __ChangeOrderButtonState createState() => __ChangeOrderButtonState();
+}
+
+class __ChangeOrderButtonState extends State<_ChangeOrderButton> {
   bool isPublic = GlobalStore.store.getState().user.role == 'Public';
+  bool _isOrderChanged = false;
 
   Future getInitialData() async {
-    QueryResult result = await BaseGraphQLClient.instance.fetchOrder(orderId);
+    QueryResult result =
+        await BaseGraphQLClient.instance.fetchOrder(widget.orderId);
     return result.data['orders'][0];
   }
 
-  return FutureBuilder(
+  void refresh() {
+    setState(() {});
+  }
+
+  void _setOrderChanged(bool value) {
+    setState(() {
+      _isOrderChanged = value;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
       future: getInitialData(),
       builder: (context, snapshot) {
         if (snapshot.hasData &&
@@ -45,47 +69,102 @@ Widget _changeOrderButton(BuildContext context, String orderId) {
             mainAxisSize: MainAxisSize.min,
             children: [
               SizedBox(height: 29.0),
-              Container(
-                width: 120.0,
-                height: 30.0,
-                child: ElevatedButton(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
-                      HexColor("#27AE60"),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (_isOrderChanged)
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 100.0,
+                          height: 30.0,
+                          child: ElevatedButton(
+                            style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStateProperty.all(Colors.blue),
+                              padding:
+                                  MaterialStateProperty.all(EdgeInsets.zero),
+                              elevation: MaterialStateProperty.all(0.0),
+                              shape: MaterialStateProperty.all(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(27.0),
+                                ),
+                              ),
+                            ),
+                            child: Text(
+                              "Re-submit",
+                              style: TextStyle(
+                                fontSize: 14.0,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
+                            onPressed: () async {
+                              try {
+                                QueryResult result = await BaseGraphQLClient
+                                    .instance
+                                    .changeOrder(widget.orderId, "on_hold", "");
+                                if (result.hasException)
+                                  print(result.exception);
+
+                                refresh();
+                              } catch (e) {
+                                print(e);
+                              }
+                            },
+                          ),
+                        ),
+                        SizedBox(width: 10.0),
+                      ],
                     ),
-                    padding: MaterialStateProperty.all(EdgeInsets.zero),
-                    elevation: MaterialStateProperty.all(0.0),
-                    shape: MaterialStateProperty.all(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(27.0),
-                      ),
-                    ),
-                  ),
-                  child: Text(
-                    "Change order",
-                    style: TextStyle(
-                      fontSize: 14.0,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => OrderWidget(
-                          orderId: snapshot.data['id'],
+                  Container(
+                    width: 120.0,
+                    height: 30.0,
+                    child: ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(
+                          HexColor("#27AE60"),
+                        ),
+                        padding: MaterialStateProperty.all(EdgeInsets.zero),
+                        elevation: MaterialStateProperty.all(0.0),
+                        shape: MaterialStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(27.0),
+                          ),
                         ),
                       ),
-                    );
-                  },
-                ),
+                      child: Text(
+                        "Change order",
+                        style: TextStyle(
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => OrderWidget(
+                              orderId: snapshot.data['id'],
+                              setOrderChanged: _setOrderChanged,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
             ],
           );
         }
         return SizedBox.shrink(child: null);
-      });
+      },
+    );
+  }
 }
 
 Widget buildView(
@@ -375,12 +454,17 @@ class _ChatOrderBlock extends StatefulWidget {
 
 class __ChatOrderBlockState extends State<_ChatOrderBlock> {
   bool isApproveClicked = false;
+
   Future getInitialData() async {
     QueryResult result =
         await BaseGraphQLClient.instance.fetchOrder(widget.orderId);
     if (result.hasException) print(result.exception);
 
     return result.data['orders'][0];
+  }
+
+  void refresh() {
+    setState(() {});
   }
 
   @override
@@ -621,7 +705,7 @@ class __ChatOrderBlockState extends State<_ChatOrderBlock> {
                                           ),
                                         ),
                                         onPressed: () => _rejectDialog(
-                                            context, widget.orderId),
+                                            context, widget.orderId, refresh),
                                       ),
                                     ),
                                     SizedBox(width: 22.0),
@@ -680,6 +764,8 @@ class __ChatOrderBlockState extends State<_ChatOrderBlock> {
                                                   if (result.hasException) {
                                                     print(result.exception);
                                                   }
+
+                                                  refresh();
                                                 } catch (e) {
                                                   print(e);
                                                 }
@@ -740,7 +826,11 @@ class __ChatOrderBlockState extends State<_ChatOrderBlock> {
   }
 }
 
-Future<void> _rejectDialog(BuildContext context, String orderId) async {
+Future<void> _rejectDialog(
+  BuildContext context,
+  String orderId,
+  Function notifyParent,
+) async {
   String inputValue = "";
 
   return showDialog(
@@ -840,6 +930,7 @@ Future<void> _rejectDialog(BuildContext context, String orderId) async {
                             ),
                           ),
                           onTap: () {
+                            notifyParent();
                             Navigator.of(context).pop();
                           },
                         ),
@@ -870,6 +961,8 @@ Future<void> _rejectDialog(BuildContext context, String orderId) async {
                                 .instance
                                 .changeOrder(orderId, "cancelled", inputValue);
                             if (result.hasException) print(result.exception);
+                            notifyParent();
+
                             Navigator.of(context).pop();
                           },
                         ),
@@ -1073,8 +1166,10 @@ class __BubbleContentWidgetState extends State<_BubbleContentWidget> {
                                                     createdAt: chatMessage[
                                                         'createdAt'],
                                                   ),
-                                                  _changeOrderButton(
-                                                      context, orderId),
+                                                  _ChangeOrderButton(
+                                                    context: context,
+                                                    orderId: orderId,
+                                                  ),
                                                 ],
                                               ),
                                             ),
