@@ -588,7 +588,15 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                         child: Container(
                           padding: EdgeInsets.all(12.0),
                           margin: EdgeInsets.only(left: 13.0),
-                          decoration: BoxDecoration(),
+                          decoration: widget.activeRoute == 'dashboardpage'
+                              ? BoxDecoration(
+                                  color: Colors.white.withOpacity(0.2),
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(16.0),
+                                    bottomLeft: Radius.circular(16.0),
+                                  ),
+                                )
+                              : null,
                           child: Stack(
                             alignment: Alignment.centerLeft,
                             children: [
@@ -608,10 +616,8 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                           ),
                         ),
                         onTap: () {
-                          Navigator.of(context).pushNamed(
-                            'storeselectionpage',
-                            arguments: null,
-                          );
+                          Navigator.of(context)
+                              .pushNamed('dashboardpage', arguments: null);
                         },
                       )
                     : GestureDetector(

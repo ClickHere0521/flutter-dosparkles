@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/widgets/connection_lost.dart';
+import 'package:com.floridainc.dosparkles/widgets/product_customization.dart';
 import 'package:com.floridainc.dosparkles/widgets/product_details_image.dart';
 import 'package:com.floridainc.dosparkles/widgets/swiper_widget.dart';
 import 'package:http/http.dart' as http;
@@ -86,29 +87,13 @@ class __FirstPageState extends State<_FirstPage> {
           backgroundColor: Colors.white,
           resizeToAvoidBottomInset: true,
           appBar: AppBar(
-            title: GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ProductDetailsImage(
-                      dispatch: widget.dispatch,
-                      selectedProduct: widget.selectedProduct,
-                      optionalMaterialSelected: widget.optionalMaterialSelected,
-                      engraveInputs: widget.engraveInputs,
-                      productQuantity: widget.productQuantity,
-                    ),
-                  ),
-                );
-              },
-              child: Text(
-                "Product Details",
-                style: TextStyle(
-                  fontSize: 22,
-                  color: HexColor("#53586F"),
-                  fontWeight: FontWeight.w600,
-                  fontFeatures: [FontFeature.enable('smcp')],
-                ),
+            title: Text(
+              "Product Details",
+              style: TextStyle(
+                fontSize: 22,
+                color: HexColor("#53586F"),
+                fontWeight: FontWeight.w600,
+                fontFeatures: [FontFeature.enable('smcp')],
               ),
             ),
             centerTitle: true,
@@ -275,7 +260,7 @@ class __FirstPageState extends State<_FirstPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ProductDetailsImage(
+                            builder: (context) => ProductCustomization(
                               dispatch: widget.dispatch,
                               selectedProduct: widget.selectedProduct,
                               productQuantity: widget.productQuantity,
