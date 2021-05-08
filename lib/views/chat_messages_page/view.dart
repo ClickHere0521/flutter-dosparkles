@@ -464,7 +464,7 @@ class __ChatOrderBlockState extends State<_ChatOrderBlock> {
   }
 
   void refresh() {
-    setState(() {});
+    if (mounted) setState(() {});
   }
 
   @override
