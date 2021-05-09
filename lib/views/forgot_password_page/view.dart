@@ -7,6 +7,7 @@ import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:toast/toast.dart';
 import '../../actions/api/graphql_client.dart';
 import '../../utils/colors.dart';
 import '../../utils/general.dart';
@@ -200,7 +201,7 @@ class __InnerPartState extends State<_InnerPart> {
                         ),
                         onPressed: () {
                           if (_formKey.currentState.validate()) {
-                            _onSubmit(emailValue);
+                            _onSubmit(context, emailValue);
                           }
                         },
                         shape: new RoundedRectangleBorder(
@@ -245,13 +246,18 @@ class __InnerPartState extends State<_InnerPart> {
   }
 }
 
-void _onSubmit(emailValue) async {
+void _onSubmit(context, emailValue) async {
   try {
     QueryResult result =
         await BaseGraphQLClient.instance.forgotPassword(emailValue);
     if (result.hasException) print(result.exception);
 
-    // print(result.data);
+    if (result.data != null) {
+      Toast.show("Please check your email address", context,
+          duration: 3, gravity: Toast.TOP);
+
+      Navigator.of(context).pushNamed('reset_passwordpage', arguments: null);
+    }
   } catch (e) {
     print(e);
   }

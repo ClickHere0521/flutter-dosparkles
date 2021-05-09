@@ -95,7 +95,6 @@ class App extends StatefulWidget {
 
 class _AppState extends State<App> {
   String _connectionStatus = 'Unknown';
-  String _resetPasswordCode = '';
   final Connectivity _connectivity = Connectivity();
   StreamSubscription<ConnectivityResult> _connectivitySubscription;
 
@@ -318,16 +317,19 @@ class _AppState extends State<App> {
   }
 
   void listenDynamicLinks() async {
-    streamSubscription = FlutterBranchSdk.initSession().listen((data) {
+    streamSubscription = FlutterBranchSdk.initSession().listen((data) async {
       // print('listenDynamicLinks - DeepLink Data: $data');
       if (data.containsKey('+clicked_branch_link') &&
           data['+clicked_branch_link'] == true) {
         print(
             '------------------------------------Link clicked----------------------------------------------');
+
+        SharedPreferences _prefs = await SharedPreferences.getInstance();
+
+        _prefs.setString("resetPasswordCode", data['code']);
+
         print('Code: ${data['code']}');
-        setState(() {
-          _resetPasswordCode = data['code'];
-        });
+
         print(
             '------------------------------------------------------------------------------------------------');
       }

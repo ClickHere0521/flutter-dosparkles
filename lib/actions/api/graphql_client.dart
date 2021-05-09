@@ -354,7 +354,7 @@ class BaseGraphQLClient {
               url
             }
             invitesSent
-            referralLink
+              referralLink
             role {
               id
               name
@@ -1104,14 +1104,14 @@ class BaseGraphQLClient {
   }
 
   Future<QueryResult> resetPassword(
+    String code,
     String passwordValue,
     String repeatPassValue,
-    String userId,
   ) {
     String _mutation = '''
       mutation {
         resetPassword (
-          code: "",
+          code: "$code",
           password: "$passwordValue",
           passwordConfirmation: "$repeatPassValue"
         ) {

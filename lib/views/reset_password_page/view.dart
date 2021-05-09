@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
 import 'package:flutter/services.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:toast/toast.dart';
 import '../../actions/api/graphql_client.dart';
 import '../../utils/colors.dart';
 import '../../utils/general.dart';
@@ -335,7 +337,7 @@ class __InnerPartState extends State<_InnerPart> {
                       ? null
                       : () {
                           if (_formKey.currentState.validate()) {
-                            _onSubmit(oldValue, newValue, repeatValue);
+                            _onSubmit(context, oldValue, newValue, repeatValue);
                           }
                         },
                 ),
@@ -349,11 +351,27 @@ class __InnerPartState extends State<_InnerPart> {
   }
 }
 
-void _onSubmit(oldValue, newValue, repeatValue) async {
+void _onSubmit(context, oldValue, newValue, repeatValue) async {
+  SharedPreferences _prefs = await SharedPreferences.getInstance();
+  String code = _prefs.getString("resetPasswordCode");
+
+  if (code == null || code == '') return null;
+
   try {
-    // QueryResult result =
-    //     await BaseGraphQLClient.instance.forgotPassword(emailValue);
-    // if (result.hasException) print(result.exception);
+    QueryResult result = await BaseGraphQLClient.instance.resetPassword(
+      code,
+      newValue,
+      repeatValue,
+    );
+    if (result.hasException) print(result.exception);
+
+    if (result.data != null) {
+      Toast.show("Your password successfully changed", context,
+          duration: 3, gravity: Toast.TOP);
+
+      _prefs.setString('jwt', null);
+      Navigator.of(context).pushNamed('startpage', arguments: null);
+    }
   } catch (e) {
     print(e);
   }
