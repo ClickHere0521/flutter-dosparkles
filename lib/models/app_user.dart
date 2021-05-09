@@ -67,6 +67,6 @@ class AppUser {
   }
   @override
   String toString() {
-    return '{"name": "$name","email": ${email != null ? '${json.encode(email)}' : 'null'}, "shippingAddress": $shippingAddress, "storeFavorite": ${storeFavorite['id']}}';
+    return '{"name": "$name","email": ${email != null ? '${json.encode(email)}' : 'null'}, "shippingAddress": $shippingAddress}';
   }
 }

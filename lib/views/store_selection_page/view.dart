@@ -30,6 +30,7 @@ Widget buildView(
   ViewService viewService,
 ) {
   Adapt.initContext(viewService.context);
+
   return _MainBodyPage(dispatch: dispatch);
 }
 

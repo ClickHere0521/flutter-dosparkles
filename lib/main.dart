@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:com.floridainc.dosparkles/globalbasestate/action.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
+import 'package:com.floridainc.dosparkles/views/reset_password_page/page.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -94,8 +95,11 @@ class App extends StatefulWidget {
 
 class _AppState extends State<App> {
   String _connectionStatus = 'Unknown';
+  String _resetPasswordCode = '';
   final Connectivity _connectivity = Connectivity();
   StreamSubscription<ConnectivityResult> _connectivitySubscription;
+
+  StreamSubscription<Map> streamSubscription;
 
   // String _token;
   // final i18n = AppLocalizations.delegate;
@@ -126,6 +130,8 @@ class _AppState extends State<App> {
     // await AppConfig.instance.init(context);
 
     _getCurrentGeoPosition();
+
+    listenDynamicLinks();
 
     initConnectivity();
     _connectivitySubscription =
@@ -178,6 +184,7 @@ class _AppState extends State<App> {
   @override
   void dispose() {
     _connectivitySubscription.cancel();
+    streamSubscription?.cancel();
     super.dispose();
   }
 
@@ -309,6 +316,27 @@ class _AppState extends State<App> {
         break;
     }
   }
+
+  void listenDynamicLinks() async {
+    streamSubscription = FlutterBranchSdk.initSession().listen((data) {
+      // print('listenDynamicLinks - DeepLink Data: $data');
+      if (data.containsKey('+clicked_branch_link') &&
+          data['+clicked_branch_link'] == true) {
+        print(
+            '------------------------------------Link clicked----------------------------------------------');
+        print('Code: ${data['code']}');
+        setState(() {
+          _resetPasswordCode = data['code'];
+        });
+        print(
+            '------------------------------------------------------------------------------------------------');
+      }
+    }, onError: (error) {
+      PlatformException platformException = error as PlatformException;
+      print(
+          'InitSession error: ${platformException.code} - ${platformException.message}');
+    });
+  }
 }
 
 void _getCurrentGeoPosition() async {
@@ -328,5 +356,3 @@ void _getCurrentGeoPosition() async {
     );
   });
 }
-
-void _checkInternetConnection() async {}

@@ -6,6 +6,7 @@ import 'package:com.floridainc.dosparkles/models/models.dart';
 
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/action.dart';
+import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
 
 import 'action.dart';
 import 'state.dart';
@@ -34,7 +35,7 @@ void _onInit(Action action, Context<StoreSelectionPageState> ctx) async {
   ctx.state.connectionStatus = GlobalStore.store.getState().connectionStatus;
 }
 
-void _onBuild(Action action, Context<StoreSelectionPageState> ctx) {
+void _onBuild(Action action, Context<StoreSelectionPageState> ctx) async {
   Future.delayed(Duration(milliseconds: 150),
       () => ctx.state.animationController.forward());
 }
