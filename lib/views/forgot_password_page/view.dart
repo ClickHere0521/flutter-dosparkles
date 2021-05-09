@@ -199,7 +199,9 @@ class __InnerPartState extends State<_InnerPart> {
                           ),
                         ),
                         onPressed: () {
-                          _onSubmit(_formKey, emailValue);
+                          if (_formKey.currentState.validate()) {
+                            _onSubmit(emailValue);
+                          }
                         },
                         shape: new RoundedRectangleBorder(
                           borderRadius: new BorderRadius.circular(31.0),
@@ -243,33 +245,14 @@ class __InnerPartState extends State<_InnerPart> {
   }
 }
 
-void _onSubmit(formKey, emailValue) async {
-  if (formKey.currentState.validate()) {
-    // http.post('https://backend.dosparkles.com/admin/auth/forgot-password',
-    //     body: {
-    //       'email': 'user@strapi.io',
-    //       'url':
-    //           'https://backend.dosparkles.com/admin/plugins/users-permissions/auth/reset-password',
-    //     }).then((response) {
-    //   // Handle success.
+void _onSubmit(emailValue) async {
+  try {
+    QueryResult result =
+        await BaseGraphQLClient.instance.forgotPassword(emailValue);
+    if (result.hasException) print(result.exception);
 
-    //   print(response.statusCode);
-
-    //   print('Your user received an email : ' + response.body);
-    // }).catchError((error) {
-    //   // Handle error.
-
-    //   print('An error occurred:' + error);
-    // });
-
-    // try {
-    //   QueryResult result =
-    //       await BaseGraphQLClient.instance.forgotPassword(emailValue);
-    //   if (result.hasException) print(result.exception);
-
-    //   print(result.data);
-    // } catch (e) {
-    //   print(e);
-    // }
+    // print(result.data);
+  } catch (e) {
+    print(e);
   }
 }
