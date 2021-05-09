@@ -363,20 +363,20 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                 //     );
                 //   },
                 // ),
-                // ListTile(
-                //   leading: const Icon(Icons.phone_iphone),
-                //   minLeadingWidth: 0.0,
-                //   title: Text(
-                //     'Apple sign-in',
-                //     style: TextStyle(color: Colors.white),
-                //   ),
-                //   onTap: () {
-                //     Navigator.push(
-                //       context,
-                //       MaterialPageRoute(builder: (context) => MyAppleApp()),
-                //     );
-                //   },
-                // ),
+                ListTile(
+                  leading: const Icon(Icons.phone_iphone),
+                  minLeadingWidth: 0.0,
+                  title: Text(
+                    'Apple sign-in',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => MyAppleApp()),
+                    );
+                  },
+                ),
                 // ListTile(
                 //   leading: const Icon(Icons.phone_iphone),
                 //   minLeadingWidth: 0.0,

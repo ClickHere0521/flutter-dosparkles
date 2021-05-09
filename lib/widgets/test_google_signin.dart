@@ -7,6 +7,7 @@
 import 'dart:async';
 import 'dart:convert' show json;
 
+import 'package:graphql_flutter/graphql_flutter.dart';
 import "package:http/http.dart" as http;
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -30,6 +31,7 @@ class SignInDemoState extends State<SignInDemo> {
   @override
   void initState() {
     super.initState();
+
     _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount account) {
       setState(() {
         _currentUser = account;

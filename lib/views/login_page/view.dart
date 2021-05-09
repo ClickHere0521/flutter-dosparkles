@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
@@ -7,8 +8,12 @@ import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:com.floridainc.dosparkles/utils/colors.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'action.dart';
 import 'state.dart';
+import 'package:http/http.dart' as http;
 
 Widget buildView(
     LoginPageState state, Dispatch dispatch, ViewService viewService) {
@@ -322,9 +327,14 @@ class __InnerPartState extends State<_InnerPart> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Image.asset(
-                        "images/Google_icon.png",
-                        fit: BoxFit.contain,
+                      GestureDetector(
+                        child: Image.asset(
+                          "images/Google_icon.png",
+                          fit: BoxFit.contain,
+                        ),
+                        onTap: () {
+                          _goolgeSignIn();
+                        },
                       ),
                       SizedBox(width: 16),
                       Image.asset(
@@ -332,15 +342,26 @@ class __InnerPartState extends State<_InnerPart> {
                         fit: BoxFit.contain,
                       ),
                       SizedBox(width: 16),
-                      Image.asset(
-                        "images/Group 84.png",
-                        fit: BoxFit.contain,
+                      GestureDetector(
+                        child: Image.asset(
+                          "images/Group 84.png",
+                          fit: BoxFit.contain,
+                        ),
+                        onTap: () {
+                          _facebookSignIn();
+                        },
                       ),
                       SizedBox(width: 16),
-                      Image.asset(
-                        "images/Group 85.png",
-                        fit: BoxFit.contain,
-                      ),
+                      if (Platform.isIOS || Platform.isMacOS)
+                        GestureDetector(
+                          child: Image.asset(
+                            "images/Group 85.png",
+                            fit: BoxFit.contain,
+                          ),
+                          onTap: () {
+                            _appleSignIn();
+                          },
+                        ),
                     ],
                   ),
                 ],
@@ -351,4 +372,87 @@ class __InnerPartState extends State<_InnerPart> {
       ),
     );
   }
+}
+
+void _goolgeSignIn() async {
+  GoogleSignIn _googleSignIn = GoogleSignIn(
+    scopes: [
+      'email',
+      'https://www.googleapis.com/auth/contacts.readonly',
+    ],
+  );
+  try {
+    await _googleSignIn.signIn();
+  } catch (error) {
+    print(error);
+  }
+}
+
+void _facebookSignIn() async {
+  final FacebookLogin facebookSignIn = new FacebookLogin();
+  final FacebookLoginResult result = await facebookSignIn.logIn(['email']);
+
+  switch (result.status) {
+    case FacebookLoginStatus.loggedIn:
+      final FacebookAccessToken accessToken = result.accessToken;
+
+      print('''
+         Logged in!
+         
+         Token: ${accessToken.token}
+         User id: ${accessToken.userId}
+         Expires: ${accessToken.expires}
+         Permissions: ${accessToken.permissions}
+         Declined permissions: ${accessToken.declinedPermissions}
+         ''');
+      break;
+    case FacebookLoginStatus.cancelledByUser:
+      print('Login cancelled by the user.');
+      break;
+    case FacebookLoginStatus.error:
+      print('Something went wrong with the login process.\n'
+          'Here\'s the error Facebook gave us: ${result.errorMessage}');
+      break;
+  }
+}
+
+void _appleSignIn() async {
+  final credential = await SignInWithApple.getAppleIDCredential(
+    scopes: [
+      AppleIDAuthorizationScopes.email,
+      AppleIDAuthorizationScopes.fullName,
+    ],
+    webAuthenticationOptions: WebAuthenticationOptions(
+      // TODO: Set the `clientId` and `redirectUri` arguments to the values you entered in the Apple Developer portal during the setup
+      clientId: 'com.aboutyou.dart_packages.sign_in_with_apple.example',
+      redirectUri: Uri.parse(
+        'https://flutter-sign-in-with-apple-example.glitch.me/callbacks/sign_in_with_apple',
+      ),
+    ),
+  );
+
+  print("______credential:$credential");
+
+  // This is the endpoint that will convert an authorization code obtained
+  // via Sign in with Apple into a session in your system
+  final signInWithAppleEndpoint = Uri(
+    scheme: 'https',
+    host: 'flutter-sign-in-with-apple-example.glitch.me',
+    path: '/sign_in_with_apple',
+    queryParameters: <String, String>{
+      'code': credential.authorizationCode,
+      if (credential.givenName != null) 'firstName': credential.givenName,
+      if (credential.familyName != null) 'lastName': credential.familyName,
+      'useBundleId': Platform.isIOS || Platform.isMacOS ? 'true' : 'false',
+      if (credential.state != null) 'state': credential.state,
+    },
+  );
+
+  final session = await http.Client().post(
+    signInWithAppleEndpoint,
+  );
+
+  // If we got this far, a session based on the Apple ID credential has been created in your system,
+  // and you can now set this as the app's session
+  print("______session:$session");
 }
