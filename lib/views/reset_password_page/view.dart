@@ -372,6 +372,7 @@ void _onSubmit(context, oldValue, newValue, repeatValue) async {
       _prefs.setString('jwt', null);
       Navigator.of(context).pushNamed('startpage', arguments: null);
     }
+     _prefs.setString('resetPasswordCode', null);
   } catch (e) {
     print(e);
   }

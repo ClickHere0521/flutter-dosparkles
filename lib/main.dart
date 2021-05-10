@@ -318,20 +318,32 @@ class _AppState extends State<App> {
 
   void listenDynamicLinks() async {
     streamSubscription = FlutterBranchSdk.initSession().listen((data) async {
-      // print('listenDynamicLinks - DeepLink Data: $data');
+      //  print('listenDynamicLinks - DeepLink Data: $data');
       if (data.containsKey('+clicked_branch_link') &&
           data['+clicked_branch_link'] == true) {
         print(
-            '------------------------------------Link clicked----------------------------------------------');
+            '------------------------------------Link clicked----------------------------------------');
+        if (data['~referring_link'] != null && data['~referring_link'] != '') {
+          String link = data['~referring_link'];
+          List<String> splitted = link.split('=');
 
-        SharedPreferences _prefs = await SharedPreferences.getInstance();
+          if (splitted[0] == 'https://ku5t1.app.link/referralToken') {
+            SharedPreferences.getInstance().then((_p) {
+              _p.setString("referralLink", link);
+            });
+            print('ReferralLink : $link');
+          }
+        }
 
-        _prefs.setString("resetPasswordCode", data['code']);
-
-        print('Code: ${data['code']}');
+        if (data['code'] != null && data['code'] != '') {
+          SharedPreferences.getInstance().then((_p) {
+            _p.setString("resetPasswordCode", data['code']);
+          });
+          print('Code : ${data['code']}');
+        }
 
         print(
-            '------------------------------------------------------------------------------------------------');
+            '------------------------------------------------------------------------------------------');
       }
     }, onError: (error) {
       PlatformException platformException = error as PlatformException;

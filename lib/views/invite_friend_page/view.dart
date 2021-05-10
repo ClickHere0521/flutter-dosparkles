@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:ui';
 
 import 'package:com.floridainc.dosparkles/actions/api/graphql_client.dart';
+import 'package:com.floridainc.dosparkles/actions/app_config.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/models/models.dart';
 import 'package:com.floridainc.dosparkles/widgets/bottom_nav_bar.dart';
@@ -17,11 +18,14 @@ import 'package:com.floridainc.dosparkles/actions/adapt.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:http/http.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../utils/colors.dart';
 import 'state.dart';
+
+import 'package:http/http.dart' as http;
 
 Future<PermissionStatus> _getContactPermission() async {
   PermissionStatus permission = await Permission.contacts.status;
@@ -1387,21 +1391,38 @@ class __ContactsPageState extends State<_ContactsPage> {
 }
 
 void _onSubmit(List filteredList, Function _setLoading) async {
-  String meId = GlobalStore.store.getState().user.id;
+  AppUser globalUser = GlobalStore.store.getState().user;
 
-  List<String> phones = [];
+  List<Map<String, dynamic>> friendsList = [];
   for (int i = 0; i < filteredList.length; i++) {
     var contact = filteredList[i];
-    phones.add("\"${contact['phone']}\"");
-  }
 
-  jsonEncode(phones);
+    if (contact['phone'] != null && contact['phone'] != '') {
+      friendsList.add({
+        'name': "${contact['name']}",
+        'phone': "${contact['phone']}",
+      });
+    } else
+      continue;
+  }
 
   try {
     _setLoading(true);
-    QueryResult result =
-        await BaseGraphQLClient.instance.setUserInvitesSent(meId, phones);
-    if (result.hasException) print(result.exception);
+
+    Response result = await http.post(
+      '${AppConfig.instance.baseApiHost}/friend-invites/inviteRequest',
+      body: {
+        'id': "${globalUser.id}",
+        'referralLink': "${globalUser.referralLink}",
+        'data': json.encode(friendsList),
+      },
+    );
+
+    print("RESULT : " + result.body);
+
+    // QueryResult result =
+    //     await BaseGraphQLClient.instance.setUserInvitesSent(meId, phones);
+    // if (result.hasException) print(result.exception);
 
     _setLoading(false);
   } catch (e) {

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:com.floridainc.dosparkles/actions/api/graphql_client.dart';
+import 'package:com.floridainc.dosparkles/actions/app_config.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/action.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/models/app_user.dart';
@@ -8,11 +9,14 @@ import 'package:com.floridainc.dosparkles/models/model_factory.dart';
 import 'package:com.floridainc.dosparkles/routes/routes.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/widgets.dart' hide Action;
+import 'package:http/http.dart' as http;
 import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:http/http.dart';
 // import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../utils/general.dart';
 import 'action.dart';
@@ -103,15 +107,17 @@ void _goToMain(Context<LoginPageState> ctx) async {
 
   await checkUserReferralLink(globalState.user);
 
-  for (var i = 0; i < globalState.storesList.length; i++) {
-    var store = globalState.storesList[i];
-    if (globalState.user.storeFavorite != null &&
-        globalState.user.storeFavorite['id'] == store.id) {
-      GlobalStore.store.dispatch(
-        GlobalActionCreator.setSelectedStore(store),
-      );
-      Navigator.of(ctx.context).pushReplacementNamed('storepage');
-      return null;
+  if (globalState.storesList != null && globalState.storesList.length > 0) {
+    for (var i = 0; i < globalState.storesList.length; i++) {
+      var store = globalState.storesList[i];
+      if (globalState.user.storeFavorite != null &&
+          globalState.user.storeFavorite['id'] == store.id) {
+        GlobalStore.store.dispatch(
+          GlobalActionCreator.setSelectedStore(store),
+        );
+        Navigator.of(ctx.context).pushReplacementNamed('storepage');
+        return null;
+      }
     }
   }
 
@@ -140,12 +146,6 @@ Future checkUserReferralLink(AppUser globalUser) async {
       imageUrl: 'https://miro.medium.com/max/1000/1*ilC2Aqp5sZd1wi0CopD1Hw.png',
       contentDescription:
           'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-      contentMetadata: BranchContentMetaData()
-        ..addCustomMetadata('custom_string', 'abc')
-        ..addCustomMetadata('custom_number', 12345)
-        ..addCustomMetadata('custom_bool', true)
-        ..addCustomMetadata('custom_list_number', [1, 2, 3, 4, 5])
-        ..addCustomMetadata('custom_list_string', ['a', 'b', 'c']),
       keywords: ['Plugin', 'Branch', 'Flutter'],
       publiclyIndex: true,
       locallyIndex: true,
@@ -156,8 +156,8 @@ Future checkUserReferralLink(AppUser globalUser) async {
 
     BranchLinkProperties lp = BranchLinkProperties(
         channel: 'google',
-        feature: 'sharing',
-        //alias: 'flutterplugin' //define link url,
+        feature: 'referral',
+        alias: 'referralToken=${Uuid().v4()}',
         stage: 'new share',
         campaign: 'xxxxx',
         tags: ['one', 'two', 'three']);
@@ -184,6 +184,23 @@ Future checkUserReferralLink(AppUser globalUser) async {
     }
   }
 }
+
+// Future<void> _invitedRegisteredMethod() async {
+//   SharedPreferences.getInstance().then((_p) async {
+//     String referralLink = _p.getString("referralLink");
+//     if (referralLink != null && referralLink != '') {
+//       Response result = await http.post(
+//         '${AppConfig.instance.baseApiHost}/friend-invites/inviteRequest',
+//         body: {
+//           'id': "${globalUser.id}",
+//           'data': json.encode(friendsList),
+//         },
+//       );
+
+//       print("RESULT : " + result.body);
+//     }
+//   });
+// }
 
 Future<Map<String, dynamic>> _emailSignIn(
     Action action, Context<LoginPageState> ctx) async {
