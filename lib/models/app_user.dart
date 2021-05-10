@@ -26,6 +26,8 @@ class AppUser {
 
   String referralLink;
 
+  String phoneNumber;
+
   AppUser.fromParams({
     this.id,
     this.name,
@@ -39,6 +41,7 @@ class AppUser {
     this.orders,
     this.invitesSent,
     this.referralLink,
+    this.phoneNumber,
   });
 
   factory AppUser(jsonStr) => jsonStr == null
@@ -58,6 +61,7 @@ class AppUser {
     orders = jsonRes['orders'];
     invitesSent = jsonRes['invitesSent'];
     referralLink = jsonRes['referralLink'];
+    phoneNumber = jsonRes['phoneNumber'];
 
     avatarUrl = jsonRes['avatar'] != null
         ? AppConfig.instance.baseApiHost + jsonRes['avatar']['url']

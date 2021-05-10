@@ -1,6 +1,8 @@
 import 'dart:ui';
 
+import 'package:com.floridainc.dosparkles/globalbasestate/action.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
+import 'package:com.floridainc.dosparkles/models/models.dart';
 import 'package:com.floridainc.dosparkles/widgets/connection_lost.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
@@ -16,13 +18,18 @@ import 'state.dart';
 import 'package:country_pickers/country.dart';
 import 'package:country_pickers/country_pickers.dart';
 
-void _onSubmit(String fullValue) async {
-  String meId = GlobalStore.store.getState().user.id;
+void _onSubmit(BuildContext context, String fullValue) async {
+  AppUser globalUser = GlobalStore.store.getState().user;
 
   try {
-    QueryResult result =
-        await BaseGraphQLClient.instance.setUserPhoneNumber(meId, fullValue);
+    QueryResult result = await BaseGraphQLClient.instance
+        .setUserPhoneNumber(globalUser.id, fullValue);
     if (result.hasException) print(result.exception);
+
+    globalUser.phoneNumber = fullValue;
+    GlobalStore.store.dispatch(GlobalActionCreator.setUser(globalUser));
+
+    Navigator.of(context).pop();
   } catch (e) {
     print(e);
   }
@@ -94,10 +101,11 @@ class __MainBodyState extends State<_MainBody> {
               elevation: 0.0,
               leadingWidth: 70.0,
               automaticallyImplyLeading: false,
-              leading: InkWell(
-                child: Image.asset("images/back_button.png"),
-                onTap: () => Navigator.of(context).pop(),
-              ),
+              leading: null,
+              // leading: InkWell(
+              //   child: Image.asset("images/back_button.png"),
+              //   onTap: () => Navigator.of(context).pop(),
+              // ),
               backgroundColor: Colors.transparent,
               title: Text(
                 "Add Phone",
@@ -215,7 +223,7 @@ class __InnerPartState extends State<_InnerPart> {
                         ? null
                         : () {
                             if (_formKey.currentState.validate()) {
-                              _onSubmit(fullValue);
+                              _onSubmit(context, fullValue);
                             }
                           },
                   ),

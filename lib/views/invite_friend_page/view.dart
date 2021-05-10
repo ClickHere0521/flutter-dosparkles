@@ -140,7 +140,9 @@ class _FirstPage extends StatefulWidget {
 }
 
 class __FirstPageState extends State<_FirstPage> {
+  AppUser globalUser = GlobalStore.store.getState().user;
   int currentPage = 0;
+  bool _isFinalPage = false;
   bool _isLostConnection = false;
 
   Future fetchData() async {
@@ -173,6 +175,15 @@ class __FirstPageState extends State<_FirstPage> {
       setState(() {
         _isLostConnection = false;
       });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (globalUser.invitesSent.length >= 10) {
+      _isFinalPage = true;
     }
   }
 
@@ -222,10 +233,12 @@ class __FirstPageState extends State<_FirstPage> {
                 currentPage: currentPage,
                 setCurrentPage: _setCurrentPage,
               ),
-              secondChild: _NextBody(
-                currentPage: currentPage,
-                setCurrentPage: _setCurrentPage,
-              ),
+              secondChild: _isFinalPage
+                  ? _EndBody()
+                  : _NextBody(
+                      currentPage: currentPage,
+                      setCurrentPage: _setCurrentPage,
+                    ),
               crossFadeState: currentPage == 0
                   ? CrossFadeState.showFirst
                   : CrossFadeState.showSecond,
@@ -584,13 +597,19 @@ class _NextBody extends StatefulWidget {
   final int currentPage;
   final Function setCurrentPage;
 
-  _NextBody({Key key, this.currentPage, this.setCurrentPage}) : super(key: key);
+  _NextBody({
+    Key key,
+    this.currentPage,
+    this.setCurrentPage,
+  }) : super(key: key);
 
   @override
   __NextBodyState createState() => __NextBodyState();
 }
 
 class __NextBodyState extends State<_NextBody> {
+  AppUser globalUser = GlobalStore.store.getState().user;
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -654,7 +673,7 @@ class __NextBodyState extends State<_NextBody> {
           ),
           SizedBox(height: 11.0),
           Text(
-            "4/10",
+            "${globalUser.invitesSent.length}/10",
             style: TextStyle(
               fontSize: 18.0,
               fontWeight: FontWeight.w700,
@@ -664,33 +683,35 @@ class __NextBodyState extends State<_NextBody> {
           SizedBox(height: 10.0),
           Container(
             width: MediaQuery.of(context).size.width,
-            height: 10.0,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                for (int i = 0; i < 10; i++)
-                  if (i < 4)
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.08,
-                      height: 6.0,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.circular(6.0),
-                        color: HexColor("#6092DC"),
-                      ),
-                    )
-                  else
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.09,
-                      height: 6.0,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.circular(6.0),
-                        color: HexColor("#EFF4FB"),
-                      ),
-                    )
-              ],
+            height: 6.0,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: 10,
+              separatorBuilder: (context, index) {
+                return SizedBox(width: 2.0);
+              },
+              itemBuilder: (context, index) {
+                if (index < globalUser.invitesSent.length)
+                  return Container(
+                    width: MediaQuery.of(context).size.width * 0.08,
+                    height: 6.0,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.rectangle,
+                      borderRadius: BorderRadius.circular(6.0),
+                      color: HexColor("#6092DC"),
+                    ),
+                  );
+
+                return Container(
+                  width: MediaQuery.of(context).size.width * 0.09,
+                  height: 6.0,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.circular(6.0),
+                    color: HexColor("#EFF4FB"),
+                  ),
+                );
+              },
             ),
           ),
           SizedBox(height: 35.0),
@@ -1039,7 +1060,7 @@ class __ContactsPageState extends State<_ContactsPage> {
                 : [];
 
             contactsList.add({
-              "phone": phoneValue,
+              "phone": phoneValue.replaceAll(new RegExp(r"\s+\b|\b\s"), ""),
               "name": contact.displayName != null ? contact.displayName : '',
               "checked": invitesPresent.length > 0 ? true : false,
               "invited": invitesPresent.length > 0 ? true : false,
@@ -1402,12 +1423,13 @@ void _onSubmit(List filteredList, Function _setLoading) async {
         'name': "${contact['name']}",
         'phone': "${contact['phone']}",
       });
-    } else
-      continue;
+    }
   }
 
   try {
     _setLoading(true);
+
+    // print("RAW : " + filteredList.toString());
 
     Response result = await http.post(
       '${AppConfig.instance.baseApiHost}/friend-invites/inviteRequest',

@@ -294,12 +294,19 @@ class __InnerPartState extends State<_InnerPart> {
                             height: double.infinity,
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(16.0),
-                              child: CachedNetworkImage(
-                                imageUrl: relevantList[index].thumbnail,
-                                fit: BoxFit.cover,
-                                width: double.infinity,
-                                height: double.infinity,
-                              ),
+                              child: relevantList[index].thumbnail != null
+                                  ? CachedNetworkImage(
+                                      imageUrl: relevantList[index].thumbnail,
+                                      fit: BoxFit.cover,
+                                      width: double.infinity,
+                                      height: double.infinity,
+                                    )
+                                  : Image.asset(
+                                      "images/image-not-found.png",
+                                      fit: BoxFit.cover,
+                                      width: double.infinity,
+                                      height: double.infinity,
+                                    ),
                             ),
                           ),
                           SizedBox(width: 8.0),

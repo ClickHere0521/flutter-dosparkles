@@ -1,9 +1,11 @@
 import 'dart:ui';
 
 import 'package:com.floridainc.dosparkles/actions/api/graphql_client.dart';
+import 'package:com.floridainc.dosparkles/actions/app_config.dart';
 import 'package:com.floridainc.dosparkles/actions/user_info_operate.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/action.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
+import 'package:com.floridainc.dosparkles/models/models.dart';
 import 'package:com.floridainc.dosparkles/widgets/connection_lost.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -11,9 +13,11 @@ import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 import '../../utils/colors.dart';
+import 'package:http/http.dart' as http;
 import 'state.dart';
 
 Widget buildView(
@@ -481,6 +485,10 @@ void _goToMain(BuildContext context) async {
 
   var globalState = GlobalStore.store.getState();
 
+  await Navigator.of(context).pushNamed('addphonepage', arguments: null);
+
+  await _invitedRegisteredMethod(globalState.user);
+
   for (var i = 0; i < globalState.storesList.length; i++) {
     var store = globalState.storesList[i];
     if (globalState.user.storeFavorite != null &&
@@ -494,4 +502,28 @@ void _goToMain(BuildContext context) async {
   }
 
   Navigator.of(context).pushReplacementNamed('storeselectionpage');
+}
+
+Future<void> _invitedRegisteredMethod(AppUser globalUser) async {
+  SharedPreferences.getInstance().then((_p) async {
+    String referralLink = _p.getString("referralLink");
+
+    print("----------------------------------------------------");
+    print("$referralLink");
+    print("----------------------------------------------------");
+
+    if (referralLink != null && referralLink != '') {
+      Response result = await http.post(
+        '${AppConfig.instance.baseApiHost}/friend-invites/inviteConfirm',
+        body: {
+          'referralLink': "$referralLink",
+          'phoneNumber':
+              "${globalUser.phoneNumber.replaceAll(new RegExp(r"\s+\b|\b\s"), "")}",
+        },
+      );
+      _p.setString("referralLink", null);
+
+      print("Registered : " + result.body);
+    }
+  });
 }

@@ -185,15 +185,15 @@ Future checkUserReferralLink(AppUser globalUser) async {
   }
 }
 
-// Future<void> _invitedRegisteredMethod() async {
+// Future<void> _invitedRegisteredMethod(AppUser globalUser) async {
 //   SharedPreferences.getInstance().then((_p) async {
 //     String referralLink = _p.getString("referralLink");
 //     if (referralLink != null && referralLink != '') {
 //       Response result = await http.post(
-//         '${AppConfig.instance.baseApiHost}/friend-invites/inviteRequest',
+//         '${AppConfig.instance.baseApiHost}/friend-invites/inviteConfirm',
 //         body: {
-//           'id': "${globalUser.id}",
-//           'data': json.encode(friendsList),
+//           'referralLink': "$referralLink",
+//           'phoneNumber': "${globalUser.phoneNumber}",
 //         },
 //       );
 
