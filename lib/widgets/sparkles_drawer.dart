@@ -66,15 +66,15 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
               children: [
                 GestureDetector(
                   onTap: () {
-                    Navigator.of(context)
-                        .pushNamed('forgot_passwordpage', arguments: null);
+                    // Navigator.of(context)
+                    //     .pushNamed('forgot_passwordpage', arguments: null);
 
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (context) => SwiperTestApp(),
-                    //   ),
-                    // );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Checkout(),
+                      ),
+                    );
                   },
                   child: Container(
                     height: 218.0,

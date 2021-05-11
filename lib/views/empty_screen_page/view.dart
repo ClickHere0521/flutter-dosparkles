@@ -46,68 +46,10 @@ class __MainBodyState extends State<_MainBody> {
     return Stack(
       children: [
         Scaffold(
-          appBar: AppBar(
-            title: Text(
-              'Empty Screen',
-            ),
-          ),
-          body: Container(
-            child: Center(
-              child: Container(
-                width: 300.0,
-                height: 48.0,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(31.0),
-                ),
-                child: ElevatedButton(
-                  style: ButtonStyle(
-                    elevation: MaterialStateProperty.all(0),
-                    backgroundColor:
-                        MaterialStateProperty.all(HexColor("#6092DC")),
-                    shape: MaterialStateProperty.all(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(31.0),
-                      ),
-                    ),
-                  ),
-                  child: Text(
-                    'Submit',
-                    style: TextStyle(
-                      fontSize: 17.0,
-                      fontWeight: FontWeight.normal,
-                      color: Colors.white,
-                    ),
-                  ),
-                  onPressed: () {
-                    _onSubmit();
-                  },
-                ),
-              ),
-            ),
-          ),
+          body: Container(),
         ),
         if (_isLostConnection) ConnectionLost(),
       ],
     );
-  }
-}
-
-void _onSubmit() async {
-  AppUser globalUser = GlobalStore.store.getState().user;
-
-  try {
-    Response result = await http.post(
-      '${AppConfig.instance.baseApiHost}/friend-invites/inviteRequest',
-      body: {
-        'id': globalUser.id,
-        'phone': '+996707889512',
-        'name': 'Eddie',
-        'referralLink': '${globalUser.referralLink}',
-      },
-    );
-
-    print(result.body);
-  } catch (e) {
-    print(e);
   }
 }

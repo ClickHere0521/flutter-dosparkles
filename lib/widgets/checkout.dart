@@ -5,6 +5,23 @@ import 'package:com.floridainc.dosparkles/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dash/flutter_dash.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+void _saveFieldsInfo(
+  String addressValue,
+  String apartmentValue,
+  String firstNameValue,
+  String lastNameValue,
+  bool checkboxValue,
+) async {
+  SharedPreferences.getInstance().then((_p) {
+    _p.setString("checkoutAddress", addressValue);
+    _p.setString("checkoutApartment", apartmentValue);
+    _p.setString("checkoutFirstName", firstNameValue);
+    _p.setString("checkoutLastName", lastNameValue);
+    _p.setBool("checkoutSaveForNextTime", checkboxValue);
+  });
+}
 
 class Checkout extends StatefulWidget {
   @override
@@ -127,11 +144,30 @@ class _InnerPart extends StatefulWidget {
 }
 
 class __InnerPartState extends State<_InnerPart> {
-  String addressValue = '';
-  String apartmentValue = '';
-  String firstNameValue = '';
-  String lastNameValue = '';
+  TextEditingController addressValue;
+  TextEditingController apartmentValue;
+  TextEditingController firstNameValue;
+  TextEditingController lastNameValue;
   bool checkboxValue = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    SharedPreferences.getInstance().then((_p) {
+      setState(() {
+        addressValue =
+            TextEditingController(text: _p.getString("checkoutAddress"));
+        apartmentValue =
+            TextEditingController(text: _p.getString("checkoutApartment"));
+        firstNameValue =
+            TextEditingController(text: _p.getString("checkoutFirstName"));
+        lastNameValue =
+            TextEditingController(text: _p.getString("checkoutLastName"));
+        checkboxValue = _p.getBool("checkoutSaveForNextTime") ?? false;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -242,8 +278,9 @@ class __InnerPartState extends State<_InnerPart> {
                             textAlign: TextAlign.left,
                             keyboardType: TextInputType.text,
                             onChanged: (value) {
-                              setState(() => firstNameValue = value);
+                              // setState(() => firstNameValue = value);
                             },
+                            controller: firstNameValue,
                             decoration: InputDecoration(
                               hintText: 'Enter here',
                               enabledBorder: UnderlineInputBorder(
@@ -281,8 +318,9 @@ class __InnerPartState extends State<_InnerPart> {
                           child: TextFormField(
                             textAlign: TextAlign.left,
                             keyboardType: TextInputType.text,
+                            controller: lastNameValue,
                             onChanged: (value) {
-                              setState(() => lastNameValue = value);
+                              // setState(() => lastNameValue = value);
                             },
                             decoration: InputDecoration(
                               hintText: 'Enter here',
@@ -323,8 +361,9 @@ class __InnerPartState extends State<_InnerPart> {
                       textAlign: TextAlign.left,
                       keyboardType: TextInputType.text,
                       onChanged: (value) {
-                        setState(() => addressValue = value);
+                        // setState(() => addressValue = value);
                       },
+                      controller: addressValue,
                       decoration: InputDecoration(
                         hintText: 'Enter your address',
                         enabledBorder: UnderlineInputBorder(
@@ -396,8 +435,9 @@ class __InnerPartState extends State<_InnerPart> {
                       textAlign: TextAlign.left,
                       keyboardType: TextInputType.text,
                       onChanged: (value) {
-                        setState(() => addressValue = value);
+                        // setState(() => addressValue = value);
                       },
+                      controller: apartmentValue,
                       decoration: InputDecoration(
                         hintText: 'Enter your apartment',
                         enabledBorder: UnderlineInputBorder(
@@ -428,17 +468,29 @@ class __InnerPartState extends State<_InnerPart> {
                     ),
                     SizedBox(height: 23),
                     Row(
-                      children: <Widget>[
+                      children: [
                         SizedBox(
                           height: 16.0,
                           width: 16.0,
                           child: Checkbox(
-                            value: this.checkboxValue,
+                            value: checkboxValue,
                             materialTapTargetSize: MaterialTapTargetSize.padded,
                             onChanged: (bool value) {
                               setState(() {
-                                this.checkboxValue = value;
+                                checkboxValue = value;
                               });
+
+                              if (checkboxValue) {
+                                _saveFieldsInfo(
+                                  addressValue.text.toString(),
+                                  apartmentValue.text.toString(),
+                                  firstNameValue.text.toString(),
+                                  lastNameValue.text.toString(),
+                                  checkboxValue,
+                                );
+                              } else {
+                                _saveFieldsInfo('', '', '', '', false);
+                              }
                             },
                           ),
                         ),
