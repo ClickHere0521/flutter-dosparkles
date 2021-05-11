@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/utils/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_credit_card/flutter_credit_card.dart';
 import 'package:flutter_dash/flutter_dash.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -30,7 +31,7 @@ class Checkout extends StatefulWidget {
 
 class _CheckoutState extends State<Checkout> {
   final _formKey1 = GlobalKey<FormState>();
-  final _formKey2 = GlobalKey<FormState>();
+  final _cardForm = GlobalKey<FormState>();
 
   bool isNextPage = false;
 
@@ -64,7 +65,7 @@ class _CheckoutState extends State<Checkout> {
         height: MediaQuery.of(context).size.height,
         color: Colors.white,
         child: isNextPage
-            ? _InnerCardPart(formKey: _formKey2)
+            ? _InnerCardPart(cardForm: _cardForm)
             : _InnerPart(formKey: _formKey1),
       ),
       bottomNavigationBar: Container(
@@ -119,7 +120,7 @@ class _CheckoutState extends State<Checkout> {
                     });
                   }
                 } else {
-                  if (_formKey2.currentState.validate()) {
+                  if (_cardForm.currentState.validate()) {
                     setState(() {
                       isNextPage = false;
                     });
@@ -513,20 +514,20 @@ class __InnerPartState extends State<_InnerPart> {
 }
 
 class _InnerCardPart extends StatefulWidget {
-  final formKey;
+  final cardForm;
 
-  _InnerCardPart({this.formKey});
+  _InnerCardPart({this.cardForm});
 
   @override
   __InnerCardPartState createState() => __InnerCardPartState();
 }
 
 class __InnerCardPartState extends State<_InnerCardPart> {
-  String addressValue = '';
-  String apartmentValue = '';
-  String firstNameValue = '';
-  String lastNameValue = '';
-  bool checkboxValue = false;
+  String cardNumber = '';
+  String expiryDate = '';
+  String cardHolderName = '';
+  String cvvCode = '';
+  bool isCvvFocused = false;
 
   @override
   Widget build(BuildContext context) {
@@ -637,212 +638,110 @@ class __InnerCardPartState extends State<_InnerCardPart> {
                   ),
                 ],
               ),
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
-              child: Form(
-                key: widget.formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 20.0),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          "TOTAL PRICE:",
-                          style: TextStyle(
-                            fontSize: 14.0,
-                            fontWeight: FontWeight.w700,
-                            color: HexColor("#0F142B"),
-                          ),
-                        ),
-                        Text(
-                          "\$79.90",
-                          style: TextStyle(
-                            fontSize: 26.0,
-                            fontWeight: FontWeight.w900,
-                            color: HexColor("#0F142B"),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 32.0),
-                    TextFormField(
-                      textAlign: TextAlign.left,
-                      keyboardType: TextInputType.text,
-                      onChanged: (value) {
-                        setState(() => addressValue = value);
-                      },
-                      decoration: InputDecoration(
-                        hintText: 'Enter your cardholder name',
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: HexColor("#C4C6D2")),
-                        ),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: HexColor("#C4C6D2")),
-                        ),
-                        hintStyle: TextStyle(
-                          fontSize: 16,
-                          color: Colors.black26,
-                        ),
-                        contentPadding: EdgeInsets.symmetric(vertical: 5),
-                        floatingLabelBehavior: FloatingLabelBehavior.always,
-                        labelText: 'Cardholder name',
-                        labelStyle: TextStyle(
-                          color: Colors.black,
-                          height: 0.7,
-                          fontSize: 22,
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Field must not be empty';
-                        }
-                        return null;
-                      },
-                    ),
-                    SizedBox(height: 20.0),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Card number",
-                          style: TextStyle(fontSize: 16, color: Colors.black),
-                        ),
-                        SizedBox(height: 7.0),
-                        TextFormField(
-                          textAlign: TextAlign.left,
-                          keyboardType: TextInputType.text,
-                          onChanged: (value) {
-                            setState(() => addressValue = value);
-                          },
-                          decoration: InputDecoration(
-                            isDense: true,
-                            enabledBorder: UnderlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: HexColor("#C4C6D2")),
-                            ),
-                            focusedBorder: UnderlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: HexColor("#C4C6D2")),
-                            ),
-                            hintText: ' Enter',
-                            hintStyle: TextStyle(
-                              fontSize: 16,
-                              color: Colors.black26,
-                            ),
-                            prefixIcon:
-                                SvgPicture.asset("images/Group 208.svg"),
-                            prefixIconConstraints: BoxConstraints(
-                              maxWidth: 19.0,
-                            ),
-                            contentPadding: EdgeInsets.only(
-                              top: 5.0,
-                              bottom: 5.0,
-                            ),
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Field must not be empty';
-                            }
-                            return null;
-                          },
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 20.0),
-                    Row(
-                      children: [
-                        Flexible(
-                          child: TextFormField(
-                            textAlign: TextAlign.left,
-                            keyboardType: TextInputType.text,
-                            onChanged: (value) {
-                              setState(() => firstNameValue = value);
-                            },
-                            decoration: InputDecoration(
-                              hintText: 'Enter date',
-                              enabledBorder: UnderlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: HexColor("#C4C6D2")),
-                              ),
-                              focusedBorder: UnderlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: HexColor("#C4C6D2")),
-                              ),
-                              hintStyle: TextStyle(
-                                fontSize: 16,
-                                color: Colors.black26,
-                              ),
-                              contentPadding: EdgeInsets.symmetric(vertical: 5),
-                              floatingLabelBehavior:
-                                  FloatingLabelBehavior.always,
-                              labelText: 'Expiry date',
-                              labelStyle: TextStyle(
-                                color: Colors.black,
-                                height: 0.7,
-                                fontSize: 22,
-                              ),
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Field must not be empty';
-                              }
-                              return null;
-                            },
-                          ),
-                        ),
-                        SizedBox(width: 23),
-                        Flexible(
-                          child: TextFormField(
-                            textAlign: TextAlign.left,
-                            keyboardType: TextInputType.text,
-                            onChanged: (value) {
-                              setState(() => lastNameValue = value);
-                            },
-                            decoration: InputDecoration(
-                              hintText: 'Enter CVV',
-                              enabledBorder: UnderlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: HexColor("#C4C6D2")),
-                              ),
-                              focusedBorder: UnderlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: HexColor("#C4C6D2")),
-                              ),
-                              hintStyle: TextStyle(
-                                fontSize: 16,
-                                color: Colors.black26,
-                              ),
-                              contentPadding: EdgeInsets.symmetric(vertical: 5),
-                              floatingLabelBehavior:
-                                  FloatingLabelBehavior.always,
-                              labelText: 'CVV',
-                              labelStyle: TextStyle(
-                                color: Colors.black,
-                                height: 0.7,
-                                fontSize: 22,
-                              ),
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Field must not be empty';
-                              }
-                              return null;
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 20.0),
-                  ],
+              child: CreditCardForm(
+                formKey: widget.cardForm,
+                obscureCvv: true,
+                obscureNumber: false,
+                cardHolderDecoration: InputDecoration(
+                  hintText: 'Enter your cardholder name',
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: HexColor("#C4C6D2")),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: HexColor("#C4C6D2")),
+                  ),
+                  hintStyle: TextStyle(
+                    fontSize: 16,
+                    color: Colors.black26,
+                  ),
+                  contentPadding: EdgeInsets.symmetric(vertical: 5),
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                  labelText: 'Cardholder name',
+                  labelStyle: TextStyle(
+                    color: Colors.black,
+                    height: 0.7,
+                    fontSize: 22,
+                  ),
                 ),
+                cardNumberDecoration: InputDecoration(
+                  hintText: 'Enter ',
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: HexColor("#C4C6D2")),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: HexColor("#C4C6D2")),
+                  ),
+                  hintStyle: TextStyle(
+                    fontSize: 16,
+                    color: Colors.black26,
+                  ),
+                  contentPadding: EdgeInsets.symmetric(vertical: 5),
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                  labelText: 'Card number',
+                  labelStyle: TextStyle(
+                    color: Colors.black,
+                    height: 0.7,
+                    fontSize: 22,
+                  ),
+                ),
+                expiryDateDecoration: InputDecoration(
+                  hintText: 'Enter date',
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: HexColor("#C4C6D2")),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: HexColor("#C4C6D2")),
+                  ),
+                  hintStyle: TextStyle(
+                    fontSize: 16,
+                    color: Colors.black26,
+                  ),
+                  contentPadding: EdgeInsets.symmetric(vertical: 5),
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                  labelText: 'Expiry date',
+                  labelStyle: TextStyle(
+                    color: Colors.black,
+                    height: 0.7,
+                    fontSize: 22,
+                  ),
+                ),
+                cvvCodeDecoration: InputDecoration(
+                  hintText: 'Enter CVV',
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: HexColor("#C4C6D2")),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: HexColor("#C4C6D2")),
+                  ),
+                  hintStyle: TextStyle(
+                    fontSize: 16,
+                    color: Colors.black26,
+                  ),
+                  contentPadding: EdgeInsets.symmetric(vertical: 5),
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                  labelText: 'CVV',
+                  labelStyle: TextStyle(
+                    color: Colors.black,
+                    height: 0.7,
+                    fontSize: 22,
+                  ),
+                ),
+                onCreditCardModelChange: onCreditCardModelChange,
               ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  void onCreditCardModelChange(CreditCardModel creditCardModel) {
+    setState(() {
+      cardNumber = creditCardModel.cardNumber;
+      expiryDate = creditCardModel.expiryDate;
+      cardHolderName = creditCardModel.cardHolderName;
+      cvvCode = creditCardModel.cvvCode;
+      isCvvFocused = creditCardModel.isCvvFocused;
+    });
   }
 }

@@ -11,6 +11,8 @@ import 'package:com.floridainc.dosparkles/widgets/branch/branch_two.dart';
 import 'package:com.floridainc.dosparkles/widgets/checkout.dart';
 import 'package:com.floridainc.dosparkles/widgets/connectivity.dart';
 import 'package:com.floridainc.dosparkles/widgets/product_details_image.dart';
+import 'package:com.floridainc.dosparkles/widgets/test_credit_card_form.dart';
+import 'package:com.floridainc.dosparkles/widgets/test_flutter_notifications.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_social_share.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_apple_signin.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_country_code_picker.dart';
@@ -72,7 +74,8 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => Checkout(),
+                        builder: (context) =>
+                            Checkout(), // CreditCardFormCustom(),
                       ),
                     );
                   },

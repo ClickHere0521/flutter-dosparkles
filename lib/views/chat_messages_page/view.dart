@@ -15,14 +15,31 @@ import 'package:com.floridainc.dosparkles/widgets/sparkles_drawer.dart';
 import 'package:com.floridainc.dosparkles/widgets/swiper_widget.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:http/http.dart';
 import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
 import 'package:flui/flui.dart';
 
 import 'dart:async';
 import 'state.dart';
+
+Future<void> _sendPushNotification(String orderId, bool isApproved) async {
+  if (orderId != null && orderId != '') {
+    Response result = await http.post(
+      '${AppConfig.instance.baseApiHost}/notifications/sendPushNotification',
+      body: {
+        'orderId': "$orderId",
+        'status': "$isApproved",
+      },
+    );
+
+    print("---------------- " + result.body);
+  }
+}
 
 class _ChangeOrderButton extends StatefulWidget {
   final BuildContext context;
@@ -765,6 +782,9 @@ class __ChatOrderBlockState extends State<_ChatOrderBlock> {
                                                     print(result.exception);
                                                   }
 
+                                                  _sendPushNotification(
+                                                      widget.orderId, true);
+
                                                   refresh();
                                                 } catch (e) {
                                                   print(e);
@@ -961,6 +981,8 @@ Future<void> _rejectDialog(
                                 .instance
                                 .changeOrder(orderId, "cancelled", inputValue);
                             if (result.hasException) print(result.exception);
+
+                            _sendPushNotification(orderId, false);
                             notifyParent();
 
                             Navigator.of(context).pop();
