@@ -9,7 +9,8 @@ Reducer<CartPageState> buildReducer() {
   return asReducer(
     <Object, Reducer<CartPageState>>{
       CartPageAction.action: _onAction,
-      CartPageAction.setProductCountUpdate: _onSetProductCountUpdate
+      CartPageAction.setProductCountUpdate: _onSetProductCountUpdate,
+      CartPageAction.setPaymentToken: _onSetPaymentToken
     },
   );
 }
@@ -25,5 +26,13 @@ CartPageState _onSetProductCountUpdate(CartPageState state, Action action) {
 
   final CartPageState newState = state.clone();
   newState.shoppingCart = cart;
+  return newState;
+}
+
+CartPageState _onSetPaymentToken(CartPageState state, Action action) {
+  String token = action.payload;
+
+  final CartPageState newState = state.clone();
+  newState.paymentToken = token;
   return newState;
 }

@@ -12,6 +12,7 @@ import 'package:com.floridainc.dosparkles/views/cart_page/state.dart';
 import 'package:com.floridainc.dosparkles/views/profile_page/state.dart';
 import 'package:com.floridainc.dosparkles/views/store_page/action.dart';
 import 'package:com.floridainc.dosparkles/views/store_page/state.dart';
+import 'package:com.floridainc.dosparkles/widgets/checkout.dart';
 import 'package:com.floridainc.dosparkles/widgets/confirm_video.dart';
 import 'package:com.floridainc.dosparkles/widgets/connection_lost.dart';
 import 'package:com.floridainc.dosparkles/widgets/custom_switch.dart';
@@ -749,24 +750,18 @@ class __MainBodyState extends State<_MainBody> {
                         ),
                       ),
                       onPressed: () {
-                        //  _addDialog(context);
-
-                        StripePayment.paymentRequestWithCardForm(
-                          CardFormPaymentRequest(),
-                        ).then((paymentMethod) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Received ${paymentMethod.id}'),
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => Checkout(
+                              dispatch: widget.dispatch,
                             ),
-                          );
-                          setState(() {
-                            _paymentMethod = paymentMethod;
-                          });
-                        }).catchError(setError);
-
-                        widget.dispatch(
-                          CartPageActionCreator.onProceedToCheckout(),
+                          ),
                         );
+
+                        //   widget.dispatch(
+                        //     CartPageActionCreator.onProceedToCheckout(),
+                        //   );
                       },
                     ),
                   ),

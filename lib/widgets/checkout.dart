@@ -2,11 +2,16 @@ import 'dart:ui';
 
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/utils/colors.dart';
+import 'package:com.floridainc.dosparkles/views/cart_page/action.dart';
+import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_credit_card/flutter_credit_card.dart';
 import 'package:flutter_dash/flutter_dash.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:stripe_payment/stripe_payment.dart';
+
+void _onPayNowMethod() async {}
 
 void _saveFieldsInfo(
   String addressValue,
@@ -25,6 +30,10 @@ void _saveFieldsInfo(
 }
 
 class Checkout extends StatefulWidget {
+  final Dispatch dispatch;
+
+  Checkout({this.dispatch});
+
   @override
   _CheckoutState createState() => _CheckoutState();
 }
@@ -34,6 +43,33 @@ class _CheckoutState extends State<Checkout> {
   final _cardForm = GlobalKey<FormState>();
 
   bool isNextPage = false;
+
+  String cardNumber = '';
+  String expiryDate = '';
+  String cardHolderName = '';
+  String cvvCode = '';
+  bool isCvvFocused = false;
+
+  bool _isLoading = false;
+
+  void _setIsLoading(bool value) {
+    setState(() {
+      _isLoading = value;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    StripePayment.setOptions(
+      StripeOptions(
+        publishableKey: "pk_test_aSaULNS8cJU6Tvo20VAXy6rp",
+        merchantId: "Test",
+        androidPayMode: 'test',
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,14 +95,6 @@ class _CheckoutState extends State<Checkout> {
             fontFeatures: [FontFeature.enable('smcp')],
           ),
         ),
-      ),
-      body: Container(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        color: Colors.white,
-        child: isNextPage
-            ? _InnerCardPart(cardForm: _cardForm)
-            : _InnerPart(formKey: _formKey1),
       ),
       bottomNavigationBar: Container(
         width: double.infinity,
@@ -97,41 +125,306 @@ class _CheckoutState extends State<Checkout> {
             child: ElevatedButton(
               style: ButtonStyle(
                 elevation: MaterialStateProperty.all(0),
-                backgroundColor: MaterialStateProperty.all(HexColor("#6092DC")),
+                backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                  (Set<MaterialState> states) {
+                    if (states.contains(MaterialState.disabled))
+                      return HexColor("#C4C6D2");
+                    return HexColor("#6092DC");
+                  },
+                ),
                 shape: MaterialStateProperty.all(
                   RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(31.0),
                   ),
                 ),
               ),
-              child: Text(
-                isNextPage ? "Pay now" : 'Continue To Payment',
-                style: TextStyle(
-                  fontSize: 17.0,
-                  fontWeight: FontWeight.normal,
-                  color: Colors.white,
-                ),
-              ),
-              onPressed: () {
-                if (isNextPage == false) {
-                  if (_formKey1.currentState.validate()) {
-                    setState(() {
-                      isNextPage = true;
-                    });
-                  }
-                } else {
-                  if (_cardForm.currentState.validate()) {
-                    setState(() {
-                      isNextPage = false;
-                    });
-                  }
-                }
-              },
+              child: _isLoading
+                  ? Container(
+                      width: 25.0,
+                      height: 25.0,
+                      child: CircularProgressIndicator(),
+                    )
+                  : Text(
+                      isNextPage ? "Pay now" : 'Continue To Payment',
+                      style: TextStyle(
+                        fontSize: 17.0,
+                        fontWeight: FontWeight.normal,
+                        color: Colors.white,
+                      ),
+                    ),
+              onPressed: _isLoading
+                  ? null
+                  : () async {
+                      if (isNextPage == false) {
+                        if (_formKey1.currentState.validate()) {
+                          setState(() {
+                            isNextPage = true;
+                          });
+                        }
+                      } else {
+                        if (_cardForm.currentState.validate()) {
+                          _setIsLoading(true);
+                          List<String> expiryDateSplitted =
+                              expiryDate.split("/");
+
+                          final CreditCard cardSchema = CreditCard(
+                            number: cardNumber,
+                            expMonth: int.parse(expiryDateSplitted[0]),
+                            expYear: int.parse(expiryDateSplitted[1]),
+                            cvc: cvvCode,
+                          );
+
+                          Token _paymentToken =
+                              await StripePayment.createTokenWithCard(
+                                  cardSchema);
+
+                          await widget.dispatch(
+                            CartPageActionCreator.onSetPaymentToken(
+                                _paymentToken.tokenId.toString()),
+                          );
+
+                          widget.dispatch(
+                            CartPageActionCreator.onProceedToCheckout(),
+                          );
+
+                          _setIsLoading(false);
+                        }
+                      }
+                    },
             ),
           ),
         ),
       ),
+      body: Container(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        color: Colors.white,
+        child: !isNextPage
+            ? _InnerPart(formKey: _formKey1)
+            : Container(
+                width: MediaQuery.of(context).size.width,
+                constraints: BoxConstraints(
+                  minHeight: MediaQuery.of(context).size.height,
+                ),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(height: 20.0),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  "images/Group 203.png",
+                                  color: Colors.white.withOpacity(.2),
+                                ),
+                                Dash(
+                                  direction: Axis.horizontal,
+                                  length: 210,
+                                  dashLength: 10,
+                                  dashColor: HexColor("#C4C6D2"),
+                                ),
+                                Image.asset("images/Group 203.png"),
+                              ],
+                            ),
+                            SizedBox(height: 7.0),
+                            Container(
+                              width: 320.0,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Shipping info",
+                                    style: TextStyle(
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.w700,
+                                      foreground: Paint()
+                                        ..shader = LinearGradient(
+                                          colors: [
+                                            HexColor('#CBD3FD'),
+                                            HexColor('#5d74bc')
+                                          ],
+                                          begin:
+                                              const FractionalOffset(0.0, 0.0),
+                                          end: const FractionalOffset(1.0, 0.0),
+                                          stops: [0.0, 1.0],
+                                          tileMode: TileMode.clamp,
+                                        ).createShader(Rect.fromLTWH(
+                                            0.0, 0.0, 200.0, 70.0)),
+                                    ),
+                                  ),
+                                  Text(
+                                    "Payment info",
+                                    style: TextStyle(
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.w700,
+                                      foreground: Paint()
+                                        ..shader = LinearGradient(
+                                          colors: [
+                                            HexColor('#CBD3FD'),
+                                            HexColor('#5d74bc')
+                                          ],
+                                          begin:
+                                              const FractionalOffset(0.0, 0.0),
+                                          end: const FractionalOffset(1.0, 0.0),
+                                          stops: [0.0, 1.0],
+                                          tileMode: TileMode.clamp,
+                                        ).createShader(
+                                          Rect.fromLTWH(0.0, 0.0, 200.0, 70.0),
+                                        ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 28.0),
+                      Container(
+                        width: double.infinity,
+                        constraints: BoxConstraints(
+                          minHeight: MediaQuery.of(context).size.height - 100,
+                        ),
+                        decoration: BoxDecoration(
+                          color: HexColor("#FAFCFF"),
+                          borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(32.0),
+                            topLeft: Radius.circular(32.0),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey[300],
+                              offset: Offset(0.0, -0.2), // (x, y)
+                              blurRadius: 10.0,
+                            ),
+                          ],
+                        ),
+                        child: CreditCardForm(
+                          formKey: _cardForm,
+                          obscureCvv: true,
+                          obscureNumber: false,
+                          cardHolderDecoration: InputDecoration(
+                            hintText: 'Enter your cardholder name',
+                            enabledBorder: UnderlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: HexColor("#C4C6D2")),
+                            ),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: HexColor("#C4C6D2")),
+                            ),
+                            hintStyle: TextStyle(
+                              fontSize: 16,
+                              color: Colors.black26,
+                            ),
+                            contentPadding: EdgeInsets.symmetric(vertical: 5),
+                            floatingLabelBehavior: FloatingLabelBehavior.always,
+                            labelText: 'Cardholder name',
+                            labelStyle: TextStyle(
+                              color: Colors.black,
+                              height: 0.7,
+                              fontSize: 22,
+                            ),
+                          ),
+                          cardNumberDecoration: InputDecoration(
+                            hintText: 'Enter ',
+                            enabledBorder: UnderlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: HexColor("#C4C6D2")),
+                            ),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: HexColor("#C4C6D2")),
+                            ),
+                            hintStyle: TextStyle(
+                              fontSize: 16,
+                              color: Colors.black26,
+                            ),
+                            contentPadding: EdgeInsets.symmetric(vertical: 5),
+                            floatingLabelBehavior: FloatingLabelBehavior.always,
+                            labelText: 'Card number',
+                            labelStyle: TextStyle(
+                              color: Colors.black,
+                              height: 0.7,
+                              fontSize: 22,
+                            ),
+                          ),
+                          expiryDateDecoration: InputDecoration(
+                            hintText: 'Enter date',
+                            enabledBorder: UnderlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: HexColor("#C4C6D2")),
+                            ),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: HexColor("#C4C6D2")),
+                            ),
+                            hintStyle: TextStyle(
+                              fontSize: 16,
+                              color: Colors.black26,
+                            ),
+                            contentPadding: EdgeInsets.symmetric(vertical: 5),
+                            floatingLabelBehavior: FloatingLabelBehavior.always,
+                            labelText: 'Expiry date',
+                            labelStyle: TextStyle(
+                              color: Colors.black,
+                              height: 0.7,
+                              fontSize: 22,
+                            ),
+                          ),
+                          cvvCodeDecoration: InputDecoration(
+                            hintText: 'Enter CVV',
+                            enabledBorder: UnderlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: HexColor("#C4C6D2")),
+                            ),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: HexColor("#C4C6D2")),
+                            ),
+                            hintStyle: TextStyle(
+                              fontSize: 16,
+                              color: Colors.black26,
+                            ),
+                            contentPadding: EdgeInsets.symmetric(vertical: 5),
+                            floatingLabelBehavior: FloatingLabelBehavior.always,
+                            labelText: 'CVV',
+                            labelStyle: TextStyle(
+                              color: Colors.black,
+                              height: 0.7,
+                              fontSize: 22,
+                            ),
+                          ),
+                          onCreditCardModelChange: onCreditCardModelChange,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+      ),
     );
+  }
+
+  void onCreditCardModelChange(CreditCardModel creditCardModel) {
+    setState(() {
+      cardNumber = creditCardModel.cardNumber;
+      expiryDate = creditCardModel.expiryDate;
+      cardHolderName = creditCardModel.cardHolderName;
+      cvvCode = creditCardModel.cvvCode;
+      isCvvFocused = creditCardModel.isCvvFocused;
+    });
   }
 }
 
@@ -510,238 +803,5 @@ class __InnerPartState extends State<_InnerPart> {
         ),
       ),
     );
-  }
-}
-
-class _InnerCardPart extends StatefulWidget {
-  final cardForm;
-
-  _InnerCardPart({this.cardForm});
-
-  @override
-  __InnerCardPartState createState() => __InnerCardPartState();
-}
-
-class __InnerCardPartState extends State<_InnerCardPart> {
-  String cardNumber = '';
-  String expiryDate = '';
-  String cardHolderName = '';
-  String cvvCode = '';
-  bool isCvvFocused = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      constraints: BoxConstraints(
-        minHeight: MediaQuery.of(context).size.height,
-      ),
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(height: 20.0),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        "images/Group 203.png",
-                        color: Colors.white.withOpacity(.2),
-                      ),
-                      Dash(
-                        direction: Axis.horizontal,
-                        length: 210,
-                        dashLength: 10,
-                        dashColor: HexColor("#C4C6D2"),
-                      ),
-                      Image.asset("images/Group 203.png"),
-                    ],
-                  ),
-                  SizedBox(height: 7.0),
-                  Container(
-                    width: 320.0,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Shipping info",
-                          style: TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.w700,
-                            foreground: Paint()
-                              ..shader = LinearGradient(
-                                colors: [
-                                  HexColor('#CBD3FD'),
-                                  HexColor('#5d74bc')
-                                ],
-                                begin: const FractionalOffset(0.0, 0.0),
-                                end: const FractionalOffset(1.0, 0.0),
-                                stops: [0.0, 1.0],
-                                tileMode: TileMode.clamp,
-                              ).createShader(
-                                  Rect.fromLTWH(0.0, 0.0, 200.0, 70.0)),
-                          ),
-                        ),
-                        Text(
-                          "Payment info",
-                          style: TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.w700,
-                            foreground: Paint()
-                              ..shader = LinearGradient(
-                                colors: [
-                                  HexColor('#CBD3FD'),
-                                  HexColor('#5d74bc')
-                                ],
-                                begin: const FractionalOffset(0.0, 0.0),
-                                end: const FractionalOffset(1.0, 0.0),
-                                stops: [0.0, 1.0],
-                                tileMode: TileMode.clamp,
-                              ).createShader(
-                                Rect.fromLTWH(0.0, 0.0, 200.0, 70.0),
-                              ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 28.0),
-            Container(
-              width: double.infinity,
-              constraints: BoxConstraints(
-                minHeight: MediaQuery.of(context).size.height -
-                    Scaffold.of(context).appBarMaxHeight * 2,
-              ),
-              decoration: BoxDecoration(
-                color: HexColor("#FAFCFF"),
-                borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(32.0),
-                  topLeft: Radius.circular(32.0),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey[300],
-                    offset: Offset(0.0, -0.2), // (x, y)
-                    blurRadius: 10.0,
-                  ),
-                ],
-              ),
-              child: CreditCardForm(
-                formKey: widget.cardForm,
-                obscureCvv: true,
-                obscureNumber: false,
-                cardHolderDecoration: InputDecoration(
-                  hintText: 'Enter your cardholder name',
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: HexColor("#C4C6D2")),
-                  ),
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: HexColor("#C4C6D2")),
-                  ),
-                  hintStyle: TextStyle(
-                    fontSize: 16,
-                    color: Colors.black26,
-                  ),
-                  contentPadding: EdgeInsets.symmetric(vertical: 5),
-                  floatingLabelBehavior: FloatingLabelBehavior.always,
-                  labelText: 'Cardholder name',
-                  labelStyle: TextStyle(
-                    color: Colors.black,
-                    height: 0.7,
-                    fontSize: 22,
-                  ),
-                ),
-                cardNumberDecoration: InputDecoration(
-                  hintText: 'Enter ',
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: HexColor("#C4C6D2")),
-                  ),
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: HexColor("#C4C6D2")),
-                  ),
-                  hintStyle: TextStyle(
-                    fontSize: 16,
-                    color: Colors.black26,
-                  ),
-                  contentPadding: EdgeInsets.symmetric(vertical: 5),
-                  floatingLabelBehavior: FloatingLabelBehavior.always,
-                  labelText: 'Card number',
-                  labelStyle: TextStyle(
-                    color: Colors.black,
-                    height: 0.7,
-                    fontSize: 22,
-                  ),
-                ),
-                expiryDateDecoration: InputDecoration(
-                  hintText: 'Enter date',
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: HexColor("#C4C6D2")),
-                  ),
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: HexColor("#C4C6D2")),
-                  ),
-                  hintStyle: TextStyle(
-                    fontSize: 16,
-                    color: Colors.black26,
-                  ),
-                  contentPadding: EdgeInsets.symmetric(vertical: 5),
-                  floatingLabelBehavior: FloatingLabelBehavior.always,
-                  labelText: 'Expiry date',
-                  labelStyle: TextStyle(
-                    color: Colors.black,
-                    height: 0.7,
-                    fontSize: 22,
-                  ),
-                ),
-                cvvCodeDecoration: InputDecoration(
-                  hintText: 'Enter CVV',
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: HexColor("#C4C6D2")),
-                  ),
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: HexColor("#C4C6D2")),
-                  ),
-                  hintStyle: TextStyle(
-                    fontSize: 16,
-                    color: Colors.black26,
-                  ),
-                  contentPadding: EdgeInsets.symmetric(vertical: 5),
-                  floatingLabelBehavior: FloatingLabelBehavior.always,
-                  labelText: 'CVV',
-                  labelStyle: TextStyle(
-                    color: Colors.black,
-                    height: 0.7,
-                    fontSize: 22,
-                  ),
-                ),
-                onCreditCardModelChange: onCreditCardModelChange,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void onCreditCardModelChange(CreditCardModel creditCardModel) {
-    setState(() {
-      cardNumber = creditCardModel.cardNumber;
-      expiryDate = creditCardModel.expiryDate;
-      cardHolderName = creditCardModel.cardHolderName;
-      cvvCode = creditCardModel.cvvCode;
-      isCvvFocused = creditCardModel.isCvvFocused;
-    });
   }
 }

@@ -162,8 +162,9 @@ void _onProceedToCheckout(Action action, Context<CartPageState> ctx) async {
 
   productsIdsJson = "[${cart.map((item) => '"${item.product.id}"').join(',')}]";
 
-  printWrapped('orderDetailsJson: $orderDetailsJson');
+  // printWrapped('orderDetailsJson: $orderDetailsJson');
   // printWrapped('productsIdsJson: $productsIdsJson');
+  // print("--------------- ${ctx.state.paymentToken}");
 
   GlobalStore.store.dispatch(GlobalActionCreator.setShoppingCart(
       List<CartItem>.empty(growable: true)));
@@ -172,6 +173,7 @@ void _onProceedToCheckout(Action action, Context<CartPageState> ctx) async {
     orderDetailsJson,
     totalPrice,
     productsIdsJson,
+    ctx.state.paymentToken,
   );
   if (resultOrder.hasException) {
     printWrapped('Exception: ${resultOrder.exception}');

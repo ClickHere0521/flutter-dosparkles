@@ -6,11 +6,13 @@ import 'package:com.floridainc.dosparkles/models/models.dart';
 
 class CartPageState implements GlobalBaseState, Cloneable<CartPageState> {
   AnimationController animationController;
+  String paymentToken;
 
   @override
   CartPageState clone() {
     return CartPageState()
       ..animationController = animationController
+      ..paymentToken = paymentToken
       //
       ..locale = locale
       ..user = user

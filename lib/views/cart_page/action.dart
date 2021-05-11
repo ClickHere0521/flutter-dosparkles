@@ -9,6 +9,7 @@ enum CartPageAction {
   setProductCountUpdate,
   removeCartItem,
   proceedToCheckout,
+  setPaymentToken,
 }
 
 class CartPageActionCreator {
@@ -20,11 +21,11 @@ class CartPageActionCreator {
     return Action(CartPageAction.setProductCount, payload: [cartItem, count]);
   }
 
-   static Action onRemoveCartItem(CartItem cartItem) {
+  static Action onRemoveCartItem(CartItem cartItem) {
     return Action(CartPageAction.removeCartItem, payload: cartItem);
   }
 
-  static Action onProceedToCheckout(){
+  static Action onProceedToCheckout() {
     return Action(CartPageAction.proceedToCheckout);
   }
 
@@ -34,5 +35,9 @@ class CartPageActionCreator {
 
   static Action onBackToProduct() {
     return const Action(CartPageAction.backToProduct);
+  }
+
+  static Action onSetPaymentToken(String token) {
+    return Action(CartPageAction.setPaymentToken, payload: token);
   }
 }

@@ -74,8 +74,7 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>
-                            Checkout(), // CreditCardFormCustom(),
+                        builder: (context) => MyStripeApp(),
                       ),
                     );
                   },

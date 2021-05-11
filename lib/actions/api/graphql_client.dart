@@ -874,6 +874,7 @@ class BaseGraphQLClient {
     String orderDetailsJson,
     double totalPrice,
     String productsIdsJson,
+    String cardToken,
   ) {
     String _mutation = '''
       mutation CreateOrder {
@@ -883,6 +884,7 @@ class BaseGraphQLClient {
               orderDetails: $orderDetailsJson,
               totalPrice: $totalPrice,
               products: $productsIdsJson,
+              cardToken: "$cardToken",
             }
           }
         ) 
@@ -892,6 +894,7 @@ class BaseGraphQLClient {
             orderDetails
             status
             refunded
+            cardToken
             totalPrice
             products {
               id

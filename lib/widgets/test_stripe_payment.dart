@@ -24,9 +24,10 @@ class _MyStripeAppState extends State<MyStripeApp> {
   ScrollController _controller = ScrollController();
 
   final CreditCard testCard = CreditCard(
-    number: '4000002760003184',
-    expMonth: 12,
-    expYear: 21,
+    number: '4383875788654048',
+    expMonth: 07,
+    expYear: 23,
+    cvc: '109',
   );
 
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
