@@ -236,6 +236,7 @@ class _MainBody extends StatefulWidget {
 class __MainBodyState extends State<_MainBody> {
   String selectedDate = DateTime.now().toString();
   List filteredList;
+  Map<String, dynamic> statistics = {};
   List<Asset> pickedImages = <Asset>[];
   bool _isLoading = false;
 
@@ -281,6 +282,25 @@ class __MainBodyState extends State<_MainBody> {
     QueryResult result = await BaseGraphQLClient.instance
         .fetchStoreById(widget.globalUser.store['id']);
     return result.data['stores'][0];
+  }
+
+  void _getStatistics(DateTime date) async {
+    Response result = await http.post(
+      '${AppConfig.instance.baseApiHost}/analytics/getStatistics',
+      body: {
+        'date': "$date",
+        'storeId': "${widget.globalUser.store['id']}",
+      },
+    );
+
+    print(result.statusCode);
+    statistics = json.decode(result.body);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getStatistics(DateTime.parse(selectedDate));
   }
 
   @override
@@ -424,6 +444,7 @@ class __MainBodyState extends State<_MainBody> {
                               initialDate: DateTime.now(),
                               lastDate: DateTime(2100),
                             ).then((date) {
+                              _getStatistics(date);
                               setState(() {
                                 selectedDate = date.toString();
                               });
@@ -580,7 +601,7 @@ class __MainBodyState extends State<_MainBody> {
                               ),
                               SizedBox(height: 11.0),
                               Text(
-                                "11",
+                                "${statistics['utitsSold']}",
                                 style: TextStyle(
                                   fontSize: 14.0,
                                   fontWeight: FontWeight.w600,
@@ -622,7 +643,7 @@ class __MainBodyState extends State<_MainBody> {
                               ),
                               SizedBox(height: 11.0),
                               Text(
-                                "\$441.30",
+                                "\$${statistics['revenue']}",
                                 style: TextStyle(
                                   fontSize: 14.0,
                                   fontWeight: FontWeight.w600,
@@ -664,7 +685,7 @@ class __MainBodyState extends State<_MainBody> {
                               ),
                               SizedBox(height: 11.0),
                               Text(
-                                "\$156.11",
+                                "\$${statistics['totalCost']}",
                                 style: TextStyle(
                                   fontSize: 14.0,
                                   fontWeight: FontWeight.w600,
@@ -706,7 +727,7 @@ class __MainBodyState extends State<_MainBody> {
                               ),
                               SizedBox(height: 11.0),
                               Text(
-                                "\$285.19",
+                                "\$${statistics['profit']}",
                                 style: TextStyle(
                                   fontSize: 14.0,
                                   fontWeight: FontWeight.w600,
@@ -778,37 +799,6 @@ class __MainBodyState extends State<_MainBody> {
                             SizedBox(width: 12.0),
                             Text(
                               "Get more customers",
-                              style: TextStyle(fontSize: 16.0),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 12.0),
-                      Container(
-                        width: double.infinity,
-                        height: 48.0,
-                        constraints: BoxConstraints(maxWidth: 343.0),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(31.0),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey[300],
-                              offset: Offset(0.0, 0.0), // (x,y)
-                              blurRadius: 10.0,
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Image.asset(
-                              "images/Group 268 (1).png",
-                              width: 48.0,
-                            ),
-                            SizedBox(width: 12.0),
-                            Text(
-                              "Change school",
                               style: TextStyle(fontSize: 16.0),
                             ),
                           ],

@@ -1052,15 +1052,22 @@ class __ContactsPageState extends State<_ContactsPage> {
           for (var contact in contacts) {
             if (contact.phones.isEmpty && contact.displayName == null) continue;
             String phoneValue = contact.phones.isNotEmpty
-                ? contact.phones.elementAt(0).value
+                ? contact.phones
+                    .elementAt(0)
+                    .value
+                    .replaceAll(new RegExp(r"\s+\b|\b\s"), "")
                 : '';
 
             List invitesPresent = invitesSent != null && invitesSent.length > 0
-                ? invitesSent.where((phone) => phone == phoneValue).toList()
+                ? invitesSent
+                    .where((invite) =>
+                        invite['phone'] == phoneValue &&
+                        invite['confirmed'] == true)
+                    .toList()
                 : [];
 
             contactsList.add({
-              "phone": phoneValue.replaceAll(new RegExp(r"\s+\b|\b\s"), ""),
+              "phone": phoneValue,
               "name": contact.displayName != null ? contact.displayName : '',
               "checked": invitesPresent.length > 0 ? true : false,
               "invited": invitesPresent.length > 0 ? true : false,
