@@ -53,10 +53,6 @@ Future<bool> _askPermissions() async {
   return isAccepted;
 }
 
-int _checkIsInvited(List checkedList) {
-  return checkedList.where((item) => item['invited'] == false).toList().length;
-}
-
 Future<void> _congratulationsDialog(BuildContext context) async {
   return showDialog(
     context: context,
@@ -1058,19 +1054,19 @@ class __ContactsPageState extends State<_ContactsPage> {
                     .replaceAll(new RegExp(r"\s+\b|\b\s"), "")
                 : '';
 
-            List invitesPresent = invitesSent != null && invitesSent.length > 0
+            bool invitesPresent = invitesSent != null && invitesSent.length > 0
                 ? invitesSent
                     .where((invite) =>
                         invite['phone'] == phoneValue &&
                         invite['confirmed'] == true)
-                    .toList()
+                    .isNotEmpty
                 : [];
 
             contactsList.add({
               "phone": phoneValue,
               "name": contact.displayName != null ? contact.displayName : '',
-              "checked": invitesPresent.length > 0 ? true : false,
-              "invited": invitesPresent.length > 0 ? true : false,
+              "checked": false,
+              "invited": invitesPresent,
             });
             setState(() {});
           }
@@ -1391,9 +1387,9 @@ class __ContactsPageState extends State<_ContactsPage> {
                           child: CircularProgressIndicator(),
                         )
                       : Text(
-                          _checkIsInvited(checkedList) == 0
+                          checkedList.length == 0
                               ? 'Invite Friends'
-                              : 'Invite Friends (${_checkIsInvited(checkedList)})',
+                              : 'Invite Friends (${checkedList.length})',
                           style: TextStyle(
                             fontSize: 16.0,
                             fontWeight: FontWeight.normal,
@@ -1404,7 +1400,8 @@ class __ContactsPageState extends State<_ContactsPage> {
                       ? null
                       : () {
                           if (checkedList.isNotEmpty) {
-                            _onSubmit(checkedList, _setLoading);
+                            _onSubmit(checkedList, contactsList, _setLoading,
+                                context);
                           }
                         },
                 ),
@@ -1418,12 +1415,21 @@ class __ContactsPageState extends State<_ContactsPage> {
   }
 }
 
-void _onSubmit(List filteredList, Function _setLoading) async {
+void _onSubmit(
+  List checkedList,
+  List contactsList,
+  Function _setLoading,
+  BuildContext context,
+) async {
   AppUser globalUser = GlobalStore.store.getState().user;
 
+  if (checkedList.length == contactsList.length) {
+    _congratulationsDialog(context);
+  }
+
   List<Map<String, dynamic>> friendsList = [];
-  for (int i = 0; i < filteredList.length; i++) {
-    var contact = filteredList[i];
+  for (int i = 0; i < checkedList.length; i++) {
+    var contact = checkedList[i];
 
     if (contact['phone'] != null && contact['phone'] != '') {
       friendsList.add({
@@ -1436,9 +1442,7 @@ void _onSubmit(List filteredList, Function _setLoading) async {
   try {
     _setLoading(true);
 
-    // print("RAW : " + filteredList.toString());
-
-    Response result = await http.post(
+    await http.post(
       '${AppConfig.instance.baseApiHost}/friend-invites/inviteRequest',
       body: {
         'id': "${globalUser.id}",
@@ -1446,12 +1450,6 @@ void _onSubmit(List filteredList, Function _setLoading) async {
         'data': json.encode(friendsList),
       },
     );
-
-    print("RESULT : " + result.body);
-
-    // QueryResult result =
-    //     await BaseGraphQLClient.instance.setUserInvitesSent(meId, phones);
-    // if (result.hasException) print(result.exception);
 
     _setLoading(false);
   } catch (e) {

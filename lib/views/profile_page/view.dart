@@ -17,6 +17,7 @@ import 'package:com.floridainc.dosparkles/widgets/connection_lost.dart';
 import 'package:com.floridainc.dosparkles/widgets/custom_switch.dart';
 import 'package:com.floridainc.dosparkles/widgets/sparkles_drawer.dart';
 import 'package:fish_redux/fish_redux.dart';
+import 'package:flui/flui.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -601,7 +602,14 @@ class __MainBodyState extends State<_MainBody> {
                   ),
                 ],
               ),
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => _FriendsSignedUp(),
+                  ),
+                );
+              },
             ),
           ),
           SizedBox(height: 32.0),
@@ -620,7 +628,7 @@ class _OrderHistory extends StatefulWidget {
 
 class __OrderHistoryState extends State<_OrderHistory> {
   String selectedDate = DateTime.now().toString();
-  List filteredList;
+  List filteredList = [];
 
   String formatDateTimeToMY(String date) {
     return DateFormat('LLLL yyyy').format(DateTime.parse(date));
@@ -691,10 +699,7 @@ class __OrderHistoryState extends State<_OrderHistory> {
               return Container(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height,
-                padding: EdgeInsets.only(
-                  left: 16.0,
-                  right: 16.0,
-                ),
+                padding: EdgeInsets.only(left: 16.0, right: 16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -866,7 +871,9 @@ class __OrderHistoryState extends State<_OrderHistory> {
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
                                               for (int i = 0;
-                                                  i < order['products'].length;
+                                                  i <
+                                                      order['products'].length -
+                                                          1;
                                                   i++)
                                                 Padding(
                                                   padding: EdgeInsets.only(
@@ -1032,6 +1039,153 @@ class __OrderHistoryState extends State<_OrderHistory> {
                 ),
               );
             }),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _FriendsSignedUp extends StatefulWidget {
+  final AppUser globalUser = GlobalStore.store.getState().user;
+
+  @override
+  __FriendsSignedUpState createState() => __FriendsSignedUpState();
+}
+
+class __FriendsSignedUpState extends State<_FriendsSignedUp> {
+  Future _fetchData() async {
+    QueryResult result =
+        await BaseGraphQLClient.instance.fetchUserById(widget.globalUser.id);
+    if (result.hasException) print(result.exception);
+
+    return result.data['users'][0];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.white,
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height,
+      child: Stack(
+        children: [
+          Positioned(
+            top: 0,
+            left: 0,
+            width: MediaQuery.of(context).size.width,
+            child: Image.asset(
+              "images/background_lines_top.png",
+              fit: BoxFit.contain,
+            ),
+          ),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            width: MediaQuery.of(context).size.width,
+            child: Image.asset(
+              "images/background_lines_bottom.png",
+              fit: BoxFit.contain,
+            ),
+          ),
+          Scaffold(
+            backgroundColor: Colors.white,
+            resizeToAvoidBottomInset: true,
+            appBar: AppBar(
+              centerTitle: true,
+              elevation: 0.0,
+              leadingWidth: 70.0,
+              automaticallyImplyLeading: false,
+              leading: InkWell(
+                child: Image.asset("images/back_button.png"),
+                onTap: () => Navigator.of(context).pop(),
+              ),
+              backgroundColor: Colors.transparent,
+              title: Text(
+                "Friends Signed Up",
+                style: TextStyle(
+                  fontSize: 22,
+                  color: HexColor("#53586F"),
+                  fontWeight: FontWeight.w600,
+                  fontFeatures: [FontFeature.enable('smcp')],
+                ),
+              ),
+            ),
+            body: Container(
+              padding: EdgeInsets.only(left: 16.0, right: 16.0, top: 20.0),
+              child: FutureBuilder(
+                future: _fetchData(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData && !snapshot.hasError) {
+                    List invitesSent = snapshot.data['invitesSent']
+                        .where((el) => el['confirmed'] == true)
+                        .toList();
+
+                    return Container(
+                      color: Colors.white,
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height,
+                      child: invitesSent == null && invitesSent.length == 0
+                          ? Text("No Data")
+                          : ListView.separated(
+                              itemCount: invitesSent.length,
+                              shrinkWrap: true,
+                              physics: BouncingScrollPhysics(),
+                              separatorBuilder: (_, index) => Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 4.0),
+                                child: Divider(
+                                  color: Colors.white,
+                                  thickness: 2.0,
+                                  height: 0.0,
+                                ),
+                              ),
+                              itemBuilder: (BuildContext context, int index) {
+                                Map contact = invitesSent[index];
+
+                                return Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  height: 50.0,
+                                  color: HexColor("#FAFCFF"),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      FLAvatar(
+                                        image: Image.asset(
+                                          'images/user-male-circle.png',
+                                          fit: BoxFit.cover,
+                                          width: double.infinity,
+                                          height: double.infinity,
+                                        ),
+                                        width: 50.0,
+                                        height: double.infinity,
+                                      ),
+                                      SizedBox(width: 13.0),
+                                      Expanded(
+                                        child: Text(
+                                          "${contact['name'] != null ? contact['name'] : contact['phone']}",
+                                          style: TextStyle(
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                    );
+                  }
+                  return Center(child: CircularProgressIndicator());
+                },
+              ),
+            ),
           ),
         ],
       ),

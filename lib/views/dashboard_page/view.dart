@@ -236,7 +236,18 @@ class _MainBody extends StatefulWidget {
 class __MainBodyState extends State<_MainBody> {
   String selectedDate = DateTime.now().toString();
   List filteredList;
-  Map<String, dynamic> statistics = {};
+  Map<String, dynamic> topStatistics = {
+    'sales': 0,
+    'customers': 0,
+    'inbox': 0,
+  };
+
+  Map<String, dynamic> bottomStatistics = {
+    'utitsSold': 0,
+    'revenue': 0,
+    'totalCost': 0,
+    'profit': 0
+  };
   List<Asset> pickedImages = <Asset>[];
   bool _isLoading = false;
 
@@ -285,16 +296,28 @@ class __MainBodyState extends State<_MainBody> {
   }
 
   void _getStatistics(DateTime date) async {
+    bool isStoreOwner =
+        GlobalStore.store.getState().user.role == 'Store Manager';
+
     Response result = await http.post(
       '${AppConfig.instance.baseApiHost}/analytics/getStatistics',
       body: {
         'date': "$date",
-        'storeId': "${widget.globalUser.store['id']}",
+        'storeId': isStoreOwner ? "${widget.globalUser.store['id']}" : '',
       },
     );
 
-    print(result.statusCode);
-    statistics = json.decode(result.body);
+    Map<String, dynamic> statistics = json.decode(result.body);
+
+    setState(() {
+      if (statistics['topStatistics'] != null)
+        topStatistics = statistics['topStatistics'];
+
+      if (statistics['bottomStatistics'] != null)
+        bottomStatistics = statistics['bottomStatistics'];
+    });
+
+    // print("-------------- $topStatistics $bottomStatistics");
   }
 
   @override
@@ -463,7 +486,7 @@ class __MainBodyState extends State<_MainBody> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          "85",
+                          "${topStatistics != null && topStatistics['sales'] != null ? topStatistics['sales'] : 0}",
                           style: TextStyle(
                             fontSize: 20.0,
                             color: HexColor("#53586F"),
@@ -486,7 +509,7 @@ class __MainBodyState extends State<_MainBody> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          "383",
+                          "${topStatistics != null && topStatistics['customers'] != null ? topStatistics['customers'] : 0}",
                           style: TextStyle(
                             fontSize: 20.0,
                             fontWeight: FontWeight.w600,
@@ -509,7 +532,7 @@ class __MainBodyState extends State<_MainBody> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          "3",
+                          "${topStatistics != null && topStatistics['inbox'] != null ? topStatistics['inbox'] : 0}",
                           style: TextStyle(
                             fontSize: 20.0,
                             fontWeight: FontWeight.w600,
@@ -601,7 +624,7 @@ class __MainBodyState extends State<_MainBody> {
                               ),
                               SizedBox(height: 11.0),
                               Text(
-                                "${statistics['utitsSold']}",
+                                "${bottomStatistics != null && bottomStatistics['utitsSold'] != null ? bottomStatistics['utitsSold'] : 0}",
                                 style: TextStyle(
                                   fontSize: 14.0,
                                   fontWeight: FontWeight.w600,
@@ -643,7 +666,7 @@ class __MainBodyState extends State<_MainBody> {
                               ),
                               SizedBox(height: 11.0),
                               Text(
-                                "\$${statistics['revenue']}",
+                                "\$${bottomStatistics != null && bottomStatistics['revenue'] != null ? bottomStatistics['revenue'] : 0}",
                                 style: TextStyle(
                                   fontSize: 14.0,
                                   fontWeight: FontWeight.w600,
@@ -685,7 +708,7 @@ class __MainBodyState extends State<_MainBody> {
                               ),
                               SizedBox(height: 11.0),
                               Text(
-                                "\$${statistics['totalCost']}",
+                                "\$${bottomStatistics != null && bottomStatistics['totalCost'] != null ? bottomStatistics['totalCost'] : 0}",
                                 style: TextStyle(
                                   fontSize: 14.0,
                                   fontWeight: FontWeight.w600,
@@ -727,7 +750,7 @@ class __MainBodyState extends State<_MainBody> {
                               ),
                               SizedBox(height: 11.0),
                               Text(
-                                "\$${statistics['profit']}",
+                                "\$${bottomStatistics != null && bottomStatistics['profit'] != null ? bottomStatistics['profit'] : 0}",
                                 style: TextStyle(
                                   fontSize: 14.0,
                                   fontWeight: FontWeight.w600,

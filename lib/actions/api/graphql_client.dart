@@ -291,44 +291,6 @@ class BaseGraphQLClient {
     return _service.mutate(_mutation);
   }
 
-  Future<QueryResult> setUserInvitesSent(String id, List data) {
-    String _mutation = '''
-      mutation {
-        updateUser (
-          input: {
-            where: {
-              id: "$id"
-            }
-            data: {
-              invitesSent: $data
-            }
-          }
-        )
-        {
-          user {
-            id
-            email
-            username
-            enableNotifications
-            phoneNumber
-            invitesSent
-            referralLink
-            role {
-              id
-              name
-            }
-            storeFavorite {
-              id
-            }
-            pushToken
-          }
-        }
-      }
-    ''';
-
-    return _service.mutate(_mutation);
-  }
-
   Future<QueryResult> setUserAvatar(String id, String imageId) {
     String _mutation = '''
       mutation {

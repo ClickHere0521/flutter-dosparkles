@@ -59,6 +59,7 @@ class ProductCustomizationState extends State<ProductCustomization> {
         selectedProduct.properties != null &&
         selectedProduct.properties['engravings'] != null) {
       var engravings = selectedProduct.properties['engravings'];
+
       if (engravings is int) {
         engravingsCount = engravings;
       } else {
@@ -77,7 +78,15 @@ class ProductCustomizationState extends State<ProductCustomization> {
       }
     }
 
-    print('engravingsCount: $engravingsCount');
+    double wholeSum = (engravingsCount * selectedProduct.engravePrice) +
+        (productQuantity * selectedProduct.price);
+    double wholeOldSum = (engravingsCount * selectedProduct.engraveOldPrice) +
+        (productQuantity * selectedProduct.oldPrice);
+
+    if (optionalMaterialSelected) {
+      wholeSum += selectedProduct.optionalFinishMaterialPrice;
+      wholeOldSum += selectedProduct.optionalFinishMaterialOldPrice;
+    }
 
     return Stack(
       children: [
@@ -208,8 +217,7 @@ class ProductCustomizationState extends State<ProductCustomization> {
                               text: TextSpan(
                                 children: [
                                   TextSpan(
-                                    text:
-                                        "\$${widget.selectedProduct.oldPrice}",
+                                    text: "\$$wholeOldSum",
                                     style: TextStyle(
                                       color: Colors.white.withOpacity(.5),
                                       fontSize: 18.0,
@@ -217,7 +225,7 @@ class ProductCustomizationState extends State<ProductCustomization> {
                                     ),
                                   ),
                                   TextSpan(
-                                    text: "\$${widget.selectedProduct.price}",
+                                    text: "\$$wholeSum",
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 24.0,

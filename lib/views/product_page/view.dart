@@ -189,8 +189,8 @@ class __FirstPageState extends State<_FirstPage> {
           bottomNavigationBar: Container(
             width: double.infinity,
             height: double.infinity,
-            constraints: BoxConstraints(maxHeight: 75.0),
-            padding: EdgeInsets.symmetric(horizontal: 16.0),
+            constraints: BoxConstraints(maxHeight: 90.0),
+            padding: EdgeInsets.only(top: 15.0),
             decoration: BoxDecoration(
               color: Colors.white.withOpacity(.9),
               borderRadius: BorderRadius.only(
@@ -205,76 +205,81 @@ class __FirstPageState extends State<_FirstPage> {
                 ),
               ],
             ),
-            child: Center(
-              child: Row(
-                children: [
-                  Container(
-                    width: 163.0,
-                    height: 42.0,
-                    child: Center(
-                      child: Text(
-                        "\$${widget.productQuantity * widget.selectedProduct.price}",
-                        style: TextStyle(
-                          color: HexColor("#53586F"),
-                          fontSize: 22.0,
-                          fontWeight: FontWeight.w700,
-                        ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 163.0,
+                  height: 42.0,
+                  child: Center(
+                    child: Text(
+                      "\$${widget.productQuantity * widget.selectedProduct.price}",
+                      style: TextStyle(
+                        color: HexColor("#53586F"),
+                        fontSize: 22.0,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                   ),
-                  Container(
-                    width: 163.0,
-                    height: 42.0,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(31.0),
-                    ),
-                    child: ElevatedButton(
-                      style: ButtonStyle(
-                        elevation: MaterialStateProperty.all(0.0),
-                        backgroundColor:
-                            MaterialStateProperty.all(HexColor("#6092DC")),
-                        shape: MaterialStateProperty.all(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(31.0),
+                ),
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: Container(
+                      width: 163.0,
+                      height: 42.0,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(31.0),
+                      ),
+                      child: ElevatedButton(
+                        style: ButtonStyle(
+                          elevation: MaterialStateProperty.all(0.0),
+                          backgroundColor:
+                              MaterialStateProperty.all(HexColor("#6092DC")),
+                          shape: MaterialStateProperty.all(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(31.0),
+                            ),
                           ),
                         ),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          SvgPicture.asset("images/Group 423423.svg"),
-                          SizedBox(width: 4.0),
-                          Text(
-                            'Add to cart',
-                            style: TextStyle(
-                              fontSize: 17.0,
-                              fontWeight: FontWeight.normal,
-                              color: Colors.white,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SvgPicture.asset("images/Group 423423.svg"),
+                            SizedBox(width: 4.0),
+                            Text(
+                              'Add to cart',
+                              style: TextStyle(
+                                fontSize: 17.0,
+                                fontWeight: FontWeight.normal,
+                                color: Colors.white,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ProductCustomization(
-                              dispatch: widget.dispatch,
-                              selectedProduct: widget.selectedProduct,
-                              productQuantity: widget.productQuantity,
-                              engraveInputs: widget.engraveInputs,
-                              optionalMaterialSelected:
-                                  widget.optionalMaterialSelected,
+                          ],
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProductCustomization(
+                                dispatch: widget.dispatch,
+                                selectedProduct: widget.selectedProduct,
+                                productQuantity: widget.productQuantity,
+                                engraveInputs: widget.engraveInputs,
+                                optionalMaterialSelected:
+                                    widget.optionalMaterialSelected,
+                              ),
                             ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
