@@ -9,6 +9,7 @@ import 'package:com.floridainc.dosparkles/utils/colors.dart';
 import 'package:com.floridainc.dosparkles/widgets/blog.dart';
 import 'package:com.floridainc.dosparkles/widgets/branch/branch_two.dart';
 import 'package:com.floridainc.dosparkles/widgets/checkout.dart';
+import 'package:com.floridainc.dosparkles/widgets/test_connectivity.dart';
 import 'package:com.floridainc.dosparkles/widgets/product_details_image.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_credit_card_form.dart';
 import 'package:com.floridainc.dosparkles/widgets/test_flutter_notifications.dart';
@@ -101,7 +102,8 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                                 ),
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(10.0),
-                                  child: widget.globalUser.avatarUrl != null
+                                  child: widget.globalUser != null &&
+                                          widget.globalUser.avatarUrl != null
                                       ? CachedNetworkImage(
                                           imageUrl: widget.globalUser.avatarUrl,
                                           width: double.infinity,

@@ -1,13 +1,15 @@
 # dosparkles
 
 # Update translations:
-flutter pub run intl_translation:generate_from_arb     --output-dir=lib/l10n --no-use-deferred-loading     lib/main.dart lib/l10n/intl_*.arb
+
+flutter pub run intl*translation:generate_from_arb --output-dir=lib/l10n --no-use-deferred-loading lib/main.dart lib/l10n/intl*\*.arb
 
 # build apk:
+
 flutter build apk
 
-
 # update repos:
+
 cd ios
 pod cache clean --all
 pod repo update
@@ -17,8 +19,17 @@ flutter clean
 flutter build ios
 grep -r IUWebView ios/Pods
 
-
 android emulator with local backend
 
 ipconfig
 // 192.168.43.136
+
+{
+"graphQLHttpLink": "http://192.168.43.136:1337/graphql",
+"baseApiHost": "http://192.168.43.136:1337"
+}
+
+{
+"graphQLHttpLink": "https://backend.dosparkles.com/graphql",
+"baseApiHost": "https://backend.dosparkles.com"
+}

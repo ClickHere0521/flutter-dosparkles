@@ -315,7 +315,8 @@ class __MainBodyState extends State<_MainBody> {
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10.0),
-                    child: widget.globalUser.avatarUrl != null
+                    child: widget.globalUser != null &&
+                            widget.globalUser.avatarUrl != null
                         ? CachedNetworkImage(
                             imageUrl: widget.globalUser.avatarUrl,
                             width: double.infinity,

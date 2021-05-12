@@ -178,7 +178,7 @@ class __FirstPageState extends State<_FirstPage> {
   void initState() {
     super.initState();
 
-    if (globalUser.invitesSent.length >= 10) {
+    if (globalUser.invitesSent != null && globalUser.invitesSent.length >= 10) {
       _isFinalPage = true;
     }
   }
@@ -669,7 +669,7 @@ class __NextBodyState extends State<_NextBody> {
           ),
           SizedBox(height: 11.0),
           Text(
-            "${globalUser.invitesSent.length}/10",
+            "${globalUser.invitesSent != null ? globalUser.invitesSent.length : 0}/10",
             style: TextStyle(
               fontSize: 18.0,
               fontWeight: FontWeight.w700,
@@ -687,7 +687,8 @@ class __NextBodyState extends State<_NextBody> {
                 return SizedBox(width: 2.0);
               },
               itemBuilder: (context, index) {
-                if (index < globalUser.invitesSent.length)
+                if (globalUser.invitesSent != null &&
+                    index < globalUser.invitesSent.length)
                   return Container(
                     width: MediaQuery.of(context).size.width * 0.08,
                     height: 6.0,
@@ -1060,7 +1061,7 @@ class __ContactsPageState extends State<_ContactsPage> {
                         invite['phone'] == phoneValue &&
                         invite['confirmed'] == true)
                     .isNotEmpty
-                : [];
+                : false;
 
             contactsList.add({
               "phone": phoneValue,

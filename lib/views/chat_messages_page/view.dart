@@ -37,7 +37,7 @@ Future<void> _sendPushNotification(String orderId, bool isApproved) async {
       },
     );
 
-    print("---------------- " + result.body);
+    // print("---------------- " + result.body);
   }
 }
 
@@ -1036,11 +1036,13 @@ class __BubbleContentWidgetState extends State<_BubbleContentWidget> {
                           } else if (scrollNotification
                               is ScrollEndNotification) {
                             if (_buttonShowing) {
-                              Future.delayed(Duration(seconds: 5)).then(
-                                (_) => setState(() {
-                                  _buttonShowing = false;
-                                }),
-                              );
+                              Future.delayed(Duration(seconds: 5)).then((_) {
+                                if (mounted) {
+                                  setState(() {
+                                    _buttonShowing = false;
+                                  });
+                                }
+                              });
                             }
                           }
                           return false;
@@ -1219,7 +1221,7 @@ class __BubbleContentWidgetState extends State<_BubbleContentWidget> {
                               ),
                               child: Center(
                                   child: Text(
-                                "November 16",
+                                DateFormat("LLLL dd").format(DateTime.now()),
                                 style: TextStyle(
                                   fontSize: 12.0,
                                   fontWeight: FontWeight.w500,
