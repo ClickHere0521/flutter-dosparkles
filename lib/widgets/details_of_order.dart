@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:ui';
 
+import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/utils/general.dart';
+import 'package:com.floridainc.dosparkles/widgets/connection_lost.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -35,6 +37,21 @@ class OrderWidget extends StatefulWidget {
 }
 
 class _OrderWidgetState extends State<OrderWidget> {
+  bool _isLostConnection = false;
+
+  checkInternetConnectivity() {
+    String _connectionStatus = GlobalStore.store.getState().connectionStatus;
+    if (_connectionStatus == 'ConnectivityResult.none') {
+      setState(() {
+        _isLostConnection = true;
+      });
+    } else {
+      setState(() {
+        _isLostConnection = false;
+      });
+    }
+  }
+
   double allProductsTotalPrice = 0.0;
 
   Future getInitialData() async {
@@ -66,6 +83,8 @@ class _OrderWidgetState extends State<OrderWidget> {
 
   @override
   Widget build(BuildContext context) {
+    checkInternetConnectivity();
+
     return Stack(
       children: [
         Positioned(
@@ -341,6 +360,7 @@ class _OrderWidgetState extends State<OrderWidget> {
             ),
           ),
         ),
+        if (_isLostConnection) ConnectionLost(),
       ],
     );
   }

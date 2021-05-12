@@ -54,36 +54,21 @@ void _switchNotifications(
 }
 
 void _changeProfileMainImage(
-    String root, List<Asset> pickedImages, Function setLoading) async {
+    List<Asset> pickedImages, Function setLoading) async {
   AppUser globalUser = GlobalStore.store.getState().user;
 
-  if (root == 'user') {
-    setLoading(true);
-    List<String> listOfIds = await _sendRequest(pickedImages);
+  setLoading(true);
+  List<String> listOfIds = await _sendRequest(pickedImages);
 
-    QueryResult result = await BaseGraphQLClient.instance
-        .setUserAvatar(globalUser.id, listOfIds[0]);
-    if (result.hasException) print(result.exception);
+  QueryResult result = await BaseGraphQLClient.instance
+      .setUserAvatar(globalUser.id, listOfIds[0]);
+  if (result.hasException) print(result.exception);
 
-    globalUser.avatarUrl = AppConfig.instance.baseApiHost +
-        result.data['updateUser']['user']['avatar']['url'];
-    GlobalStore.store.dispatch(GlobalActionCreator.setUser(globalUser));
+  globalUser.avatarUrl = AppConfig.instance.baseApiHost +
+      result.data['updateUser']['user']['avatar']['url'];
+  GlobalStore.store.dispatch(GlobalActionCreator.setUser(globalUser));
 
-    setLoading(false);
-  } else {
-    setLoading(true);
-    List<String> listOfIds = await _sendRequest(pickedImages);
-
-    QueryResult result = await BaseGraphQLClient.instance
-        .setStoreThumbnail(globalUser.store['id'], listOfIds[0]);
-    if (result.hasException) print(result.exception);
-
-    // globalUser.avatarUrl = AppConfig.instance.baseApiHost +
-    //     result.data['updateStore']['store']['thumbnail']['url'];
-    // GlobalStore.store.dispatch(GlobalActionCreator.setUser(globalUser));
-
-    setLoading(false);
-  }
+  setLoading(false);
 }
 
 Future _sendRequest(imagesList) async {
@@ -367,7 +352,7 @@ class __MainBodyState extends State<_MainBody> {
             onTap: () async {
               await loadAssets();
               if (pickedImages != null && pickedImages.length > 0) {
-                _changeProfileMainImage('user', pickedImages, _setLoading);
+                _changeProfileMainImage(pickedImages, _setLoading);
               }
             },
           ),
@@ -557,7 +542,7 @@ class __MainBodyState extends State<_MainBody> {
               ),
               onTap: () {
                 Navigator.of(context)
-                    .pushNamed('reset_passwordpage', arguments: null);
+                    .pushNamed('forgot_passwordpage', arguments: null);
               },
             ),
           ),
@@ -631,6 +616,7 @@ class __OrderHistoryState extends State<_OrderHistory> {
   List filteredList = [];
 
   String formatDateTimeToMY(String date) {
+    if (date == null || date.length < 15) date = DateTime.now().toString();
     return DateFormat('LLLL yyyy').format(DateTime.parse(date));
   }
 

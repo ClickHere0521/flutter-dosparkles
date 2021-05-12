@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/utils/colors.dart';
+import 'package:com.floridainc.dosparkles/widgets/connection_lost.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -11,8 +12,25 @@ class Blog extends StatefulWidget {
 }
 
 class _BlogState extends State<Blog> {
+  bool _isLostConnection = false;
+
+  checkInternetConnectivity() {
+    String _connectionStatus = GlobalStore.store.getState().connectionStatus;
+    if (_connectionStatus == 'ConnectivityResult.none') {
+      setState(() {
+        _isLostConnection = true;
+      });
+    } else {
+      setState(() {
+        _isLostConnection = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    checkInternetConnectivity();
+
     return Container(
       color: HexColor("#F2F6FA"),
       width: MediaQuery.of(context).size.width,
@@ -71,6 +89,7 @@ class _BlogState extends State<Blog> {
               child: _InnerPart(),
             ),
           ),
+          if (_isLostConnection) ConnectionLost(),
         ],
       ),
     );

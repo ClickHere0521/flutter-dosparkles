@@ -27,73 +27,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'state.dart';
 
-void _changeProfileMainImage(
-    String root, List<Asset> pickedImages, Function setLoading) async {
-  AppUser globalUser = GlobalStore.store.getState().user;
-
-  if (root == 'user') {
-    setLoading(true);
-    List<String> listOfIds = await _sendRequest(pickedImages);
-
-    QueryResult result = await BaseGraphQLClient.instance
-        .setUserAvatar(globalUser.id, listOfIds[0]);
-    if (result.hasException) print(result.exception);
-
-    globalUser.avatarUrl = AppConfig.instance.baseApiHost +
-        result.data['updateUser']['user']['avatar']['url'];
-    GlobalStore.store.dispatch(GlobalActionCreator.setUser(globalUser));
-
-    setLoading(false);
-  } else {
-    setLoading(true);
-    List<String> listOfIds = await _sendRequest(pickedImages);
-
-    QueryResult result = await BaseGraphQLClient.instance
-        .setStoreThumbnail(globalUser.store['id'], listOfIds[0]);
-    if (result.hasException) print(result.exception);
-
-    // globalUser.avatarUrl = AppConfig.instance.baseApiHost +
-    //     result.data['updateStore']['store']['thumbnail']['url'];
-    // GlobalStore.store.dispatch(GlobalActionCreator.setUser(globalUser));
-
-    setLoading(false);
-  }
-}
-
-Future _sendRequest(imagesList) async {
-  Uri uri = Uri.parse('https://backend.dosparkles.com/upload');
-
-  MultipartRequest request = http.MultipartRequest("POST", uri);
-
-  for (var i = 0; i < imagesList.length; i++) {
-    var asset = imagesList[i];
-
-    ByteData byteData = await asset.getByteData();
-    List<int> imageData = byteData.buffer.asUint8List();
-
-    MultipartFile multipartFile = MultipartFile.fromBytes(
-      'files',
-      imageData,
-      filename: '${asset.name}',
-      contentType: MediaType("image", "jpg"),
-    );
-
-    request.files.add(multipartFile);
-  }
-
-  http.Response response = await http.Response.fromStream(await request.send());
-  print(response.statusCode);
-  List imagesResponse = json.decode(response.body);
-  List<String> listOfIds =
-      imagesResponse.map((image) => "\"${image['id']}\"").toList();
-
-  // List<Map<String, String>> imagesData = imagesResponse
-  //     .map((image) => {'url': "${image['url']}", 'id': "${image['id']}"})
-  //     .toList();
-
-  return listOfIds;
-}
-
 Widget buildView(
     DashboardPageState state, Dispatch dispatch, ViewService viewService) {
   Adapt.initContext(viewService.context);
@@ -340,59 +273,50 @@ class __MainBodyState extends State<_MainBody> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 SizedBox(height: 30.0),
-                GestureDetector(
-                  child: Stack(
-                    children: [
-                      Container(
-                        width: 82.0,
-                        height: 82.0,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10.0),
-                          child: store != null && store['thumbnail'] != null
-                              ? CachedNetworkImage(
-                                  imageUrl: AppConfig.instance.baseApiHost +
-                                      store['thumbnail']['url'],
-                                  width: double.infinity,
-                                  height: double.infinity,
-                                  fit: BoxFit.cover,
-                                )
-                              : Image.asset(
-                                  "images/image-not-found.png",
-                                  width: double.infinity,
-                                  height: double.infinity,
-                                  fit: BoxFit.cover,
-                                ),
-                        ),
+                Stack(
+                  children: [
+                    Container(
+                      width: 82.0,
+                      height: 82.0,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10.0),
                       ),
-                      if (_isLoading)
-                        Positioned.fill(
-                          child: Container(
-                            width: double.infinity,
-                            height: double.infinity,
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(.4),
-                            ),
-                            child: Center(
-                              child: SizedBox(
-                                width: 20.0,
-                                height: 20.0,
-                                child: CircularProgressIndicator(),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10.0),
+                        child: store != null && store['thumbnail'] != null
+                            ? CachedNetworkImage(
+                                imageUrl: AppConfig.instance.baseApiHost +
+                                    store['thumbnail']['url'],
+                                width: double.infinity,
+                                height: double.infinity,
+                                fit: BoxFit.cover,
+                              )
+                            : Image.asset(
+                                "images/image-not-found.png",
+                                width: double.infinity,
+                                height: double.infinity,
+                                fit: BoxFit.cover,
                               ),
+                      ),
+                    ),
+                    if (_isLoading)
+                      Positioned.fill(
+                        child: Container(
+                          width: double.infinity,
+                          height: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(.4),
+                          ),
+                          child: Center(
+                            child: SizedBox(
+                              width: 20.0,
+                              height: 20.0,
+                              child: CircularProgressIndicator(),
                             ),
                           ),
                         ),
-                    ],
-                  ),
-                  onTap: () async {
-                    await loadAssets();
-                    if (pickedImages != null && pickedImages.length > 0) {
-                      _changeProfileMainImage(
-                          'store', pickedImages, _setLoading);
-                    }
-                  },
+                      ),
+                  ],
                 ),
                 SizedBox(height: 12.0),
                 Text(

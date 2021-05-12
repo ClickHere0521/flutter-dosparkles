@@ -1,4 +1,6 @@
+import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/utils/colors.dart';
+import 'package:com.floridainc.dosparkles/widgets/connection_lost.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -8,8 +10,25 @@ class VideoPlayer extends StatefulWidget {
 }
 
 class _VideoPlayerState extends State<VideoPlayer> {
+  bool _isLostConnection = false;
+
+  checkInternetConnectivity() {
+    String _connectionStatus = GlobalStore.store.getState().connectionStatus;
+    if (_connectionStatus == 'ConnectivityResult.none') {
+      setState(() {
+        _isLostConnection = true;
+      });
+    } else {
+      setState(() {
+        _isLostConnection = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    checkInternetConnectivity();
+
     return Stack(
       children: [
         Positioned(
@@ -114,6 +133,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
             child: Image.asset("images/close_button_terms.png"),
           ),
         ),
+        if (_isLostConnection) ConnectionLost(),
       ],
     );
   }
@@ -125,8 +145,25 @@ class VideoPlayerNow extends StatefulWidget {
 }
 
 class _VideoPlayerNowState extends State<VideoPlayerNow> {
+  bool _isLostConnection = false;
+
+  checkInternetConnectivity() {
+    String _connectionStatus = GlobalStore.store.getState().connectionStatus;
+    if (_connectionStatus == 'ConnectivityResult.none') {
+      setState(() {
+        _isLostConnection = true;
+      });
+    } else {
+      setState(() {
+        _isLostConnection = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    checkInternetConnectivity();
+
     return Stack(
       children: [
         Positioned(
@@ -204,6 +241,7 @@ class _VideoPlayerNowState extends State<VideoPlayerNow> {
             ),
           ),
         ),
+        if (_isLostConnection) ConnectionLost(),
       ],
     );
   }

@@ -3,7 +3,9 @@ import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
 import 'package:com.floridainc.dosparkles/actions/app_config.dart';
+import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/utils/colors.dart';
+import 'package:com.floridainc.dosparkles/widgets/connection_lost.dart';
 import 'package:com.floridainc.dosparkles/widgets/sparkles_drawer.dart';
 import 'package:com.floridainc.dosparkles/widgets/swiper_widget.dart';
 import 'package:flutter/gestures.dart';
@@ -22,35 +24,57 @@ class OrderProductDetailsWidget extends StatefulWidget {
 }
 
 class _OrderProductDetailsWidgetState extends State<OrderProductDetailsWidget> {
+  bool _isLostConnection = false;
+
+  checkInternetConnectivity() {
+    String _connectionStatus = GlobalStore.store.getState().connectionStatus;
+    if (_connectionStatus == 'ConnectivityResult.none') {
+      setState(() {
+        _isLostConnection = true;
+      });
+    } else {
+      setState(() {
+        _isLostConnection = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _MainBody(
-        product: widget.product,
-      ),
-      backgroundColor: Colors.white,
-      resizeToAvoidBottomInset: true,
-      appBar: AppBar(
-        centerTitle: true,
-        elevation: 0.0,
-        leadingWidth: 70.0,
-        automaticallyImplyLeading: false,
-        leading: InkWell(
-          child: Image.asset("images/back_button.png"),
-          onTap: () => Navigator.of(context).pop(),
-        ),
-        backgroundColor: Colors.white,
-        title: Text(
-          "Details of product",
-          style: TextStyle(
-            fontSize: 22,
-            color: HexColor("#53586F"),
-            fontWeight: FontWeight.w600,
-            fontFeatures: [FontFeature.enable('smcp')],
+    checkInternetConnectivity();
+
+    return Stack(
+      children: [
+        Scaffold(
+          body: _MainBody(
+            product: widget.product,
           ),
+          backgroundColor: Colors.white,
+          resizeToAvoidBottomInset: true,
+          appBar: AppBar(
+            centerTitle: true,
+            elevation: 0.0,
+            leadingWidth: 70.0,
+            automaticallyImplyLeading: false,
+            leading: InkWell(
+              child: Image.asset("images/back_button.png"),
+              onTap: () => Navigator.of(context).pop(),
+            ),
+            backgroundColor: Colors.white,
+            title: Text(
+              "Details of product",
+              style: TextStyle(
+                fontSize: 22,
+                color: HexColor("#53586F"),
+                fontWeight: FontWeight.w600,
+                fontFeatures: [FontFeature.enable('smcp')],
+              ),
+            ),
+          ),
+          drawer: SparklesDrawer(),
         ),
-      ),
-      drawer: SparklesDrawer(),
+        if (_isLostConnection) ConnectionLost(),
+      ],
     );
   }
 }

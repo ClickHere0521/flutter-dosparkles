@@ -1,7 +1,9 @@
 import 'dart:ui';
 
 import 'package:com.floridainc.dosparkles/actions/api/graphql_client.dart';
+import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/utils/colors.dart';
+import 'package:com.floridainc.dosparkles/widgets/connection_lost.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
@@ -12,9 +14,31 @@ Future _fetchData() async {
   return result.data['appContent']['aboutUs'];
 }
 
-class AboutUs extends StatelessWidget {
+class AboutUs extends StatefulWidget {
+  @override
+  _AboutUsState createState() => _AboutUsState();
+}
+
+class _AboutUsState extends State<AboutUs> {
+  bool _isLostConnection = false;
+
+  checkInternetConnectivity() {
+    String _connectionStatus = GlobalStore.store.getState().connectionStatus;
+    if (_connectionStatus == 'ConnectivityResult.none') {
+      setState(() {
+        _isLostConnection = true;
+      });
+    } else {
+      setState(() {
+        _isLostConnection = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    checkInternetConnectivity();
+
     return Container(
       color: HexColor("#F2F6FA"),
       width: MediaQuery.of(context).size.width,
@@ -96,6 +120,7 @@ class AboutUs extends StatelessWidget {
               ),
             ),
           ),
+          if (_isLostConnection) ConnectionLost(),
         ],
       ),
     );

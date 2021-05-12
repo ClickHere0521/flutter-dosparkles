@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
+import 'package:com.floridainc.dosparkles/widgets/connection_lost.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
@@ -15,8 +17,25 @@ class ConfirmEmail extends StatefulWidget {
 }
 
 class _ConfirmEmailState extends State<ConfirmEmail> {
+  bool _isLostConnection = false;
+
+  checkInternetConnectivity() {
+    String _connectionStatus = GlobalStore.store.getState().connectionStatus;
+    if (_connectionStatus == 'ConnectivityResult.none') {
+      setState(() {
+        _isLostConnection = true;
+      });
+    } else {
+      setState(() {
+        _isLostConnection = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    checkInternetConnectivity();
+
     return Container(
       color: HexColor("#F2F6FA"),
       width: MediaQuery.of(context).size.width,
@@ -74,6 +93,7 @@ class _ConfirmEmailState extends State<ConfirmEmail> {
               child: _InnerPart(),
             ),
           ),
+          if (_isLostConnection) ConnectionLost(),
         ],
       ),
     );

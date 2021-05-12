@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
+import 'package:com.floridainc.dosparkles/widgets/connection_lost.dart';
 import 'package:com.floridainc.dosparkles/widgets/product_customization.dart';
 import 'package:com.floridainc.dosparkles/widgets/swiper_widget.dart';
 import 'package:flutter_dash/flutter_dash.dart';
@@ -39,254 +41,276 @@ class ProductDetailsImage extends StatefulWidget {
 }
 
 class _ProductDetailsImageState extends State<ProductDetailsImage> {
+  bool _isLostConnection = false;
+
+  checkInternetConnectivity() {
+    String _connectionStatus = GlobalStore.store.getState().connectionStatus;
+    if (_connectionStatus == 'ConnectivityResult.none') {
+      setState(() {
+        _isLostConnection = true;
+      });
+    } else {
+      setState(() {
+        _isLostConnection = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _MainBody(
-        dispatch: widget.dispatch,
-        selectedProduct: widget.selectedProduct,
-        optionalMaterialSelected: widget.optionalMaterialSelected,
-        engraveInputs: widget.engraveInputs,
-        productQuantity: widget.productQuantity,
-      ),
-      backgroundColor: Colors.white,
-      resizeToAvoidBottomInset: true,
-      appBar: AppBar(
-        title: Text(
-          "Product Details",
-          style: TextStyle(
-            fontSize: 22,
-            color: HexColor("#53586F"),
-            fontWeight: FontWeight.w600,
-            fontFeatures: [FontFeature.enable('smcp')],
+    checkInternetConnectivity();
+
+    return Stack(
+      children: [
+        Scaffold(
+          body: _MainBody(
+            dispatch: widget.dispatch,
+            selectedProduct: widget.selectedProduct,
+            optionalMaterialSelected: widget.optionalMaterialSelected,
+            engraveInputs: widget.engraveInputs,
+            productQuantity: widget.productQuantity,
           ),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        elevation: 0.0,
-        leadingWidth: 70.0,
-        automaticallyImplyLeading: false,
-        actions: [
-          Center(
-            child: Container(
-              width: 34.0,
-              height: 34.0,
-              margin: EdgeInsets.only(right: 16.0),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey[200],
-                    offset: Offset(0.0, 0.0), // (x, y)
-                    blurRadius: 10.0,
-                  ),
-                ],
-              ),
-              child: Center(
-                child: SvgPicture.asset(
-                  "images/Group 2424.svg",
-                  color: HexColor("#B3C1F2"),
-                ),
+          backgroundColor: Colors.white,
+          resizeToAvoidBottomInset: true,
+          appBar: AppBar(
+            title: Text(
+              "Product Details",
+              style: TextStyle(
+                fontSize: 22,
+                color: HexColor("#53586F"),
+                fontWeight: FontWeight.w600,
+                fontFeatures: [FontFeature.enable('smcp')],
               ),
             ),
-          ),
-        ],
-        leading: Builder(
-          builder: (context) => IconButton(
-            highlightColor: Colors.transparent,
-            splashColor: Colors.transparent,
-            icon: Container(
-              width: 34.0,
-              height: 34.0,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey[200],
-                    offset: Offset(0.0, 0.0), // (x, y)
-                    blurRadius: 10.0,
-                  ),
-                ],
-              ),
-              child: Center(
-                child: SvgPicture.asset(
-                  "images/Group 934534.svg",
-                  color: HexColor("#B3C1F2"),
-                ),
-              ),
-            ),
-            onPressed: () => Scaffold.of(context).openDrawer(),
-          ),
-        ),
-      ),
-      drawer: SparklesDrawer(),
-      bottomNavigationBar: Container(
-        width: double.infinity,
-        height: double.infinity,
-        constraints: BoxConstraints(maxHeight: 75.0),
-        padding: EdgeInsets.symmetric(horizontal: 16.0),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(.9),
-          borderRadius: BorderRadius.only(
-            topRight: Radius.circular(32.0),
-            topLeft: Radius.circular(32.0),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey[300],
-              offset: Offset(0.0, -0.2), // (x,y)
-              blurRadius: 10.0,
-            ),
-          ],
-        ),
-        child: Center(
-          // child: Container(
-          //   width: 300.0,
-          //   height: 42.0,
-          //   decoration: BoxDecoration(
-          //     borderRadius: BorderRadius.circular(31.0),
-          //   ),
-          //   child: ElevatedButton(
-          //     style: ButtonStyle(
-          //       elevation: MaterialStateProperty.all(0.0),
-          //       backgroundColor: MaterialStateProperty.all(HexColor("#6092DC")),
-          //       shape: MaterialStateProperty.all(
-          //         RoundedRectangleBorder(
-          //           borderRadius: BorderRadius.circular(31.0),
-          //         ),
-          //       ),
-          //     ),
-          //     child: Text(
-          //       'Upload your photo',
-          //       style: TextStyle(
-          //         fontSize: 17.0,
-          //         fontWeight: FontWeight.normal,
-          //         color: Colors.white,
-          //       ),
-          //     ),
-          //     onPressed: () {
-          //       Navigator.push(
-          //         context,
-          //         MaterialPageRoute(
-          //           builder: (context) => _ProductCustomization(
-          //             dispatch: widget.dispatch,
-          //             selectedProduct: widget.selectedProduct,
-          //             productQuantity: widget.productQuantity,
-          //             engraveInputs: widget.engraveInputs,
-          //             optionalMaterialSelected: widget.optionalMaterialSelected,
-          //           ),
-          //         ),
-          //       );
-          //     },
-          //   ),
-          // ),
-          child: Row(
-            children: [
-              Expanded(
+            centerTitle: true,
+            backgroundColor: Colors.white,
+            elevation: 0.0,
+            leadingWidth: 70.0,
+            automaticallyImplyLeading: false,
+            actions: [
+              Center(
                 child: Container(
-                  width: double.infinity,
-                  height: 42.0,
-                  constraints: BoxConstraints(
-                    maxWidth: 163.0,
-                  ),
+                  width: 34.0,
+                  height: 34.0,
+                  margin: EdgeInsets.only(right: 16.0),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(31.0),
-                  ),
-                  child: ElevatedButton(
-                    style: ButtonStyle(
-                      elevation: MaterialStateProperty.all(0.0),
-                      backgroundColor:
-                          MaterialStateProperty.all(HexColor("#F4F6FD")),
-                      shape: MaterialStateProperty.all(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(31.0),
-                          side: BorderSide(
-                            width: 1.0,
-                            color: HexColor("#6092DC"),
-                          ),
-                        ),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey[200],
+                        offset: Offset(0.0, 0.0), // (x, y)
+                        blurRadius: 10.0,
                       ),
-                    ),
-                    child: Text(
-                      'Change image',
-                      style: TextStyle(
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.normal,
-                        color: HexColor("#6092DC"),
-                      ),
-                    ),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ProductCustomization(
-                            dispatch: widget.dispatch,
-                            selectedProduct: widget.selectedProduct,
-                            productQuantity: widget.productQuantity,
-                            engraveInputs: widget.engraveInputs,
-                            optionalMaterialSelected:
-                                widget.optionalMaterialSelected,
-                          ),
-                        ),
-                      );
-                    },
+                    ],
                   ),
-                ),
-              ),
-              SizedBox(width: 7.0),
-              Expanded(
-                child: Container(
-                  width: double.infinity,
-                  height: 42.0,
-                  constraints: BoxConstraints(
-                    maxWidth: 163.0,
-                  ),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(31.0),
-                  ),
-                  child: ElevatedButton(
-                    style: ButtonStyle(
-                      elevation: MaterialStateProperty.all(0.0),
-                      backgroundColor:
-                          MaterialStateProperty.all(HexColor("#6092DC")),
-                      shape: MaterialStateProperty.all(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(31.0),
-                        ),
-                      ),
+                  child: Center(
+                    child: SvgPicture.asset(
+                      "images/Group 2424.svg",
+                      color: HexColor("#B3C1F2"),
                     ),
-                    child: Text(
-                      'Add to cart',
-                      style: TextStyle(
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.normal,
-                        color: Colors.white,
-                      ),
-                    ),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ProductCustomization(
-                            dispatch: widget.dispatch,
-                            selectedProduct: widget.selectedProduct,
-                            productQuantity: widget.productQuantity,
-                            engraveInputs: widget.engraveInputs,
-                            optionalMaterialSelected:
-                                widget.optionalMaterialSelected,
-                          ),
-                        ),
-                      );
-                    },
                   ),
                 ),
               ),
             ],
+            leading: Builder(
+              builder: (context) => IconButton(
+                highlightColor: Colors.transparent,
+                splashColor: Colors.transparent,
+                icon: Container(
+                  width: 34.0,
+                  height: 34.0,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey[200],
+                        offset: Offset(0.0, 0.0), // (x, y)
+                        blurRadius: 10.0,
+                      ),
+                    ],
+                  ),
+                  child: Center(
+                    child: SvgPicture.asset(
+                      "images/Group 934534.svg",
+                      color: HexColor("#B3C1F2"),
+                    ),
+                  ),
+                ),
+                onPressed: () => Scaffold.of(context).openDrawer(),
+              ),
+            ),
+          ),
+          drawer: SparklesDrawer(),
+          bottomNavigationBar: Container(
+            width: double.infinity,
+            height: double.infinity,
+            constraints: BoxConstraints(maxHeight: 75.0),
+            padding: EdgeInsets.symmetric(horizontal: 16.0),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(.9),
+              borderRadius: BorderRadius.only(
+                topRight: Radius.circular(32.0),
+                topLeft: Radius.circular(32.0),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey[300],
+                  offset: Offset(0.0, -0.2), // (x,y)
+                  blurRadius: 10.0,
+                ),
+              ],
+            ),
+            child: Center(
+              // child: Container(
+              //   width: 300.0,
+              //   height: 42.0,
+              //   decoration: BoxDecoration(
+              //     borderRadius: BorderRadius.circular(31.0),
+              //   ),
+              //   child: ElevatedButton(
+              //     style: ButtonStyle(
+              //       elevation: MaterialStateProperty.all(0.0),
+              //       backgroundColor: MaterialStateProperty.all(HexColor("#6092DC")),
+              //       shape: MaterialStateProperty.all(
+              //         RoundedRectangleBorder(
+              //           borderRadius: BorderRadius.circular(31.0),
+              //         ),
+              //       ),
+              //     ),
+              //     child: Text(
+              //       'Upload your photo',
+              //       style: TextStyle(
+              //         fontSize: 17.0,
+              //         fontWeight: FontWeight.normal,
+              //         color: Colors.white,
+              //       ),
+              //     ),
+              //     onPressed: () {
+              //       Navigator.push(
+              //         context,
+              //         MaterialPageRoute(
+              //           builder: (context) => _ProductCustomization(
+              //             dispatch: widget.dispatch,
+              //             selectedProduct: widget.selectedProduct,
+              //             productQuantity: widget.productQuantity,
+              //             engraveInputs: widget.engraveInputs,
+              //             optionalMaterialSelected: widget.optionalMaterialSelected,
+              //           ),
+              //         ),
+              //       );
+              //     },
+              //   ),
+              // ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      width: double.infinity,
+                      height: 42.0,
+                      constraints: BoxConstraints(
+                        maxWidth: 163.0,
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(31.0),
+                      ),
+                      child: ElevatedButton(
+                        style: ButtonStyle(
+                          elevation: MaterialStateProperty.all(0.0),
+                          backgroundColor:
+                              MaterialStateProperty.all(HexColor("#F4F6FD")),
+                          shape: MaterialStateProperty.all(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(31.0),
+                              side: BorderSide(
+                                width: 1.0,
+                                color: HexColor("#6092DC"),
+                              ),
+                            ),
+                          ),
+                        ),
+                        child: Text(
+                          'Change image',
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.normal,
+                            color: HexColor("#6092DC"),
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProductCustomization(
+                                dispatch: widget.dispatch,
+                                selectedProduct: widget.selectedProduct,
+                                productQuantity: widget.productQuantity,
+                                engraveInputs: widget.engraveInputs,
+                                optionalMaterialSelected:
+                                    widget.optionalMaterialSelected,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 7.0),
+                  Expanded(
+                    child: Container(
+                      width: double.infinity,
+                      height: 42.0,
+                      constraints: BoxConstraints(
+                        maxWidth: 163.0,
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(31.0),
+                      ),
+                      child: ElevatedButton(
+                        style: ButtonStyle(
+                          elevation: MaterialStateProperty.all(0.0),
+                          backgroundColor:
+                              MaterialStateProperty.all(HexColor("#6092DC")),
+                          shape: MaterialStateProperty.all(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(31.0),
+                            ),
+                          ),
+                        ),
+                        child: Text(
+                          'Add to cart',
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.normal,
+                            color: Colors.white,
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProductCustomization(
+                                dispatch: widget.dispatch,
+                                selectedProduct: widget.selectedProduct,
+                                productQuantity: widget.productQuantity,
+                                engraveInputs: widget.engraveInputs,
+                                optionalMaterialSelected:
+                                    widget.optionalMaterialSelected,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
-      ),
+        if (_isLostConnection) ConnectionLost(),
+      ],
     );
   }
 }

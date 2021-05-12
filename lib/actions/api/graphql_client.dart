@@ -1424,7 +1424,7 @@ class BaseGraphQLClient {
       }
     ''';
 
-    print("DEBUG________$_mutation");
+    // print("DEBUG________$_mutation");
     return _service.mutate(_mutation);
   }
 

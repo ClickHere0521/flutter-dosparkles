@@ -532,6 +532,4 @@ void _onSubmit(nameValue, emailValue, dropDownValue, messageValue) async {
     messageValue,
   );
   if (result.hasException) print(result.exception);
-
-  print(result.data);
 }

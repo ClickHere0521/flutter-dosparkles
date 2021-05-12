@@ -1,7 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/models/models.dart';
 import 'package:com.floridainc.dosparkles/utils/colors.dart';
 import 'package:com.floridainc.dosparkles/views/product_page/action.dart';
+import 'package:com.floridainc.dosparkles/widgets/connection_lost.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -32,6 +34,21 @@ class ProductCustomization extends StatefulWidget {
 }
 
 class ProductCustomizationState extends State<ProductCustomization> {
+  bool _isLostConnection = false;
+
+  checkInternetConnectivity() {
+    String _connectionStatus = GlobalStore.store.getState().connectionStatus;
+    if (_connectionStatus == 'ConnectivityResult.none') {
+      setState(() {
+        _isLostConnection = true;
+      });
+    } else {
+      setState(() {
+        _isLostConnection = false;
+      });
+    }
+  }
+
   Dispatch dispatch;
   ProductItem selectedProduct;
   int productQuantity;
@@ -50,8 +67,7 @@ class ProductCustomizationState extends State<ProductCustomization> {
 
   @override
   Widget build(BuildContext context) {
-    print(
-        '_ProductCustomization optionalMaterialSelected: $optionalMaterialSelected');
+    checkInternetConnectivity();
 
     int engravingsCount = 0;
 
@@ -705,6 +721,7 @@ class ProductCustomizationState extends State<ProductCustomization> {
             ),
           ),
         ),
+        if (_isLostConnection) ConnectionLost(),
       ],
     );
   }
