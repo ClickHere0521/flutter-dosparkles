@@ -466,6 +466,7 @@ class __MainBodyState extends State<_MainBody> {
                               firstDate: DateTime(1960),
                               initialDate: DateTime.now(),
                               lastDate: DateTime(2100),
+                              locale: const Locale("en", "US"),
                             ).then((date) {
                               _getStatistics(date);
                               setState(() {

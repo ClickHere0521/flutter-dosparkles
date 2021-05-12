@@ -769,6 +769,7 @@ class __OrderHistoryState extends State<_OrderHistory> {
                                   firstDate: DateTime(1960),
                                   initialDate: DateTime.now(),
                                   lastDate: DateTime(2100),
+                                  locale: const Locale("en", "US"),
                                 ).then((date) {
                                   setState(() {
                                     selectedDate = date.toString();
