@@ -497,10 +497,10 @@ class _VideoPlayerItemState extends State<VideoPlayerItem> {
   @override
   void initState() {
     super.initState();
-    // printWrapped(widget.videoUrl);
+    print(widget.videoUrl);
 
     _videoController =
-        VideoPlayerController.network(widget.videoUrl, useCache: true)
+        VideoPlayerController.network(widget.videoUrl, useCache: false)
           ..initialize().then((value) {
             _videoController.setLooping(true);
             _videoController.play();
