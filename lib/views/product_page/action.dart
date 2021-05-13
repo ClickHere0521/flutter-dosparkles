@@ -30,7 +30,10 @@ class ProductPageActionCreator {
   }
 
   static Action onSetEngravingInputs(List<String> inputs) {
-    return Action(ProductPageAction.setEngravingInputs, payload: inputs);
+    List<String> filtered =
+        inputs.where((el) => el != null && el != '').toList();
+
+    return Action(ProductPageAction.setEngravingInputs, payload: filtered);
   }
 
   static Action onSetOptionMaterialSelected(bool selected) {

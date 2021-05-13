@@ -758,84 +758,8 @@ class __MainBodyState extends State<_MainBody> {
                             ),
                           ),
                         );
-
-                        //   widget.dispatch(
-                        //     CartPageActionCreator.onProceedToCheckout(),
-                        //   );
                       },
                     ),
-                  ),
-                  SizedBox(height: 18.0),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Container(
-                        width: 107.0,
-                        height: 58.0,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10.0),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey[300],
-                              offset: Offset(0.0, 3.0), // (x, y)
-                              blurRadius: 5.0,
-                            ),
-                          ],
-                        ),
-                        child: Center(
-                          child: Image.asset(
-                            "images/1280px-Apple_Pay_logo.png",
-                            height: 20.0,
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                      ),
-                      Container(
-                        width: 107.0,
-                        height: 58.0,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10.0),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey[300],
-                              offset: Offset(0.0, 3.0), // (x, y)
-                              blurRadius: 5.0,
-                            ),
-                          ],
-                        ),
-                        child: Center(
-                          child: Image.asset(
-                            "images/paypal-logo-big.png",
-                            height: 20.0,
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                      ),
-                      Container(
-                        width: 107.0,
-                        height: 58.0,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10.0),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey[300],
-                              offset: Offset(0.0, 3.0), // (x, y)
-                              blurRadius: 5.0,
-                            ),
-                          ],
-                        ),
-                        child: Center(
-                          child: Image.asset(
-                            "images/Group 156.png",
-                            height: 20.0,
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                      ),
-                    ],
                   ),
                   SizedBox(height: 24.0),
                 ],

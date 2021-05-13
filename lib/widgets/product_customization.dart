@@ -55,7 +55,7 @@ class ProductCustomizationState extends State<ProductCustomization> {
   bool optionalMaterialSelected;
   List<String> engraveInputs;
 
-  List<TextEditingController> engravingControllers;
+  List<TextEditingController> engravingControllers = List.empty(growable: true);
 
   ProductCustomizationState({
     this.dispatch,
@@ -84,7 +84,8 @@ class ProductCustomizationState extends State<ProductCustomization> {
     }
 
     if (engravingsCount > 0) {
-      engravingControllers = List.empty(growable: true);
+      //  engravingControllers = List.empty(growable: true);
+
       for (var i = 0; i < engravingsCount; i++) {
         var controller = TextEditingController();
         if (engraveInputs != null && engraveInputs.length > i) {
@@ -94,9 +95,16 @@ class ProductCustomizationState extends State<ProductCustomization> {
       }
     }
 
-    double wholeSum = (engravingsCount * selectedProduct.engravePrice) +
+    int engravingsFilled = widget.engraveInputs != null
+        ? widget.engraveInputs
+            .where((el) => el != null && el != '')
+            .toList()
+            .length
+        : 0;
+
+    double wholeSum = (engravingsFilled * selectedProduct.engravePrice) +
         (productQuantity * selectedProduct.price);
-    double wholeOldSum = (engravingsCount * selectedProduct.engraveOldPrice) +
+    double wholeOldSum = (engravingsFilled * selectedProduct.engraveOldPrice) +
         (productQuantity * selectedProduct.oldPrice);
 
     if (optionalMaterialSelected) {
@@ -403,7 +411,7 @@ class ProductCustomizationState extends State<ProductCustomization> {
                                                 children: [
                                                   TextSpan(
                                                     text:
-                                                        "\$${widget.selectedProduct.engraveOldPrice} ",
+                                                        "\$${widget.selectedProduct.engraveOldPrice * engravingsCount} ",
                                                     style: TextStyle(
                                                       fontSize: 18.0,
                                                       color: HexColor("#53586F")
@@ -414,7 +422,7 @@ class ProductCustomizationState extends State<ProductCustomization> {
                                                   ),
                                                   TextSpan(
                                                     text:
-                                                        "\$${widget.selectedProduct.engravePrice}",
+                                                        "\$${widget.selectedProduct.engravePrice * engravingsCount}",
                                                     style: TextStyle(
                                                       fontSize: 22.0,
                                                       fontWeight:

@@ -325,7 +325,10 @@ class __MainBodyState extends State<_MainBody> {
               ),
             ),
             onTap: () {
-              termsDialog(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => TermsContitions()),
+              );
             },
           ),
           SizedBox(height: 6.0),
@@ -792,7 +795,10 @@ class __NextBodyState extends State<_NextBody> {
               ),
             ),
             onTap: () {
-              termsDialog(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => TermsContitions()),
+              );
             },
           ),
           SizedBox(height: 16.0),
@@ -945,7 +951,10 @@ class __EndBodyState extends State<_EndBody> {
               ),
             ),
             onTap: () {
-              termsDialog(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => TermsContitions()),
+              );
             },
           ),
           SizedBox(height: 12.0),
