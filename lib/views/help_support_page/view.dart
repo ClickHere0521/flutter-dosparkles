@@ -291,7 +291,10 @@ class __InnerPartState extends State<_InnerPart> {
                 ],
               ),
               onTap: () {
-                termsDialog(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => TermsContitions()),
+                );
               },
             ),
           ),

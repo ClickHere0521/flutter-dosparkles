@@ -33,13 +33,13 @@ class _BottomNavBarWidgetState extends State<BottomNavBarWidget> {
       var storeFavorite = globalState.user.storeFavorite;
 
       if (storeFavorite != null)
-        Navigator.of(context).pushNamed('storepage', arguments: null);
+        Navigator.of(context).pushReplacementNamed('storepage');
       else
-        Navigator.of(context).pushNamed('storeselectionpage', arguments: null);
+        Navigator.of(context).pushReplacementNamed('storeselectionpage');
     } else if (index == 1) {
-      Navigator.of(context).pushNamed('emptyscreenpage', arguments: null);
+      Navigator.of(context).pushReplacementNamed('chatpage');
     } else if (index == 2) {
-      Navigator.of(context).pushNamed('invite_friendpage', arguments: null);
+      Navigator.of(context).pushReplacementNamed('invite_friendpage');
     }
   }
 

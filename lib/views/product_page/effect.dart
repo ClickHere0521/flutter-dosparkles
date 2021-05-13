@@ -59,13 +59,16 @@ void _onAddToCart(Action action, Context<ProductPageState> ctx) async {
 
   if (ctx.state.selectedProduct.engraveAvailable) {
     var empty = true;
-    if (ctx.state.engraveInputs != null)
+
+    if (ctx.state.engraveInputs != null) {
       for (var i = 0; i < ctx.state.engraveInputs.length; i++) {
         if (ctx.state.engraveInputs[i].trim().length > 0) {
           empty = false;
           break;
         }
       }
+    }
+
     if (!empty) {
       amount += ctx.state.selectedProduct.engravePrice;
     }

@@ -31,6 +31,7 @@ ProductPageState _onSetOptionMaterialSelected(
 
 ProductPageState _onSetEngravingInputs(ProductPageState state, Action action) {
   final ProductPageState newState = state.clone();
+
   newState.engraveInputs = action.payload;
   return newState;
 }
