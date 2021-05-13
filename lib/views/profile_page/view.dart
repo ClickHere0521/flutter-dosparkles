@@ -1105,9 +1105,9 @@ class __FriendsSignedUpState extends State<_FriendsSignedUp> {
                 future: _fetchData(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData && !snapshot.hasError) {
-                    List invitesSent = snapshot.data['invitesSent']
+                    List invitesSent = snapshot.data['invitesSent'] != null ? snapshot.data['invitesSent']
                         .where((el) => el['confirmed'] == true)
-                        .toList();
+                        .toList() : [];
 
                     return Container(
                       color: Colors.white,
