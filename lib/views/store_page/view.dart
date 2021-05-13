@@ -26,6 +26,7 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 import 'package:video_player/video_player.dart';
+import 'package:better_player/better_player.dart';
 
 Widget buildView(
     StorePageState state, Dispatch dispatch, ViewService viewService) {
@@ -492,28 +493,35 @@ class VideoPlayerItem extends StatefulWidget {
 
 class _VideoPlayerItemState extends State<VideoPlayerItem> {
   VideoPlayerController _videoController;
+  BetterPlayerController _betterPlayerController;
+
   bool isShowPlaying = false;
 
   @override
   void initState() {
     super.initState();
-    print(widget.videoUrl);
 
-    _videoController =
-        VideoPlayerController.network(widget.videoUrl, useCache: false)
-          ..initialize().then((value) {
-            _videoController.setLooping(true);
-            _videoController.play();
-            setState(() {
-              isShowPlaying = false;
-            });
-          });
+    BetterPlayerCacheConfiguration cacheConfiguration =
+        BetterPlayerCacheConfiguration(
+            useCache: true,
+            maxCacheSize: 512 * 1024 * 1024,
+            maxCacheFileSize: 512 * 1024 * 1024);
+
+    BetterPlayerDataSource betterPlayerDataSource = BetterPlayerDataSource(
+        BetterPlayerDataSourceType.network, widget.videoUrl,
+        cacheConfiguration: cacheConfiguration);
+
+    _betterPlayerController = BetterPlayerController(
+        BetterPlayerConfiguration(autoPlay: true, looping: true, aspectRatio: 9 / 16),
+        betterPlayerDataSource: betterPlayerDataSource);
+
+    _betterPlayerController.setControlsEnabled(false);
   }
 
   @override
   void dispose() {
     super.dispose();
-    _videoController.dispose();
+    _betterPlayerController.dispose();
   }
 
   // Widget isPlaying() {
@@ -529,77 +537,99 @@ class _VideoPlayerItemState extends State<VideoPlayerItem> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-        onTap: () {
-          setState(() {
-            _videoController.value.isPlaying
-                ? _videoController.pause()
-                : _videoController.play();
-          });
-        },
+        // onTap: () {
+        //   setState(() {
+        //     _videoController.value.isPlaying
+        //         ? _videoController.pause()
+        //         : _videoController.play();
+        //   });
+        // },
         child: RotatedBox(
-          quarterTurns: -1,
-          child: Container(
-              height: widget.size.height,
-              width: widget.size.width,
-              child: Stack(
-                children: [
-                  Container(
-                    height: widget.size.height,
-                    width: widget.size.width,
-                    child: Stack(
-                      children: [
-                        SizedBox.expand(
-                          child: FittedBox(
+      quarterTurns: -1,
+      child: Container(
+          height: widget.size.height,
+          width: widget.size.width,
+          child: Stack(
+            children: [
+              Container(
+                height: widget.size.height,
+                width: widget.size.width,
+                child: Stack(
+                  children: [
+                    SizedBox.expand(
+                        child: FittedBox(
                             fit: BoxFit.cover,
                             child: SizedBox(
-                              width: _videoController.value.size?.width ?? 0,
-                              height: _videoController.value.size?.height ?? 0,
-                              child: VideoPlayer(_videoController),
-                            ),
-                          ),
+                              height: widget.size.height,
+                              width: widget.size.width,
+                              child: BetterPlayer(
+                                controller: _betterPlayerController,
+                              ),
+                            ))),
+
+                    //                   SizedBox.expand(
+                    //                     child: FittedBox(
+                    //                       fit: BoxFit.cover,
+                    //                        child:  AspectRatio(
+                    //                        child:   BetterPlayer(
+                    //   controller: _betterPlayerController,
+                    // ),
+                    //   aspectRatio: 16 / 9,
+
+                    // ),
+                    //                       // child: SizedBox(
+                    //                       //   // width: _videoController.value.size?.width ?? 0,
+                    //                       //   // height: _videoController.value.size?.height ?? 0,
+                    //                       //   width: 500, widget.size.width,
+                    //                       //   height: 300, widget.size.height,
+                    //                       //   child:
+
+                    //                       //   // VideoPlayer(_videoController),
+                    //                       // ),
+                    //                     ),
+                    //                   ),
+                    // Center(
+                    //   child: Container(
+                    //     decoration: BoxDecoration(),
+                    //     child: isPlaying(),
+                    //   ),
+                    // )
+                  ],
+                ),
+              ),
+              Container(
+                height: widget.size.height,
+                width: widget.size.width,
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    top: 20,
+                    right: 16,
+                    bottom: 26,
+                  ),
+                  child: SafeArea(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Expanded(
+                          child: LeftPanel(
+                              size: widget.size,
+                              tabSelectedIndex: widget.tabSelectedIndex,
+                              dispatch: widget.dispatch,
+                              store: widget.store
+                              // name: "${widget.name}",
+                              // price: "${widget.price}",
+                              ),
                         ),
-                        // Center(
-                        //   child: Container(
-                        //     decoration: BoxDecoration(),
-                        //     child: isPlaying(),
-                        //   ),
-                        // )
                       ],
                     ),
                   ),
-                  Container(
-                    height: widget.size.height,
-                    width: widget.size.width,
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                        left: 16,
-                        top: 20,
-                        right: 16,
-                        bottom: 26,
-                      ),
-                      child: SafeArea(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Expanded(
-                              child: LeftPanel(
-                                  size: widget.size,
-                                  tabSelectedIndex: widget.tabSelectedIndex,
-                                  dispatch: widget.dispatch,
-                                  store: widget.store
-                                  // name: "${widget.name}",
-                                  // price: "${widget.price}",
-                                  ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  )
-                ],
-              )),
-        ));
+                ),
+              )
+            ],
+          )),
+    ));
   }
 }
 
