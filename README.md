@@ -8,6 +8,8 @@ flutter pub run intl*translation:generate_from_arb --output-dir=lib/l10n --no-us
 
 flutter build apk
 
+flutter build apk --no-sound-null-safety
+flutter build apk --split-per-abi --no-sound-null-safety
 # update repos:
 
 cd ios
