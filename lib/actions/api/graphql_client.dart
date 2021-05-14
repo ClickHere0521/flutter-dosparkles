@@ -215,6 +215,19 @@ class BaseGraphQLClient {
     return _service.query(_query);
   }
 
+  Future<QueryResult> fetchUserNotification(String id) {
+    String _query = '''
+      query {
+        users ( where: { id: "$id" } ) {
+          enableNotifications
+        }
+      }
+    ''';
+
+    // printWrapped('Debug _mutation: $_mutation');
+    return _service.query(_query);
+  }
+
   Future<QueryResult> setUserPhoneNumber(String id, String phoneNumber) {
     String _mutation = '''
       mutation {

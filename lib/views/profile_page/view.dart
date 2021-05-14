@@ -298,6 +298,21 @@ class __MainBodyState extends State<_MainBody> {
   }
 
   @override
+  void initState() {
+    super.initState();
+
+    BaseGraphQLClient.instance
+        .fetchUserNotification(widget.globalUser.id)
+        .then((result) {
+      if (result.hasException) print(result.exception);
+
+      setState(() {
+        _switchValue = result.data['users'][0]['enableNotifications'];
+      });
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
@@ -1105,9 +1120,11 @@ class __FriendsSignedUpState extends State<_FriendsSignedUp> {
                 future: _fetchData(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData && !snapshot.hasError) {
-                    List invitesSent = snapshot.data['invitesSent'] != null ? snapshot.data['invitesSent']
-                        .where((el) => el['confirmed'] == true)
-                        .toList() : [];
+                    List invitesSent = snapshot.data['invitesSent'] != null
+                        ? snapshot.data['invitesSent']
+                            .where((el) => el['confirmed'] == true)
+                            .toList()
+                        : [];
 
                     return Container(
                       color: Colors.white,
