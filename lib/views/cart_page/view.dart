@@ -514,8 +514,19 @@ class __MainBodyState extends State<_MainBody> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            widget.shoppingCart[index].product
-                                                .name,
+                                            widget.shoppingCart != null &&
+                                                    widget.shoppingCart[
+                                                            index] !=
+                                                        null &&
+                                                    widget.shoppingCart[index]
+                                                            .product !=
+                                                        null &&
+                                                    widget.shoppingCart[index]
+                                                            .product.name !=
+                                                        null
+                                                ? widget.shoppingCart[index]
+                                                    .product.name
+                                                : '',
                                             style: TextStyle(
                                               fontSize: 16.0,
                                               color: HexColor("#53586F"),

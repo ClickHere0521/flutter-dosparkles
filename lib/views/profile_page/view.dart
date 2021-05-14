@@ -306,9 +306,11 @@ class __MainBodyState extends State<_MainBody> {
         .then((result) {
       if (result.hasException) print(result.exception);
 
-      setState(() {
-        _switchValue = result.data['users'][0]['enableNotifications'];
-      });
+      if (result.data != null) {
+        setState(() {
+          _switchValue = result.data['users'][0]['enableNotifications'];
+        });
+      }
     });
   }
 

@@ -9,18 +9,17 @@ class StoresInfoOperate {
   static Future whenAppStart() async {
     final storesRequest =
         await BaseGraphQLClient.instance.storesWithProductsList();
+    if (storesRequest.hasException) print(storesRequest.exception);
 
     List<StoreItem> storesList = List.empty(growable: true);
 
-    if (storesRequest.data['stores'] != null) {
+    if (storesRequest.data != null && storesRequest.data['stores'] != null) {
       for (var i = 0; i < storesRequest.data['stores'].length; i++) {
         // printWrapped('store: ${storesRequest.data['stores'][i]}');
         StoreItem _store =
             ModelFactory.generate<StoreItem>(storesRequest.data['stores'][i]);
         storesList.add(_store);
       }
-
-      // printWrapped('storesList: ${storesList.toString()}');
 
       GlobalStore.store.dispatch(GlobalActionCreator.setStoresList(storesList));
     }

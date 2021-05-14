@@ -221,7 +221,10 @@ class __FirstListPageState extends State<_FirstListPage> {
           resizeToAvoidBottomInset: true,
           appBar: AppBar(
             title: Text(
-              widget.state.selectedStore.name,
+              widget.state.selectedStore != null &&
+                      widget.state.selectedStore.name != null
+                  ? widget.state.selectedStore.name
+                  : '',
               style: TextStyle(
                 fontSize: 22,
                 color: Colors.white,
@@ -359,7 +362,7 @@ class _MainBody extends StatelessWidget {
                                 ),
                               ),
                               child: Text(
-                                product.name,
+                                product.name != null ? product.name : '',
                                 style: TextStyle(
                                   fontSize: 14.0,
                                   fontWeight: FontWeight.w600,
@@ -381,7 +384,9 @@ class _MainBody extends StatelessWidget {
                   },
                 );
               },
-              childCount: store.products.length,
+              childCount: store != null && store.products != null
+                  ? store.products.length
+                  : 0,
             ),
           ),
         ],
@@ -451,15 +456,17 @@ class _ProductViewState extends State<_ProductView>
         child: TabBarView(
           controller: _tabController,
           children: List.generate(items.length, (index) {
-            return VideoPlayerItem(
-                videoUrl: items[index].videoUrl,
-                size: size,
-                tabSelectedIndex: _tabSelectedIndex,
-                dispatch: widget.dispatch,
-                store: widget.store
-                // name: items[index].name,
-                // price: '\$${items[index].price}',
-                );
+            return items[index] != null && items[index].videoUrl != null
+                ? VideoPlayerItem(
+                    videoUrl: items[index].videoUrl,
+                    size: size,
+                    tabSelectedIndex: _tabSelectedIndex,
+                    dispatch: widget.dispatch,
+                    store: widget.store
+                    // name: items[index].name,
+                    // price: '\$${items[index].price}',
+                    )
+                : Container();
           }),
         ),
       ),
@@ -512,7 +519,8 @@ class _VideoPlayerItemState extends State<VideoPlayerItem> {
         cacheConfiguration: cacheConfiguration);
 
     _betterPlayerController = BetterPlayerController(
-        BetterPlayerConfiguration(autoPlay: true, looping: true, aspectRatio: 9 / 16),
+        BetterPlayerConfiguration(
+            autoPlay: true, looping: true, aspectRatio: 9 / 16),
         betterPlayerDataSource: betterPlayerDataSource);
 
     _betterPlayerController.setControlsEnabled(false);

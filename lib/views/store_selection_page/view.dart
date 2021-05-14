@@ -174,21 +174,25 @@ class __InnerPartState extends State<_InnerPart> {
   String searchValue = "";
 
   void _onSearch() {
-    setState(() {
-      filteredList = widget.stores.where((contact) {
-        String name = contact.name.toLowerCase();
-        String value = searchValue.toLowerCase();
-        return name.indexOf(value) != -1;
-      }).toList();
-    });
+    if (widget.stores != null && mounted) {
+      setState(() {
+        filteredList = widget.stores.where((contact) {
+          String name = contact.name.toLowerCase();
+          String value = searchValue.toLowerCase();
+          return name.indexOf(value) != -1;
+        }).toList();
+      });
+    }
   }
 
   @override
   void initState() {
     super.initState();
 
-    widget.stores.sort((StoreItem a, StoreItem b) =>
-        a.storeDistance.compareTo(b.storeDistance));
+    if (widget.stores != null) {
+      widget.stores.sort((StoreItem a, StoreItem b) =>
+          a.storeDistance.compareTo(b.storeDistance));
+    }
   }
 
   @override
@@ -200,7 +204,7 @@ class __InnerPartState extends State<_InnerPart> {
     return Container(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           SizedBox(height: 20.0),
           Row(
@@ -269,131 +273,137 @@ class __InnerPartState extends State<_InnerPart> {
           SizedBox(height: 17.0),
           Flexible(
             fit: FlexFit.loose,
-            child: ListView.separated(
-              itemCount: relevantList.length,
-              separatorBuilder: (context, index) => SizedBox(height: 10.0),
-              itemBuilder: (context, index) {
-                return InkWell(
-                  child: Card(
-                    elevation: 5.0,
-                    shadowColor: Colors.grey[50].withOpacity(.5),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16.0),
-                    ),
-                    child: Container(
-                      width: double.infinity,
-                      height: 85.0,
-                      padding: EdgeInsets.all(6.0),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16.0),
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 73.0,
-                            height: double.infinity,
-                            child: ClipRRect(
+            child: relevantList != null && relevantList.length > 0
+                ? ListView.separated(
+                    itemCount: relevantList.length,
+                    separatorBuilder: (context, index) =>
+                        SizedBox(height: 10.0),
+                    itemBuilder: (context, index) {
+                      return InkWell(
+                        child: Card(
+                          elevation: 5.0,
+                          shadowColor: Colors.grey[50].withOpacity(.5),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16.0),
+                          ),
+                          child: Container(
+                            width: double.infinity,
+                            height: 85.0,
+                            padding: EdgeInsets.all(6.0),
+                            decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(16.0),
-                              child: relevantList[index].thumbnail != null
-                                  ? CachedNetworkImage(
-                                      imageUrl: relevantList[index].thumbnail,
-                                      fit: BoxFit.cover,
-                                      width: double.infinity,
-                                      height: double.infinity,
-                                    )
-                                  : Image.asset(
-                                      "images/image-not-found.png",
-                                      fit: BoxFit.cover,
-                                      width: double.infinity,
-                                      height: double.infinity,
-                                    ),
                             ),
-                          ),
-                          SizedBox(width: 8.0),
-                          Expanded(
-                            child: Container(
-                              height: double.infinity,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    relevantList[index].name,
-                                    style: TextStyle(
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 73.0,
+                                  height: double.infinity,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(16.0),
+                                    child: relevantList[index].thumbnail != null
+                                        ? CachedNetworkImage(
+                                            imageUrl:
+                                                relevantList[index].thumbnail,
+                                            fit: BoxFit.cover,
+                                            width: double.infinity,
+                                            height: double.infinity,
+                                          )
+                                        : Image.asset(
+                                            "images/image-not-found.png",
+                                            fit: BoxFit.cover,
+                                            width: double.infinity,
+                                            height: double.infinity,
+                                          ),
                                   ),
-                                  SizedBox(height: 5.0),
-                                  SizedBox(
-                                    width: double.infinity,
-                                    height: 15.0,
-                                    child: Stack(
-                                      alignment: Alignment.centerLeft,
+                                ),
+                                SizedBox(width: 8.0),
+                                Expanded(
+                                  child: Container(
+                                    height: double.infinity,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        SvgPicture.asset(
-                                          "images/Group 2131.svg",
+                                        Text(
+                                          relevantList[index].name,
+                                          style: TextStyle(
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
                                         ),
-                                        Positioned(
-                                          top: 0,
-                                          left: 15.0,
-                                          child: Text(
-                                            relevantList[index].address,
-                                            style: TextStyle(
-                                              fontSize: 13.0,
-                                              color:
-                                                  Colors.black.withOpacity(0.7),
-                                            ),
+                                        SizedBox(height: 5.0),
+                                        SizedBox(
+                                          width: double.infinity,
+                                          height: 15.0,
+                                          child: Stack(
+                                            alignment: Alignment.centerLeft,
+                                            children: [
+                                              SvgPicture.asset(
+                                                "images/Group 2131.svg",
+                                              ),
+                                              Positioned(
+                                                top: 0,
+                                                left: 15.0,
+                                                child: Text(
+                                                  relevantList[index].address,
+                                                  style: TextStyle(
+                                                    fontSize: 13.0,
+                                                    color: Colors.black
+                                                        .withOpacity(0.7),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        SizedBox(height: 5.0),
+                                        SizedBox(
+                                          width: double.infinity,
+                                          height: 16.0,
+                                          child: Stack(
+                                            alignment: Alignment.centerLeft,
+                                            children: [
+                                              SvgPicture.asset(
+                                                "images/Group (1).svg",
+                                              ),
+                                              Positioned(
+                                                top: 0,
+                                                left: 15.0,
+                                                child: Text(
+                                                  relevantList[index].phone,
+                                                  style: TextStyle(
+                                                    fontSize: 13.0,
+                                                    color: Colors.black
+                                                        .withOpacity(0.7),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ],
                                     ),
                                   ),
-                                  SizedBox(height: 5.0),
-                                  SizedBox(
-                                    width: double.infinity,
-                                    height: 16.0,
-                                    child: Stack(
-                                      alignment: Alignment.centerLeft,
-                                      children: [
-                                        SvgPicture.asset(
-                                          "images/Group (1).svg",
-                                        ),
-                                        Positioned(
-                                          top: 0,
-                                          left: 15.0,
-                                          child: Text(
-                                            relevantList[index].phone,
-                                            style: TextStyle(
-                                              fontSize: 13.0,
-                                              color:
-                                                  Colors.black.withOpacity(0.7),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  onTap: () {
-                    widget.dispatch(
-                      StoreSelectionPageActionCreator.onStoreSelected(
-                        relevantList[index],
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
+                        ),
+                        onTap: () {
+                          widget.dispatch(
+                            StoreSelectionPageActionCreator.onStoreSelected(
+                              relevantList[index],
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  )
+                : SizedBox.shrink(child: null),
           ),
         ],
       ),

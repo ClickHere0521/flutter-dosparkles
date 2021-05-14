@@ -147,6 +147,7 @@ void _onProceedToCheckout(Action action, Context<CartPageState> ctx) async {
   var isMe = GlobalStore.store.getState().user.role == 'Store Manager';
 
   List<CartItem> cart = ctx.state.shoppingCart;
+
   if (cart == null || cart.length == 0 || isMe) return;
 
   String orderDetailsJson;

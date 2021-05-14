@@ -231,7 +231,10 @@ class ProductCustomizationState extends State<ProductCustomization> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              widget.selectedProduct.name,
+                              widget.selectedProduct != null &&
+                                      widget.selectedProduct.name != null
+                                  ? widget.selectedProduct.name
+                                  : '',
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize: 16.0,

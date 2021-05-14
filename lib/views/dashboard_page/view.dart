@@ -232,10 +232,14 @@ class __MainBodyState extends State<_MainBody> {
     bool isStoreOwner =
         GlobalStore.store.getState().user.role == 'Store Manager';
 
+    DateTime startDate = DateTime(date.year, date.month);
+    DateTime endDate = DateTime(date.year, date.month + 1, 0);
+
     Response result = await http.post(
       '${AppConfig.instance.baseApiHost}/analytics/getStatistics',
       body: {
-        'date': "$date",
+        'startDate': "$startDate",
+        'endDate': "$endDate",
         'storeId': isStoreOwner ? "${widget.globalUser.store['id']}" : '',
       },
     );
@@ -250,7 +254,7 @@ class __MainBodyState extends State<_MainBody> {
         bottomStatistics = statistics['bottomStatistics'];
     });
 
-    // print("-------------- $topStatistics $bottomStatistics");
+    // print("-------------- $startDate $endDate");
   }
 
   @override
