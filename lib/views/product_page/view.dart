@@ -103,54 +103,59 @@ class __FirstPageState extends State<_FirstPage> {
             automaticallyImplyLeading: false,
             actions: [
               Center(
-                child: Container(
-                  width: 34.0,
-                  height: 34.0,
-                  margin: EdgeInsets.only(right: 16.0),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10.0),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey[200],
-                        offset: Offset(0.0, 0.0), // (x, y)
-                        blurRadius: 10.0,
-                      ),
-                    ],
-                  ),
-                  child: Center(
-                    child: Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        SvgPicture.asset(
-                          "images/Group 2424.svg",
-                          color: HexColor("#B3C1F2"),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pushReplacementNamed('cartpage');
+                  },
+                  child: Container(
+                    width: 34.0,
+                    height: 34.0,
+                    margin: EdgeInsets.only(right: 16.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey[200],
+                          offset: Offset(0.0, 0.0), // (x, y)
+                          blurRadius: 10.0,
                         ),
-                        Positioned.fill(
-                          top: -2.5,
-                          child: Align(
-                            alignment: Alignment.topRight,
-                            child: Container(
-                              width: 10.0,
-                              height: 10.0,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Center(
-                                child: Text(
-                                  widget.productQuantity.toString(),
-                                  style: TextStyle(
-                                    fontSize: 6.0,
-                                    fontWeight: FontWeight.w900,
-                                    color: HexColor("#6092DC"),
+                      ],
+                    ),
+                    child: Center(
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          SvgPicture.asset(
+                            "images/Group 2424.svg",
+                            color: HexColor("#B3C1F2"),
+                          ),
+                          Positioned.fill(
+                            top: -2.5,
+                            child: Align(
+                              alignment: Alignment.topRight,
+                              child: Container(
+                                width: 10.0,
+                                height: 10.0,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    widget.productQuantity.toString(),
+                                    style: TextStyle(
+                                      fontSize: 6.0,
+                                      fontWeight: FontWeight.w900,
+                                      color: HexColor("#6092DC"),
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -263,15 +268,23 @@ class __FirstPageState extends State<_FirstPage> {
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(
-                              builder: (context) => ProductCustomization(
-                                dispatch: widget.dispatch,
-                                selectedProduct: widget.selectedProduct,
-                                productQuantity: widget.productQuantity,
-                                engraveInputs: widget.engraveInputs,
-                                optionalMaterialSelected:
-                                    widget.optionalMaterialSelected,
-                              ),
+                            PageRouteBuilder(
+                              pageBuilder: (BuildContext context,
+                                  Animation animation,
+                                  Animation secondaryAnimation) {
+                                return ScaleTransition(
+                                  scale: animation,
+                                  alignment: Alignment.bottomCenter,
+                                  child: ProductCustomization(
+                                    dispatch: widget.dispatch,
+                                    selectedProduct: widget.selectedProduct,
+                                    productQuantity: widget.productQuantity,
+                                    engraveInputs: widget.engraveInputs,
+                                    optionalMaterialSelected:
+                                        widget.optionalMaterialSelected,
+                                  ),
+                                );
+                              },
                             ),
                           );
                         },

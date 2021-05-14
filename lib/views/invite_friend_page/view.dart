@@ -223,21 +223,32 @@ class __FirstPageState extends State<_FirstPage> {
                 topRight: Radius.circular(32.0),
               ),
             ),
-            child: AnimatedCrossFade(
-              duration: const Duration(seconds: 1),
-              firstChild: _MainBody(
-                currentPage: currentPage,
-                setCurrentPage: _setCurrentPage,
+            child: GestureDetector(
+              onHorizontalDragEnd: (dragEndDetails) async {
+                if (dragEndDetails.primaryVelocity < 0) {
+                  // Page forwards
+                  _setCurrentPage(0);
+                } else if (dragEndDetails.primaryVelocity > 0) {
+                  // Page backwards
+                  _setCurrentPage(1);
+                }
+              },
+              child: AnimatedCrossFade(
+                duration: const Duration(microseconds: 1000),
+                firstChild: _MainBody(
+                  currentPage: currentPage,
+                  setCurrentPage: _setCurrentPage,
+                ),
+                secondChild: _isFinalPage
+                    ? _EndBody()
+                    : _NextBody(
+                        currentPage: currentPage,
+                        setCurrentPage: _setCurrentPage,
+                      ),
+                crossFadeState: currentPage == 0
+                    ? CrossFadeState.showFirst
+                    : CrossFadeState.showSecond,
               ),
-              secondChild: _isFinalPage
-                  ? _EndBody()
-                  : _NextBody(
-                      currentPage: currentPage,
-                      setCurrentPage: _setCurrentPage,
-                    ),
-              crossFadeState: currentPage == 0
-                  ? CrossFadeState.showFirst
-                  : CrossFadeState.showSecond,
             ),
           ),
           backgroundColor: Colors.transparent,

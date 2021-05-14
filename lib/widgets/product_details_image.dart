@@ -89,25 +89,30 @@ class _ProductDetailsImageState extends State<ProductDetailsImage> {
             automaticallyImplyLeading: false,
             actions: [
               Center(
-                child: Container(
-                  width: 34.0,
-                  height: 34.0,
-                  margin: EdgeInsets.only(right: 16.0),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10.0),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey[200],
-                        offset: Offset(0.0, 0.0), // (x, y)
-                        blurRadius: 10.0,
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pushReplacementNamed('cartpage');
+                  },
+                  child: Container(
+                    width: 34.0,
+                    height: 34.0,
+                    margin: EdgeInsets.only(right: 16.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey[200],
+                          offset: Offset(0.0, 0.0), // (x, y)
+                          blurRadius: 10.0,
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: SvgPicture.asset(
+                        "images/Group 2424.svg",
+                        color: HexColor("#B3C1F2"),
                       ),
-                    ],
-                  ),
-                  child: Center(
-                    child: SvgPicture.asset(
-                      "images/Group 2424.svg",
-                      color: HexColor("#B3C1F2"),
                     ),
                   ),
                 ),

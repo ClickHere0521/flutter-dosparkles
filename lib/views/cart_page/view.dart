@@ -322,54 +322,59 @@ class __FirstPageState extends State<_FirstPage> {
             ),
             actions: [
               Center(
-                child: Container(
-                  width: 32.0,
-                  height: 32.0,
-                  margin: EdgeInsets.only(right: 16.0),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(.2),
-                    borderRadius: BorderRadius.circular(10.0),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.white.withOpacity(.2),
-                        offset: Offset(0.0, 0.0), // (x, y)
-                        blurRadius: 5.0,
-                      ),
-                    ],
-                  ),
-                  child: Center(
-                    child: Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        SvgPicture.asset(
-                          "images/Group 2424.svg",
-                          color: Colors.white,
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pushReplacementNamed('cartpage');
+                  },
+                  child: Container(
+                    width: 32.0,
+                    height: 32.0,
+                    margin: EdgeInsets.only(right: 16.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(.2),
+                      borderRadius: BorderRadius.circular(10.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.white.withOpacity(.2),
+                          offset: Offset(0.0, 0.0), // (x, y)
+                          blurRadius: 5.0,
                         ),
-                        Positioned.fill(
-                          top: -2.5,
-                          child: Align(
-                            alignment: Alignment.topRight,
-                            child: Container(
-                              width: 10.0,
-                              height: 10.0,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Center(
-                                child: Text(
-                                  widget.shoppingCart.length.toString(),
-                                  style: TextStyle(
-                                    fontSize: 6.0,
-                                    fontWeight: FontWeight.w900,
-                                    color: HexColor("#6092DC"),
+                      ],
+                    ),
+                    child: Center(
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          SvgPicture.asset(
+                            "images/Group 2424.svg",
+                            color: Colors.white,
+                          ),
+                          Positioned.fill(
+                            top: -2.5,
+                            child: Align(
+                              alignment: Alignment.topRight,
+                              child: Container(
+                                width: 10.0,
+                                height: 10.0,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    widget.shoppingCart.length.toString(),
+                                    style: TextStyle(
+                                      fontSize: 6.0,
+                                      fontWeight: FontWeight.w900,
+                                      color: HexColor("#6092DC"),
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),

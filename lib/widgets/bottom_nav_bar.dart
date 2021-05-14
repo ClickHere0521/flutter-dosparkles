@@ -113,6 +113,8 @@ class _BottomNavBarWidgetState extends State<BottomNavBarWidget> {
             label: "",
             icon: SvgPicture.asset(
               'images/Vector (1)121.svg',
+              fit: BoxFit.contain,
+              height: 23.0,
             ),
             activeIcon: Container(
               width: 60.0,
@@ -124,6 +126,8 @@ class _BottomNavBarWidgetState extends State<BottomNavBarWidget> {
               child: Center(
                 child: SvgPicture.asset(
                   'images/Vector (1)121.svg',
+                  fit: BoxFit.contain,
+                  height: 23.0,
                 ),
               ),
             ),
@@ -133,7 +137,11 @@ class _BottomNavBarWidgetState extends State<BottomNavBarWidget> {
             icon: Stack(
               clipBehavior: Clip.none,
               children: [
-                SvgPicture.asset('images/0 notification.svg'),
+                SvgPicture.asset(
+                  'images/0 notification.svg',
+                  fit: BoxFit.contain,
+                  height: 23.0,
+                ),
                 _isUpdated == true && _updatedChatsCount != 0
                     ? Positioned.fill(
                         top: -1.8,
@@ -173,6 +181,8 @@ class _BottomNavBarWidgetState extends State<BottomNavBarWidget> {
               child: Center(
                 child: SvgPicture.asset(
                   'images/0 notification.svg',
+                  fit: BoxFit.contain,
+                  height: 23.0,
                 ),
               ),
             ),
@@ -181,6 +191,8 @@ class _BottomNavBarWidgetState extends State<BottomNavBarWidget> {
             label: "",
             icon: SvgPicture.asset(
               'images/Group 25324245.svg',
+              fit: BoxFit.contain,
+              height: 23.0,
             ),
             activeIcon: Container(
               width: 60.0,
@@ -192,6 +204,8 @@ class _BottomNavBarWidgetState extends State<BottomNavBarWidget> {
               child: Center(
                 child: SvgPicture.asset(
                   'images/Group 25324245.svg',
+                  fit: BoxFit.contain,
+                  height: 23.0,
                 ),
               ),
             ),

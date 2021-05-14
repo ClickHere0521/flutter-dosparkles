@@ -423,6 +423,7 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
 
                 SizedBox(height: 45.0),
                 GestureDetector(
+                  behavior: HitTestBehavior.translucent,
                   child: Container(
                     padding: EdgeInsets.all(12.0),
                     margin: EdgeInsets.only(left: 13.0),
@@ -456,14 +457,16 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                   onTap: () {
                     if (GlobalStore.store.getState().user.storeFavorite != null)
                       Navigator.of(context)
-                          .pushNamed('storepage', arguments: null);
+                          .pushReplacementNamed('storepage', arguments: null);
                     else
-                      Navigator.of(context)
-                          .pushNamed('storeselectionpage', arguments: null);
+                      Navigator.of(context).pushReplacementNamed(
+                          'storeselectionpage',
+                          arguments: null);
                   },
                 ),
                 SizedBox(height: 10.0),
                 GestureDetector(
+                  behavior: HitTestBehavior.translucent,
                   child: Container(
                     padding: EdgeInsets.all(12.0),
                     margin: EdgeInsets.only(left: 13.0),
@@ -496,11 +499,12 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                   ),
                   onTap: () {
                     Navigator.of(context)
-                        .pushNamed('profilepage', arguments: null);
+                        .pushReplacementNamed('profilepage', arguments: null);
                   },
                 ),
                 SizedBox(height: 10.0),
                 GestureDetector(
+                  behavior: HitTestBehavior.translucent,
                   child: Container(
                     padding: EdgeInsets.all(12.0),
                     margin: EdgeInsets.only(left: 13.0),
@@ -533,11 +537,12 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                   ),
                   onTap: () {
                     Navigator.of(context)
-                        .pushNamed('chatpage', arguments: null);
+                        .pushReplacementNamed('chatpage', arguments: null);
                   },
                 ),
                 SizedBox(height: 10.0),
                 GestureDetector(
+                  behavior: HitTestBehavior.translucent,
                   child: Container(
                     padding: EdgeInsets.all(12.0),
                     margin: EdgeInsets.only(left: 13.0),
@@ -570,6 +575,7 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                 widget.globalUser.role == "Store Manager" ||
                         widget.globalUser.role == "Authenticated"
                     ? GestureDetector(
+                        behavior: HitTestBehavior.translucent,
                         child: Container(
                           padding: EdgeInsets.all(12.0),
                           margin: EdgeInsets.only(left: 13.0),
@@ -601,11 +607,13 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                           ),
                         ),
                         onTap: () {
-                          Navigator.of(context)
-                              .pushNamed('dashboardpage', arguments: null);
+                          Navigator.of(context).pushReplacementNamed(
+                              'dashboardpage',
+                              arguments: null);
                         },
                       )
                     : GestureDetector(
+                        behavior: HitTestBehavior.translucent,
                         child: Container(
                           padding: EdgeInsets.all(12.0),
                           margin: EdgeInsets.only(left: 13.0),
@@ -629,7 +637,7 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                           ),
                         ),
                         onTap: () {
-                          Navigator.of(context).pushNamed(
+                          Navigator.of(context).pushReplacementNamed(
                             'storeselectionpage',
                             arguments: null,
                           );
@@ -638,6 +646,7 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
 
                 SizedBox(height: 10.0),
                 GestureDetector(
+                  behavior: HitTestBehavior.translucent,
                   child: Container(
                     padding: EdgeInsets.all(12.0),
                     margin: EdgeInsets.only(left: 13.0),
@@ -668,6 +677,7 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                 ),
                 SizedBox(height: 10.0),
                 GestureDetector(
+                  behavior: HitTestBehavior.translucent,
                   child: Container(
                     padding: EdgeInsets.all(12.0),
                     margin: EdgeInsets.only(left: 13.0),
@@ -699,12 +709,14 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                     ),
                   ),
                   onTap: () {
-                    Navigator.of(context)
-                        .pushNamed('helpsupportpage', arguments: null);
+                    Navigator.of(context).pushReplacementNamed(
+                        'helpsupportpage',
+                        arguments: null);
                   },
                 ),
                 SizedBox(height: 40.0),
                 GestureDetector(
+                  behavior: HitTestBehavior.translucent,
                   child: Container(
                     padding: EdgeInsets.all(12.0),
                     margin: EdgeInsets.only(left: 13.0),
