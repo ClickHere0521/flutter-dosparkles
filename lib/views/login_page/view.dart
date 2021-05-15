@@ -117,13 +117,39 @@ class __InnerPartState extends State<_InnerPart> {
   final _formKey = GlobalKey<FormState>();
   bool _hidePassword = true;
 
+  GoogleSignIn _googleSignIn = GoogleSignIn(
+    scopes: [
+      'email',
+      'https://www.googleapis.com/auth/contacts.readonly',
+    ],
+  );
+
+  GoogleSignInAccount _currentUser;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount account) {
+      print("------3333------ $account");
+
+      setState(() {
+        _currentUser = account;
+      });
+      if (_currentUser != null) {
+        print("------1111------ $_currentUser");
+      }
+    });
+    _googleSignIn.signInSilently();
+  }
+
   @override
   Widget build(BuildContext context) {
+    print("-------2222------ $_currentUser");
+
     return SingleChildScrollView(
       child: Container(
         height: MediaQuery.of(context).size.height,
-        // height: MediaQuery.of(context).size.height -
-        //     Scaffold.of(context).appBarMaxHeight,
         padding: EdgeInsets.only(
           bottom: MediaQuery.of(context).size.height * 0.02,
         ),
@@ -338,7 +364,7 @@ class __InnerPartState extends State<_InnerPart> {
                           fit: BoxFit.contain,
                         ),
                         onTap: () {
-                          _goolgeSignIn();
+                          _goolgeSignIn(_googleSignIn);
                         },
                       ),
                       SizedBox(width: 16),
@@ -379,15 +405,10 @@ class __InnerPartState extends State<_InnerPart> {
   }
 }
 
-void _goolgeSignIn() async {
-  GoogleSignIn _googleSignIn = GoogleSignIn(
-    scopes: [
-      'email',
-      'https://www.googleapis.com/auth/contacts.readonly',
-    ],
-  );
+void _goolgeSignIn(_googleSignIn) async {
   try {
-    await _googleSignIn.signIn();
+    var response = await _googleSignIn.signIn();
+    print("-------44444------ $response");
   } catch (error) {
     print(error);
   }
