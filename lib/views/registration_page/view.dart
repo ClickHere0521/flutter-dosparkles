@@ -395,47 +395,43 @@ void _onSubmit(
 ) async {
   String fullName = "$firstNameValue $lastNameValue";
 
-  QueryResult fetchResult = await BaseGraphQLClient.instance.fetchUsers();
+  QueryResult fetchResult =
+      await BaseGraphQLClient.instance.fetchUserByEmail(emailValue.trim());
   if (fetchResult.hasException) print(fetchResult.exception);
 
-  for (int i = 0; i < fetchResult.data['users'].length; i++) {
-    var user = fetchResult.data['users'][i];
+  print("-------------- ${fetchResult.data}");
 
-    if (emailValue.trim() != user['email'].trim()) {
-      try {
-        QueryResult resultRegister =
-            await BaseGraphQLClient.instance.registerUser({
-          'emailValue': emailValue.trim(),
-          'passwordValue': passwordValue.trim(),
+  if (fetchResult.data['users'].isEmpty)
+    try {
+      QueryResult resultRegister =
+          await BaseGraphQLClient.instance.registerUser({
+        'emailValue': emailValue.trim(),
+        'passwordValue': passwordValue.trim(),
+      });
+      if (resultRegister.hasException) print(resultRegister.exception);
+
+      QueryResult resultUpdate = await BaseGraphQLClient.instance
+          .updateUserOnCreate(resultRegister.data['register']['user']['id'],
+              {'fullName': fullName});
+      if (resultUpdate.hasException) print(resultUpdate.exception);
+
+      final _result =
+          await _emailSignIn(context, emailValue.trim(), passwordValue.trim());
+      if (_result == null) return;
+
+      if (_result['jwt'].toString().isNotEmpty) {
+        SharedPreferences.getInstance().then((_p) async {
+          _p.setString("jwt", _result['jwt']);
+          _p.setString("userId", _result['user']['id'].toString());
+          print('jwt: ${_result['jwt'].toString()}');
+
+          await UserInfoOperate.whenLogin(_result['jwt'].toString());
+          _goToMain(context);
         });
-        if (resultRegister.hasException) print(resultRegister.exception);
-
-        QueryResult resultUpdate = await BaseGraphQLClient.instance
-            .updateUserOnCreate(resultRegister.data['register']['user']['id'],
-                {'fullName': fullName});
-        if (resultUpdate.hasException) print(resultUpdate.exception);
-
-        final _result = await _emailSignIn(
-            context, emailValue.trim(), passwordValue.trim());
-        if (_result == null) return;
-
-        if (_result['jwt'].toString().isNotEmpty) {
-          SharedPreferences.getInstance().then((_p) async {
-            _p.setString("jwt", _result['jwt']);
-            _p.setString("userId", _result['user']['id'].toString());
-            print('jwt: ${_result['jwt'].toString()}');
-
-            await UserInfoOperate.whenLogin(_result['jwt'].toString());
-            _goToMain(context);
-          });
-        }
-      } catch (e) {
-        print(e);
       }
-
-      break;
+    } catch (e) {
+      print(e);
     }
-  }
 }
 
 Future<Map<String, dynamic>> _emailSignIn(

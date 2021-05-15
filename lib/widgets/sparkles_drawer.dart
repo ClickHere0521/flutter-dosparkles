@@ -120,7 +120,8 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                                 ),
                               ),
                               SizedBox(height: 12.0),
-                              if (widget.globalUser.role == "Store Manager")
+                              if (widget.globalUser != null &&
+                                  widget.globalUser.role == "Store Manager")
                                 Text(
                                   widget.globalUser.store != null
                                       ? widget.globalUser.store['name']
@@ -134,7 +135,8 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                                 )
                               else
                                 Text(
-                                  widget.globalUser.name != null
+                                  widget.globalUser != null &&
+                                          widget.globalUser.name != null
                                       ? widget.globalUser.name
                                       : "User",
                                   style: TextStyle(
@@ -455,7 +457,8 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                     ),
                   ),
                   onTap: () {
-                    if (GlobalStore.store.getState().user.storeFavorite != null)
+                    if (GlobalStore.store.getState().user != null &&
+                        GlobalStore.store.getState().user.storeFavorite != null)
                       Navigator.of(context)
                           .pushReplacementNamed('storepage', arguments: null);
                     else
@@ -572,8 +575,9 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                   },
                 ),
                 SizedBox(height: 10.0),
-                widget.globalUser.role == "Store Manager" ||
-                        widget.globalUser.role == "Authenticated"
+                widget.globalUser != null &&
+                        (widget.globalUser.role == "Store Manager" ||
+                            widget.globalUser.role == "Authenticated")
                     ? GestureDetector(
                         behavior: HitTestBehavior.translucent,
                         child: Container(

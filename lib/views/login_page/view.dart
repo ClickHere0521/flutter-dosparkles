@@ -1,6 +1,9 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:com.floridainc.dosparkles/actions/app_config.dart';
+import 'package:com.floridainc.dosparkles/actions/user_info_operate.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/widgets/connection_lost.dart';
 import 'package:email_validator/email_validator.dart';
@@ -10,6 +13,8 @@ import 'package:flutter/services.dart';
 import 'package:com.floridainc.dosparkles/utils/colors.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:http/http.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'action.dart';
 import 'state.dart';
@@ -348,7 +353,7 @@ class __InnerPartState extends State<_InnerPart> {
                           fit: BoxFit.contain,
                         ),
                         onTap: () {
-                          _facebookSignIn();
+                          _facebookSignIn(context);
                         },
                       ),
                       SizedBox(width: 16),
@@ -388,7 +393,7 @@ void _goolgeSignIn() async {
   }
 }
 
-void _facebookSignIn() async {
+void _facebookSignIn(context) async {
   final FacebookLogin facebookSignIn = new FacebookLogin();
   final FacebookLoginResult result = await facebookSignIn.logIn(['email']);
 
@@ -396,15 +401,27 @@ void _facebookSignIn() async {
     case FacebookLoginStatus.loggedIn:
       final FacebookAccessToken accessToken = result.accessToken;
 
-      print('''
-         Logged in!
-         
-         Token: ${accessToken.token}
-         User id: ${accessToken.userId}
-         Expires: ${accessToken.expires}
-         Permissions: ${accessToken.permissions}
-         Declined permissions: ${accessToken.declinedPermissions}
-         ''');
+      Response response = await http.get(
+        '${AppConfig.instance.baseApiHost}/auth/facebook/callback?access_token=${accessToken.token}',
+      );
+      Map<String, dynamic> token = json.decode(response.body);
+
+      if (token['jwt'].isNotEmpty) {
+        SharedPreferences.getInstance().then((_p) async {
+          await _p.setString("jwt", token['jwt']);
+          Navigator.of(context).pushReplacementNamed('loginpage');
+        });
+      }
+
+      // print('''
+      //    Logged in!
+
+      //    Token: ${accessToken.token}
+      //    User id: ${accessToken.userId}
+      //    Expires: ${accessToken.expires}
+      //    Permissions: ${accessToken.permissions}
+      //    Declined permissions: ${accessToken.declinedPermissions}
+      //    ''');
       break;
     case FacebookLoginStatus.cancelledByUser:
       print('Login cancelled by the user.');

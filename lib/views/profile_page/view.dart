@@ -301,17 +301,18 @@ class __MainBodyState extends State<_MainBody> {
   void initState() {
     super.initState();
 
-    BaseGraphQLClient.instance
-        .fetchUserNotification(widget.globalUser.id)
-        .then((result) {
-      if (result.hasException) print(result.exception);
+    if (widget.globalUser != null)
+      BaseGraphQLClient.instance
+          .fetchUserNotification(widget.globalUser.id)
+          .then((result) {
+        if (result.hasException) print(result.exception);
 
-      if (result.data != null) {
-        setState(() {
-          _switchValue = result.data['users'][0]['enableNotifications'];
-        });
-      }
-    });
+        if (result.data != null) {
+          setState(() {
+            _switchValue = result.data['users'][0]['enableNotifications'];
+          });
+        }
+      });
   }
 
   @override
@@ -376,7 +377,9 @@ class __MainBodyState extends State<_MainBody> {
           ),
           SizedBox(height: 12.0),
           Text(
-            widget.globalUser.name != null ? widget.globalUser.name : "User",
+            widget.globalUser != null && widget.globalUser.name != null
+                ? widget.globalUser.name
+                : "User",
             style: TextStyle(
               fontSize: 18.0,
               fontWeight: FontWeight.w500,
@@ -1060,11 +1063,13 @@ class _FriendsSignedUp extends StatefulWidget {
 
 class __FriendsSignedUpState extends State<_FriendsSignedUp> {
   Future _fetchData() async {
-    QueryResult result =
-        await BaseGraphQLClient.instance.fetchUserById(widget.globalUser.id);
-    if (result.hasException) print(result.exception);
-
-    return result.data['users'][0];
+    if (widget.globalUser != null) {
+      QueryResult result =
+          await BaseGraphQLClient.instance.fetchUserById(widget.globalUser.id);
+      if (result.hasException) print(result.exception);
+      return result.data['users'][0];
+    }
+    return null;
   }
 
   @override

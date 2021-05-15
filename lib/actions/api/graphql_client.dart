@@ -215,6 +215,20 @@ class BaseGraphQLClient {
     return _service.query(_query);
   }
 
+  Future<QueryResult> fetchUserByEmail(String email) {
+    String _query = '''
+      query {
+        users ( where: { email: "$email" } ) {
+          id
+          email
+        }
+      }
+    ''';
+
+    // printWrapped('Debug _mutation: $_mutation');
+    return _service.query(_query);
+  }
+
   Future<QueryResult> fetchUserNotification(String id) {
     String _query = '''
       query {
