@@ -108,12 +108,7 @@ class __MainBodyPageState extends State<_MainBodyPage> {
                 topRight: Radius.circular(32.0),
               ),
             ),
-            child: AnimatedSwitcher(
-              duration: Duration(milliseconds: 300),
-              child: _InnerPart(
-                dispatch: widget.dispatch,
-              ),
-            ),
+            child: _InnerPart(dispatch: widget.dispatch),
             padding: EdgeInsets.symmetric(horizontal: 16.0),
           ),
           backgroundColor: Colors.transparent,
@@ -189,9 +184,13 @@ class __InnerPartState extends State<_InnerPart> {
   void initState() {
     super.initState();
 
-    if (widget.stores != null) {
-      widget.stores.sort((StoreItem a, StoreItem b) =>
-          a.storeDistance.compareTo(b.storeDistance));
+    if (widget.stores != null && widget.stores.length > 0) {
+      widget.stores.sort((StoreItem a, StoreItem b) {
+        if (a.storeDistance != null && b.storeDistance != null) {
+          return a.storeDistance.compareTo(b.storeDistance);
+        }
+        return null;
+      });
     }
   }
 
@@ -271,8 +270,7 @@ class __InnerPartState extends State<_InnerPart> {
             ],
           ),
           SizedBox(height: 17.0),
-          Flexible(
-            fit: FlexFit.loose,
+          Expanded(
             child: relevantList != null && relevantList.length > 0
                 ? ListView.separated(
                     itemCount: relevantList.length,
@@ -283,6 +281,7 @@ class __InnerPartState extends State<_InnerPart> {
                         child: Card(
                           elevation: 5.0,
                           shadowColor: Colors.grey[50].withOpacity(.5),
+                          color: Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16.0),
                           ),
@@ -403,7 +402,7 @@ class __InnerPartState extends State<_InnerPart> {
                       );
                     },
                   )
-                : SizedBox.shrink(child: null),
+                : Container(),
           ),
         ],
       ),

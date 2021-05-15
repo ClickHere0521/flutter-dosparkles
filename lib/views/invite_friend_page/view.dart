@@ -22,6 +22,7 @@ import 'package:http/http.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:social_share/social_share.dart';
 import 'package:toast/toast.dart';
 import '../../utils/colors.dart';
 import 'state.dart';
@@ -228,10 +229,10 @@ class __FirstPageState extends State<_FirstPage> {
               onHorizontalDragEnd: (dragEndDetails) async {
                 if (dragEndDetails.primaryVelocity < 0) {
                   // Page forwards
-                  _setCurrentPage(0);
+                  _setCurrentPage(1);
                 } else if (dragEndDetails.primaryVelocity > 0) {
                   // Page backwards
-                  _setCurrentPage(1);
+                  _setCurrentPage(0);
                 }
               },
               child: AnimatedCrossFade(
@@ -425,28 +426,45 @@ class __MainBodyState extends State<_MainBody> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Column(
-                children: [
-                  Image.asset(
-                    "images/Group 287.png",
-                    fit: BoxFit.contain,
-                    width: 60.0,
-                    height: 60.0,
-                  ),
-                  Text("WhatsApp"),
-                ],
+              GestureDetector(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image.asset(
+                      "images/Group 287.png",
+                      fit: BoxFit.contain,
+                      width: 60.0,
+                      height: 60.0,
+                    ),
+                    Text("WhatsApp"),
+                  ],
+                ),
+                onTap: () async {
+                  if (globalUser != null && globalUser.referralLink != null) {
+                    await SocialShare.shareWhatsapp(globalUser.referralLink);
+                  }
+                },
               ),
               SizedBox(width: 81.0),
-              Column(
-                children: [
-                  Image.asset(
-                    "images/Page 1.png",
-                    fit: BoxFit.contain,
-                    width: 60.0,
-                    height: 60.0,
-                  ),
-                  Text("SMS"),
-                ],
+              GestureDetector(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image.asset(
+                      "images/Page 1.png",
+                      fit: BoxFit.contain,
+                      width: 60.0,
+                      height: 60.0,
+                    ),
+                    Text("SMS"),
+                  ],
+                ),
+                onTap: () async {
+                  if (globalUser != null && globalUser.referralLink != null) {
+                    await SocialShare.shareSms("",
+                        url: globalUser.referralLink, trailingText: "");
+                  }
+                },
               ),
             ],
           ),
@@ -480,7 +498,9 @@ class __MainBodyState extends State<_MainBody> {
                         borderRadius: BorderRadius.circular(22.0),
                       ),
                       child: Text(
-                        globalUser.referralLink,
+                        globalUser != null && globalUser.referralLink != null
+                            ? globalUser.referralLink
+                            : '',
                         style: TextStyle(
                           fontSize: 14.0,
                           fontWeight: FontWeight.w500,
@@ -526,7 +546,10 @@ class __MainBodyState extends State<_MainBody> {
                             ),
                           ),
                           onPressed: () async {
-                            await Share.share(globalUser.referralLink);
+                            if (globalUser != null &&
+                                globalUser.referralLink != null) {
+                              await Share.share(globalUser.referralLink);
+                            }
                           },
                         ),
                       ),
@@ -805,28 +828,45 @@ class __NextBodyState extends State<_NextBody> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Column(
-                children: [
-                  Image.asset(
-                    "images/Group 287.png",
-                    fit: BoxFit.contain,
-                    width: 60.0,
-                    height: 60.0,
-                  ),
-                  Text("WhatsApp"),
-                ],
+              GestureDetector(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image.asset(
+                      "images/Group 287.png",
+                      fit: BoxFit.contain,
+                      width: 60.0,
+                      height: 60.0,
+                    ),
+                    Text("WhatsApp"),
+                  ],
+                ),
+                onTap: () async {
+                  if (globalUser != null && globalUser.referralLink != null) {
+                    await SocialShare.shareWhatsapp(globalUser.referralLink);
+                  }
+                },
               ),
               SizedBox(width: 81.0),
-              Column(
-                children: [
-                  Image.asset(
-                    "images/Page 1.png",
-                    fit: BoxFit.contain,
-                    width: 60.0,
-                    height: 60.0,
-                  ),
-                  Text("SMS"),
-                ],
+              GestureDetector(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image.asset(
+                      "images/Page 1.png",
+                      fit: BoxFit.contain,
+                      width: 60.0,
+                      height: 60.0,
+                    ),
+                    Text("SMS"),
+                  ],
+                ),
+                onTap: () async {
+                  if (globalUser != null && globalUser.referralLink != null) {
+                    await SocialShare.shareSms("",
+                        url: globalUser.referralLink, trailingText: "");
+                  }
+                },
               ),
             ],
           ),
