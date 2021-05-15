@@ -1587,16 +1587,16 @@ void _onSubmit(
   }
 
   try {
-    // _setLoading(true);
+    _setLoading(true);
 
-    // await http.post(
-    //   '${AppConfig.instance.baseApiHost}/friend-invites/inviteRequest',
-    //   body: {
-    //     'id': "${globalUser.id}",
-    //     'referralLink': "${globalUser.referralLink}",
-    //     'data': json.encode(friendsList),
-    //   },
-    // );
+    await http.post(
+      '${AppConfig.instance.baseApiHost}/friend-invites/inviteRequest',
+      body: {
+        'id': "${globalUser.id}",
+        'referralLink': "${globalUser.referralLink}",
+        'data': json.encode(friendsList),
+      },
+    );
 
     _setLoading(false);
   } catch (e) {
