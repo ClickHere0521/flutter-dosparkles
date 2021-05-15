@@ -131,8 +131,6 @@ class __InnerPartState extends State<_InnerPart> {
     super.initState();
 
     _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount account) {
-      print("------3333------ $account");
-
       setState(() {
         _currentUser = account;
       });
@@ -145,8 +143,6 @@ class __InnerPartState extends State<_InnerPart> {
 
   @override
   Widget build(BuildContext context) {
-    print("-------2222------ $_currentUser");
-
     return SingleChildScrollView(
       child: Container(
         height: MediaQuery.of(context).size.height,
@@ -407,8 +403,7 @@ class __InnerPartState extends State<_InnerPart> {
 
 void _goolgeSignIn(_googleSignIn) async {
   try {
-    var response = await _googleSignIn.signIn();
-    print("-------44444------ $response");
+    await _googleSignIn.signIn();
   } catch (error) {
     print(error);
   }
