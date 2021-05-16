@@ -219,7 +219,6 @@ class __InnerPartState extends State<_InnerPart> {
                   TextFormField(
                     textAlign: TextAlign.left,
                     focusNode: _passwordNode,
-                    maxLength: 20,
                     obscureText: _hidePassword,
                     controller: widget.state.passWordTextController,
                     decoration: InputDecoration(
@@ -264,6 +263,12 @@ class __InnerPartState extends State<_InnerPart> {
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Field must not be empty';
+                      }
+                      if (value.length < 8) {
+                        return 'Field value should contain at least 8 characters';
+                      }
+                      if (value.length > 16) {
+                        return 'Field value should not exceed 16 characters.';
                       }
                       return null;
                     },

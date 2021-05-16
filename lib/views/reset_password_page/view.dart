@@ -128,6 +128,9 @@ class __InnerPartState extends State<_InnerPart> {
   bool newHide = true;
   String repeatValue = '';
   bool repeatHide = true;
+  FocusNode _passwordNode1 = FocusNode();
+  FocusNode _passwordNode2 = FocusNode();
+  FocusNode _passwordNode3 = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -148,6 +151,7 @@ class __InnerPartState extends State<_InnerPart> {
                   TextFormField(
                     textAlign: TextAlign.left,
                     obscureText: oldHide,
+                    focusNode: _passwordNode1,
                     onChanged: (value) {
                       setState(() {
                         oldValue = value;
@@ -182,6 +186,8 @@ class __InnerPartState extends State<_InnerPart> {
                             setState(() {
                               oldHide = !oldHide;
                             });
+
+                            _passwordNode1.canRequestFocus = false;
                           },
                         ),
                       ),
@@ -191,6 +197,12 @@ class __InnerPartState extends State<_InnerPart> {
                       if (value == null || value.isEmpty) {
                         return 'Field must not be empty';
                       }
+                      if (value.length < 8) {
+                        return 'Field value should contain at least 8 characters';
+                      }
+                      if (value.length > 16) {
+                        return 'Field value should not exceed 16 characters.';
+                      }
                       return null;
                     },
                   ),
@@ -198,6 +210,7 @@ class __InnerPartState extends State<_InnerPart> {
                   TextFormField(
                     textAlign: TextAlign.left,
                     obscureText: newHide,
+                    focusNode: _passwordNode2,
                     onChanged: (value) {
                       setState(() {
                         newValue = value;
@@ -232,6 +245,8 @@ class __InnerPartState extends State<_InnerPart> {
                             setState(() {
                               newHide = !newHide;
                             });
+
+                            _passwordNode2.canRequestFocus = false;
                           },
                         ),
                       ),
@@ -241,6 +256,12 @@ class __InnerPartState extends State<_InnerPart> {
                       if (value == null || value.isEmpty) {
                         return 'Field must not be empty';
                       }
+                      if (value.length < 8) {
+                        return 'Field value should contain at least 8 characters';
+                      }
+                      if (value.length > 16) {
+                        return 'Field value should not exceed 16 characters.';
+                      }
                       return null;
                     },
                   ),
@@ -248,6 +269,7 @@ class __InnerPartState extends State<_InnerPart> {
                   TextFormField(
                     textAlign: TextAlign.left,
                     obscureText: repeatHide,
+                    focusNode: _passwordNode3,
                     onChanged: (value) {
                       setState(() {
                         repeatValue = value;
@@ -284,6 +306,8 @@ class __InnerPartState extends State<_InnerPart> {
                             setState(() {
                               repeatHide = !repeatHide;
                             });
+
+                            _passwordNode3.canRequestFocus = false;
                           },
                         ),
                       ),
@@ -294,6 +318,12 @@ class __InnerPartState extends State<_InnerPart> {
                         return 'Field must not be empty';
                       } else if (value != newValue) {
                         return 'Password are not matching';
+                      }
+                      if (value.length < 8) {
+                        return 'Field value should contain at least 8 characters';
+                      }
+                      if (value.length > 16) {
+                        return 'Field value should not exceed 16 characters.';
                       }
                       return null;
                     },
@@ -372,7 +402,7 @@ void _onSubmit(context, oldValue, newValue, repeatValue) async {
       _prefs.setString('jwt', null);
       Navigator.of(context).pushNamed('startpage', arguments: null);
     }
-     _prefs.setString('resetPasswordCode', null);
+    _prefs.setString('resetPasswordCode', null);
   } catch (e) {
     print(e);
   }
