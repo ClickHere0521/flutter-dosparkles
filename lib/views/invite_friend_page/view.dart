@@ -361,10 +361,7 @@ class __MainBodyState extends State<_MainBody> {
               ),
             ),
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => TermsContitions()),
-              );
+              termsConditionsDialog(context);
             },
           ),
           SizedBox(height: 6.0),
@@ -881,10 +878,7 @@ class __NextBodyState extends State<_NextBody> {
               ),
             ),
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => TermsContitions()),
-              );
+              termsConditionsDialog(context);
             },
           ),
           SizedBox(height: 16.0),
@@ -1037,10 +1031,7 @@ class __EndBodyState extends State<_EndBody> {
               ),
             ),
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => TermsContitions()),
-              );
+              termsConditionsDialog(context);
             },
           ),
           SizedBox(height: 12.0),
@@ -1147,8 +1138,13 @@ class __ContactsPageState extends State<_ContactsPage> {
               await BaseGraphQLClient.instance.fetchUserById(meId);
           if (result.hasException) print(result.exception);
 
-          List invitesSent = result.data['users'][0]['invitesSent'] ?? [];
-          invitesSentList = invitesSent;
+          List invitesSent = [];
+          if (result.data != null &&
+              result.data['users'] != null &&
+              result.data['users'].length > 0) {
+            invitesSent = result.data['users'][0]['invitesSent'] ?? [];
+            invitesSentList = invitesSent;
+          }
 
           for (var contact in contacts) {
             if (contact.phones.isEmpty && contact.displayName == null) continue;

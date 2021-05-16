@@ -76,6 +76,7 @@ dependencies:
   connectivity:
   social_share: ^2.0.5
   flutter_credit_card: ^0.1.4
+  mask_text_input_formatter: ^1.2.1
   better_player: 
   uuid: 
   video_player:

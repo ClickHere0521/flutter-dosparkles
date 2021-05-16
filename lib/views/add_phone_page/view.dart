@@ -3,12 +3,14 @@ import 'dart:ui';
 import 'package:com.floridainc.dosparkles/globalbasestate/action.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/models/models.dart';
+import 'package:com.floridainc.dosparkles/models/number_format_model.dart';
 import 'package:com.floridainc.dosparkles/widgets/connection_lost.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
 import 'package:flutter/services.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:social_share/social_share.dart';
 import '../../actions/api/graphql_client.dart';
 import '../../utils/colors.dart';
@@ -21,9 +23,10 @@ import 'package:country_pickers/country_pickers.dart';
 void _onSubmit(BuildContext context, String fullValue) async {
   AppUser globalUser = GlobalStore.store.getState().user;
 
+  String formattedValue = fullValue.replaceAll(new RegExp('[^0-9]'), "");
   try {
     QueryResult result = await BaseGraphQLClient.instance
-        .setUserPhoneNumber(globalUser.id, fullValue);
+        .setUserPhoneNumber(globalUser.id, formattedValue);
     if (result.hasException) print(result.exception);
 
     globalUser.phoneNumber = fullValue;
@@ -140,7 +143,7 @@ class _InnerPart extends StatefulWidget {
 }
 
 class __InnerPartState extends State<_InnerPart> {
-  final _formKey = GlobalKey<FormState>();
+  final formKey = GlobalKey<FormState>();
   String fullValue = '';
   String phone = '';
 
@@ -157,80 +160,79 @@ class __InnerPartState extends State<_InnerPart> {
       child: Container(
         height: MediaQuery.of(context).size.height -
             Scaffold.of(context).appBarMaxHeight,
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                children: [
-                  Text(
-                    "1.Prizes are sent via SMS.",
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  SizedBox(height: 3.0),
-                  Text(
-                    "2.We don't share or you. Ever.",
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ],
-              ),
-              Padding(
-                padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).size.height * 0.10,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              children: [
+                Text(
+                  "1.Prizes are sent via SMS.",
+                  style: TextStyle(fontSize: 16),
                 ),
-                child: _CountryPickerDropdown(
-                    context: context,
-                    setPhoneValue: (val, countryCode) =>
-                        _setPhoneValue(val, countryCode)),
-              ),
-              Padding(
-                padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).size.height * 0.30,
+                SizedBox(height: 3.0),
+                Text(
+                  "2.We don't share or you. Ever.",
+                  style: TextStyle(fontSize: 16),
                 ),
-                child: Container(
-                  width: 300.0,
-                  height: 48.0,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(31.0),
+              ],
+            ),
+            Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).size.height * 0.10,
+              ),
+              child: _CountryPickerDropdown(
+                context: context,
+                setPhoneValue: (val, countryCode) =>
+                    _setPhoneValue(val, countryCode),
+                formKey: formKey,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).size.height * 0.30,
+              ),
+              child: Container(
+                width: 300.0,
+                height: 48.0,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(31.0),
+                ),
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                    elevation: MaterialStateProperty.all(0),
+                    backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                      (Set<MaterialState> states) {
+                        if (states.contains(MaterialState.disabled))
+                          return HexColor("#C4C6D2");
+                        return HexColor("#6092DC");
+                      },
+                    ),
+                    shape: MaterialStateProperty.all(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(31.0),
+                      ),
+                    ),
                   ),
-                  child: ElevatedButton(
-                    style: ButtonStyle(
-                      elevation: MaterialStateProperty.all(0),
-                      backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                        (Set<MaterialState> states) {
-                          if (states.contains(MaterialState.disabled))
-                            return HexColor("#C4C6D2");
-                          return HexColor("#6092DC");
+                  child: Text(
+                    'Next',
+                    style: TextStyle(
+                      fontSize: 17.0,
+                      fontWeight: FontWeight.normal,
+                      color: Colors.white,
+                    ),
+                  ),
+                  onPressed: phone.length == 0
+                      ? null
+                      : () {
+                          if (formKey.currentState.validate()) {
+                            _onSubmit(context, fullValue);
+                          }
                         },
-                      ),
-                      shape: MaterialStateProperty.all(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(31.0),
-                        ),
-                      ),
-                    ),
-                    child: Text(
-                      'Next',
-                      style: TextStyle(
-                        fontSize: 17.0,
-                        fontWeight: FontWeight.normal,
-                        color: Colors.white,
-                      ),
-                    ),
-                    onPressed: phone.length == 0
-                        ? null
-                        : () {
-                            if (_formKey.currentState.validate()) {
-                              _onSubmit(context, fullValue);
-                            }
-                          },
-                  ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -240,15 +242,40 @@ class __InnerPartState extends State<_InnerPart> {
 class _CountryPickerDropdown extends StatefulWidget {
   final BuildContext context;
   final Function setPhoneValue;
+  final formKey;
 
-  _CountryPickerDropdown({Key key, this.context, this.setPhoneValue})
-      : super(key: key);
+  _CountryPickerDropdown({
+    Key key,
+    this.context,
+    this.setPhoneValue,
+    this.formKey,
+  }) : super(key: key);
 
   @override
   __CountryPickerDropdownState createState() => __CountryPickerDropdownState();
 }
 
 class __CountryPickerDropdownState extends State<_CountryPickerDropdown> {
+  USCodePhoneNumberMask numberMask = USCodePhoneNumberMask(
+    formatter: MaskTextInputFormatter(mask: "(###) ###-####"),
+    validator: (value) {
+      if (value != null && value.length < 14) {
+        return 'Should be at least 8 characters';
+      }
+      return null;
+    },
+  );
+
+  USCodePhoneNumberMask numberMaskOther = USCodePhoneNumberMask(
+    formatter: MaskTextInputFormatter(mask: "####-####-####-####"),
+    validator: (value) {
+      if (value != null && value.length < 14) {
+        return 'Should be at least 14 characters';
+      }
+      return null;
+    },
+  );
+
   double dropdownButtonWidth;
   double dropdownItemWidth;
   String countryCode = '1';
@@ -294,33 +321,39 @@ class __CountryPickerDropdownState extends State<_CountryPickerDropdown> {
           ),
         ),
         Expanded(
-          child: TextFormField(
-            keyboardType: TextInputType.numberWithOptions(decimal: true),
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            onChanged: (String value) {
-              widget.setPhoneValue(value, countryCode);
-            },
-            decoration: InputDecoration(
-              hintText: "Add Phone",
-              hintStyle: TextStyle(
-                fontSize: 16,
-                color: Colors.black26,
+          child: Form(
+            key: widget.formKey,
+            child: TextFormField(
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
+              onChanged: (String value) {
+                widget.setPhoneValue(value, countryCode);
+              },
+              inputFormatters: [
+                countryCode == '1'
+                    ? numberMask.formatter
+                    : numberMaskOther
+                        .formatter // FilteringTextInputFormatter.digitsOnly
+              ],
+              validator: countryCode == '1'
+                  ? numberMask.validator
+                  : numberMaskOther.validator,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              decoration: InputDecoration(
+                hintText: "Add Phone",
+                hintStyle: TextStyle(
+                  fontSize: 16,
+                  color: Colors.black26,
+                ),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: HexColor("#C4C6D2")),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: HexColor("#C4C6D2")),
+                ),
+                isDense: true,
+                contentPadding: EdgeInsets.symmetric(vertical: 10),
               ),
-              enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: HexColor("#C4C6D2")),
-              ),
-              focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: HexColor("#C4C6D2")),
-              ),
-              isDense: true,
-              contentPadding: EdgeInsets.symmetric(vertical: 10),
             ),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Field must not be empty';
-              }
-              return null;
-            },
           ),
         )
       ],
