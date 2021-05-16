@@ -116,6 +116,7 @@ class _InnerPart extends StatefulWidget {
 class __InnerPartState extends State<_InnerPart> {
   final _formKey = GlobalKey<FormState>();
   bool _hidePassword = true;
+  FocusNode _passwordNode = FocusNode();
 
   GoogleSignIn _googleSignIn = GoogleSignIn(
     scopes: [
@@ -144,8 +145,6 @@ class __InnerPartState extends State<_InnerPart> {
 
   @override
   Widget build(BuildContext context) {
-    print("-------2222------ $_currentUser");
-
     return SingleChildScrollView(
       child: Container(
         height: MediaQuery.of(context).size.height,
@@ -162,7 +161,7 @@ class __InnerPartState extends State<_InnerPart> {
               Image.asset("images/Group 319.png"),
               SizedBox(height: MediaQuery.of(context).size.height * 0.002),
               Text(
-                "Welcome to Sparkle!",
+                "Welcome to Sparkles!",
                 style: TextStyle(
                   fontSize: 22.0,
                   fontWeight: FontWeight.w900,
@@ -172,7 +171,7 @@ class __InnerPartState extends State<_InnerPart> {
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 0.002),
               Text(
-                "Please sign in to continue",
+                "Please sign in to continue.",
                 style: TextStyle(fontSize: 16.0),
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 0.04),
@@ -219,6 +218,8 @@ class __InnerPartState extends State<_InnerPart> {
                   SizedBox(height: 21),
                   TextFormField(
                     textAlign: TextAlign.left,
+                    focusNode: _passwordNode,
+                    maxLength: 20,
                     obscureText: _hidePassword,
                     controller: widget.state.passWordTextController,
                     decoration: InputDecoration(
@@ -252,6 +253,7 @@ class __InnerPartState extends State<_InnerPart> {
                             setState(() {
                               _hidePassword = !_hidePassword;
                             });
+                            _passwordNode.canRequestFocus = false;
                           },
                         ),
                       ),

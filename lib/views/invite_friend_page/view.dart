@@ -22,6 +22,8 @@ import 'package:http/http.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:social_share/social_share.dart';
+import 'package:toast/toast.dart';
 import '../../utils/colors.dart';
 import 'state.dart';
 
@@ -227,10 +229,10 @@ class __FirstPageState extends State<_FirstPage> {
               onHorizontalDragEnd: (dragEndDetails) async {
                 if (dragEndDetails.primaryVelocity < 0) {
                   // Page forwards
-                  _setCurrentPage(0);
+                  _setCurrentPage(1);
                 } else if (dragEndDetails.primaryVelocity > 0) {
                   // Page backwards
-                  _setCurrentPage(1);
+                  _setCurrentPage(0);
                 }
               },
               child: AnimatedCrossFade(
@@ -306,6 +308,29 @@ class _MainBody extends StatefulWidget {
 
 class __MainBodyState extends State<_MainBody> {
   final AppUser globalUser = GlobalStore.store.getState().user;
+  List invitesSent = [];
+
+  void _fetchInvitesSent() async {
+    QueryResult result =
+        await BaseGraphQLClient.instance.fetchUserById(globalUser.id);
+    if (result.hasException) print(result.exception);
+
+    if (result.data != null &&
+        result.data['users'] != null &&
+        result.data['users'][0] != null &&
+        result.data['users'][0]['invitesSent'] != null) {
+      setState(() {
+        invitesSent = result.data['users'][0]['invitesSent'];
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _fetchInvitesSent();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -401,30 +426,58 @@ class __MainBodyState extends State<_MainBody> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Column(
-                children: [
-                  Image.asset(
-                    "images/Group 287.png",
-                    fit: BoxFit.contain,
-                    width: 60.0,
-                    height: 60.0,
-                  ),
-                  Text("WhatsApp"),
-                ],
+              GestureDetector(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image.asset(
+                      "images/Group 287.png",
+                      fit: BoxFit.contain,
+                      width: 60.0,
+                      height: 60.0,
+                    ),
+                    Text("WhatsApp"),
+                  ],
+                ),
+                onTap: () async {
+                  if (globalUser != null && globalUser.referralLink != null) {
+                    await SocialShare.shareWhatsapp(globalUser.referralLink);
+                  }
+                },
               ),
               SizedBox(width: 81.0),
-              Column(
-                children: [
-                  Image.asset(
-                    "images/Page 1.png",
-                    fit: BoxFit.contain,
-                    width: 60.0,
-                    height: 60.0,
-                  ),
-                  Text("SMS"),
-                ],
+              GestureDetector(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image.asset(
+                      "images/Page 1.png",
+                      fit: BoxFit.contain,
+                      width: 60.0,
+                      height: 60.0,
+                    ),
+                    Text("SMS"),
+                  ],
+                ),
+                onTap: () async {
+                  if (globalUser != null && globalUser.referralLink != null) {
+                    await SocialShare.shareSms("",
+                        url: globalUser.referralLink, trailingText: "");
+                  }
+                },
               ),
             ],
+          ),
+          SizedBox(height: 21.0),
+          Container(
+            child: Text(
+              "${invitesSent.length}/100",
+              style: TextStyle(
+                fontSize: 22.0,
+                fontWeight: FontWeight.bold,
+                color: invitesSent.length >= 100 ? Colors.red : null,
+              ),
+            ),
           ),
           SizedBox(height: 21.0),
           Container(
@@ -445,7 +498,9 @@ class __MainBodyState extends State<_MainBody> {
                         borderRadius: BorderRadius.circular(22.0),
                       ),
                       child: Text(
-                        globalUser.referralLink,
+                        globalUser != null && globalUser.referralLink != null
+                            ? globalUser.referralLink
+                            : '',
                         style: TextStyle(
                           fontSize: 14.0,
                           fontWeight: FontWeight.w500,
@@ -491,7 +546,10 @@ class __MainBodyState extends State<_MainBody> {
                             ),
                           ),
                           onPressed: () async {
-                            await Share.share(globalUser.referralLink);
+                            if (globalUser != null &&
+                                globalUser.referralLink != null) {
+                              await Share.share(globalUser.referralLink);
+                            }
                           },
                         ),
                       ),
@@ -770,28 +828,45 @@ class __NextBodyState extends State<_NextBody> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Column(
-                children: [
-                  Image.asset(
-                    "images/Group 287.png",
-                    fit: BoxFit.contain,
-                    width: 60.0,
-                    height: 60.0,
-                  ),
-                  Text("WhatsApp"),
-                ],
+              GestureDetector(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image.asset(
+                      "images/Group 287.png",
+                      fit: BoxFit.contain,
+                      width: 60.0,
+                      height: 60.0,
+                    ),
+                    Text("WhatsApp"),
+                  ],
+                ),
+                onTap: () async {
+                  if (globalUser != null && globalUser.referralLink != null) {
+                    await SocialShare.shareWhatsapp(globalUser.referralLink);
+                  }
+                },
               ),
               SizedBox(width: 81.0),
-              Column(
-                children: [
-                  Image.asset(
-                    "images/Page 1.png",
-                    fit: BoxFit.contain,
-                    width: 60.0,
-                    height: 60.0,
-                  ),
-                  Text("SMS"),
-                ],
+              GestureDetector(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image.asset(
+                      "images/Page 1.png",
+                      fit: BoxFit.contain,
+                      width: 60.0,
+                      height: 60.0,
+                    ),
+                    Text("SMS"),
+                  ],
+                ),
+                onTap: () async {
+                  if (globalUser != null && globalUser.referralLink != null) {
+                    await SocialShare.shareSms("",
+                        url: globalUser.referralLink, trailingText: "");
+                  }
+                },
               ),
             ],
           ),
@@ -1040,15 +1115,23 @@ class _ContactsPage extends StatefulWidget {
 
 class __ContactsPageState extends State<_ContactsPage> {
   List<Map<String, dynamic>> contactsList = [];
-  List<Map<String, dynamic>> filteredList;
-  List<Map<String, dynamic>> checkedList;
+  List<Map<String, dynamic>> filteredList = [];
+  List<Map<String, dynamic>> checkedList = [];
+  List invitesSentList = [];
   String searchValue = '';
   bool _isLoading = false;
+  bool _isResendLoading = false;
   bool _isLostConnection = false;
 
   void _setLoading(bool value) {
     setState(() {
       _isLoading = value;
+    });
+  }
+
+  void _setResendLoading(bool value) {
+    setState(() {
+      _isResendLoading = value;
     });
   }
 
@@ -1064,7 +1147,8 @@ class __ContactsPageState extends State<_ContactsPage> {
               await BaseGraphQLClient.instance.fetchUserById(meId);
           if (result.hasException) print(result.exception);
 
-          List invitesSent = result.data['users'][0]['invitesSent'];
+          List invitesSent = result.data['users'][0]['invitesSent'] ?? [];
+          invitesSentList = invitesSent;
 
           for (var contact in contacts) {
             if (contact.phones.isEmpty && contact.displayName == null) continue;
@@ -1075,11 +1159,9 @@ class __ContactsPageState extends State<_ContactsPage> {
                     .replaceAll(new RegExp(r"\s+\b|\b\s"), "")
                 : '';
 
-            bool invitesPresent = invitesSent != null && invitesSent.length > 0
+            bool invitesPresent = invitesSent.length > 0
                 ? invitesSent
-                    .where((invite) =>
-                        invite['phone'] == phoneValue &&
-                        invite['confirmed'] == true)
+                    .where((invite) => invite['phone'] == phoneValue)
                     .isNotEmpty
                 : false;
 
@@ -1276,6 +1358,30 @@ class __ContactsPageState extends State<_ContactsPage> {
                             itemBuilder: (BuildContext context, int index) {
                               Map contact = filteredList[index];
 
+                              List invitesPresent = invitesSentList.length > 0
+                                  ? invitesSentList
+                                      .where((invite) =>
+                                          contact['invited'] &&
+                                          invite['phone'] == contact['phone'])
+                                      .toList()
+                                  : [];
+
+                              bool shouldDisabledBtn = false;
+
+                              if (invitesPresent.length > 0) {
+                                DateTime currentDate = DateTime.now();
+                                DateTime inviteDate =
+                                    DateTime.fromMillisecondsSinceEpoch(
+                                        invitesPresent[0]['date']);
+
+                                int inviteDifference =
+                                    inviteDate.difference(currentDate).inDays;
+
+                                if (inviteDifference < 3) {
+                                  shouldDisabledBtn = true;
+                                }
+                              }
+
                               return GestureDetector(
                                 child: Container(
                                   width: MediaQuery.of(context).size.width,
@@ -1327,13 +1433,23 @@ class __ContactsPageState extends State<_ContactsPage> {
                                       SizedBox(width: 13.0),
                                       contact['invited'] == true
                                           ? ElevatedButton(
-                                              child: Text(
-                                                'Resend',
-                                                style: TextStyle(
-                                                  fontSize: 14.0,
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                              ),
+                                              child: _isResendLoading
+                                                  ? Container(
+                                                      width: 15.0,
+                                                      height: 15.0,
+                                                      child:
+                                                          CircularProgressIndicator(
+                                                        color: Colors.white,
+                                                      ),
+                                                    )
+                                                  : Text(
+                                                      'Resend',
+                                                      style: TextStyle(
+                                                        fontSize: 14.0,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                      ),
+                                                    ),
                                               style: ButtonStyle(
                                                 backgroundColor:
                                                     MaterialStateProperty
@@ -1346,7 +1462,12 @@ class __ContactsPageState extends State<_ContactsPage> {
                                                   },
                                                 ),
                                               ),
-                                              onPressed: null,
+                                              onPressed: shouldDisabledBtn
+                                                  ? null
+                                                  : () {
+                                                      _resendHandler(contact,
+                                                          _setResendLoading);
+                                                    },
                                             )
                                           : Image.asset(
                                               contact['checked']
@@ -1436,6 +1557,32 @@ class __ContactsPageState extends State<_ContactsPage> {
   }
 }
 
+void _resendHandler(Map contact, Function _setResendLoading) async {
+  AppUser globalUser = GlobalStore.store.getState().user;
+
+  try {
+    _setResendLoading(true);
+
+    await http.post(
+      '${AppConfig.instance.baseApiHost}/friend-invites/inviteRequest',
+      body: {
+        'id': "${globalUser.id}",
+        'referralLink': "${globalUser.referralLink}",
+        'data': json.encode([
+          {
+            'name': "${contact['name']}",
+            'phone': "${contact['phone']}",
+          }
+        ]),
+      },
+    );
+
+    _setResendLoading(false);
+  } catch (e) {
+    print(e);
+  }
+}
+
 void _onSubmit(
   List checkedList,
   List contactsList,
@@ -1446,6 +1593,25 @@ void _onSubmit(
 
   if (checkedList.length == contactsList.length) {
     _congratulationsDialog(context);
+  }
+
+  QueryResult result =
+      await BaseGraphQLClient.instance.fetchUserById(globalUser.id);
+  if (result.hasException) print(result.exception);
+
+  if (result.data != null &&
+      result.data['users'] != null &&
+      result.data['users'][0] != null) {
+    List invitesSent = result.data['users'][0]['invitesSent'] ?? [];
+
+    if ((checkedList.length + invitesSent.length) > 100) {
+      return Toast.show(
+        "Must not exceed 100 people",
+        context,
+        duration: 3,
+        gravity: Toast.BOTTOM,
+      );
+    }
   }
 
   List<Map<String, dynamic>> friendsList = [];

@@ -7,15 +7,18 @@ import 'package:com.floridainc.dosparkles/globalbasestate/action.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/models/models.dart';
 import 'package:com.floridainc.dosparkles/widgets/connection_lost.dart';
+import 'package:com.floridainc.dosparkles/widgets/terms_and_conditions.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
+import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
+import 'package:uuid/uuid.dart';
 import '../../utils/colors.dart';
 import 'package:http/http.dart' as http;
 import 'state.dart';
@@ -129,8 +132,9 @@ class __InnerPartState extends State<_InnerPart> {
   String passwordValue = '';
   String firstNameValue = '';
   String lastNameValue = '';
-  bool _hidePassword = false;
+  bool _hidePassword = true;
   bool checkboxValue = false;
+  FocusNode _passwordNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -264,6 +268,8 @@ class __InnerPartState extends State<_InnerPart> {
               SizedBox(height: 25),
               TextFormField(
                 textAlign: TextAlign.left,
+                focusNode: _passwordNode,
+                maxLength: 20,
                 onChanged: (value) {
                   setState(() => passwordValue = value);
                 },
@@ -289,13 +295,14 @@ class __InnerPartState extends State<_InnerPart> {
                     padding: EdgeInsetsDirectional.only(start: 12.0, top: 12.0),
                     child: InkWell(
                       child: Icon(
-                        _hidePassword ? Icons.visibility : Icons.visibility_off,
+                        _hidePassword ? Icons.visibility_off : Icons.visibility,
                         color: Colors.black26,
                       ),
                       onTap: () {
                         setState(() {
                           _hidePassword = !_hidePassword;
                         });
+                        _passwordNode.canRequestFocus = false;
                       },
                     ),
                   ),
@@ -309,13 +316,11 @@ class __InnerPartState extends State<_InnerPart> {
               ),
               SizedBox(height: 24),
               Row(
-                children: <Widget>[
+                children: [
                   SizedBox(
                     height: 16.0,
-                    width: 16.0,
+                    width: 20.0,
                     child: Checkbox(
-                      // checkColor: Colors.greenAccent,
-                      // activeColor: Colors.red,
                       value: this.checkboxValue,
                       materialTapTargetSize: MaterialTapTargetSize.padded,
                       onChanged: (bool value) {
@@ -326,9 +331,18 @@ class __InnerPartState extends State<_InnerPart> {
                     ),
                   ),
                   SizedBox(width: 13),
-                  Text(
-                    'Agree with Terms & Conditions',
-                    style: TextStyle(fontSize: 13.0),
+                  GestureDetector(
+                    child: Text(
+                      'Agree with Terms & Conditions',
+                      style: TextStyle(fontSize: 13.0),
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => TermsContitions()),
+                      );
+                    },
                   ),
                 ],
               ),
@@ -483,6 +497,8 @@ void _goToMain(BuildContext context) async {
 
   await Navigator.of(context).pushNamed('addphonepage', arguments: null);
 
+  await checkUserReferralLink(globalState.user);
+
   await _invitedRegisteredMethod(globalState.user);
 
   for (var i = 0; i < globalState.storesList.length; i++) {
@@ -522,4 +538,52 @@ Future<void> _invitedRegisteredMethod(AppUser globalUser) async {
       print("Registered : " + result.body);
     }
   });
+}
+
+Future checkUserReferralLink(AppUser globalUser) async {
+  if (globalUser.referralLink == null || globalUser.referralLink == '') {
+    BranchUniversalObject buo = BranchUniversalObject(
+      canonicalIdentifier: 'flutter/branch',
+      //canonicalUrl: '',
+      title: 'Example Branch Flutter Link',
+      imageUrl: 'https://miro.medium.com/max/1000/1*ilC2Aqp5sZd1wi0CopD1Hw.png',
+      contentDescription:
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+      keywords: ['Plugin', 'Branch', 'Flutter'],
+      publiclyIndex: true,
+      locallyIndex: true,
+      expirationDateInMilliSec:
+          DateTime.now().add(Duration(days: 365)).millisecondsSinceEpoch,
+    );
+    FlutterBranchSdk.registerView(buo: buo);
+
+    BranchLinkProperties lp = BranchLinkProperties(
+        channel: 'google',
+        feature: 'referral',
+        alias: 'referralToken=${Uuid().v4()}',
+        stage: 'new share',
+        campaign: 'xxxxx',
+        tags: ['one', 'two', 'three']);
+    lp.addControlParam('url', 'http://www.google.com');
+    lp.addControlParam('url2', 'http://flutter.dev');
+
+    BranchResponse response =
+        await FlutterBranchSdk.getShortUrl(buo: buo, linkProperties: lp);
+    if (response.success) {
+      print("referral link : ${response.result}");
+
+      try {
+        QueryResult result = await BaseGraphQLClient.instance
+            .setUserReferralLink(globalUser.id, response.result);
+        if (result.hasException) print(result.exception);
+
+        globalUser.referralLink = response.result;
+        GlobalStore.store.dispatch(GlobalActionCreator.setUser(globalUser));
+      } catch (e) {
+        print(e);
+      }
+    } else {
+      print('Error : ${response.errorCode} - ${response.errorMessage}');
+    }
+  }
 }
