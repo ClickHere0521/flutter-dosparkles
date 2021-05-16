@@ -78,7 +78,8 @@ class _CheckoutState extends State<Checkout> {
 
     StripePayment.setOptions(
       StripeOptions(
-        publishableKey: "pk_test_aSaULNS8cJU6Tvo20VAXy6rp",
+        publishableKey:
+            "pk_test_RZ5vq09GA2ZJdUZMjIykRGIQ", // "pk_test_aSaULNS8cJU6Tvo20VAXy6rp",
         merchantId: "Test",
         androidPayMode: 'test',
       ),
@@ -196,10 +197,13 @@ class _CheckoutState extends State<Checkout> {
                                   await StripePayment.createTokenWithCard(
                                       cardSchema);
 
-                              await widget.dispatch(
-                                CartPageActionCreator.onSetPaymentToken(
-                                    _paymentToken.tokenId.toString()),
-                              );
+                              if (_paymentToken != null &&
+                                  _paymentToken.tokenId != null) {
+                                await widget.dispatch(
+                                  CartPageActionCreator.onSetPaymentToken(
+                                      _paymentToken.tokenId.toString()),
+                                );
+                              }
 
                               widget.dispatch(
                                 CartPageActionCreator.onProceedToCheckout(),
@@ -788,12 +792,6 @@ class __InnerPartState extends State<_InnerPart> {
                           fontSize: 22,
                         ),
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Field must not be empty';
-                        }
-                        return null;
-                      },
                     ),
                     SizedBox(height: 23),
                     Row(
