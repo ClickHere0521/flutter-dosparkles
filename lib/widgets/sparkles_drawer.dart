@@ -66,113 +66,102 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
             color: HexColor("#6092DC"),
             child: ListView(
               children: [
-                GestureDetector(
-                  onTap: () {
-                    Navigator.of(context)
-                        .pushNamed('addphonepage', arguments: null);
-                  },
-                  child: Container(
-                    height: 218.0,
-                    child: DrawerHeader(
-                      child: Stack(
-                        children: [
-                          Positioned(
-                            top: 18.0,
-                            right: 8.0,
-                            child: GestureDetector(
-                              child: SvgPicture.asset(
-                                "images/close_icon.svg",
-                                width: 17.0,
-                                height: 17.0,
-                              ),
-                              onTap: () {
-                                Navigator.of(context).pop();
-                              },
+                Container(
+                  height: 218.0,
+                  child: DrawerHeader(
+                    child: Stack(
+                      children: [
+                        Positioned(
+                          top: 18.0,
+                          right: 8.0,
+                          child: GestureDetector(
+                            child: SvgPicture.asset(
+                              "images/close_icon.svg",
+                              width: 17.0,
+                              height: 17.0,
                             ),
+                            onTap: () {
+                              Navigator.of(context).pop();
+                            },
                           ),
-                          Align(
-                            alignment: Alignment.center,
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Container(
-                                  width: 82.0,
-                                  height: 82.0,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                    border: widget.globalUser != null &&
-                                            widget.globalUser.avatarUrl != null
-                                        ? Border.all(color: Colors.white)
-                                        : null,
+                        ),
+                        Align(
+                          alignment: Alignment.center,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: 82.0,
+                                height: 82.0,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  border: widget.globalUser != null &&
+                                          widget.globalUser.avatarUrl != null
+                                      ? Border.all(color: Colors.white)
+                                      : null,
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  child: widget.globalUser != null &&
+                                          widget.globalUser.avatarUrl != null
+                                      ? CachedNetworkImage(
+                                          imageUrl: widget.globalUser.avatarUrl,
+                                          width: double.infinity,
+                                          height: double.infinity,
+                                          fit: BoxFit.cover,
+                                        )
+                                      : Image.asset(
+                                          "images/user-male-circle.png",
+                                          width: double.infinity,
+                                          height: double.infinity,
+                                          color: Colors.white,
+                                          fit: BoxFit.cover,
+                                        ),
+                                ),
+                              ),
+                              SizedBox(height: 12.0),
+                              if (widget.globalUser != null &&
+                                  widget.globalUser.role == "Store Manager")
+                                Text(
+                                  widget.globalUser.store != null
+                                      ? widget.globalUser.store['name']
+                                      : "Store",
+                                  style: TextStyle(
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
+                                    fontFeatures: [FontFeature.enable('smcp')],
                                   ),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                    child: widget.globalUser != null &&
-                                            widget.globalUser.avatarUrl != null
-                                        ? CachedNetworkImage(
-                                            imageUrl:
-                                                widget.globalUser.avatarUrl,
-                                            width: double.infinity,
-                                            height: double.infinity,
-                                            fit: BoxFit.cover,
-                                          )
-                                        : Image.asset(
-                                            "images/user-male-circle.png",
-                                            width: double.infinity,
-                                            height: double.infinity,
-                                            color: Colors.white,
-                                            fit: BoxFit.cover,
-                                          ),
+                                )
+                              else
+                                Text(
+                                  widget.globalUser != null &&
+                                          widget.globalUser.name != null
+                                      ? widget.globalUser.name
+                                      : "User",
+                                  style: TextStyle(
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
+                                    fontFeatures: [FontFeature.enable('smcp')],
                                   ),
                                 ),
-                                SizedBox(height: 12.0),
-                                if (widget.globalUser != null &&
-                                    widget.globalUser.role == "Store Manager")
-                                  Text(
-                                    widget.globalUser.store != null
-                                        ? widget.globalUser.store['name']
-                                        : "Store",
-                                    style: TextStyle(
-                                      fontSize: 18.0,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.white,
-                                      fontFeatures: [
-                                        FontFeature.enable('smcp')
-                                      ],
-                                    ),
-                                  )
-                                else
-                                  Text(
-                                    widget.globalUser != null &&
-                                            widget.globalUser.name != null
-                                        ? widget.globalUser.name
-                                        : "User",
-                                    style: TextStyle(
-                                      fontSize: 18.0,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.white,
-                                      fontFeatures: [
-                                        FontFeature.enable('smcp')
-                                      ],
-                                    ),
-                                  ),
-                              ],
-                            ),
+                            ],
                           ),
-                        ],
+                        ),
+                      ],
+                    ),
+                    decoration: BoxDecoration(
+                      color: HexColor("#182465"),
+                      borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(32.0),
                       ),
-                      decoration: BoxDecoration(
-                        color: HexColor("#182465"),
-                        borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(32.0),
-                        ),
-                        gradient: LinearGradient(
-                          colors: [HexColor('#8FADEB'), HexColor('#7397E2')],
-                          begin: const FractionalOffset(0.0, 0.0),
-                          end: const FractionalOffset(1.0, 0.0),
-                          stops: [0.0, 1.0],
-                          tileMode: TileMode.clamp,
-                        ),
+                      gradient: LinearGradient(
+                        colors: [HexColor('#8FADEB'), HexColor('#7397E2')],
+                        begin: const FractionalOffset(0.0, 0.0),
+                        end: const FractionalOffset(1.0, 0.0),
+                        stops: [0.0, 1.0],
+                        tileMode: TileMode.clamp,
                       ),
                     ),
                   ),
