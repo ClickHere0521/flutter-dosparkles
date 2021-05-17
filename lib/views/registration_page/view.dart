@@ -418,7 +418,7 @@ void _onSubmit(
       await BaseGraphQLClient.instance.fetchUserByEmail(emailValue.trim());
   if (fetchResult.hasException) print(fetchResult.exception);
 
-  print("-------------- ${fetchResult.data}");
+  print("User with this Emails already exists ? : ${fetchResult.data}");
 
   if (fetchResult.data['users'].isEmpty)
     try {
@@ -499,12 +499,17 @@ void _goToMain(BuildContext context) async {
   });
 
   var globalState = GlobalStore.store.getState();
+  SharedPreferences _prefs = await SharedPreferences.getInstance();
+  String referralLink = _prefs.getString("referralLink");
+
+  if (referralLink != null && referralLink != '') {
+    await _invitedRegisteredMethod(globalState.user);
+    await setUserFavoriteStore(globalState.user, referralLink);
+  }
 
   await Navigator.of(context).pushNamed('addphonepage', arguments: null);
 
   await checkUserReferralLink(globalState.user);
-
-  await _invitedRegisteredMethod(globalState.user);
 
   for (var i = 0; i < globalState.storesList.length; i++) {
     var store = globalState.storesList[i];
@@ -535,12 +540,12 @@ Future<void> _invitedRegisteredMethod(AppUser globalUser) async {
         body: {
           'referralLink': "$referralLink",
           'phoneNumber':
-              "${globalUser.phoneNumber.replaceAll(new RegExp(r"\s+\b|\b\s"), "")}",
+              "${globalUser != null && globalUser.phoneNumber != null ? globalUser.phoneNumber.replaceAll(new RegExp(r"\s+\b|\b\s"), "") : ''}",
         },
       );
       _p.setString("referralLink", null);
 
-      print("Registered : " + result.body);
+      // print("Registered : " + result.body);
     }
   });
 }
@@ -590,5 +595,28 @@ Future checkUserReferralLink(AppUser globalUser) async {
     } else {
       print('Error : ${response.errorCode} - ${response.errorMessage}');
     }
+  }
+}
+
+Future setUserFavoriteStore(AppUser globalUser, String referralLink) async {
+  try {
+    QueryResult resultLink =
+        await BaseGraphQLClient.instance.fetchUserByReferralLink(referralLink);
+    if (resultLink.hasException) print(resultLink.exception);
+
+    if (resultLink.data != null &&
+        resultLink.data['users'] != null &&
+        resultLink.data['users'].length > 0 != null &&
+        resultLink.data['users'][0]['referralLink'] != null) {
+      if (resultLink.data['users'][0]['referralLink'] == referralLink) {
+        Map favoriteStore = resultLink.data['users'][0]['storeFavorite'];
+
+        QueryResult resultStore = await BaseGraphQLClient.instance
+            .setUserFavoriteStore(globalUser.id, favoriteStore['id']);
+        if (resultStore.hasException) print(resultStore.exception);
+      }
+    }
+  } catch (e) {
+    print(e);
   }
 }

@@ -271,6 +271,18 @@ class _MainBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (store != null && store.products != null && store.products.length > 0) {
+      store.products.sort((ProductItem a, ProductItem b) {
+        if (a.orderInList == null || b.orderInList == null) {
+          return -1;
+        }
+        if (a.orderInList != null && b.orderInList != null) {
+          return a.orderInList.compareTo(b.orderInList);
+        }
+        return null;
+      });
+    }
+
     return Container(
       child: CustomScrollView(
         slivers: [
@@ -417,15 +429,26 @@ class _ProductViewState extends State<_ProductView>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
   int _tabSelectedIndex;
+  bool _shouldAbsorb = true;
 
   @override
   void initState() {
     super.initState();
     _tabSelectedIndex = widget.productIndex;
-    _tabController =
-        TabController(length: widget.store.products.length, vsync: this);
-    _tabController
-        .addListener(() => {_tabSelectedIndex = _tabController.index});
+    _tabController = TabController(
+      length: widget.store.products.length,
+      vsync: this,
+    );
+    _tabController.addListener(() {
+      setState(() {
+        _tabSelectedIndex = _tabController.index;
+
+        if (_tabController.index == 0)
+          _shouldAbsorb = true;
+        else
+          _shouldAbsorb = false;
+      });
+    });
   }
 
   @override
@@ -441,33 +464,50 @@ class _ProductViewState extends State<_ProductView>
     var size = MediaQuery.of(context).size;
     return GestureDetector(
       // Using the DragEndDetails allows us to only fire once per swipe.
-      onHorizontalDragEnd: (dragEndDetails) {
+      onVerticalDragEnd: (dragEndDetails) {
         if (dragEndDetails.primaryVelocity < 0) {
-          // Page forwards
+          // Page up
           widget.dispatch(StorePageActionCreator.onGoToProductPage(
               widget.store.products[_tabSelectedIndex]));
         } else if (dragEndDetails.primaryVelocity > 0) {
-          // Page backwards
+          // Page down
           widget.dispatch(StorePageActionCreator.onBackToAllProducts());
         }
       },
+      onHorizontalDragEnd: (dragEndDetails) {
+        if (dragEndDetails.primaryVelocity < 0) {
+          // Page forwards
+
+          _tabController.index++;
+        } else if (dragEndDetails.primaryVelocity > 0) {
+          // Page backwards
+
+          if (_tabController.index == 0 && _tabController.offset == 0.0) {
+            widget.dispatch(StorePageActionCreator.onBackToAllProducts());
+          }
+        }
+      },
+
       child: RotatedBox(
-        quarterTurns: 1,
-        child: TabBarView(
-          controller: _tabController,
-          children: List.generate(items.length, (index) {
-            return items[index] != null && items[index].videoUrl != null
-                ? VideoPlayerItem(
-                    videoUrl: items[index].videoUrl,
-                    size: size,
-                    tabSelectedIndex: _tabSelectedIndex,
-                    dispatch: widget.dispatch,
-                    store: widget.store
-                    // name: items[index].name,
-                    // price: '\$${items[index].price}',
-                    )
-                : Container();
-          }),
+        quarterTurns: 0,
+        child: AbsorbPointer(
+          absorbing: _shouldAbsorb,
+          child: TabBarView(
+            controller: _tabController,
+            children: List.generate(items.length, (index) {
+              return items[index] != null && items[index].videoUrl != null
+                  ? VideoPlayerItem(
+                      videoUrl: items[index].videoUrl,
+                      size: size,
+                      tabSelectedIndex: _tabSelectedIndex,
+                      dispatch: widget.dispatch,
+                      store: widget.store
+                      // name: items[index].name,
+                      // price: '\$${items[index].price}',
+                      )
+                  : Container();
+            }),
+          ),
         ),
       ),
     );

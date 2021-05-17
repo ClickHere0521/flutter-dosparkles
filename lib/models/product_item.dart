@@ -64,6 +64,8 @@ class ProductItem {
 
   bool isNew;
 
+  int orderInList;
+
   ProductItem.fromParams({
     this.id,
     this.name,
@@ -94,6 +96,7 @@ class ProductItem {
     this.optionalFinishMaterialOldPrice,
     this.showOptionalFinishMaterialOldPrice,
     this.isNew,
+    this.orderInList,
   });
 
   factory ProductItem(jsonStr) => jsonStr == null
@@ -131,6 +134,7 @@ class ProductItem {
     properties = jsonRes['properties'];
     shineonIds = jsonRes['shineonIds'];
     isNew = jsonRes['new'];
+    orderInList = jsonRes['orderInList'];
 
     engraveOldPrice = checkDouble(jsonRes['engraveOldPrice']);
     engravePrice = checkDouble(jsonRes['engravePrice']);
