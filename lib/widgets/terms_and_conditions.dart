@@ -152,6 +152,7 @@ Future<void> termsConditionsDialog(BuildContext context) async {
                   child: Align(
                     alignment: Alignment.topRight,
                     child: GestureDetector(
+                      behavior: HitTestBehavior.translucent,
                       child: Image.asset("images/close_button_terms.png"),
                       onTap: () {
                         Navigator.of(context).pop();

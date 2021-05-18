@@ -273,9 +273,6 @@ void _onProceedToCheckout(Action action, Context<CartPageState> ctx) async {
       },
     );
   }
-
-  // Navigator.of(ctx.context)
-  //     .pushReplacementNamed('storepage', arguments: {'listView': true});
 }
 
 void _onBackToProduct(Action action, Context<CartPageState> ctx) async {

@@ -180,85 +180,91 @@ class __FirstListPageState extends State<_FirstListPage> {
   Widget build(BuildContext context) {
     checkInternetConnectivity();
 
-    return Stack(
-      children: [
-        Positioned(
-          top: 0,
-          left: 0,
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            height: 181.0,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [HexColor('#8FADEB'), HexColor('#7397E2')],
-                begin: const FractionalOffset(0.0, 0.0),
-                end: const FractionalOffset(1.0, 0.0),
-                stops: [0.0, 1.0],
-                tileMode: TileMode.clamp,
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Stack(
+        children: [
+          Positioned(
+            top: 0,
+            left: 0,
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: 181.0,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [HexColor('#8FADEB'), HexColor('#7397E2')],
+                  begin: const FractionalOffset(0.0, 0.0),
+                  end: const FractionalOffset(1.0, 0.0),
+                  stops: [0.0, 1.0],
+                  tileMode: TileMode.clamp,
+                ),
               ),
             ),
           ),
-        ),
-        Scaffold(
-          body: Container(
-            width: MediaQuery.of(context).size.width,
-            constraints:
-                BoxConstraints(minHeight: MediaQuery.of(context).size.height),
-            decoration: BoxDecoration(
-              color: HexColor("#FAFCFF"),
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(32.0),
-                topRight: Radius.circular(32.0),
+          Scaffold(
+            body: Container(
+              width: MediaQuery.of(context).size.width,
+              constraints:
+                  BoxConstraints(minHeight: MediaQuery.of(context).size.height),
+              decoration: BoxDecoration(
+                color: HexColor("#FAFCFF"),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(32.0),
+                  topRight: Radius.circular(32.0),
+                ),
               ),
-            ),
-            child: _MainBody(
-              dispatch: widget.dispatch,
-              store: widget.state.selectedStore,
-            ),
-            padding: EdgeInsets.only(left: 16.0, right: 16.0, top: 20.0),
-          ),
-          backgroundColor: Colors.transparent,
-          resizeToAvoidBottomInset: true,
-          appBar: AppBar(
-            title: Text(
-              widget.state.selectedStore != null &&
-                      widget.state.selectedStore.name != null
-                  ? widget.state.selectedStore.name
-                  : '',
-              style: TextStyle(
-                fontSize: 22,
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
-                fontFeatures: [FontFeature.enable('smcp')],
+              child: _MainBody(
+                dispatch: widget.dispatch,
+                store: widget.state.selectedStore,
               ),
+              padding: EdgeInsets.only(left: 16.0, right: 16.0, top: 20.0),
             ),
-            centerTitle: true,
             backgroundColor: Colors.transparent,
-            elevation: 0.0,
-            leadingWidth: 70.0,
-            automaticallyImplyLeading: false,
-            leading: Builder(
-              builder: (context) => IconButton(
-                highlightColor: Colors.transparent,
-                splashColor: Colors.transparent,
-                icon: Image.asset("images/offcanvas_icon.png"),
-                onPressed: () => Scaffold.of(context).openDrawer(),
+            resizeToAvoidBottomInset: true,
+            appBar: AppBar(
+              title: Text(
+                widget.state.selectedStore != null &&
+                        widget.state.selectedStore.name != null
+                    ? widget.state.selectedStore.name
+                    : '',
+                style: TextStyle(
+                  fontSize: 22,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                  fontFeatures: [FontFeature.enable('smcp')],
+                ),
+              ),
+              centerTitle: true,
+              backgroundColor: Colors.transparent,
+              elevation: 0.0,
+              leadingWidth: 70.0,
+              automaticallyImplyLeading: false,
+              leading: Builder(
+                builder: (context) => IconButton(
+                  highlightColor: Colors.transparent,
+                  splashColor: Colors.transparent,
+                  icon: Image.asset("images/offcanvas_icon.png"),
+                  onPressed: () => Scaffold.of(context).openDrawer(),
+                ),
               ),
             ),
+            drawer: SparklesDrawer(activeRoute: "homepage"),
+            bottomNavigationBar: StreamBuilder(
+              stream: fetchDataProcess(),
+              builder: (_, snapshot) {
+                return BottomNavBarWidget(
+                  prefsData: snapshot.data,
+                  initialIndex: 0,
+                );
+              },
+            ),
           ),
-          drawer: SparklesDrawer(activeRoute: "homepage"),
-          bottomNavigationBar: StreamBuilder(
-            stream: fetchDataProcess(),
-            builder: (_, snapshot) {
-              return BottomNavBarWidget(
-                prefsData: snapshot.data,
-                initialIndex: 0,
-              );
-            },
-          ),
-        ),
-        if (_isLostConnection) ConnectionLost(),
-      ],
+          if (_isLostConnection) ConnectionLost(),
+        ],
+      ),
     );
   }
 }
@@ -271,6 +277,18 @@ class _MainBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (store != null && store.products != null && store.products.length > 0) {
+      store.products.sort((ProductItem a, ProductItem b) {
+        if (a.orderInList == null || b.orderInList == null) {
+          return -1;
+        }
+        if (a.orderInList != null && b.orderInList != null) {
+          return a.orderInList.compareTo(b.orderInList);
+        }
+        return null;
+      });
+    }
+
     return Container(
       child: CustomScrollView(
         slivers: [
@@ -417,15 +435,26 @@ class _ProductViewState extends State<_ProductView>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
   int _tabSelectedIndex;
+  bool _shouldAbsorb = true;
 
   @override
   void initState() {
     super.initState();
     _tabSelectedIndex = widget.productIndex;
-    _tabController =
-        TabController(length: widget.store.products.length, vsync: this);
-    _tabController
-        .addListener(() => {_tabSelectedIndex = _tabController.index});
+    _tabController = TabController(
+      length: widget.store.products.length,
+      vsync: this,
+    );
+    _tabController.addListener(() {
+      setState(() {
+        _tabSelectedIndex = _tabController.index;
+
+        if (_tabController.index == 0)
+          _shouldAbsorb = true;
+        else
+          _shouldAbsorb = false;
+      });
+    });
   }
 
   @override
@@ -441,31 +470,47 @@ class _ProductViewState extends State<_ProductView>
     var size = MediaQuery.of(context).size;
     return GestureDetector(
       // Using the DragEndDetails allows us to only fire once per swipe.
-      onHorizontalDragEnd: (dragEndDetails) {
+      onVerticalDragEnd: (dragEndDetails) {
         if (dragEndDetails.primaryVelocity < 0) {
-          // Page forwards
+          // Page up
           widget.dispatch(StorePageActionCreator.onGoToProductPage(
               widget.store.products[_tabSelectedIndex]));
         } else if (dragEndDetails.primaryVelocity > 0) {
-          // Page backwards
+          // Page down
           widget.dispatch(StorePageActionCreator.onBackToAllProducts());
         }
       },
-      child: RotatedBox(
-        quarterTurns: 1,
+      onHorizontalDragEnd: (dragEndDetails) {
+        if (dragEndDetails.primaryVelocity < 0) {
+          // Page forwards
+
+          _tabController.index++;
+        } else if (dragEndDetails.primaryVelocity > 0) {
+          // Page backwards
+
+          if (_tabController.index == 0 && _tabController.offset == 0.0) {
+            widget.dispatch(StorePageActionCreator.onBackToAllProducts());
+          }
+        }
+      },
+
+      child: AbsorbPointer(
+        absorbing: _shouldAbsorb,
         child: TabBarView(
           controller: _tabController,
           children: List.generate(items.length, (index) {
             return items[index] != null && items[index].videoUrl != null
-                ? VideoPlayerItem(
-                    videoUrl: items[index].videoUrl,
-                    size: size,
-                    tabSelectedIndex: _tabSelectedIndex,
-                    dispatch: widget.dispatch,
-                    store: widget.store
-                    // name: items[index].name,
-                    // price: '\$${items[index].price}',
-                    )
+                ? Center(
+                    child: VideoPlayerItem(
+                        videoUrl: items[index].videoUrl,
+                        size: size,
+                        tabSelectedIndex: _tabSelectedIndex,
+                        dispatch: widget.dispatch,
+                        store: widget.store
+                        // name: items[index].name,
+                        // price: '\$${items[index].price}',
+                        ),
+                  )
                 : Container();
           }),
         ),
@@ -553,7 +598,7 @@ class _VideoPlayerItemState extends State<VideoPlayerItem> {
         //   });
         // },
         child: RotatedBox(
-      quarterTurns: -1,
+      quarterTurns: 0,
       child: Container(
           height: widget.size.height,
           width: widget.size.width,
@@ -565,15 +610,17 @@ class _VideoPlayerItemState extends State<VideoPlayerItem> {
                 child: Stack(
                   children: [
                     SizedBox.expand(
-                        child: FittedBox(
-                            fit: BoxFit.cover,
-                            child: SizedBox(
-                              height: widget.size.height,
-                              width: widget.size.width,
-                              child: BetterPlayer(
-                                controller: _betterPlayerController,
-                              ),
-                            ))),
+                      child: FittedBox(
+                        fit: BoxFit.cover,
+                        child: SizedBox(
+                          height: widget.size.height,
+                          width: widget.size.width,
+                          child: BetterPlayer(
+                            controller: _betterPlayerController,
+                          ),
+                        ),
+                      ),
+                    ),
 
                     //                   SizedBox.expand(
                     //                     child: FittedBox(
@@ -610,10 +657,10 @@ class _VideoPlayerItemState extends State<VideoPlayerItem> {
                 width: widget.size.width,
                 child: Padding(
                   padding: const EdgeInsets.only(
-                    left: 16,
-                    top: 20,
+                    top: 16,
+                    bottom: 16,
                     right: 16,
-                    bottom: 26,
+                    left: 16,
                   ),
                   child: SafeArea(
                     child: Column(
@@ -621,14 +668,17 @@ class _VideoPlayerItemState extends State<VideoPlayerItem> {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Expanded(
-                          child: LeftPanel(
-                              size: widget.size,
-                              tabSelectedIndex: widget.tabSelectedIndex,
-                              dispatch: widget.dispatch,
-                              store: widget.store
-                              // name: "${widget.name}",
-                              // price: "${widget.price}",
-                              ),
+                          child: RotatedBox(
+                            quarterTurns: 0,
+                            child: LeftPanel(
+                                size: widget.size,
+                                tabSelectedIndex: widget.tabSelectedIndex,
+                                dispatch: widget.dispatch,
+                                store: widget.store
+                                // name: "${widget.name}",
+                                // price: "${widget.price}",
+                                ),
+                          ),
                         ),
                       ],
                     ),
@@ -667,7 +717,7 @@ class LeftPanel extends StatelessWidget {
       width: 40.0,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Container(
             width: 40.0,
@@ -721,6 +771,7 @@ class LeftPanel extends StatelessWidget {
           // ),
           //  SizedBox(height: 15.0),
           GestureDetector(
+            behavior: HitTestBehavior.translucent,
             onTap: () {
               dispatch(StorePageActionCreator.onGoToProductPage(
                   store.products[tabSelectedIndex]));

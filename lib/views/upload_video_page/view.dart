@@ -261,6 +261,7 @@ class __FirstPartState extends State<_FirstPart> {
                   ),
                   SizedBox(height: 20.0),
                   GestureDetector(
+                    behavior: HitTestBehavior.translucent,
                     onTap: () {},
                     child: Container(
                       width: double.infinity,

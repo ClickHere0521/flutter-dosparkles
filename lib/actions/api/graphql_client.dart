@@ -94,6 +94,7 @@ class BaseGraphQLClient {
               id
               shineonImportId
               new
+              orderInList
               optionalFinishMaterialOldPrice
               showOptionalFinishMaterialOldPrice
               thumbnail {
@@ -221,6 +222,23 @@ class BaseGraphQLClient {
         users ( where: { email: "$email" } ) {
           id
           email
+        }
+      }
+    ''';
+
+    // printWrapped('Debug _mutation: $_mutation');
+    return _service.query(_query);
+  }
+
+  Future<QueryResult> fetchUserByReferralLink(String referralLink) {
+    String _query = '''
+      query {
+        users ( where: { referralLink: "$referralLink" } ) {
+          id
+          referralLink
+          storeFavorite {
+            id
+          }
         }
       }
     ''';
@@ -404,6 +422,49 @@ class BaseGraphQLClient {
     return _service.mutate(_mutation);
   }
 
+  Future<QueryResult> setUserFavoriteStore(String id, String storeId) {
+    String _mutation = '''
+      mutation {
+        updateUser (
+          input: {
+            where: {
+              id: "$id"
+            }
+            data: {
+              storeFavorite: "$storeId"
+            }
+          }
+        )
+        {
+          user {
+            id
+            email
+            username
+            enableNotifications
+            phoneNumber
+            avatar {
+              id
+              url
+            }
+            invitesSent
+            referralLink
+            role {
+              id
+              name
+            }
+            storeFavorite {
+              id
+            }
+            pushToken
+          }
+        }
+      }
+    ''';
+
+    // printWrapped('Debug _mutation: $_mutation');
+    return _service.mutate(_mutation);
+  }
+
   Future<QueryResult> registerUser(Map data) {
     String _mutation = '''
       mutation {
@@ -499,8 +560,9 @@ class BaseGraphQLClient {
             id
             new
             shineonImportId
-             optionalFinishMaterialOldPrice
-              showOptionalFinishMaterialOldPrice
+            optionalFinishMaterialOldPrice
+            showOptionalFinishMaterialOldPrice
+            orderInList
             thumbnail {
               url
             }
@@ -1610,6 +1672,7 @@ class BaseGraphQLClient {
               shineonImportId
               optionalFinishMaterialOldPrice
               showOptionalFinishMaterialOldPrice
+              orderInList
               thumbnail {
                 url
               }

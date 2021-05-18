@@ -81,6 +81,7 @@ class _MainPageState extends State<MainPage> {
                           ),
                         ),
                         child: GestureDetector(
+                          behavior: HitTestBehavior.translucent,
                           child: Container(
                             width: 250,
                             child: ListTile(
@@ -115,6 +116,7 @@ class _MainPageState extends State<MainPage> {
                           ),
                         ),
                         child: GestureDetector(
+                          behavior: HitTestBehavior.translucent,
                           child: Container(
                             width: 250,
                             child: ListTile(
@@ -149,6 +151,7 @@ class _MainPageState extends State<MainPage> {
                           ),
                         ),
                         child: GestureDetector(
+                          behavior: HitTestBehavior.translucent,
                           child: Container(
                             width: 250,
                             child: ListTile(
@@ -183,6 +186,7 @@ class _MainPageState extends State<MainPage> {
                           ),
                         ),
                         child: GestureDetector(
+                          behavior: HitTestBehavior.translucent,
                           child: Container(
                             width: 250,
                             child: ListTile(

@@ -85,283 +85,308 @@ class _OrderWidgetState extends State<OrderWidget> {
   Widget build(BuildContext context) {
     checkInternetConnectivity();
 
-    return Stack(
-      children: [
-        Positioned(
-          top: 0,
-          left: 0,
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            height: 181.0,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [HexColor('#8FADEB'), HexColor('#7397E2')],
-                begin: const FractionalOffset(0.0, 0.0),
-                end: const FractionalOffset(1.0, 0.0),
-                stops: [0.0, 1.0],
-                tileMode: TileMode.clamp,
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Stack(
+        children: [
+          Positioned(
+            top: 0,
+            left: 0,
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: 181.0,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [HexColor('#8FADEB'), HexColor('#7397E2')],
+                  begin: const FractionalOffset(0.0, 0.0),
+                  end: const FractionalOffset(1.0, 0.0),
+                  stops: [0.0, 1.0],
+                  tileMode: TileMode.clamp,
+                ),
               ),
             ),
           ),
-        ),
-        Scaffold(
-          appBar: AppBar(
-            title: Text(
-              "Details of order",
-              style: TextStyle(
-                fontSize: 22,
-                color: Colors.white,
-                fontFeatures: [FontFeature.enable('smcp')],
-                fontWeight: FontWeight.w600,
+          Scaffold(
+            appBar: AppBar(
+              title: Text(
+                "Details of order",
+                style: TextStyle(
+                  fontSize: 22,
+                  color: Colors.white,
+                  fontFeatures: [FontFeature.enable('smcp')],
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              centerTitle: true,
+              backgroundColor: Colors.transparent,
+              elevation: 0.0,
+              leadingWidth: 70.0,
+              automaticallyImplyLeading: false,
+              leading: InkWell(
+                child: Image.asset("images/back_button_white.png"),
+                onTap: () => Navigator.of(context).pop(),
               ),
             ),
-            centerTitle: true,
             backgroundColor: Colors.transparent,
-            elevation: 0.0,
-            leadingWidth: 70.0,
-            automaticallyImplyLeading: false,
-            leading: InkWell(
-              child: Image.asset("images/back_button_white.png"),
-              onTap: () => Navigator.of(context).pop(),
-            ),
-          ),
-          backgroundColor: Colors.transparent,
-          resizeToAvoidBottomInset: true,
-          body: Container(
-            width: MediaQuery.of(context).size.width,
-            height: double.infinity,
-            padding: EdgeInsets.only(top: 20.0, left: 16.0, right: 16.0),
-            decoration: BoxDecoration(
-              color: HexColor("#FAFCFF"),
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(32.0),
-                topRight: Radius.circular(32.0),
+            resizeToAvoidBottomInset: true,
+            body: Container(
+              width: MediaQuery.of(context).size.width,
+              height: double.infinity,
+              padding: EdgeInsets.only(top: 20.0, left: 16.0, right: 16.0),
+              decoration: BoxDecoration(
+                color: HexColor("#FAFCFF"),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(32.0),
+                  topRight: Radius.circular(32.0),
+                ),
               ),
-            ),
-            child: FutureBuilder(
-              future: getInitialData(),
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                if (snapshot.hasData && !snapshot.hasError) {
-                  var order = snapshot.data;
-                  List<dynamic> products = order['products'];
+              child: FutureBuilder(
+                future: getInitialData(),
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (snapshot.hasData && !snapshot.hasError) {
+                    var order = snapshot.data;
+                    List<dynamic> products = order['products'];
 
-                  return SingleChildScrollView(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          margin: EdgeInsets.symmetric(vertical: 5.0),
-                          height: MediaQuery.of(context).size.height,
-                          child: ListView.builder(
-                            itemCount: products.length,
-                            shrinkWrap: true,
-                            itemBuilder: (_, index) {
-                              var product = products[index];
+                    return SingleChildScrollView(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            margin: EdgeInsets.symmetric(vertical: 5.0),
+                            height: MediaQuery.of(context).size.height,
+                            child: ListView.builder(
+                              itemCount: products.length,
+                              shrinkWrap: true,
+                              itemBuilder: (_, index) {
+                                var product = products[index];
+                                List orderDetails = order != null &&
+                                        order['orderDetails'] != null &&
+                                        order['orderDetails'].length > 0
+                                    ? order['orderDetails']
+                                    : [];
+                                Map orderDetail = orderDetails[index] ?? {};
 
-                              if (product != null) {
-                                return InkWell(
-                                  child: Card(
-                                    elevation: 5.0,
-                                    margin: EdgeInsets.only(bottom: 16.0),
-                                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                                    shadowColor: Colors.black26,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(16.0),
-                                      side: BorderSide(color: Colors.grey[50]),
-                                    ),
-                                    child: Container(
-                                      width: double.infinity,
-                                      height: 111.0,
-                                      constraints:
-                                          BoxConstraints(maxWidth: 343.0),
-                                      padding: EdgeInsets.all(10.0),
+                                if (product != null) {
+                                  return InkWell(
+                                    child: Card(
+                                      elevation: 5.0,
+                                      margin: EdgeInsets.only(bottom: 16.0),
+                                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                                      shadowColor: Colors.black26,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(16.0),
+                                        side:
+                                            BorderSide(color: Colors.grey[50]),
+                                      ),
                                       child: Container(
                                         width: double.infinity,
-                                        height: 91.0,
-                                        child: Row(
-                                          children: [
-                                            Container(
-                                              width: 78.0,
-                                              height: double.infinity,
-                                              child: ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(16.0),
-                                                child: product['thumbnail'] !=
-                                                        null
-                                                    ? CachedNetworkImage(
-                                                        imageUrl: AppConfig
-                                                                .instance
-                                                                .baseApiHost +
-                                                            product['thumbnail']
-                                                                ['url'],
-                                                        fit: BoxFit.cover,
-                                                        width: double.infinity,
-                                                        height: double.infinity,
-                                                      )
-                                                    : SizedBox.shrink(
-                                                        child: null),
-                                              ),
-                                            ),
-                                            SizedBox(width: 10.0),
-                                            Expanded(
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    product['name'],
-                                                    maxLines: 2,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: TextStyle(
-                                                      fontSize: 16.0,
-                                                      color:
-                                                          HexColor("#53586F"),
-                                                    ),
-                                                  ),
-                                                  SizedBox(height: 12.0),
-                                                  RichText(
-                                                    text: TextSpan(
-                                                      children: [
-                                                        TextSpan(
-                                                          text: product[
-                                                                      'price'] !=
-                                                                  null
-                                                              ? "\$${product['price']} "
-                                                              : ' ',
-                                                          style: TextStyle(
-                                                            fontSize: 22.0,
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                            color: HexColor(
-                                                                "#53586F"),
-                                                          ),
-                                                        ),
-                                                        TextSpan(
-                                                          text: order['orderDetails'] !=
-                                                                      null &&
-                                                                  order['orderDetails']
-                                                                          .length >
-                                                                      0 &&
-                                                                  order['orderDetails']
-                                                                              [
-                                                                              index]
-                                                                          [
-                                                                          'quantity'] !=
-                                                                      null
-                                                              ? "x${order['orderDetails'][index]['quantity']}"
-                                                              : '',
-                                                          style: TextStyle(
-                                                            fontSize: 16.0,
-                                                          ),
+                                        height: 111.0,
+                                        constraints:
+                                            BoxConstraints(maxWidth: 343.0),
+                                        padding: EdgeInsets.all(10.0),
+                                        child: Container(
+                                          width: double.infinity,
+                                          height: 91.0,
+                                          child: Row(
+                                            children: [
+                                              Container(
+                                                width: 78.0,
+                                                height: double.infinity,
+                                                child: ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          16.0),
+                                                  child: product['thumbnail'] !=
+                                                          null
+                                                      ? CachedNetworkImage(
+                                                          imageUrl: AppConfig
+                                                                  .instance
+                                                                  .baseApiHost +
+                                                              product['thumbnail']
+                                                                  ['url'],
+                                                          fit: BoxFit.cover,
+                                                          width:
+                                                              double.infinity,
+                                                          height:
+                                                              double.infinity,
                                                         )
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
+                                                      : SizedBox.shrink(
+                                                          child: null),
+                                                ),
                                               ),
-                                            ),
-                                          ],
+                                              SizedBox(width: 10.0),
+                                              Expanded(
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      product['name'],
+                                                      maxLines: 2,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                        fontSize: 16.0,
+                                                        color:
+                                                            HexColor("#53586F"),
+                                                      ),
+                                                    ),
+                                                    SizedBox(height: 12.0),
+                                                    RichText(
+                                                      text: TextSpan(
+                                                        children: [
+                                                          TextSpan(
+                                                            text: product[
+                                                                        'price'] !=
+                                                                    null
+                                                                ? "\$${product['price']} "
+                                                                : ' ',
+                                                            style: TextStyle(
+                                                              fontSize: 22.0,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              color: HexColor(
+                                                                  "#53586F"),
+                                                            ),
+                                                          ),
+                                                          if (orderDetail !=
+                                                                  null &&
+                                                              orderDetail[
+                                                                      'quantity'] !=
+                                                                  null)
+                                                            TextSpan(
+                                                              text:
+                                                                  "x${order['orderDetails'][index]['quantity']}",
+                                                              style: TextStyle(
+                                                                fontSize: 16.0,
+                                                                color: HexColor(
+                                                                    "#53586F"),
+                                                              ),
+                                                            )
+                                                          else
+                                                            TextSpan(
+                                                              text: "x1",
+                                                              style: TextStyle(
+                                                                fontSize: 16.0,
+                                                                color: HexColor(
+                                                                    "#53586F"),
+                                                              ),
+                                                            ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) {
-                                          if (order['status'] == 'cancelled') {
-                                            return _ChangeOrder(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) {
+                                            if (order['status'] ==
+                                                'cancelled') {
+                                              return _ChangeOrder(
+                                                product: product,
+                                                orderDetail:
+                                                    order['orderDetails']
+                                                        [index],
+                                                order: order,
+                                                setOrderChanged:
+                                                    widget.setOrderChanged,
+                                              );
+                                            }
+                                            return OrderProductDetailsWidget(
                                               product: product,
-                                              orderDetail: order['orderDetails']
-                                                  [index],
-                                              order: order,
-                                              setOrderChanged:
-                                                  widget.setOrderChanged,
                                             );
-                                          }
-                                          return OrderProductDetailsWidget(
-                                            product: product,
-                                          );
-                                        },
-                                      ),
-                                    );
-                                  },
-                                );
-                              } else {
-                                return SizedBox.shrink(child: null);
-                              }
-                            },
+                                          },
+                                        ),
+                                      );
+                                    },
+                                  );
+                                } else {
+                                  return SizedBox.shrink(child: null);
+                                }
+                              },
+                            ),
                           ),
+                        ],
+                      ),
+                    );
+                  }
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(height: Adapt.screenH() / 4),
+                      SizedBox(
+                        width: Adapt.screenW(),
+                        height: Adapt.screenH() / 4,
+                        child: Container(
+                          child: CircularProgressIndicator(),
+                          alignment: Alignment.center,
                         ),
-                      ],
-                    ),
+                      )
+                    ],
                   );
-                }
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(height: Adapt.screenH() / 4),
-                    SizedBox(
-                      width: Adapt.screenW(),
-                      height: Adapt.screenH() / 4,
-                      child: Container(
-                        child: CircularProgressIndicator(),
-                        alignment: Alignment.center,
+                },
+              ),
+            ),
+            bottomNavigationBar: Container(
+              height: 83.0,
+              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12,
+                    offset: Offset(0.0, -0.2), // (x,y)
+                    blurRadius: 10.0,
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        "TOTAL PRICE:",
+                        style: TextStyle(
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                    )
-                  ],
-                );
-              },
+                      Text(
+                        "\$$allProductsTotalPrice",
+                        style: TextStyle(
+                          fontSize: 26.0,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
-          bottomNavigationBar: Container(
-            height: 83.0,
-            padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black12,
-                  offset: Offset(0.0, -0.2), // (x,y)
-                  blurRadius: 10.0,
-                ),
-              ],
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      "TOTAL PRICE:",
-                      style: TextStyle(
-                        fontSize: 14.0,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    Text(
-                      "\$$allProductsTotalPrice",
-                      style: TextStyle(
-                        fontSize: 26.0,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-        if (_isLostConnection) ConnectionLost(),
-      ],
+          if (_isLostConnection) ConnectionLost(),
+        ],
+      ),
     );
   }
 }
@@ -430,449 +455,456 @@ class __ChangeOrderState extends State<_ChangeOrder> {
       return AppConfig.instance.baseApiHost + item['url'].toString();
     }).toList();
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      resizeToAvoidBottomInset: true,
-      appBar: AppBar(
-        centerTitle: true,
-        elevation: 0.0,
-        leadingWidth: 70.0,
-        automaticallyImplyLeading: false,
-        leading: InkWell(
-          child: Image.asset("images/back_button.png"),
-          onTap: () => Navigator.of(context).pop(),
-        ),
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
         backgroundColor: Colors.white,
-        title: Text(
-          "Change Order",
-          style: TextStyle(
-            fontSize: 22,
-            color: HexColor("#53586F"),
-            fontWeight: FontWeight.w600,
-            fontFeatures: [FontFeature.enable('smcp')],
+        resizeToAvoidBottomInset: true,
+        appBar: AppBar(
+          centerTitle: true,
+          elevation: 0.0,
+          leadingWidth: 70.0,
+          automaticallyImplyLeading: false,
+          leading: InkWell(
+            child: Image.asset("images/back_button.png"),
+            onTap: () => Navigator.of(context).pop(),
+          ),
+          backgroundColor: Colors.white,
+          title: Text(
+            "Change Order",
+            style: TextStyle(
+              fontSize: 22,
+              color: HexColor("#53586F"),
+              fontWeight: FontWeight.w600,
+              fontFeatures: [FontFeature.enable('smcp')],
+            ),
           ),
         ),
-      ),
-      drawer: SparklesDrawer(),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 20.0),
-            SwiperWidget(productMedia: productMedia),
-            SizedBox(height: 16.0),
-            Container(
-              height: 71.0,
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: pickedImages != null && pickedImages.length > 0
-                  ? buildGridView(
-                      pickedImages,
-                      widget.product['properties']['buyer_uploads'],
-                      loadAssets,
-                    )
-                  : GestureDetector(
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Stack(
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(16.0),
-                                child: Image.asset(
-                                  "images/image 2.png",
-                                  width: 70.0,
-                                  height: double.infinity,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                              Positioned.fill(
-                                child: Container(
-                                  width: 70.0,
-                                  height: double.infinity,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(16.0),
-                                    color: Colors.white.withOpacity(.4),
-                                  ),
-                                ),
-                              ),
-                              Positioned.fill(
-                                child: Center(
-                                  child: SvgPicture.asset(
-                                    "images/cloud_white.svg",
-                                    color: Colors.white,
-                                    width: 24.0,
-                                    height: 18.0,
+        drawer: SparklesDrawer(),
+        body: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 20.0),
+              SwiperWidget(productMedia: productMedia),
+              SizedBox(height: 16.0),
+              Container(
+                height: 71.0,
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: pickedImages != null && pickedImages.length > 0
+                    ? buildGridView(
+                        pickedImages,
+                        widget.product['properties']['buyer_uploads'],
+                        loadAssets,
+                      )
+                    : GestureDetector(
+                        behavior: HitTestBehavior.translucent,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Stack(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(16.0),
+                                  child: Image.asset(
+                                    "images/image 2.png",
+                                    width: 70.0,
+                                    height: double.infinity,
                                     fit: BoxFit.cover,
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(width: 12.0),
-                          Expanded(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "your Uploaded image".toUpperCase(),
-                                  style: TextStyle(
-                                    fontSize: 14.0,
-                                    fontWeight: FontWeight.w600,
-                                    color: HexColor("#C4C6D2"),
+                                Positioned.fill(
+                                  child: Container(
+                                    width: 70.0,
+                                    height: double.infinity,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(16.0),
+                                      color: Colors.white.withOpacity(.4),
+                                    ),
                                   ),
                                 ),
-                                SizedBox(height: 2.0),
-                                RichText(
-                                  text: TextSpan(
-                                    children: [
-                                      TextSpan(
-                                        text: "Files should be ",
-                                        style: TextStyle(
-                                          fontSize: 12.0,
-                                          color: HexColor("#C4C6D2"),
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: "PNG, JPG ",
-                                        style: TextStyle(
-                                          fontSize: 12.0,
-                                          fontWeight: FontWeight.w600,
-                                          color: HexColor("#53586F")
-                                              .withOpacity(.7),
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: "size - 0000",
-                                        style: TextStyle(
-                                          fontSize: 12.0,
-                                          color: HexColor("#C4C6D2"),
-                                        ),
-                                      ),
-                                    ],
+                                Positioned.fill(
+                                  child: Center(
+                                    child: SvgPicture.asset(
+                                      "images/cloud_white.svg",
+                                      color: Colors.white,
+                                      width: 24.0,
+                                      height: 18.0,
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
                                 ),
                               ],
                             ),
-                          ),
-                        ],
-                      ),
-                      onTap: () {
-                        if (widget.product['uploadsAvailable'] == true) {
-                          loadAssets();
-                        }
-                      },
-                    ),
-            ),
-            SizedBox(height: 12.0),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Text(
-                "Engraving".toUpperCase(),
-                style: TextStyle(
-                  fontSize: 14.0,
-                  fontWeight: FontWeight.w600,
-                  color: HexColor("#C4C6D2"),
-                ),
-              ),
-            ),
-            SizedBox(height: 10.0),
-            Container(
-              height: 40.0,
-              width: MediaQuery.of(context).size.width,
-              margin: const EdgeInsets.symmetric(horizontal: 16.0),
-              decoration: BoxDecoration(
-                color: HexColor("#EDEEF2"),
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              child: TextField(
-                onChanged: (text) {
-                  engravingName = text;
-                },
-                style: TextStyle(
-                  color: HexColor("#53586F"),
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.w700,
-                ),
-                decoration: InputDecoration(
-                  isDense: true,
-                  hintText: 'Engraving name',
-                  contentPadding: EdgeInsets.symmetric(
-                    vertical: 11,
-                    horizontal: 16,
-                  ),
-                  fillColor: Colors.white,
-                  hintStyle: new TextStyle(color: Colors.grey),
-                  labelStyle: new TextStyle(color: Colors.white),
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
-                  border: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(height: 20.0),
-            Center(
-              child: Container(
-                width: 300.0,
-                height: 48.0,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(31.0),
-                ),
-                child: ElevatedButton(
-                  style: ButtonStyle(
-                    elevation: MaterialStateProperty.all(0),
-                    backgroundColor: MaterialStateProperty.resolveWith(
-                      (states) {
-                        if (states.contains(MaterialState.disabled))
-                          return HexColor("#C4C6D2");
-                        return HexColor("#6092DC");
-                      },
-                    ),
-                    shape: MaterialStateProperty.all(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(31.0),
-                      ),
-                    ),
-                  ),
-                  child: isLoading
-                      ? Container(
-                          width: 25.0,
-                          height: 25.0,
-                          child: CircularProgressIndicator(),
-                        )
-                      : Text(
-                          'Save',
-                          style: TextStyle(
-                            fontSize: 18.0,
-                            fontWeight: FontWeight.normal,
-                            color: Colors.white,
-                          ),
-                        ),
-                  onPressed: isLoading
-                      ? null
-                      : () async {
-                          await _onSaveClicked(
-                            context,
-                            widget.product['id'],
-                            pickedImages,
-                            engravingName,
-                            widget.product['properties']['buyer_uploads'],
-                            _setLoading,
-                            widget.order,
-                            widget.orderDetail,
-                            widget.setOrderChanged,
-                          );
-                        },
-                ),
-              ),
-            ),
-            SizedBox(height: 18.0),
-            Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: HexColor("#FAFCFF"),
-                borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(32.0),
-                  topLeft: Radius.circular(32.0),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey[300],
-                    offset: Offset(0.0, -0.2), // (x, y)
-                    blurRadius: 10.0,
-                  ),
-                ],
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(height: 19.0),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 37.0),
-                    child: Text(
-                      "${widget.product['name']}",
-                      style: TextStyle(
-                        color: HexColor("#53586F"),
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 21.0),
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      RichText(
-                        text: TextSpan(
-                          children: [
-                            TextSpan(
-                              text: "\$${widget.product['price']} ",
-                              style: TextStyle(
-                                color: HexColor("#53586F"),
-                                fontSize: 24.0,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            TextSpan(
-                              text: "\$${widget.product['oldPrice']}",
-                              style: TextStyle(
-                                color: HexColor("#53586F").withOpacity(.5),
-                                fontSize: 18.0,
-                                decoration: TextDecoration.lineThrough,
+                            SizedBox(width: 12.0),
+                            Expanded(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "your Uploaded image".toUpperCase(),
+                                    style: TextStyle(
+                                      fontSize: 14.0,
+                                      fontWeight: FontWeight.w600,
+                                      color: HexColor("#C4C6D2"),
+                                    ),
+                                  ),
+                                  SizedBox(height: 2.0),
+                                  RichText(
+                                    text: TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: "Files should be ",
+                                          style: TextStyle(
+                                            fontSize: 12.0,
+                                            color: HexColor("#C4C6D2"),
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text: "PNG, JPG ",
+                                          style: TextStyle(
+                                            fontSize: 12.0,
+                                            fontWeight: FontWeight.w600,
+                                            color: HexColor("#53586F")
+                                                .withOpacity(.7),
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text: "size - 0000",
+                                          style: TextStyle(
+                                            fontSize: 12.0,
+                                            color: HexColor("#C4C6D2"),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
                         ),
+                        onTap: () {
+                          if (widget.product['uploadsAvailable'] == true) {
+                            loadAssets();
+                          }
+                        },
                       ),
-                      SizedBox(height: 3.0),
-                      Text(
-                        "You Save: \$40 (50%)",
-                        style: TextStyle(
-                          fontSize: 12.0,
-                          color: HexColor("#27AE60"),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 10.0),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: InkWell(
-                          child: Container(
-                            width: double.infinity,
-                            height: 36.0,
-                            constraints: BoxConstraints(
-                              maxWidth: 188.0,
-                            ),
-                            decoration: currentTab == 0
-                                ? BoxDecoration(
-                                    color: HexColor("#FAFCFF"),
-                                    borderRadius: BorderRadius.only(
-                                      topRight: Radius.circular(16.0),
-                                      bottomRight: Radius.circular(16.0),
-                                    ),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.grey[300],
-                                        offset: Offset(0.0, 5.0), // (x, y)
-                                        blurRadius: 5.0,
-                                      ),
-                                    ],
-                                  )
-                                : null,
-                            child: Center(
-                              child: Text(
-                                "Product Details",
-                                style: TextStyle(
-                                  fontSize: 14.0,
-                                  fontWeight: FontWeight.w700,
-                                  color: currentTab == 0
-                                      ? HexColor("#53586F")
-                                      : HexColor("#C4C6D2"),
-                                ),
-                              ),
-                            ),
-                          ),
-                          onTap: () {
-                            setState(() {
-                              currentTab = 0;
-                            });
-                          },
-                        ),
-                      ),
-                      SizedBox(width: 20.0),
-                      Expanded(
-                        child: InkWell(
-                          child: Container(
-                            width: double.infinity,
-                            height: 36.0,
-                            constraints: BoxConstraints(
-                              maxWidth: 188.0,
-                            ),
-                            decoration: currentTab == 1
-                                ? BoxDecoration(
-                                    color: HexColor("#FAFCFF"),
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(16.0),
-                                      bottomLeft: Radius.circular(16.0),
-                                    ),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.grey[300],
-                                        offset: Offset(0.0, 5.0), // (x, y)
-                                        blurRadius: 5.0,
-                                      ),
-                                    ],
-                                  )
-                                : null,
-                            child: Center(
-                              child: Text(
-                                "Delivery Time",
-                                style: TextStyle(
-                                  fontSize: 14.0,
-                                  fontWeight: FontWeight.w700,
-                                  color: currentTab == 1
-                                      ? HexColor("#53586F")
-                                      : HexColor("#C4C6D2"),
-                                ),
-                              ),
-                            ),
-                          ),
-                          onTap: () {
-                            setState(() {
-                              currentTab = 1;
-                            });
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 16.0),
-                  currentTab == 1
-                      ? Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16.0),
-                          child: Text(
-                            widget.product['productDetails'] != null
-                                ? widget.product['productDetails']
-                                : "",
-                            style: TextStyle(
-                              fontSize: 11.0,
-                              fontWeight: FontWeight.w300,
-                              height: 1.35,
-                            ),
-                          ),
-                        )
-                      : Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16.0),
-                          child: Text(
-                            widget.product['deliveryTime'] != null
-                                ? widget.product['deliveryTime']
-                                : "",
-                            style: TextStyle(
-                              fontSize: 11.0,
-                              fontWeight: FontWeight.w300,
-                              height: 1.35,
-                            ),
-                          ),
-                        ),
-                  SizedBox(height: 20.0),
-                ],
               ),
-            ),
-          ],
+              SizedBox(height: 12.0),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Text(
+                  "Engraving".toUpperCase(),
+                  style: TextStyle(
+                    fontSize: 14.0,
+                    fontWeight: FontWeight.w600,
+                    color: HexColor("#C4C6D2"),
+                  ),
+                ),
+              ),
+              SizedBox(height: 10.0),
+              Container(
+                height: 40.0,
+                width: MediaQuery.of(context).size.width,
+                margin: const EdgeInsets.symmetric(horizontal: 16.0),
+                decoration: BoxDecoration(
+                  color: HexColor("#EDEEF2"),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                child: TextField(
+                  onChanged: (text) {
+                    engravingName = text;
+                  },
+                  style: TextStyle(
+                    color: HexColor("#53586F"),
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.w700,
+                  ),
+                  decoration: InputDecoration(
+                    isDense: true,
+                    hintText: 'Engraving name',
+                    contentPadding: EdgeInsets.symmetric(
+                      vertical: 11,
+                      horizontal: 16,
+                    ),
+                    fillColor: Colors.white,
+                    hintStyle: new TextStyle(color: Colors.grey),
+                    labelStyle: new TextStyle(color: Colors.white),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    border: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 20.0),
+              Center(
+                child: Container(
+                  width: 300.0,
+                  height: 48.0,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(31.0),
+                  ),
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                      elevation: MaterialStateProperty.all(0),
+                      backgroundColor: MaterialStateProperty.resolveWith(
+                        (states) {
+                          if (states.contains(MaterialState.disabled))
+                            return HexColor("#C4C6D2");
+                          return HexColor("#6092DC");
+                        },
+                      ),
+                      shape: MaterialStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(31.0),
+                        ),
+                      ),
+                    ),
+                    child: isLoading
+                        ? Container(
+                            width: 25.0,
+                            height: 25.0,
+                            child: CircularProgressIndicator(),
+                          )
+                        : Text(
+                            'Save',
+                            style: TextStyle(
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.normal,
+                              color: Colors.white,
+                            ),
+                          ),
+                    onPressed: isLoading
+                        ? null
+                        : () async {
+                            await _onSaveClicked(
+                              context,
+                              widget.product['id'],
+                              pickedImages,
+                              engravingName,
+                              widget.product['properties']['buyer_uploads'],
+                              _setLoading,
+                              widget.order,
+                              widget.orderDetail,
+                              widget.setOrderChanged,
+                            );
+                          },
+                  ),
+                ),
+              ),
+              SizedBox(height: 18.0),
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: HexColor("#FAFCFF"),
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(32.0),
+                    topLeft: Radius.circular(32.0),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey[300],
+                      offset: Offset(0.0, -0.2), // (x, y)
+                      blurRadius: 10.0,
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(height: 19.0),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 37.0),
+                      child: Text(
+                        "${widget.product['name']}",
+                        style: TextStyle(
+                          color: HexColor("#53586F"),
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 21.0),
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: "\$${widget.product['price']} ",
+                                style: TextStyle(
+                                  color: HexColor("#53586F"),
+                                  fontSize: 24.0,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              TextSpan(
+                                text: "\$${widget.product['oldPrice']}",
+                                style: TextStyle(
+                                  color: HexColor("#53586F").withOpacity(.5),
+                                  fontSize: 18.0,
+                                  decoration: TextDecoration.lineThrough,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 3.0),
+                        Text(
+                          "You Save: \$40 (50%)",
+                          style: TextStyle(
+                            fontSize: 12.0,
+                            color: HexColor("#27AE60"),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 10.0),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: InkWell(
+                            child: Container(
+                              width: double.infinity,
+                              height: 36.0,
+                              constraints: BoxConstraints(
+                                maxWidth: 188.0,
+                              ),
+                              decoration: currentTab == 0
+                                  ? BoxDecoration(
+                                      color: HexColor("#FAFCFF"),
+                                      borderRadius: BorderRadius.only(
+                                        topRight: Radius.circular(16.0),
+                                        bottomRight: Radius.circular(16.0),
+                                      ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.grey[300],
+                                          offset: Offset(0.0, 5.0), // (x, y)
+                                          blurRadius: 5.0,
+                                        ),
+                                      ],
+                                    )
+                                  : null,
+                              child: Center(
+                                child: Text(
+                                  "Product Details",
+                                  style: TextStyle(
+                                    fontSize: 14.0,
+                                    fontWeight: FontWeight.w700,
+                                    color: currentTab == 0
+                                        ? HexColor("#53586F")
+                                        : HexColor("#C4C6D2"),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            onTap: () {
+                              setState(() {
+                                currentTab = 0;
+                              });
+                            },
+                          ),
+                        ),
+                        SizedBox(width: 20.0),
+                        Expanded(
+                          child: InkWell(
+                            child: Container(
+                              width: double.infinity,
+                              height: 36.0,
+                              constraints: BoxConstraints(
+                                maxWidth: 188.0,
+                              ),
+                              decoration: currentTab == 1
+                                  ? BoxDecoration(
+                                      color: HexColor("#FAFCFF"),
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(16.0),
+                                        bottomLeft: Radius.circular(16.0),
+                                      ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.grey[300],
+                                          offset: Offset(0.0, 5.0), // (x, y)
+                                          blurRadius: 5.0,
+                                        ),
+                                      ],
+                                    )
+                                  : null,
+                              child: Center(
+                                child: Text(
+                                  "Delivery Time",
+                                  style: TextStyle(
+                                    fontSize: 14.0,
+                                    fontWeight: FontWeight.w700,
+                                    color: currentTab == 1
+                                        ? HexColor("#53586F")
+                                        : HexColor("#C4C6D2"),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            onTap: () {
+                              setState(() {
+                                currentTab = 1;
+                              });
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 16.0),
+                    currentTab == 1
+                        ? Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16.0),
+                            child: Text(
+                              widget.product['productDetails'] != null
+                                  ? widget.product['productDetails']
+                                  : "",
+                              style: TextStyle(
+                                fontSize: 11.0,
+                                fontWeight: FontWeight.w300,
+                                height: 1.35,
+                              ),
+                            ),
+                          )
+                        : Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16.0),
+                            child: Text(
+                              widget.product['deliveryTime'] != null
+                                  ? widget.product['deliveryTime']
+                                  : "",
+                              style: TextStyle(
+                                fontSize: 11.0,
+                                fontWeight: FontWeight.w300,
+                                height: 1.35,
+                              ),
+                            ),
+                          ),
+                    SizedBox(height: 20.0),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -917,6 +949,7 @@ Widget buildGridView(List<Asset> images, int buyUploads, Function loadAssets) {
   int diff = buyUploads - images.length;
 
   return GestureDetector(
+    behavior: HitTestBehavior.translucent,
     child: Row(
       mainAxisSize: MainAxisSize.min,
       children: [

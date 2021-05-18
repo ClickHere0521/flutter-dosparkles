@@ -72,7 +72,7 @@ void _changeProfileMainImage(
 }
 
 Future _sendRequest(imagesList) async {
-  Uri uri = Uri.parse('https://backend.dosparkles.com/upload');
+  Uri uri = Uri.parse('${AppConfig.instance.baseApiHost}/upload');
 
   MultipartRequest request = http.MultipartRequest("POST", uri);
 
@@ -323,6 +323,7 @@ class __MainBodyState extends State<_MainBody> {
         children: [
           SizedBox(height: 30.0),
           GestureDetector(
+            behavior: HitTestBehavior.translucent,
             child: Stack(
               children: [
                 Container(
@@ -380,6 +381,7 @@ class __MainBodyState extends State<_MainBody> {
             widget.globalUser != null && widget.globalUser.name != null
                 ? widget.globalUser.name
                 : "User",
+            textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 18.0,
               fontWeight: FontWeight.w500,
@@ -426,6 +428,7 @@ class __MainBodyState extends State<_MainBody> {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.0),
             child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -477,6 +480,7 @@ class __MainBodyState extends State<_MainBody> {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.0),
             child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -524,6 +528,7 @@ class __MainBodyState extends State<_MainBody> {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.0),
             child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -571,6 +576,7 @@ class __MainBodyState extends State<_MainBody> {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.0),
             child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -1043,6 +1049,7 @@ class __OrderHistoryState extends State<_OrderHistory> {
                       )
                     else
                       Center(child: Text("No Data")),
+                    SizedBox(height: 20.0),
                   ],
                 ),
               );
@@ -1137,60 +1144,62 @@ class __FriendsSignedUpState extends State<_FriendsSignedUp> {
                       color: Colors.white,
                       width: MediaQuery.of(context).size.width,
                       height: MediaQuery.of(context).size.height,
-                      child: invitesSent == null && invitesSent.length == 0
-                          ? Text("No Data")
-                          : ListView.separated(
-                              itemCount: invitesSent.length,
-                              shrinkWrap: true,
-                              physics: BouncingScrollPhysics(),
-                              separatorBuilder: (_, index) => Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 4.0),
-                                child: Divider(
-                                  color: Colors.white,
-                                  thickness: 2.0,
-                                  height: 0.0,
+                      child: invitesSent == null || invitesSent.length == 0
+                          ? Center(child: Text("No Data"))
+                          : SafeArea(
+                              child: ListView.separated(
+                                itemCount: invitesSent.length,
+                                shrinkWrap: true,
+                                physics: BouncingScrollPhysics(),
+                                separatorBuilder: (_, index) => Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 4.0),
+                                  child: Divider(
+                                    color: Colors.white,
+                                    thickness: 2.0,
+                                    height: 0.0,
+                                  ),
                                 ),
-                              ),
-                              itemBuilder: (BuildContext context, int index) {
-                                Map contact = invitesSent[index];
+                                itemBuilder: (BuildContext context, int index) {
+                                  Map contact = invitesSent[index];
 
-                                return Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  height: 50.0,
-                                  color: HexColor("#FAFCFF"),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      FLAvatar(
-                                        image: Image.asset(
-                                          'images/user-male-circle.png',
-                                          fit: BoxFit.cover,
-                                          width: double.infinity,
+                                  return Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    height: 50.0,
+                                    color: HexColor("#FAFCFF"),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        FLAvatar(
+                                          image: Image.asset(
+                                            'images/user-male-circle.png',
+                                            fit: BoxFit.cover,
+                                            width: double.infinity,
+                                            height: double.infinity,
+                                          ),
+                                          width: 50.0,
                                           height: double.infinity,
                                         ),
-                                        width: 50.0,
-                                        height: double.infinity,
-                                      ),
-                                      SizedBox(width: 13.0),
-                                      Expanded(
-                                        child: Text(
-                                          "${contact['name'] != null ? contact['name'] : contact['phone']}",
-                                          style: TextStyle(
-                                            fontSize: 16.0,
-                                            fontWeight: FontWeight.w600,
+                                        SizedBox(width: 13.0),
+                                        Expanded(
+                                          child: Text(
+                                            "${contact['name'] != null ? contact['name'] : contact['phone']}",
+                                            style: TextStyle(
+                                              fontSize: 16.0,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
                                           ),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
                     );
                   }

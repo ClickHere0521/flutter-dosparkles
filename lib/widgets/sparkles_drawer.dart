@@ -6,6 +6,7 @@ import 'package:com.floridainc.dosparkles/routes/routes.dart';
 import 'package:com.floridainc.dosparkles/actions/user_info_operate.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/utils/colors.dart';
+import 'package:com.floridainc.dosparkles/widgets/adDialog.dart';
 import 'package:com.floridainc.dosparkles/widgets/blog.dart';
 import 'package:com.floridainc.dosparkles/widgets/branch/branch_two.dart';
 import 'package:com.floridainc.dosparkles/widgets/checkout.dart';
@@ -126,6 +127,7 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                                   widget.globalUser.store != null
                                       ? widget.globalUser.store['name']
                                       : "Store",
+                                  textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontSize: 18.0,
                                     fontWeight: FontWeight.w600,
@@ -139,6 +141,7 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                                           widget.globalUser.name != null
                                       ? widget.globalUser.name
                                       : "User",
+                                  textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontSize: 18.0,
                                     fontWeight: FontWeight.w600,
@@ -714,9 +717,8 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                     ),
                   ),
                   onTap: () {
-                    Navigator.of(context).pushReplacementNamed(
-                        'helpsupportpage',
-                        arguments: null);
+                    Navigator.of(context)
+                        .pushNamed('helpsupportpage', arguments: null);
                   },
                 ),
                 SizedBox(height: 40.0),

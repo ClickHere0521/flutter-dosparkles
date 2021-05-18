@@ -226,6 +226,7 @@ class __FirstPageState extends State<_FirstPage> {
               ),
             ),
             child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
               onHorizontalDragEnd: (dragEndDetails) async {
                 if (dragEndDetails.primaryVelocity < 0) {
                   // Page forwards
@@ -352,6 +353,7 @@ class __MainBodyState extends State<_MainBody> {
           ),
           SizedBox(height: 7.0),
           GestureDetector(
+            behavior: HitTestBehavior.translucent,
             child: Text(
               "Terms and Conditions",
               style: TextStyle(
@@ -424,6 +426,7 @@ class __MainBodyState extends State<_MainBody> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               GestureDetector(
+                behavior: HitTestBehavior.translucent,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -444,6 +447,7 @@ class __MainBodyState extends State<_MainBody> {
               ),
               SizedBox(width: 81.0),
               GestureDetector(
+                behavior: HitTestBehavior.translucent,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -598,6 +602,7 @@ class __MainBodyState extends State<_MainBody> {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: GestureDetector(
+                      behavior: HitTestBehavior.translucent,
                       child: Text(
                         "PREVIOUS",
                         style: TextStyle(
@@ -636,6 +641,7 @@ class __MainBodyState extends State<_MainBody> {
                   Align(
                     alignment: Alignment.centerRight,
                     child: GestureDetector(
+                      behavior: HitTestBehavior.translucent,
                       child: Text(
                         "NEXT",
                         style: TextStyle(
@@ -826,6 +832,7 @@ class __NextBodyState extends State<_NextBody> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               GestureDetector(
+                behavior: HitTestBehavior.translucent,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -846,6 +853,7 @@ class __NextBodyState extends State<_NextBody> {
               ),
               SizedBox(width: 81.0),
               GestureDetector(
+                behavior: HitTestBehavior.translucent,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -869,6 +877,7 @@ class __NextBodyState extends State<_NextBody> {
           ),
           SizedBox(height: 46.0),
           GestureDetector(
+            behavior: HitTestBehavior.translucent,
             child: Text(
               "Terms and Conditions",
               style: TextStyle(
@@ -890,6 +899,7 @@ class __NextBodyState extends State<_NextBody> {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: GestureDetector(
+                      behavior: HitTestBehavior.translucent,
                       child: Text(
                         "PREVIOUS",
                         style: TextStyle(
@@ -928,6 +938,7 @@ class __NextBodyState extends State<_NextBody> {
                   Align(
                     alignment: Alignment.centerRight,
                     child: GestureDetector(
+                      behavior: HitTestBehavior.translucent,
                       child: Text(
                         "NEXT",
                         style: TextStyle(
@@ -1022,6 +1033,7 @@ class __EndBodyState extends State<_EndBody> {
           ),
           SizedBox(height: 8.0),
           GestureDetector(
+            behavior: HitTestBehavior.translucent,
             child: Text(
               "Terms and Conditions",
               style: TextStyle(
@@ -1202,353 +1214,363 @@ class __ContactsPageState extends State<_ContactsPage> {
           contactsList.where((contact) => contact['checked'] == true).toList();
     });
 
-    return Stack(
-      children: [
-        Positioned(
-          top: 0,
-          left: 0,
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            height: 181.0,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [HexColor('#8FADEB'), HexColor('#7397E2')],
-                begin: const FractionalOffset(0.0, 0.0),
-                end: const FractionalOffset(1.0, 0.0),
-                stops: [0.0, 1.0],
-                tileMode: TileMode.clamp,
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Stack(
+        children: [
+          Positioned(
+            top: 0,
+            left: 0,
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: 181.0,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [HexColor('#8FADEB'), HexColor('#7397E2')],
+                  begin: const FractionalOffset(0.0, 0.0),
+                  end: const FractionalOffset(1.0, 0.0),
+                  stops: [0.0, 1.0],
+                  tileMode: TileMode.clamp,
+                ),
               ),
             ),
           ),
-        ),
-        Scaffold(
-          appBar: AppBar(
-            centerTitle: true,
-            elevation: 0.0,
-            leadingWidth: 70.0,
-            automaticallyImplyLeading: false,
-            leading: InkWell(
-              child: Image.asset("images/back_button_white.png"),
-              onTap: () => Navigator.of(context).pop(),
+          Scaffold(
+            appBar: AppBar(
+              centerTitle: true,
+              elevation: 0.0,
+              leadingWidth: 70.0,
+              automaticallyImplyLeading: false,
+              leading: InkWell(
+                child: Image.asset("images/back_button_white.png"),
+                onTap: () => Navigator.of(context).pop(),
+              ),
+              backgroundColor: Colors.transparent,
+              title: Text(
+                "Invite Friends",
+                style: TextStyle(
+                  fontSize: 22,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                  fontFeatures: [FontFeature.enable('smcp')],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  child: Text(
+                    "15 Invites",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14.0,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  onPressed: () {
+                    List foundList = [];
+
+                    for (int i = 0; i < filteredList.length; i++) {
+                      var item = filteredList[i];
+
+                      if (foundList.length == 15) break;
+                      if (item['checked'] == true) continue;
+
+                      item['checked'] = true;
+                      foundList.add(item);
+                    }
+
+                    setState(() {});
+                  },
+                ),
+              ],
             ),
             backgroundColor: Colors.transparent,
-            title: Text(
-              "Invite Friends",
-              style: TextStyle(
-                fontSize: 22,
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
-                fontFeatures: [FontFeature.enable('smcp')],
-              ),
-            ),
-            actions: [
-              TextButton(
-                child: Text(
-                  "15 Invites",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 14.0,
-                    fontWeight: FontWeight.w500,
-                  ),
+            resizeToAvoidBottomInset: true,
+            body: Container(
+              padding: EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              decoration: BoxDecoration(
+                color: HexColor("#FAFCFF"),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(32.0),
+                  topRight: Radius.circular(32.0),
                 ),
-                onPressed: () {
-                  List foundList = [];
-
-                  for (int i = 0; i < filteredList.length; i++) {
-                    var item = filteredList[i];
-
-                    if (foundList.length == 15) break;
-                    if (item['checked'] == true) continue;
-
-                    item['checked'] = true;
-                    foundList.add(item);
-                  }
-
-                  setState(() {});
-                },
               ),
-            ],
-          ),
-          backgroundColor: Colors.transparent,
-          resizeToAvoidBottomInset: true,
-          body: Container(
-            padding: EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-            decoration: BoxDecoration(
-              color: HexColor("#FAFCFF"),
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(32.0),
-                topRight: Radius.circular(32.0),
-              ),
-            ),
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Align(
-                    alignment: Alignment.center,
-                    child: Container(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Card(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(22.0),
-                            ),
-                            shadowColor: Colors.black26,
-                            elevation: 4.0,
-                            child: Container(
-                              height: 40.0,
-                              decoration: BoxDecoration(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Align(
+                      alignment: Alignment.center,
+                      child: Container(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Card(
+                              shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(22.0),
                               ),
-                              child: TextField(
-                                textAlign: TextAlign.left,
-                                keyboardType: TextInputType.visiblePassword,
-                                onChanged: (String value) {
-                                  setState(() {
-                                    searchValue = value;
-                                  });
-                                },
-                                decoration: InputDecoration(
-                                  hintText: 'Search friends',
-                                  hintStyle: TextStyle(
-                                    fontSize: 14.0,
-                                    color: Colors.black26,
-                                  ),
-                                  prefixIcon: Padding(
-                                    padding: const EdgeInsets.only(left: 12.0),
-                                    child: Icon(
-                                      Icons.search,
-                                      size: 26.0,
+                              shadowColor: Colors.black26,
+                              elevation: 4.0,
+                              child: Container(
+                                height: 40.0,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(22.0),
+                                ),
+                                child: TextField(
+                                  textAlign: TextAlign.left,
+                                  keyboardType: TextInputType.visiblePassword,
+                                  onChanged: (String value) {
+                                    setState(() {
+                                      searchValue = value;
+                                    });
+                                  },
+                                  decoration: InputDecoration(
+                                    hintText: 'Search friends',
+                                    hintStyle: TextStyle(
+                                      fontSize: 14.0,
                                       color: Colors.black26,
                                     ),
-                                  ),
-                                  filled: true,
-                                  isDense: true,
-                                  contentPadding: EdgeInsets.only(
-                                      top: 11.0, bottom: 11.0, right: 11.0),
-                                  fillColor: Colors.white,
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(25),
-                                    borderSide: BorderSide.none,
+                                    prefixIcon: Padding(
+                                      padding:
+                                          const EdgeInsets.only(left: 12.0),
+                                      child: Icon(
+                                        Icons.search,
+                                        size: 26.0,
+                                        color: Colors.black26,
+                                      ),
+                                    ),
+                                    filled: true,
+                                    isDense: true,
+                                    contentPadding: EdgeInsets.only(
+                                        top: 11.0, bottom: 11.0, right: 11.0),
+                                    fillColor: Colors.white,
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(25),
+                                      borderSide: BorderSide.none,
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                          SizedBox(height: 20),
-                          ListView.separated(
-                            itemCount: filteredList.length,
-                            shrinkWrap: true,
-                            physics: BouncingScrollPhysics(),
-                            separatorBuilder: (_, index) => Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 4.0),
-                              child: Divider(
-                                color: Colors.white,
-                                thickness: 2.0,
-                                height: 0.0,
+                            SizedBox(height: 20),
+                            ListView.separated(
+                              itemCount: filteredList.length,
+                              shrinkWrap: true,
+                              physics: BouncingScrollPhysics(),
+                              separatorBuilder: (_, index) => Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 4.0),
+                                child: Divider(
+                                  color: Colors.white,
+                                  thickness: 2.0,
+                                  height: 0.0,
+                                ),
                               ),
-                            ),
-                            itemBuilder: (BuildContext context, int index) {
-                              Map contact = filteredList[index];
+                              itemBuilder: (BuildContext context, int index) {
+                                Map contact = filteredList[index];
 
-                              List invitesPresent = invitesSentList.length > 0
-                                  ? invitesSentList
-                                      .where((invite) =>
-                                          contact['invited'] &&
-                                          invite['phone'] == contact['phone'])
-                                      .toList()
-                                  : [];
+                                List invitesPresent = invitesSentList.length > 0
+                                    ? invitesSentList
+                                        .where((invite) =>
+                                            contact['invited'] &&
+                                            invite['phone'] == contact['phone'])
+                                        .toList()
+                                    : [];
 
-                              bool shouldDisabledBtn = false;
+                                bool shouldDisabledBtn = false;
 
-                              if (invitesPresent.length > 0) {
-                                DateTime currentDate = DateTime.now();
-                                DateTime inviteDate =
-                                    DateTime.fromMillisecondsSinceEpoch(
-                                        invitesPresent[0]['date']);
+                                if (invitesPresent.length > 0) {
+                                  DateTime currentDate = DateTime.now();
+                                  DateTime inviteDate =
+                                      DateTime.fromMillisecondsSinceEpoch(
+                                          invitesPresent[0]['date']);
 
-                                int inviteDifference =
-                                    inviteDate.difference(currentDate).inDays;
+                                  int inviteDifference =
+                                      inviteDate.difference(currentDate).inDays;
 
-                                if (inviteDifference < 3) {
-                                  shouldDisabledBtn = true;
+                                  if (inviteDifference < 3) {
+                                    shouldDisabledBtn = true;
+                                  }
                                 }
-                              }
 
-                              return GestureDetector(
-                                child: Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  height: 50.0,
-                                  color: HexColor("#FAFCFF"),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      FLAvatar(
-                                        image: Image.asset(
-                                          'images/user-male-circle.png',
-                                          fit: BoxFit.cover,
-                                          width: double.infinity,
+                                return GestureDetector(
+                                  behavior: HitTestBehavior.translucent,
+                                  child: Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    height: 50.0,
+                                    color: HexColor("#FAFCFF"),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        FLAvatar(
+                                          image: Image.asset(
+                                            'images/user-male-circle.png',
+                                            fit: BoxFit.cover,
+                                            width: double.infinity,
+                                            height: double.infinity,
+                                          ),
+                                          width: 50.0,
                                           height: double.infinity,
                                         ),
-                                        width: 50.0,
-                                        height: double.infinity,
-                                      ),
-                                      SizedBox(width: 13.0),
-                                      Expanded(
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              "${contact['name']}",
-                                              style: TextStyle(
-                                                fontSize: 16.0,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                            contact['invited'] == true
-                                                ? Text(
-                                                    "You can resend in 3 days.",
-                                                    style: TextStyle(
-                                                        fontSize: 12.0),
-                                                  )
-                                                : SizedBox.shrink(child: null),
-                                          ],
-                                        ),
-                                      ),
-                                      SizedBox(width: 13.0),
-                                      contact['invited'] == true
-                                          ? ElevatedButton(
-                                              child: _isResendLoading
-                                                  ? Container(
-                                                      width: 15.0,
-                                                      height: 15.0,
-                                                      child:
-                                                          CircularProgressIndicator(
-                                                        color: Colors.white,
-                                                      ),
-                                                    )
-                                                  : Text(
-                                                      'Resend',
-                                                      style: TextStyle(
-                                                        fontSize: 14.0,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                      ),
-                                                    ),
-                                              style: ButtonStyle(
-                                                backgroundColor:
-                                                    MaterialStateProperty
-                                                        .resolveWith<Color>(
-                                                  (Set<MaterialState> states) {
-                                                    if (states.contains(
-                                                      MaterialState.disabled,
-                                                    )) return Colors.white;
-                                                    return null;
-                                                  },
+                                        SizedBox(width: 13.0),
+                                        Expanded(
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                "${contact['name']}",
+                                                style: TextStyle(
+                                                  fontSize: 16.0,
+                                                  fontWeight: FontWeight.w600,
                                                 ),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
                                               ),
-                                              onPressed: shouldDisabledBtn
-                                                  ? null
-                                                  : () {
-                                                      _resendHandler(contact,
-                                                          _setResendLoading);
+                                              contact['invited'] == true
+                                                  ? Text(
+                                                      "You can resend in 3 days.",
+                                                      style: TextStyle(
+                                                          fontSize: 12.0),
+                                                    )
+                                                  : SizedBox.shrink(
+                                                      child: null),
+                                            ],
+                                          ),
+                                        ),
+                                        SizedBox(width: 13.0),
+                                        contact['invited'] == true
+                                            ? ElevatedButton(
+                                                child: _isResendLoading
+                                                    ? Container(
+                                                        width: 15.0,
+                                                        height: 15.0,
+                                                        child:
+                                                            CircularProgressIndicator(
+                                                          color: Colors.white,
+                                                        ),
+                                                      )
+                                                    : Text(
+                                                        'Resend',
+                                                        style: TextStyle(
+                                                          fontSize: 14.0,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        ),
+                                                      ),
+                                                style: ButtonStyle(
+                                                  backgroundColor:
+                                                      MaterialStateProperty
+                                                          .resolveWith<Color>(
+                                                    (Set<MaterialState>
+                                                        states) {
+                                                      if (states.contains(
+                                                        MaterialState.disabled,
+                                                      )) return Colors.white;
+                                                      return null;
                                                     },
-                                            )
-                                          : Image.asset(
-                                              contact['checked']
-                                                  ? 'images/Group 231.png'
-                                                  : 'images/Group 230.png',
-                                              fit: BoxFit.contain,
-                                              width: 32.0,
-                                              height: 32.0,
-                                            ),
-                                    ],
+                                                  ),
+                                                ),
+                                                onPressed: shouldDisabledBtn
+                                                    ? null
+                                                    : () {
+                                                        _resendHandler(contact,
+                                                            _setResendLoading);
+                                                      },
+                                              )
+                                            : Image.asset(
+                                                contact['checked']
+                                                    ? 'images/Group 231.png'
+                                                    : 'images/Group 230.png',
+                                                fit: BoxFit.contain,
+                                                width: 32.0,
+                                                height: 32.0,
+                                              ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                onTap: () {
-                                  setState(() {
-                                    contact['checked'] = !contact['checked'];
-                                  });
-                                },
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          bottomNavigationBar: Container(
-            height: 75.0,
-            color: Colors.white,
-            child: Center(
-              child: Container(
-                width: 300.0,
-                height: 48.0,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(31.0),
-                ),
-                child: ElevatedButton(
-                  style: ButtonStyle(
-                    elevation: MaterialStateProperty.all(0),
-                    backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                      (Set<MaterialState> states) {
-                        if (states.contains(MaterialState.disabled))
-                          return HexColor("#C4C6D2");
-                        return HexColor("#6092DC");
-                      },
-                    ),
-                    shape: MaterialStateProperty.all(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(31.0),
-                      ),
-                    ),
-                  ),
-                  child: _isLoading
-                      ? Container(
-                          width: 25.0,
-                          height: 25.0,
-                          child: CircularProgressIndicator(),
-                        )
-                      : Text(
-                          checkedList.length == 0
-                              ? 'Invite Friends'
-                              : 'Invite Friends (${checkedList.length})',
-                          style: TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.normal,
-                            color: Colors.white,
-                          ),
+                                  onTap: () {
+                                    setState(() {
+                                      contact['checked'] = !contact['checked'];
+                                    });
+                                  },
+                                );
+                              },
+                            ),
+                          ],
                         ),
-                  onPressed: _isLoading
-                      ? null
-                      : () {
-                          if (checkedList.isNotEmpty) {
-                            _onSubmit(checkedList, contactsList, _setLoading,
-                                context);
-                          }
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            bottomNavigationBar: Container(
+              height: 75.0,
+              color: Colors.white,
+              child: Center(
+                child: Container(
+                  width: 300.0,
+                  height: 48.0,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(31.0),
+                  ),
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                      elevation: MaterialStateProperty.all(0),
+                      backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                        (Set<MaterialState> states) {
+                          if (states.contains(MaterialState.disabled))
+                            return HexColor("#C4C6D2");
+                          return HexColor("#6092DC");
                         },
+                      ),
+                      shape: MaterialStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(31.0),
+                        ),
+                      ),
+                    ),
+                    child: _isLoading
+                        ? Container(
+                            width: 25.0,
+                            height: 25.0,
+                            child: CircularProgressIndicator(),
+                          )
+                        : Text(
+                            checkedList.length == 0
+                                ? 'Invite Friends'
+                                : 'Invite Friends (${checkedList.length})',
+                            style: TextStyle(
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.normal,
+                              color: Colors.white,
+                            ),
+                          ),
+                    onPressed: _isLoading
+                        ? null
+                        : () {
+                            if (checkedList.isNotEmpty) {
+                              _onSubmit(checkedList, contactsList, _setLoading,
+                                  context);
+                            }
+                          },
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-        if (_isLostConnection) ConnectionLost(),
-      ],
+          if (_isLostConnection) ConnectionLost(),
+        ],
+      ),
     );
   }
 }

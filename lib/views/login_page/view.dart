@@ -55,49 +55,55 @@ class __MainBodyState extends State<_MainBody> {
   Widget build(BuildContext context) {
     checkInternetConnectivity();
 
-    return Container(
-      color: HexColor("#F2F6FA"),
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height,
-      child: Stack(
-        children: [
-          Positioned(
-            top: 0,
-            left: 0,
-            width: MediaQuery.of(context).size.width,
-            child: Image.asset(
-              "images/background_lines_top.png",
-              fit: BoxFit.contain,
-            ),
-          ),
-          Positioned(
-            bottom: 0,
-            left: 0,
-            width: MediaQuery.of(context).size.width,
-            child: Image.asset(
-              "images/background_lines_bottom.png",
-              fit: BoxFit.contain,
-            ),
-          ),
-          Scaffold(
-            backgroundColor: Colors.transparent,
-            resizeToAvoidBottomInset: true,
-            appBar: null,
-            body: Container(
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Container(
+        color: HexColor("#F2F6FA"),
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        child: Stack(
+          children: [
+            Positioned(
+              top: 0,
+              left: 0,
               width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              padding: EdgeInsets.only(
-                left: 16.0,
-                right: 16.0,
-              ),
-              child: _InnerPart(
-                state: widget.state,
-                dispatch: widget.dispatch,
+              child: Image.asset(
+                "images/background_lines_top.png",
+                fit: BoxFit.contain,
               ),
             ),
-          ),
-          if (_isLostConnection) ConnectionLost(),
-        ],
+            Positioned(
+              bottom: 0,
+              left: 0,
+              width: MediaQuery.of(context).size.width,
+              child: Image.asset(
+                "images/background_lines_bottom.png",
+                fit: BoxFit.contain,
+              ),
+            ),
+            Scaffold(
+              backgroundColor: Colors.transparent,
+              resizeToAvoidBottomInset: true,
+              appBar: null,
+              body: Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                padding: EdgeInsets.only(
+                  left: 16.0,
+                  right: 16.0,
+                ),
+                child: _InnerPart(
+                  state: widget.state,
+                  dispatch: widget.dispatch,
+                ),
+              ),
+            ),
+            if (_isLostConnection) ConnectionLost(),
+          ],
+        ),
       ),
     );
   }
@@ -277,6 +283,7 @@ class __InnerPartState extends State<_InnerPart> {
                   Align(
                     alignment: Alignment.centerRight,
                     child: GestureDetector(
+                      behavior: HitTestBehavior.translucent,
                       child: Text(
                         "Forgot password?",
                         style: TextStyle(fontSize: 15),
@@ -327,6 +334,7 @@ class __InnerPartState extends State<_InnerPart> {
                   ),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.018),
                   GestureDetector(
+                    behavior: HitTestBehavior.translucent,
                     child: RichText(
                       text: TextSpan(
                         children: [
@@ -365,6 +373,7 @@ class __InnerPartState extends State<_InnerPart> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       GestureDetector(
+                        behavior: HitTestBehavior.translucent,
                         child: Image.asset(
                           "images/Google_icon.png",
                           fit: BoxFit.contain,
@@ -380,6 +389,7 @@ class __InnerPartState extends State<_InnerPart> {
                       ),
                       SizedBox(width: 16),
                       GestureDetector(
+                        behavior: HitTestBehavior.translucent,
                         child: Image.asset(
                           "images/Group 84.png",
                           fit: BoxFit.contain,
@@ -391,6 +401,7 @@ class __InnerPartState extends State<_InnerPart> {
                       SizedBox(width: 16),
                       if (Platform.isIOS || Platform.isMacOS)
                         GestureDetector(
+                          behavior: HitTestBehavior.translucent,
                           child: Image.asset(
                             "images/Group 85.png",
                             fit: BoxFit.contain,

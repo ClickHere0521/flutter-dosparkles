@@ -34,6 +34,7 @@ class _CustomSwitchState extends State<CustomSwitch>
       animation: _animationController,
       builder: (context, child) {
         return GestureDetector(
+          behavior: HitTestBehavior.translucent,
           onTap: () {
             if (_animationController.isCompleted) {
               _animationController.reverse();
