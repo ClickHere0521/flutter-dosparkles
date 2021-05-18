@@ -72,5 +72,11 @@ void _onStart(Action action, Context<StartPageState> ctx) async {
 }
 
 Future _pushToSignInPage(BuildContext context) async {
-  await Navigator.of(context).pushReplacementNamed('loginpage');
+  SharedPreferences.getInstance().then((_p) async {
+    String referralLink = _p.getString("referralLink") ?? '';
+    if (referralLink != null && referralLink != '')
+      await Navigator.of(context).pushReplacementNamed('registrationpage');
+    else
+      await Navigator.of(context).pushReplacementNamed('loginpage');
+  });
 }

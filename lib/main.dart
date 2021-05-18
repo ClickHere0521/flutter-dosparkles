@@ -130,7 +130,7 @@ class _AppState extends State<App> {
 
     _getCurrentGeoPosition();
 
-    listenDynamicLinks();
+    await listenDynamicLinks();
 
     initConnectivity();
     _connectivitySubscription =
@@ -316,7 +316,7 @@ class _AppState extends State<App> {
     }
   }
 
-  void listenDynamicLinks() async {
+  Future<void> listenDynamicLinks() async {
     streamSubscription = FlutterBranchSdk.initSession().listen((data) async {
       //  print('listenDynamicLinks - DeepLink Data: $data');
       if (data.containsKey('+clicked_branch_link') &&

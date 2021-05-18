@@ -14,6 +14,7 @@ import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
 import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -509,15 +510,18 @@ void _goToMain(BuildContext context) async {
   String referralLink = _prefs.getString("referralLink");
 
   if (referralLink != null && referralLink != '') {
-    await _invitedRegisteredMethod(globalState.user);
     await setUserFavoriteStore(globalState.user, referralLink);
   }
 
   await Navigator.of(context).pushNamed('addphonepage', arguments: null);
 
+  if (referralLink != null && referralLink != '') {
+    await _invitedRegisteredMethod(globalState.user);
+  }
+
   await checkUserReferralLink(globalState.user);
 
-  for (var i = 0; i < globalState.storesList.length; i++) {
+  for (int i = 0; i < globalState.storesList.length; i++) {
     var store = globalState.storesList[i];
     if (globalState.user.storeFavorite != null &&
         globalState.user.storeFavorite['id'] == store.id) {
@@ -620,6 +624,16 @@ Future setUserFavoriteStore(AppUser globalUser, String referralLink) async {
         QueryResult resultStore = await BaseGraphQLClient.instance
             .setUserFavoriteStore(globalUser.id, favoriteStore['id']);
         if (resultStore.hasException) print(resultStore.exception);
+
+        if (resultStore.data != null &&
+            resultStore.data['updateUser'] != null &&
+            resultStore.data['updateUser']['user'] != null &&
+            resultStore.data['updateUser']['user']['storeFavorite'] != null) {
+          globalUser.storeFavorite =
+              resultStore.data['updateUser']['user']['storeFavorite'];
+
+          GlobalStore.store.dispatch(GlobalActionCreator.setUser(globalUser));
+        }
       }
     }
   } catch (e) {

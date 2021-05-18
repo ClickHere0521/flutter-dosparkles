@@ -133,9 +133,27 @@ class __FirstPageState extends State<_FirstPage> {
           ),
           drawer: SparklesDrawer(activeRoute: "dashboardpage"),
           floatingActionButton: FloatingActionButton(
-            child: CircleAvatar(
-              radius: 50,
-              backgroundImage: AssetImage("images/Group 266.png"),
+            child: Container(
+              width: double.infinity,
+              height: double.infinity,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  colors: [HexColor('#CBD3FD'), HexColor('#899CD6')],
+                  begin: const FractionalOffset(0.0, 0.0),
+                  end: const FractionalOffset(1.0, 0.0),
+                  stops: [0.0, 1.0],
+                  tileMode: TileMode.clamp,
+                ),
+              ),
+              child: Center(
+                child: SvgPicture.asset(
+                  "images/Vector 21312312.svg",
+                  width: 21.0,
+                  height: 20.0,
+                  color: Colors.white,
+                ),
+              ),
             ),
             backgroundColor: Colors.transparent,
             onPressed: () {

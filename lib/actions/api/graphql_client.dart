@@ -454,6 +454,7 @@ class BaseGraphQLClient {
             }
             storeFavorite {
               id
+              name
             }
             pushToken
           }
