@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/utils/colors.dart';
 import 'package:com.floridainc.dosparkles/views/cart_page/action.dart';
+import 'package:com.floridainc.dosparkles/widgets/adDialog.dart';
 import 'package:com.floridainc.dosparkles/widgets/connection_lost.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
@@ -215,6 +216,8 @@ class _CheckoutState extends State<Checkout> {
                                 );
 
                                 _setIsLoading(false);
+
+                                addDialog(context);
                               }
                             }
                           },

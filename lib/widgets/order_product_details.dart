@@ -91,7 +91,7 @@ class _MainBody extends StatefulWidget {
 class __MainBodyState extends State<_MainBody> {
   var productMedia;
   int currentTab = 0;
-  String selectedImage = '';
+  int selectedImage = 0;
 
   @override
   void initState() {
@@ -154,11 +154,11 @@ class __MainBodyState extends State<_MainBody> {
                       ),
                       onTap: () {
                         setState(() {
-                          selectedImage = productMedia[index];
+                          selectedImage = index;
                         });
                       },
                     ),
-                    productMedia[index] == selectedImage
+                    index == selectedImage
                         ? Positioned.fill(
                             child: Container(
                               width: 70.0,
@@ -821,8 +821,8 @@ class __CustomBodyState extends State<_CustomBody> {
                     ? Padding(
                         padding: EdgeInsets.symmetric(horizontal: 16.0),
                         child: Text(
-                          widget.product.productDetails != null
-                              ? widget.product.productDetails
+                          widget.product['productDetails'] != null
+                              ? widget.product['productDetails']
                               : "",
                           style: TextStyle(
                             fontSize: 11.0,
@@ -834,8 +834,8 @@ class __CustomBodyState extends State<_CustomBody> {
                     : Padding(
                         padding: EdgeInsets.symmetric(horizontal: 16.0),
                         child: Text(
-                          widget.product.deliveryTime != null
-                              ? widget.product.deliveryTime
+                          widget.product['deliveryTime'] != null
+                              ? widget.product['deliveryTime']
                               : "",
                           style: TextStyle(
                             fontSize: 11.0,

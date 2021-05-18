@@ -494,26 +494,25 @@ class _ProductViewState extends State<_ProductView>
         }
       },
 
-      child: RotatedBox(
-        quarterTurns: 0,
-        child: AbsorbPointer(
-          absorbing: _shouldAbsorb,
-          child: TabBarView(
-            controller: _tabController,
-            children: List.generate(items.length, (index) {
-              return items[index] != null && items[index].videoUrl != null
-                  ? VideoPlayerItem(
-                      videoUrl: items[index].videoUrl,
-                      size: size,
-                      tabSelectedIndex: _tabSelectedIndex,
-                      dispatch: widget.dispatch,
-                      store: widget.store
-                      // name: items[index].name,
-                      // price: '\$${items[index].price}',
-                      )
-                  : Container();
-            }),
-          ),
+      child: AbsorbPointer(
+        absorbing: _shouldAbsorb,
+        child: TabBarView(
+          controller: _tabController,
+          children: List.generate(items.length, (index) {
+            return items[index] != null && items[index].videoUrl != null
+                ? Center(
+                    child: VideoPlayerItem(
+                        videoUrl: items[index].videoUrl,
+                        size: size,
+                        tabSelectedIndex: _tabSelectedIndex,
+                        dispatch: widget.dispatch,
+                        store: widget.store
+                        // name: items[index].name,
+                        // price: '\$${items[index].price}',
+                        ),
+                  )
+                : Container();
+          }),
         ),
       ),
     );
@@ -599,7 +598,7 @@ class _VideoPlayerItemState extends State<VideoPlayerItem> {
         //   });
         // },
         child: RotatedBox(
-      quarterTurns: -1,
+      quarterTurns: 0,
       child: Container(
           height: widget.size.height,
           width: widget.size.width,
@@ -611,15 +610,17 @@ class _VideoPlayerItemState extends State<VideoPlayerItem> {
                 child: Stack(
                   children: [
                     SizedBox.expand(
-                        child: FittedBox(
-                            fit: BoxFit.cover,
-                            child: SizedBox(
-                              height: widget.size.height,
-                              width: widget.size.width,
-                              child: BetterPlayer(
-                                controller: _betterPlayerController,
-                              ),
-                            ))),
+                      child: FittedBox(
+                        fit: BoxFit.cover,
+                        child: SizedBox(
+                          height: widget.size.height,
+                          width: widget.size.width,
+                          child: BetterPlayer(
+                            controller: _betterPlayerController,
+                          ),
+                        ),
+                      ),
+                    ),
 
                     //                   SizedBox.expand(
                     //                     child: FittedBox(
@@ -656,10 +657,10 @@ class _VideoPlayerItemState extends State<VideoPlayerItem> {
                 width: widget.size.width,
                 child: Padding(
                   padding: const EdgeInsets.only(
-                    left: 16,
-                    top: 20,
+                    top: 16,
+                    bottom: 16,
                     right: 16,
-                    bottom: 26,
+                    left: 16,
                   ),
                   child: SafeArea(
                     child: Column(
@@ -667,14 +668,17 @@ class _VideoPlayerItemState extends State<VideoPlayerItem> {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Expanded(
-                          child: LeftPanel(
-                              size: widget.size,
-                              tabSelectedIndex: widget.tabSelectedIndex,
-                              dispatch: widget.dispatch,
-                              store: widget.store
-                              // name: "${widget.name}",
-                              // price: "${widget.price}",
-                              ),
+                          child: RotatedBox(
+                            quarterTurns: 0,
+                            child: LeftPanel(
+                                size: widget.size,
+                                tabSelectedIndex: widget.tabSelectedIndex,
+                                dispatch: widget.dispatch,
+                                store: widget.store
+                                // name: "${widget.name}",
+                                // price: "${widget.price}",
+                                ),
+                          ),
                         ),
                       ],
                     ),
@@ -713,7 +717,7 @@ class LeftPanel extends StatelessWidget {
       width: 40.0,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Container(
             width: 40.0,

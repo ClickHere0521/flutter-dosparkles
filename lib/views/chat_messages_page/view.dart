@@ -1228,7 +1228,8 @@ class __BubbleContentWidgetState extends State<_BubbleContentWidget> {
                               ),
                               child: Center(
                                   child: Text(
-                                DateFormat("LLLL dd").format(DateTime.now()),
+                                "${DateFormat("LLLL dd").format(DateTime.now())}"
+                                    .toUpperCase(),
                                 style: TextStyle(
                                   fontSize: 12.0,
                                   fontWeight: FontWeight.w500,
