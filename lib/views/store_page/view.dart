@@ -180,85 +180,91 @@ class __FirstListPageState extends State<_FirstListPage> {
   Widget build(BuildContext context) {
     checkInternetConnectivity();
 
-    return Stack(
-      children: [
-        Positioned(
-          top: 0,
-          left: 0,
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            height: 181.0,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [HexColor('#8FADEB'), HexColor('#7397E2')],
-                begin: const FractionalOffset(0.0, 0.0),
-                end: const FractionalOffset(1.0, 0.0),
-                stops: [0.0, 1.0],
-                tileMode: TileMode.clamp,
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Stack(
+        children: [
+          Positioned(
+            top: 0,
+            left: 0,
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: 181.0,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [HexColor('#8FADEB'), HexColor('#7397E2')],
+                  begin: const FractionalOffset(0.0, 0.0),
+                  end: const FractionalOffset(1.0, 0.0),
+                  stops: [0.0, 1.0],
+                  tileMode: TileMode.clamp,
+                ),
               ),
             ),
           ),
-        ),
-        Scaffold(
-          body: Container(
-            width: MediaQuery.of(context).size.width,
-            constraints:
-                BoxConstraints(minHeight: MediaQuery.of(context).size.height),
-            decoration: BoxDecoration(
-              color: HexColor("#FAFCFF"),
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(32.0),
-                topRight: Radius.circular(32.0),
+          Scaffold(
+            body: Container(
+              width: MediaQuery.of(context).size.width,
+              constraints:
+                  BoxConstraints(minHeight: MediaQuery.of(context).size.height),
+              decoration: BoxDecoration(
+                color: HexColor("#FAFCFF"),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(32.0),
+                  topRight: Radius.circular(32.0),
+                ),
               ),
-            ),
-            child: _MainBody(
-              dispatch: widget.dispatch,
-              store: widget.state.selectedStore,
-            ),
-            padding: EdgeInsets.only(left: 16.0, right: 16.0, top: 20.0),
-          ),
-          backgroundColor: Colors.transparent,
-          resizeToAvoidBottomInset: true,
-          appBar: AppBar(
-            title: Text(
-              widget.state.selectedStore != null &&
-                      widget.state.selectedStore.name != null
-                  ? widget.state.selectedStore.name
-                  : '',
-              style: TextStyle(
-                fontSize: 22,
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
-                fontFeatures: [FontFeature.enable('smcp')],
+              child: _MainBody(
+                dispatch: widget.dispatch,
+                store: widget.state.selectedStore,
               ),
+              padding: EdgeInsets.only(left: 16.0, right: 16.0, top: 20.0),
             ),
-            centerTitle: true,
             backgroundColor: Colors.transparent,
-            elevation: 0.0,
-            leadingWidth: 70.0,
-            automaticallyImplyLeading: false,
-            leading: Builder(
-              builder: (context) => IconButton(
-                highlightColor: Colors.transparent,
-                splashColor: Colors.transparent,
-                icon: Image.asset("images/offcanvas_icon.png"),
-                onPressed: () => Scaffold.of(context).openDrawer(),
+            resizeToAvoidBottomInset: true,
+            appBar: AppBar(
+              title: Text(
+                widget.state.selectedStore != null &&
+                        widget.state.selectedStore.name != null
+                    ? widget.state.selectedStore.name
+                    : '',
+                style: TextStyle(
+                  fontSize: 22,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                  fontFeatures: [FontFeature.enable('smcp')],
+                ),
+              ),
+              centerTitle: true,
+              backgroundColor: Colors.transparent,
+              elevation: 0.0,
+              leadingWidth: 70.0,
+              automaticallyImplyLeading: false,
+              leading: Builder(
+                builder: (context) => IconButton(
+                  highlightColor: Colors.transparent,
+                  splashColor: Colors.transparent,
+                  icon: Image.asset("images/offcanvas_icon.png"),
+                  onPressed: () => Scaffold.of(context).openDrawer(),
+                ),
               ),
             ),
+            drawer: SparklesDrawer(activeRoute: "homepage"),
+            bottomNavigationBar: StreamBuilder(
+              stream: fetchDataProcess(),
+              builder: (_, snapshot) {
+                return BottomNavBarWidget(
+                  prefsData: snapshot.data,
+                  initialIndex: 0,
+                );
+              },
+            ),
           ),
-          drawer: SparklesDrawer(activeRoute: "homepage"),
-          bottomNavigationBar: StreamBuilder(
-            stream: fetchDataProcess(),
-            builder: (_, snapshot) {
-              return BottomNavBarWidget(
-                prefsData: snapshot.data,
-                initialIndex: 0,
-              );
-            },
-          ),
-        ),
-        if (_isLostConnection) ConnectionLost(),
-      ],
+          if (_isLostConnection) ConnectionLost(),
+        ],
+      ),
     );
   }
 }
@@ -761,6 +767,7 @@ class LeftPanel extends StatelessWidget {
           // ),
           //  SizedBox(height: 15.0),
           GestureDetector(
+            behavior: HitTestBehavior.translucent,
             onTap: () {
               dispatch(StorePageActionCreator.onGoToProductPage(
                   store.products[tabSelectedIndex]));

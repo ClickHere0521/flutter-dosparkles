@@ -298,160 +298,166 @@ class _BubblePageState extends State<BubblePage> {
   Widget build(BuildContext context) {
     checkInternetConnectivity();
 
-    return Stack(
-      children: [
-        Positioned(
-          top: 0,
-          left: 0,
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            height: 181.0,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [HexColor('#8FADEB'), HexColor('#7397E2')],
-                begin: const FractionalOffset(0.0, 0.0),
-                end: const FractionalOffset(1.0, 0.0),
-                stops: [0.0, 1.0],
-                tileMode: TileMode.clamp,
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Stack(
+        children: [
+          Positioned(
+            top: 0,
+            left: 0,
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: 181.0,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [HexColor('#8FADEB'), HexColor('#7397E2')],
+                  begin: const FractionalOffset(0.0, 0.0),
+                  end: const FractionalOffset(1.0, 0.0),
+                  stops: [0.0, 1.0],
+                  tileMode: TileMode.clamp,
+                ),
               ),
             ),
           ),
-        ),
-        Scaffold(
-          appBar: AppBar(
-            title: Text(
-              widget.conversationName != null ? widget.conversationName : '',
-              style: TextStyle(
-                fontSize: 22,
-                color: Colors.white,
-                fontFeatures: [FontFeature.enable('smcp')],
-                fontWeight: FontWeight.w600,
+          Scaffold(
+            appBar: AppBar(
+              title: Text(
+                widget.conversationName != null ? widget.conversationName : '',
+                style: TextStyle(
+                  fontSize: 22,
+                  color: Colors.white,
+                  fontFeatures: [FontFeature.enable('smcp')],
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              centerTitle: true,
+              backgroundColor: Colors.transparent,
+              elevation: 0.0,
+              leadingWidth: 70.0,
+              automaticallyImplyLeading: false,
+              leading: InkWell(
+                child: Image.asset("images/back_button_white.png"),
+                onTap: () => Navigator.of(context).pop(),
               ),
             ),
-            centerTitle: true,
             backgroundColor: Colors.transparent,
-            elevation: 0.0,
-            leadingWidth: 70.0,
-            automaticallyImplyLeading: false,
-            leading: InkWell(
-              child: Image.asset("images/back_button_white.png"),
-              onTap: () => Navigator.of(context).pop(),
-            ),
-          ),
-          backgroundColor: Colors.transparent,
-          resizeToAvoidBottomInset: true,
-          body: Container(
-            width: MediaQuery.of(context).size.width,
-            padding: EdgeInsets.only(top: 10.0, left: 8.0, right: 8.0),
-            decoration: BoxDecoration(
-              color: HexColor("#FAFCFF"),
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(32.0),
-                topRight: Radius.circular(32.0),
+            resizeToAvoidBottomInset: true,
+            body: Container(
+              width: MediaQuery.of(context).size.width,
+              padding: EdgeInsets.only(top: 10.0, left: 8.0, right: 8.0),
+              decoration: BoxDecoration(
+                color: HexColor("#FAFCFF"),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(32.0),
+                  topRight: Radius.circular(32.0),
+                ),
+              ),
+              child: Column(
+                children: [
+                  _BubbleContentWidget(
+                    chatId: widget.chatId,
+                    userId: widget.userId,
+                  ),
+                ],
               ),
             ),
-            child: Column(
-              children: [
-                _BubbleContentWidget(
-                  chatId: widget.chatId,
-                  userId: widget.userId,
-                ),
-              ],
-            ),
-          ),
-          bottomNavigationBar: Container(
-            height: 83.0,
-            padding: EdgeInsets.only(top: 10.0),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black12,
-                  offset: Offset(0.0, -0.2), // (x,y)
-                  blurRadius: 10.0,
-                ),
-              ],
-            ),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      height: 40.0,
-                      decoration: BoxDecoration(
-                        color: HexColor("#EDEEF2"),
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(22),
-                          bottomLeft: Radius.circular(22),
-                        ),
-                      ),
-                      child: TextField(
-                        controller: _controller,
-                        onChanged: (text) {
-                          this.inputData = text;
-                        },
-                        style: TextStyle(color: Colors.black, fontSize: 14),
-                        decoration: InputDecoration(
-                          isDense: true,
-                          hintText: 'Enter message',
-                          contentPadding: EdgeInsets.symmetric(
-                            vertical: 12,
-                            horizontal: 10,
-                          ),
-                          fillColor: Colors.white,
-                          hintStyle: new TextStyle(color: Colors.grey),
-                          labelStyle: new TextStyle(color: Colors.white),
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white),
-                          ),
-                          focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white),
-                          ),
-                          border: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white),
-                          ),
-                        ),
-                      ),
-                      width: MediaQuery.of(context).size.width * 0.78,
-                    ),
-                    InkWell(
-                      child: Container(
-                        width: 45,
+            bottomNavigationBar: Container(
+              height: 83.0,
+              padding: EdgeInsets.only(top: 10.0),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12,
+                    offset: Offset(0.0, -0.2), // (x,y)
+                    blurRadius: 10.0,
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
                         height: 40.0,
                         decoration: BoxDecoration(
-                          color: HexColor("#6092DC"),
+                          color: HexColor("#EDEEF2"),
                           borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(22),
-                            bottomRight: Radius.circular(22),
+                            topLeft: Radius.circular(22),
+                            bottomLeft: Radius.circular(22),
                           ),
                         ),
-                        child: Icon(
-                          Icons.send,
-                          color: Colors.white,
-                          size: 17.0,
+                        child: TextField(
+                          controller: _controller,
+                          onChanged: (text) {
+                            this.inputData = text;
+                          },
+                          style: TextStyle(color: Colors.black, fontSize: 14),
+                          decoration: InputDecoration(
+                            isDense: true,
+                            hintText: 'Enter message',
+                            contentPadding: EdgeInsets.symmetric(
+                              vertical: 12,
+                              horizontal: 10,
+                            ),
+                            fillColor: Colors.white,
+                            hintStyle: new TextStyle(color: Colors.grey),
+                            labelStyle: new TextStyle(color: Colors.white),
+                            enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Colors.white),
+                            ),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Colors.white),
+                            ),
+                            border: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Colors.white),
+                            ),
+                          ),
                         ),
+                        width: MediaQuery.of(context).size.width * 0.78,
                       ),
-                      onTap: () {
-                        if (this.inputData != "") {
-                          addMessage(
-                            this.inputData,
-                            widget.chatId,
-                            widget.userId,
-                          );
-                          this.inputData = "";
-                          _controller.clear();
-                        }
-                      },
-                    )
-                  ],
-                ),
-              ],
+                      InkWell(
+                        child: Container(
+                          width: 45,
+                          height: 40.0,
+                          decoration: BoxDecoration(
+                            color: HexColor("#6092DC"),
+                            borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(22),
+                              bottomRight: Radius.circular(22),
+                            ),
+                          ),
+                          child: Icon(
+                            Icons.send,
+                            color: Colors.white,
+                            size: 17.0,
+                          ),
+                        ),
+                        onTap: () {
+                          if (this.inputData != "") {
+                            addMessage(
+                              this.inputData,
+                              widget.chatId,
+                              widget.userId,
+                            );
+                            this.inputData = "";
+                            _controller.clear();
+                          }
+                        },
+                      )
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-        if (_isLostConnection) ConnectionLost(),
-      ],
+          if (_isLostConnection) ConnectionLost(),
+        ],
+      ),
     );
   }
 }
@@ -536,6 +542,7 @@ class __ChatOrderBlockState extends State<_ChatOrderBlock> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         GestureDetector(
+                          behavior: HitTestBehavior.translucent,
                           child: Container(
                             color: Colors.white,
                             width: double.infinity,

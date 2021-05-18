@@ -54,6 +54,7 @@ class _SwiperWidgetState extends State<SwiperWidget> {
             height: 260.0,
             child: Center(
               child: GestureDetector(
+                behavior: HitTestBehavior.translucent,
                 child: Container(
                   width: 257.0,
                   height: double.infinity,

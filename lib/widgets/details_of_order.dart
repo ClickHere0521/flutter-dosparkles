@@ -85,283 +85,295 @@ class _OrderWidgetState extends State<OrderWidget> {
   Widget build(BuildContext context) {
     checkInternetConnectivity();
 
-    return Stack(
-      children: [
-        Positioned(
-          top: 0,
-          left: 0,
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            height: 181.0,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [HexColor('#8FADEB'), HexColor('#7397E2')],
-                begin: const FractionalOffset(0.0, 0.0),
-                end: const FractionalOffset(1.0, 0.0),
-                stops: [0.0, 1.0],
-                tileMode: TileMode.clamp,
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Stack(
+        children: [
+          Positioned(
+            top: 0,
+            left: 0,
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: 181.0,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [HexColor('#8FADEB'), HexColor('#7397E2')],
+                  begin: const FractionalOffset(0.0, 0.0),
+                  end: const FractionalOffset(1.0, 0.0),
+                  stops: [0.0, 1.0],
+                  tileMode: TileMode.clamp,
+                ),
               ),
             ),
           ),
-        ),
-        Scaffold(
-          appBar: AppBar(
-            title: Text(
-              "Details of order",
-              style: TextStyle(
-                fontSize: 22,
-                color: Colors.white,
-                fontFeatures: [FontFeature.enable('smcp')],
-                fontWeight: FontWeight.w600,
+          Scaffold(
+            appBar: AppBar(
+              title: Text(
+                "Details of order",
+                style: TextStyle(
+                  fontSize: 22,
+                  color: Colors.white,
+                  fontFeatures: [FontFeature.enable('smcp')],
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              centerTitle: true,
+              backgroundColor: Colors.transparent,
+              elevation: 0.0,
+              leadingWidth: 70.0,
+              automaticallyImplyLeading: false,
+              leading: InkWell(
+                child: Image.asset("images/back_button_white.png"),
+                onTap: () => Navigator.of(context).pop(),
               ),
             ),
-            centerTitle: true,
             backgroundColor: Colors.transparent,
-            elevation: 0.0,
-            leadingWidth: 70.0,
-            automaticallyImplyLeading: false,
-            leading: InkWell(
-              child: Image.asset("images/back_button_white.png"),
-              onTap: () => Navigator.of(context).pop(),
-            ),
-          ),
-          backgroundColor: Colors.transparent,
-          resizeToAvoidBottomInset: true,
-          body: Container(
-            width: MediaQuery.of(context).size.width,
-            height: double.infinity,
-            padding: EdgeInsets.only(top: 20.0, left: 16.0, right: 16.0),
-            decoration: BoxDecoration(
-              color: HexColor("#FAFCFF"),
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(32.0),
-                topRight: Radius.circular(32.0),
+            resizeToAvoidBottomInset: true,
+            body: Container(
+              width: MediaQuery.of(context).size.width,
+              height: double.infinity,
+              padding: EdgeInsets.only(top: 20.0, left: 16.0, right: 16.0),
+              decoration: BoxDecoration(
+                color: HexColor("#FAFCFF"),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(32.0),
+                  topRight: Radius.circular(32.0),
+                ),
               ),
-            ),
-            child: FutureBuilder(
-              future: getInitialData(),
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                if (snapshot.hasData && !snapshot.hasError) {
-                  var order = snapshot.data;
-                  List<dynamic> products = order['products'];
+              child: FutureBuilder(
+                future: getInitialData(),
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (snapshot.hasData && !snapshot.hasError) {
+                    var order = snapshot.data;
+                    List<dynamic> products = order['products'];
 
-                  return SingleChildScrollView(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          margin: EdgeInsets.symmetric(vertical: 5.0),
-                          height: MediaQuery.of(context).size.height,
-                          child: ListView.builder(
-                            itemCount: products.length,
-                            shrinkWrap: true,
-                            itemBuilder: (_, index) {
-                              var product = products[index];
+                    return SingleChildScrollView(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            margin: EdgeInsets.symmetric(vertical: 5.0),
+                            height: MediaQuery.of(context).size.height,
+                            child: ListView.builder(
+                              itemCount: products.length,
+                              shrinkWrap: true,
+                              itemBuilder: (_, index) {
+                                var product = products[index];
 
-                              if (product != null) {
-                                return InkWell(
-                                  child: Card(
-                                    elevation: 5.0,
-                                    margin: EdgeInsets.only(bottom: 16.0),
-                                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                                    shadowColor: Colors.black26,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(16.0),
-                                      side: BorderSide(color: Colors.grey[50]),
-                                    ),
-                                    child: Container(
-                                      width: double.infinity,
-                                      height: 111.0,
-                                      constraints:
-                                          BoxConstraints(maxWidth: 343.0),
-                                      padding: EdgeInsets.all(10.0),
+                                if (product != null) {
+                                  return InkWell(
+                                    child: Card(
+                                      elevation: 5.0,
+                                      margin: EdgeInsets.only(bottom: 16.0),
+                                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                                      shadowColor: Colors.black26,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(16.0),
+                                        side:
+                                            BorderSide(color: Colors.grey[50]),
+                                      ),
                                       child: Container(
                                         width: double.infinity,
-                                        height: 91.0,
-                                        child: Row(
-                                          children: [
-                                            Container(
-                                              width: 78.0,
-                                              height: double.infinity,
-                                              child: ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(16.0),
-                                                child: product['thumbnail'] !=
-                                                        null
-                                                    ? CachedNetworkImage(
-                                                        imageUrl: AppConfig
-                                                                .instance
-                                                                .baseApiHost +
-                                                            product['thumbnail']
-                                                                ['url'],
-                                                        fit: BoxFit.cover,
-                                                        width: double.infinity,
-                                                        height: double.infinity,
-                                                      )
-                                                    : SizedBox.shrink(
-                                                        child: null),
-                                              ),
-                                            ),
-                                            SizedBox(width: 10.0),
-                                            Expanded(
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    product['name'],
-                                                    maxLines: 2,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: TextStyle(
-                                                      fontSize: 16.0,
-                                                      color:
-                                                          HexColor("#53586F"),
-                                                    ),
-                                                  ),
-                                                  SizedBox(height: 12.0),
-                                                  RichText(
-                                                    text: TextSpan(
-                                                      children: [
-                                                        TextSpan(
-                                                          text: product[
-                                                                      'price'] !=
-                                                                  null
-                                                              ? "\$${product['price']} "
-                                                              : ' ',
-                                                          style: TextStyle(
-                                                            fontSize: 22.0,
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                            color: HexColor(
-                                                                "#53586F"),
-                                                          ),
-                                                        ),
-                                                        TextSpan(
-                                                          text: order['orderDetails'] !=
-                                                                      null &&
-                                                                  order['orderDetails']
-                                                                          .length >
-                                                                      0 &&
-                                                                  order['orderDetails']
-                                                                              [
-                                                                              index]
-                                                                          [
-                                                                          'quantity'] !=
-                                                                      null
-                                                              ? "x${order['orderDetails'][index]['quantity']}"
-                                                              : '',
-                                                          style: TextStyle(
-                                                            fontSize: 16.0,
-                                                          ),
+                                        height: 111.0,
+                                        constraints:
+                                            BoxConstraints(maxWidth: 343.0),
+                                        padding: EdgeInsets.all(10.0),
+                                        child: Container(
+                                          width: double.infinity,
+                                          height: 91.0,
+                                          child: Row(
+                                            children: [
+                                              Container(
+                                                width: 78.0,
+                                                height: double.infinity,
+                                                child: ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          16.0),
+                                                  child: product['thumbnail'] !=
+                                                          null
+                                                      ? CachedNetworkImage(
+                                                          imageUrl: AppConfig
+                                                                  .instance
+                                                                  .baseApiHost +
+                                                              product['thumbnail']
+                                                                  ['url'],
+                                                          fit: BoxFit.cover,
+                                                          width:
+                                                              double.infinity,
+                                                          height:
+                                                              double.infinity,
                                                         )
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
+                                                      : SizedBox.shrink(
+                                                          child: null),
+                                                ),
                                               ),
-                                            ),
-                                          ],
+                                              SizedBox(width: 10.0),
+                                              Expanded(
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      product['name'],
+                                                      maxLines: 2,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                        fontSize: 16.0,
+                                                        color:
+                                                            HexColor("#53586F"),
+                                                      ),
+                                                    ),
+                                                    SizedBox(height: 12.0),
+                                                    RichText(
+                                                      text: TextSpan(
+                                                        children: [
+                                                          TextSpan(
+                                                            text: product[
+                                                                        'price'] !=
+                                                                    null
+                                                                ? "\$${product['price']} "
+                                                                : ' ',
+                                                            style: TextStyle(
+                                                              fontSize: 22.0,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              color: HexColor(
+                                                                  "#53586F"),
+                                                            ),
+                                                          ),
+                                                          TextSpan(
+                                                            text: order['orderDetails'] !=
+                                                                        null &&
+                                                                    order['orderDetails']
+                                                                            .length >
+                                                                        0 &&
+                                                                    order['orderDetails'][index]
+                                                                            [
+                                                                            'quantity'] !=
+                                                                        null
+                                                                ? "x${order['orderDetails'][index]['quantity']}"
+                                                                : 'x1',
+                                                            style: TextStyle(
+                                                              fontSize: 16.0,
+                                                            ),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) {
-                                          if (order['status'] == 'cancelled') {
-                                            return _ChangeOrder(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) {
+                                            if (order['status'] ==
+                                                'cancelled') {
+                                              return _ChangeOrder(
+                                                product: product,
+                                                orderDetail:
+                                                    order['orderDetails']
+                                                        [index],
+                                                order: order,
+                                                setOrderChanged:
+                                                    widget.setOrderChanged,
+                                              );
+                                            }
+                                            return OrderProductDetailsWidget(
                                               product: product,
-                                              orderDetail: order['orderDetails']
-                                                  [index],
-                                              order: order,
-                                              setOrderChanged:
-                                                  widget.setOrderChanged,
                                             );
-                                          }
-                                          return OrderProductDetailsWidget(
-                                            product: product,
-                                          );
-                                        },
-                                      ),
-                                    );
-                                  },
-                                );
-                              } else {
-                                return SizedBox.shrink(child: null);
-                              }
-                            },
+                                          },
+                                        ),
+                                      );
+                                    },
+                                  );
+                                } else {
+                                  return SizedBox.shrink(child: null);
+                                }
+                              },
+                            ),
                           ),
+                        ],
+                      ),
+                    );
+                  }
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(height: Adapt.screenH() / 4),
+                      SizedBox(
+                        width: Adapt.screenW(),
+                        height: Adapt.screenH() / 4,
+                        child: Container(
+                          child: CircularProgressIndicator(),
+                          alignment: Alignment.center,
                         ),
-                      ],
-                    ),
+                      )
+                    ],
                   );
-                }
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(height: Adapt.screenH() / 4),
-                    SizedBox(
-                      width: Adapt.screenW(),
-                      height: Adapt.screenH() / 4,
-                      child: Container(
-                        child: CircularProgressIndicator(),
-                        alignment: Alignment.center,
+                },
+              ),
+            ),
+            bottomNavigationBar: Container(
+              height: 83.0,
+              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12,
+                    offset: Offset(0.0, -0.2), // (x,y)
+                    blurRadius: 10.0,
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        "TOTAL PRICE:",
+                        style: TextStyle(
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                    )
-                  ],
-                );
-              },
+                      Text(
+                        "\$$allProductsTotalPrice",
+                        style: TextStyle(
+                          fontSize: 26.0,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
-          bottomNavigationBar: Container(
-            height: 83.0,
-            padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black12,
-                  offset: Offset(0.0, -0.2), // (x,y)
-                  blurRadius: 10.0,
-                ),
-              ],
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      "TOTAL PRICE:",
-                      style: TextStyle(
-                        fontSize: 14.0,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    Text(
-                      "\$$allProductsTotalPrice",
-                      style: TextStyle(
-                        fontSize: 26.0,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-        if (_isLostConnection) ConnectionLost(),
-      ],
+          if (_isLostConnection) ConnectionLost(),
+        ],
+      ),
     );
   }
 }
@@ -472,6 +484,7 @@ class __ChangeOrderState extends State<_ChangeOrder> {
                       loadAssets,
                     )
                   : GestureDetector(
+                      behavior: HitTestBehavior.translucent,
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -917,6 +930,7 @@ Widget buildGridView(List<Asset> images, int buyUploads, Function loadAssets) {
   int diff = buyUploads - images.length;
 
   return GestureDetector(
+    behavior: HitTestBehavior.translucent,
     child: Row(
       mainAxisSize: MainAxisSize.min,
       children: [

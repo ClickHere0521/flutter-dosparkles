@@ -126,6 +126,7 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                                   widget.globalUser.store != null
                                       ? widget.globalUser.store['name']
                                       : "Store",
+                                  textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontSize: 18.0,
                                     fontWeight: FontWeight.w600,
@@ -139,6 +140,7 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                                           widget.globalUser.name != null
                                       ? widget.globalUser.name
                                       : "User",
+                                  textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontSize: 18.0,
                                     fontWeight: FontWeight.w600,
@@ -714,9 +716,8 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                     ),
                   ),
                   onTap: () {
-                    Navigator.of(context).pushReplacementNamed(
-                        'helpsupportpage',
-                        arguments: null);
+                    Navigator.of(context)
+                        .pushNamed('helpsupportpage', arguments: null);
                   },
                 ),
                 SizedBox(height: 40.0),

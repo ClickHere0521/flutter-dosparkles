@@ -104,6 +104,7 @@ class __FirstPageState extends State<_FirstPage> {
             actions: [
               Center(
                 child: GestureDetector(
+                  behavior: HitTestBehavior.translucent,
                   onTap: () {
                     Navigator.of(context).pushReplacementNamed('cartpage');
                   },
@@ -559,6 +560,7 @@ class __MainBodyState extends State<_MainBody> {
                   children: [
                     Expanded(
                       child: GestureDetector(
+                        behavior: HitTestBehavior.translucent,
                         child: Container(
                           width: double.infinity,
                           height: 36.0,
@@ -604,6 +606,7 @@ class __MainBodyState extends State<_MainBody> {
                     SizedBox(width: 20.0),
                     Expanded(
                       child: GestureDetector(
+                        behavior: HitTestBehavior.translucent,
                         child: Container(
                           width: double.infinity,
                           height: 36.0,

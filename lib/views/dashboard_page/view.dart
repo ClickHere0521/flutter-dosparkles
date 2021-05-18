@@ -758,6 +758,7 @@ class __MainBodyState extends State<_MainBody> {
                       ),
                       SizedBox(height: 12.0),
                       GestureDetector(
+                        behavior: HitTestBehavior.translucent,
                         child: Container(
                           width: double.infinity,
                           height: 48.0,

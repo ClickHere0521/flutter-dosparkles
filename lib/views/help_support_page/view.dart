@@ -60,63 +60,69 @@ class __MainBodyState extends State<_MainBody> {
   Widget build(BuildContext context) {
     checkInternetConnectivity();
 
-    return Container(
-      color: HexColor("#F2F6FA"),
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height,
-      child: Stack(
-        children: [
-          Positioned(
-            top: 0,
-            left: 0,
-            width: MediaQuery.of(context).size.width,
-            child: Image.asset(
-              "images/background_lines_top.png",
-              fit: BoxFit.contain,
-            ),
-          ),
-          Positioned(
-            bottom: 0,
-            left: 0,
-            width: MediaQuery.of(context).size.width,
-            child: Image.asset(
-              "images/background_lines_bottom.png",
-              fit: BoxFit.contain,
-            ),
-          ),
-          Scaffold(
-            backgroundColor: Colors.transparent,
-            resizeToAvoidBottomInset: true,
-            appBar: AppBar(
-              centerTitle: true,
-              elevation: 0.0,
-              leadingWidth: 70.0,
-              automaticallyImplyLeading: true,
-              leading: InkWell(
-                child: Image.asset("images/back_button.png"),
-                onTap: () => Navigator.of(context).pop(),
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Container(
+        color: HexColor("#F2F6FA"),
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        child: Stack(
+          children: [
+            Positioned(
+              top: 0,
+              left: 0,
+              width: MediaQuery.of(context).size.width,
+              child: Image.asset(
+                "images/background_lines_top.png",
+                fit: BoxFit.contain,
               ),
+            ),
+            Positioned(
+              bottom: 0,
+              left: 0,
+              width: MediaQuery.of(context).size.width,
+              child: Image.asset(
+                "images/background_lines_bottom.png",
+                fit: BoxFit.contain,
+              ),
+            ),
+            Scaffold(
               backgroundColor: Colors.transparent,
-              title: Text(
-                "Help and Support",
-                style: TextStyle(
-                  fontSize: 22,
-                  color: HexColor("#53586F"),
-                  fontWeight: FontWeight.w600,
-                  fontFeatures: [FontFeature.enable('smcp')],
+              resizeToAvoidBottomInset: true,
+              appBar: AppBar(
+                centerTitle: true,
+                elevation: 0.0,
+                leadingWidth: 70.0,
+                automaticallyImplyLeading: true,
+                leading: InkWell(
+                  child: Image.asset("images/back_button.png"),
+                  onTap: () => Navigator.of(context).pop(),
+                ),
+                backgroundColor: Colors.transparent,
+                title: Text(
+                  "Help and Support",
+                  style: TextStyle(
+                    fontSize: 22,
+                    color: HexColor("#53586F"),
+                    fontWeight: FontWeight.w600,
+                    fontFeatures: [FontFeature.enable('smcp')],
+                  ),
                 ),
               ),
+              body: Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                color: Colors.white,
+                child: _InnerPart(),
+              ),
+              drawer: SparklesDrawer(activeRoute: "helpsupportpage"),
             ),
-            body: Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              color: Colors.white,
-              child: _InnerPart(),
-            ),
-            drawer: SparklesDrawer(activeRoute: "helpsupportpage"),
-          ),
-          if (_isLostConnection) ConnectionLost(),
-        ],
+            if (_isLostConnection) ConnectionLost(),
+          ],
+        ),
       ),
     );
   }
@@ -155,6 +161,7 @@ class __InnerPartState extends State<_InnerPart> {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.0),
             child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -204,6 +211,7 @@ class __InnerPartState extends State<_InnerPart> {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.0),
             child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -253,6 +261,7 @@ class __InnerPartState extends State<_InnerPart> {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.0),
             child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

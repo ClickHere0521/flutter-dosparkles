@@ -160,6 +160,7 @@ class __InnerPartState extends State<_InnerPart> {
                   ),
                   SizedBox(height: 20.0),
                   GestureDetector(
+                    behavior: HitTestBehavior.translucent,
                     onTap: () {
                       _uploadDialog(context);
                     },
@@ -335,6 +336,7 @@ Future<void> _uploadDialog(BuildContext context) async {
                   child: Align(
                     alignment: Alignment.topRight,
                     child: GestureDetector(
+                      behavior: HitTestBehavior.translucent,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(16.0),
                         child: Image.asset(

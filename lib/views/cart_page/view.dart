@@ -172,6 +172,7 @@ Future<bool> _addDialog(BuildContext context) async {
                         ),
                         SizedBox(height: 13.0),
                         GestureDetector(
+                          behavior: HitTestBehavior.translucent,
                           child: Text(
                             "No, thanks",
                             textAlign: TextAlign.center,
@@ -196,6 +197,7 @@ Future<bool> _addDialog(BuildContext context) async {
                   child: Align(
                     alignment: Alignment.topRight,
                     child: GestureDetector(
+                      behavior: HitTestBehavior.translucent,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(16.0),
                         child: Image.asset(
@@ -324,6 +326,7 @@ class __FirstPageState extends State<_FirstPage> {
             actions: [
               Center(
                 child: GestureDetector(
+                  behavior: HitTestBehavior.translucent,
                   onTap: () {
                     Navigator.of(context).pushReplacementNamed('cartpage');
                   },
