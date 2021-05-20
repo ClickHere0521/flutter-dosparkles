@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'dart:convert' show json;
 import 'package:com.floridainc.dosparkles/actions/api/graphql_client.dart';
 import 'package:com.floridainc.dosparkles/actions/app_config.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/action.dart';
@@ -92,16 +92,16 @@ Future _onLoginClicked(Action action, Context<LoginPageState> ctx) async {
 }
 
 void _goToMain(Context<LoginPageState> ctx) async {
-  await FirebaseMessaging.instance.getToken().then((String token) async {
-    if (token != null) {
-      print("_goToMain Push Messaging token: $token");
+  // FirebaseMessaging.instance.getToken().then((String token) async {
+  //   // if (token != null) {
+  //   //   print("_goToMain Push Messaging token: $token");
 
-      await SharedPreferences.getInstance().then((_p) async {
-        var userId = _p.getString("userId");
-        await UserInfoOperate.savePushToken(userId, token);
-      });
-    }
-  });
+  //   //   await SharedPreferences.getInstance().then((_p) async {
+  //   //     var userId = _p.getString("userId");
+  //   //     await UserInfoOperate.savePushToken(userId, token);
+  //   //   });
+  //   // }
+  // });
 
   var globalState = GlobalStore.store.getState();
 
