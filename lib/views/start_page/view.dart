@@ -51,7 +51,7 @@ Widget buildView(
             ),
           ),
           Positioned(
-            top: 0,
+            top: 50,
             left: 0,
             child: Container(
               width: MediaQuery.of(context).size.width,
@@ -61,38 +61,39 @@ Widget buildView(
                 width: double.infinity,
                 height: double.infinity,
                 fit: BoxFit.cover,
+                alignment: Alignment.topCenter,
               ),
             ),
           ),
-          Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-            color: Colors.transparent,
-            child: Align(
-              alignment: Alignment.topCenter,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SizedBox(height: 67.0),
-                  SvgPicture.asset(
-                    "images/The Perfect Gift.svg",
-                    fit: BoxFit.cover,
-                  ),
-                  SizedBox(height: 12.0),
-                  Text(
-                    "made for you".toUpperCase(),
-                    style: TextStyle(
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                      decoration: TextDecoration.none,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+          // Container(
+          //   width: MediaQuery.of(context).size.width,
+          //   height: MediaQuery.of(context).size.height,
+          //   color: Colors.transparent,
+          //   child: Align(
+          //     alignment: Alignment.topCenter,
+          //     child: Column(
+          //       mainAxisAlignment: MainAxisAlignment.center,
+          //       mainAxisSize: MainAxisSize.min,
+          //       children: [
+          //         SizedBox(height: 67.0),
+          //         SvgPicture.asset(
+          //           "images/The Perfect Gift.svg",
+          //           fit: BoxFit.cover,
+          //         ),
+          //         SizedBox(height: 12.0),
+          //         Text(
+          //           "made for you".toUpperCase(),
+          //           style: TextStyle(
+          //             fontSize: 20.0,
+          //             fontWeight: FontWeight.w700,
+          //             color: Colors.white,
+          //             decoration: TextDecoration.none,
+          //           ),
+          //         ),
+          //       ],
+          //     ),
+          //   ),
+          // ),
           Scaffold(
             body: FutureBuilder(
               future: _checkContextInit(
@@ -135,9 +136,9 @@ Widget buildView(
                   ),
                   child: ElevatedButton(
                     style: ButtonStyle(
-                      elevation: MaterialStateProperty.all(8.0),
+                      elevation: MaterialStateProperty.all(6.0),
                       backgroundColor: MaterialStateProperty.all(Colors.white),
-                      shadowColor: MaterialStateProperty.all(Colors.black),
+                      shadowColor: MaterialStateProperty.all(Colors.grey[300]),
                       shape: MaterialStateProperty.all(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(31.0),
