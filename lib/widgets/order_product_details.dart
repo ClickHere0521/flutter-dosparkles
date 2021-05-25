@@ -12,6 +12,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 
 class OrderProductDetailsWidget extends StatefulWidget {
   final product;
@@ -346,28 +347,18 @@ class __MainBodyState extends State<_MainBody> {
                 currentTab == 1
                     ? Padding(
                         padding: EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Text(
+                        child: HtmlWidget(
                           widget.product['productDetails'] != null
                               ? widget.product['productDetails']
-                              : "",
-                          style: TextStyle(
-                            fontSize: 11.0,
-                            fontWeight: FontWeight.w300,
-                            height: 1.35,
-                          ),
+                              : '',
                         ),
                       )
                     : Padding(
                         padding: EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Text(
+                        child: HtmlWidget(
                           widget.product['deliveryTime'] != null
                               ? widget.product['deliveryTime']
-                              : "",
-                          style: TextStyle(
-                            fontSize: 11.0,
-                            fontWeight: FontWeight.w300,
-                            height: 1.35,
-                          ),
+                              : '',
                         ),
                       ),
                 SizedBox(height: 20.0),
@@ -820,28 +811,18 @@ class __CustomBodyState extends State<_CustomBody> {
                 currentTab == 1
                     ? Padding(
                         padding: EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Text(
+                        child: HtmlWidget(
                           widget.product['productDetails'] != null
                               ? widget.product['productDetails']
-                              : "",
-                          style: TextStyle(
-                            fontSize: 11.0,
-                            fontWeight: FontWeight.w300,
-                            height: 1.35,
-                          ),
+                              : '',
                         ),
                       )
                     : Padding(
                         padding: EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Text(
+                        child: HtmlWidget(
                           widget.product['deliveryTime'] != null
                               ? widget.product['deliveryTime']
-                              : "",
-                          style: TextStyle(
-                            fontSize: 11.0,
-                            fontWeight: FontWeight.w300,
-                            height: 1.35,
-                          ),
+                              : '',
                         ),
                       ),
                 SizedBox(height: 20.0),

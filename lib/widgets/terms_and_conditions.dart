@@ -5,13 +5,14 @@ import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/utils/colors.dart';
 import 'package:com.floridainc.dosparkles/widgets/connection_lost.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 Future _fetchData() async {
   QueryResult result = await BaseGraphQLClient.instance.fetchAppContent();
   if (result.hasException) print(result.exception);
 
-  return result.data['appContent']['termsAndConditions'];
+  return result.data['appContent'];
 }
 
 class TermsContitions extends StatefulWidget {
@@ -103,11 +104,11 @@ class _TermsContitionsState extends State<TermsContitions> {
                     FutureBuilder(
                       future: _fetchData(),
                       builder: (context, snapshot) {
-                        if (snapshot.hasData && !snapshot.hasError) {
-                          return Text(
-                            snapshot.data,
-                            style: TextStyle(fontSize: 16.0),
-                          );
+                        if (snapshot.hasData &&
+                            !snapshot.hasError &&
+                            snapshot.data['termsAndConditions'] != null) {
+                          return HtmlWidget(
+                              snapshot.data['termsAndConditions']);
                         }
                         return Center(
                           child: CircularProgressIndicator(),
@@ -188,11 +189,12 @@ Future<void> termsConditionsDialog(BuildContext context) async {
                             child: FutureBuilder(
                               future: _fetchData(),
                               builder: (_, snapshot) {
-                                if (snapshot.hasData && !snapshot.hasError) {
-                                  return Text(
-                                    snapshot.data,
-                                    style: TextStyle(fontSize: 14.0),
-                                  );
+                                if (snapshot.hasData &&
+                                    !snapshot.hasError &&
+                                    snapshot.data['termsAndConditionsInvite'] !=
+                                        null) {
+                                  return HtmlWidget(snapshot
+                                      .data['termsAndConditionsInvite']);
                                 }
                                 return Center(
                                   child: CircularProgressIndicator(),

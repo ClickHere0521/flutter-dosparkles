@@ -5,6 +5,7 @@ import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/utils/colors.dart';
 import 'package:com.floridainc.dosparkles/widgets/connection_lost.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 Future _fetchData() async {
@@ -104,10 +105,7 @@ class _PrivacyPolicyState extends State<PrivacyPolicy> {
                       future: _fetchData(),
                       builder: (context, snapshot) {
                         if (snapshot.hasData && !snapshot.hasError) {
-                          return Text(
-                            snapshot.data,
-                            style: TextStyle(fontSize: 16.0),
-                          );
+                          return HtmlWidget(snapshot.data);
                         }
                         return Center(
                           child: CircularProgressIndicator(),

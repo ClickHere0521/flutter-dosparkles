@@ -5,6 +5,7 @@ import 'dart:ui';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/utils/general.dart';
 import 'package:com.floridainc.dosparkles/widgets/connection_lost.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -875,28 +876,18 @@ class __ChangeOrderState extends State<_ChangeOrder> {
                     currentTab == 1
                         ? Padding(
                             padding: EdgeInsets.symmetric(horizontal: 16.0),
-                            child: Text(
+                            child: HtmlWidget(
                               widget.product['productDetails'] != null
                                   ? widget.product['productDetails']
-                                  : "",
-                              style: TextStyle(
-                                fontSize: 11.0,
-                                fontWeight: FontWeight.w300,
-                                height: 1.35,
-                              ),
+                                  : '',
                             ),
                           )
                         : Padding(
                             padding: EdgeInsets.symmetric(horizontal: 16.0),
-                            child: Text(
+                            child: HtmlWidget(
                               widget.product['deliveryTime'] != null
                                   ? widget.product['deliveryTime']
-                                  : "",
-                              style: TextStyle(
-                                fontSize: 11.0,
-                                fontWeight: FontWeight.w300,
-                                height: 1.35,
-                              ),
+                                  : '',
                             ),
                           ),
                     SizedBox(height: 20.0),

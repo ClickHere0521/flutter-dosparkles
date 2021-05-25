@@ -5,6 +5,7 @@ import 'package:com.floridainc.dosparkles/widgets/connection_lost.dart';
 import 'package:com.floridainc.dosparkles/widgets/product_customization.dart';
 import 'package:com.floridainc.dosparkles/widgets/product_details_image.dart';
 import 'package:com.floridainc.dosparkles/widgets/swiper_widget.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -655,28 +656,18 @@ class __MainBodyState extends State<_MainBody> {
                 currentTab == 1
                     ? Padding(
                         padding: EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Text(
+                        child: HtmlWidget(
                           widget.selectedProduct.productDetails != null
                               ? widget.selectedProduct.productDetails
                               : "",
-                          style: TextStyle(
-                            fontSize: 11.0,
-                            fontWeight: FontWeight.w300,
-                            height: 1.35,
-                          ),
                         ),
                       )
                     : Padding(
                         padding: EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Text(
+                        child: HtmlWidget(
                           widget.selectedProduct.deliveryTime != null
                               ? widget.selectedProduct.deliveryTime
                               : "",
-                          style: TextStyle(
-                            fontSize: 11.0,
-                            fontWeight: FontWeight.w300,
-                            height: 1.35,
-                          ),
                         ),
                       ),
                 SizedBox(height: 35.0),

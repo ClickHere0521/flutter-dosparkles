@@ -35,7 +35,7 @@ packages:
       name: async
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.5.0"
+    version: "2.6.1"
   better_player:
     dependency: "direct main"
     description:
@@ -99,6 +99,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.4"
+  chewie:
+    dependency: transitive
+    description:
+      name: chewie
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.12.2"
   cli_util:
     dependency: transitive
     description:
@@ -462,6 +469,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_widget_from_html:
+    dependency: "direct main"
+    description:
+      name: flutter_widget_from_html
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.5.2+1"
   flutter_widget_from_html_core:
     dependency: transitive
     description:
@@ -1175,6 +1189,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.0.5"
+  webview_flutter:
+    dependency: transitive
+    description:
+      name: webview_flutter
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.7"
   win32:
     dependency: transitive
     description:
