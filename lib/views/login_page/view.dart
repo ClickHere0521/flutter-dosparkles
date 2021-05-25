@@ -136,16 +136,17 @@ class __InnerPartState extends State<_InnerPart> {
   @override
   void initState() {
     super.initState();
+    // _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount account) {
+    //   print("------3333------ $account");
 
-    _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount account) {
-      setState(() {
-        _currentUser = account;
-      });
-      if (_currentUser != null) {
-        print("------1111------ $_currentUser");
-      }
-    });
-    _googleSignIn.signInSilently();
+    //   setState(() {
+    //     _currentUser = account;
+    //   });
+    //   if (_currentUser != null) {
+    //     print("------1111------ $_currentUser");
+    //   }
+    // });
+    // _googleSignIn.signInSilently();
   }
 
   @override
@@ -378,7 +379,7 @@ class __InnerPartState extends State<_InnerPart> {
                           fit: BoxFit.contain,
                         ),
                         onTap: () {
-                          _goolgeSignIn(_googleSignIn);
+                          _goolgeSignIn(_googleSignIn, context);
                         },
                       ),
                       SizedBox(width: 16),
@@ -421,9 +422,27 @@ class __InnerPartState extends State<_InnerPart> {
   }
 }
 
-void _goolgeSignIn(_googleSignIn) async {
+void _goolgeSignIn(_googleSignIn, context) async {
   try {
-    await _googleSignIn.signIn();
+    print("_goolgeSignIn");
+    GoogleSignInAccount user = await _googleSignIn.signIn();
+    print("123");
+    GoogleSignInAuthentication googleSignInAuthentication = await user.authentication;
+    print("accessToken: ${googleSignInAuthentication.accessToken}");
+
+    if (googleSignInAuthentication.accessToken != null){
+      Response response = await http.get(
+        '${AppConfig.instance.baseApiHost}/auth/google/callback?access_token=${googleSignInAuthentication.accessToken}',
+      );
+      Map<String, dynamic> token = json.decode(response.body);
+
+      if (token['jwt'].isNotEmpty) {
+        SharedPreferences.getInstance().then((_p) async {
+          await _p.setString("jwt", token['jwt']);
+          Navigator.of(context).pushReplacementNamed('loginpage');
+        });
+      }
+    }
   } catch (error) {
     print(error);
   }

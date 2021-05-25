@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "291190415379-24bdfbf2g1ir5h1skrtlb80nftmcsghj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.floridainc.dosparkles",
+            "certificate_hash": "a405f767379780e16df8075151af3d683f91b9a3"
+          }
+        },
+        {
           "client_id": "291190415379-bbd4d9bj5cs1rlk7t7hpoal70a5ee9n2.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

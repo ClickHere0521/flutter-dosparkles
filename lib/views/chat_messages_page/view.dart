@@ -253,7 +253,7 @@ class BubblePage extends StatefulWidget {
     Key key,
     this.chatId = '',
     this.userId = '',
-    this.conversationName = 'MedDrive',
+    this.conversationName = 'DoSparkles',
   }) : super(key: key);
 
   @override
