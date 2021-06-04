@@ -1,4 +1,4 @@
 {
-  "graphQLHttpLink": "https://backend.dosparkles.com/graphql",
-  "baseApiHost": "https://backend.dosparkles.com"
+  "graphQLHttpLink": "http://192.168.43.136:1337/graphql",
+  "baseApiHost": "http://192.168.43.136:1337"
 }

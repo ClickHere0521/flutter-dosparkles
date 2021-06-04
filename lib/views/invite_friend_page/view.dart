@@ -321,7 +321,9 @@ class __MainBodyState extends State<_MainBody> {
         result.data['users'][0] != null &&
         result.data['users'][0]['invitesSent'] != null) {
       setState(() {
-        invitesSent = result.data['users'][0]['invitesSent'];
+        invitesSent = result.data['users'][0]['invitesSent']
+            .where((el) => el['smsSent'] == true)
+            .toList();
       });
     }
   }
@@ -424,6 +426,7 @@ class __MainBodyState extends State<_MainBody> {
           SizedBox(height: 33.0),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               GestureDetector(
                 behavior: HitTestBehavior.translucent,
@@ -458,6 +461,17 @@ class __MainBodyState extends State<_MainBody> {
                       height: 60.0,
                     ),
                     Text("SMS"),
+                    SizedBox(height: 5.0),
+                    Container(
+                      child: Text(
+                        "${invitesSent.length}/100",
+                        style: TextStyle(
+                          fontSize: 15.0,
+                          fontWeight: FontWeight.normal,
+                          color: invitesSent.length >= 100 ? Colors.red : null,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
                 onTap: () async {
@@ -468,17 +482,6 @@ class __MainBodyState extends State<_MainBody> {
                 },
               ),
             ],
-          ),
-          SizedBox(height: 21.0),
-          Container(
-            child: Text(
-              "${invitesSent.length}/100",
-              style: TextStyle(
-                fontSize: 22.0,
-                fontWeight: FontWeight.bold,
-                color: invitesSent.length >= 100 ? Colors.red : null,
-              ),
-            ),
           ),
           SizedBox(height: 21.0),
           Container(
@@ -1206,9 +1209,22 @@ class __ContactsPageState extends State<_ContactsPage> {
     setState(() {
       filteredList = contactsList.where((contact) {
         String name = contact['name'].toLowerCase();
+        String phone = contact['phone'].toLowerCase();
         String value = searchValue.toLowerCase();
-        return name.indexOf(value) != -1;
+        return "$name $phone".indexOf(value) != -1;
       }).toList();
+
+      filteredList.sort((a, b) {
+        if (a['name'] == null || b['name'] == null) {
+          return -1;
+        }
+        if (a['name'] != null && b['name'] != null) {
+          return a['name'].compareTo(b['name']);
+        }
+        return null;
+      });
+
+      // filteredList.sort((a, b) => a['name'].compareTo(b['name']));
 
       checkedList =
           contactsList.where((contact) => contact['checked'] == true).toList();

@@ -141,7 +141,7 @@ class __InnerPartState extends State<_InnerPart> {
   TextEditingController emailController;
   TextEditingController messageController;
 
-  String dropDownValue = "One";
+  String dropDownValue = "My Order";
 
   @override
   void initState() {
@@ -428,8 +428,12 @@ class __InnerPartState extends State<_InnerPart> {
                             dropDownValue = newValue;
                           });
                         },
-                        items: ["One", "Two", "Three"]
-                            .map<DropdownMenuItem<String>>((dynamic value) {
+                        items: [
+                          "My Order",
+                          "App Feedback",
+                          "I want to sell",
+                          "Other"
+                        ].map<DropdownMenuItem<String>>((dynamic value) {
                           return DropdownMenuItem<String>(
                             value: value,
                             child: Text(
