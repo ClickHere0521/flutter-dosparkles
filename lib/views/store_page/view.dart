@@ -468,53 +468,90 @@ class _ProductViewState extends State<_ProductView>
     }
 
     var size = MediaQuery.of(context).size;
-    return GestureDetector(
-      // Using the DragEndDetails allows us to only fire once per swipe.
-      onVerticalDragEnd: (dragEndDetails) {
-        if (dragEndDetails.primaryVelocity < 0) {
-          // Page up
-          widget.dispatch(StorePageActionCreator.onGoToProductPage(
-              widget.store.products[_tabSelectedIndex]));
-        } else if (dragEndDetails.primaryVelocity > 0) {
-          // Page down
-          widget.dispatch(StorePageActionCreator.onBackToAllProducts());
-        }
-      },
-      onHorizontalDragEnd: (dragEndDetails) {
-        if (dragEndDetails.primaryVelocity < 0) {
-          // Page forwards
+    return Stack(
+      children: [
+        GestureDetector(
+          // Using the DragEndDetails allows us to only fire once per swipe.
+          onVerticalDragEnd: (dragEndDetails) {
+            if (dragEndDetails.primaryVelocity < 0) {
+              // Page up
+              widget.dispatch(StorePageActionCreator.onGoToProductPage(
+                  widget.store.products[_tabSelectedIndex]));
+            } else if (dragEndDetails.primaryVelocity > 0) {
+              // Page down
+              widget.dispatch(StorePageActionCreator.onBackToAllProducts());
+            }
+          },
+          onHorizontalDragEnd: (dragEndDetails) {
+            if (dragEndDetails.primaryVelocity < 0) {
+              // Page forwards
 
-          _tabController.index++;
-        } else if (dragEndDetails.primaryVelocity > 0) {
-          // Page backwards
+              _tabController.index++;
+            } else if (dragEndDetails.primaryVelocity > 0) {
+              // Page backwards
 
-          if (_tabController.index == 0 && _tabController.offset == 0.0) {
-            widget.dispatch(StorePageActionCreator.onBackToAllProducts());
-          }
-        }
-      },
+              if (_tabController.index == 0 && _tabController.offset == 0.0) {
+                widget.dispatch(StorePageActionCreator.onBackToAllProducts());
+              }
+            }
+          },
 
-      child: AbsorbPointer(
-        absorbing: _shouldAbsorb,
-        child: TabBarView(
-          controller: _tabController,
-          children: List.generate(items.length, (index) {
-            return items[index] != null && items[index].videoUrl != null
-                ? Center(
-                    child: VideoPlayerItem(
-                        videoUrl: items[index].videoUrl,
-                        size: size,
-                        tabSelectedIndex: _tabSelectedIndex,
-                        dispatch: widget.dispatch,
-                        store: widget.store
-                        // name: items[index].name,
-                        // price: '\$${items[index].price}',
-                        ),
-                  )
-                : Container();
-          }),
+          child: AbsorbPointer(
+            absorbing: _shouldAbsorb,
+            child: TabBarView(
+              controller: _tabController,
+              children: List.generate(items.length, (index) {
+                return items[index] != null && items[index].videoUrl != null
+                    ? Center(
+                        child: VideoPlayerItem(
+                            videoUrl: items[index].videoUrl,
+                            size: size,
+                            tabSelectedIndex: _tabSelectedIndex,
+                            dispatch: widget.dispatch,
+                            store: widget.store
+                            // name: items[index].name,
+                            // price: '\$${items[index].price}',
+                            ),
+                      )
+                    : Container();
+              }),
+            ),
+          ),
         ),
-      ),
+        Container(
+          height: size.height,
+          width: size.width,
+          child: Padding(
+            padding: const EdgeInsets.only(
+              top: 16,
+              bottom: 16,
+              right: 16,
+              left: 16,
+            ),
+            child: SafeArea(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Expanded(
+                    child: RotatedBox(
+                      quarterTurns: 0,
+                      child: LeftPanel(
+                          size: size,
+                          tabSelectedIndex: _tabSelectedIndex,
+                          dispatch: widget.dispatch,
+                          store: widget.store
+                          // name: "${widget.name}",
+                          // price: "${widget.price}",
+                          ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        )
+      ],
     );
   }
 }
@@ -590,104 +627,69 @@ class _VideoPlayerItemState extends State<VideoPlayerItem> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-        // onTap: () {
-        //   setState(() {
-        //     _videoController.value.isPlaying
-        //         ? _videoController.pause()
-        //         : _videoController.play();
-        //   });
-        // },
-        child: RotatedBox(
-      quarterTurns: 0,
-      child: Container(
+      onTap: () {
+        // setState(() {
+        //   _videoController.value.isPlaying
+        //       ? _videoController.pause()
+        //       : _videoController.play();
+        // });
+      },
+      child: RotatedBox(
+        quarterTurns: 0,
+        child: Container(
           height: widget.size.height,
           width: widget.size.width,
-          child: Stack(
-            children: [
-              Container(
-                height: widget.size.height,
-                width: widget.size.width,
-                child: Stack(
-                  children: [
-                    SizedBox.expand(
-                      child: FittedBox(
-                        fit: BoxFit.cover,
-                        child: SizedBox(
-                          height: widget.size.height,
-                          width: widget.size.width,
-                          child: BetterPlayer(
-                            controller: _betterPlayerController,
-                          ),
-                        ),
+          child: Container(
+            height: widget.size.height,
+            width: widget.size.width,
+            child: Stack(
+              children: [
+                SizedBox.expand(
+                  child: FittedBox(
+                    fit: BoxFit.cover,
+                    child: SizedBox(
+                      height: widget.size.height,
+                      width: widget.size.width,
+                      child: BetterPlayer(
+                        controller: _betterPlayerController,
                       ),
                     ),
-
-                    //                   SizedBox.expand(
-                    //                     child: FittedBox(
-                    //                       fit: BoxFit.cover,
-                    //                        child:  AspectRatio(
-                    //                        child:   BetterPlayer(
-                    //   controller: _betterPlayerController,
-                    // ),
-                    //   aspectRatio: 16 / 9,
-
-                    // ),
-                    //                       // child: SizedBox(
-                    //                       //   // width: _videoController.value.size?.width ?? 0,
-                    //                       //   // height: _videoController.value.size?.height ?? 0,
-                    //                       //   width: 500, widget.size.width,
-                    //                       //   height: 300, widget.size.height,
-                    //                       //   child:
-
-                    //                       //   // VideoPlayer(_videoController),
-                    //                       // ),
-                    //                     ),
-                    //                   ),
-                    // Center(
-                    //   child: Container(
-                    //     decoration: BoxDecoration(),
-                    //     child: isPlaying(),
-                    //   ),
-                    // )
-                  ],
-                ),
-              ),
-              Container(
-                height: widget.size.height,
-                width: widget.size.width,
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                    top: 16,
-                    bottom: 16,
-                    right: 16,
-                    left: 16,
-                  ),
-                  child: SafeArea(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Expanded(
-                          child: RotatedBox(
-                            quarterTurns: 0,
-                            child: LeftPanel(
-                                size: widget.size,
-                                tabSelectedIndex: widget.tabSelectedIndex,
-                                dispatch: widget.dispatch,
-                                store: widget.store
-                                // name: "${widget.name}",
-                                // price: "${widget.price}",
-                                ),
-                          ),
-                        ),
-                      ],
-                    ),
                   ),
                 ),
-              )
-            ],
-          )),
-    ));
+
+                //                   SizedBox.expand(
+                //                     child: FittedBox(
+                //                       fit: BoxFit.cover,
+                //                        child:  AspectRatio(
+                //                        child:   BetterPlayer(
+                //   controller: _betterPlayerController,
+                // ),
+                //   aspectRatio: 16 / 9,
+
+                // ),
+                //                       // child: SizedBox(
+                //                       //   // width: _videoController.value.size?.width ?? 0,
+                //                       //   // height: _videoController.value.size?.height ?? 0,
+                //                       //   width: 500, widget.size.width,
+                //                       //   height: 300, widget.size.height,
+                //                       //   child:
+
+                //                       //   // VideoPlayer(_videoController),
+                //                       // ),
+                //                     ),
+                //                   ),
+                // Center(
+                //   child: Container(
+                //     decoration: BoxDecoration(),
+                //     child: isPlaying(),
+                //   ),
+                // )
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
 
