@@ -591,7 +591,9 @@ class __MainBodyState extends State<_MainBody> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => _ContactsPage()),
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          _ContactsPage(fetchInvitesSent: _fetchInvitesSent)),
                 );
               },
             ),
@@ -1115,6 +1117,10 @@ class __EndBodyState extends State<_EndBody> {
 }
 
 class _ContactsPage extends StatefulWidget {
+  final Function fetchInvitesSent;
+
+  _ContactsPage({this.fetchInvitesSent});
+
   @override
   __ContactsPageState createState() => __ContactsPageState();
 }
@@ -1575,8 +1581,13 @@ class __ContactsPageState extends State<_ContactsPage> {
                         ? null
                         : () {
                             if (checkedList.isNotEmpty) {
-                              _onSubmit(checkedList, contactsList, _setLoading,
-                                  context);
+                              _onSubmit(
+                                checkedList,
+                                contactsList,
+                                _setLoading,
+                                context,
+                                widget.fetchInvitesSent,
+                              );
                             }
                           },
                   ),
@@ -1622,6 +1633,7 @@ void _onSubmit(
   List contactsList,
   Function _setLoading,
   BuildContext context,
+  Function fetchInvitesSent,
 ) async {
   AppUser globalUser = GlobalStore.store.getState().user;
 
@@ -1671,6 +1683,8 @@ void _onSubmit(
         'data': json.encode(friendsList),
       },
     );
+
+    fetchInvitesSent();
 
     _setLoading(false);
   } catch (e) {
