@@ -401,7 +401,7 @@ void _onSubmit(context, oldValue, newValue, repeatValue) async {
     );
     if (result.hasException) print(result.exception);
 
-    if (result.data != null) {
+    if (!result.hasException && result.data != null) {
       Toast.show("Your password successfully changed", context,
           duration: 3, gravity: Toast.TOP);
 

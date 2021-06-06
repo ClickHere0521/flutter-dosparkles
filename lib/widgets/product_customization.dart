@@ -481,6 +481,7 @@ class ProductCustomizationState extends State<ProductCustomization> {
                                                           color: Colors.black,
                                                           fontSize: 14.0,
                                                         ),
+                                                        maxLength: 20,
                                                         onChanged: (content) {
                                                           setState(() {});
                                                           var engravingListActual =
@@ -507,6 +508,7 @@ class ProductCustomizationState extends State<ProductCustomization> {
                                                         decoration:
                                                             InputDecoration(
                                                           isDense: true,
+                                                          counterText: "",
                                                           hintText:
                                                               'Enter your words here',
                                                           contentPadding:

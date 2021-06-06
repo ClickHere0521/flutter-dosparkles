@@ -586,7 +586,7 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                         behavior: HitTestBehavior.translucent,
                         child: Container(
                           padding: EdgeInsets.all(12.0),
-                          margin: EdgeInsets.only(left: 13.0),
+                          margin: EdgeInsets.only(left: 13.0, bottom: 10.0),
                           decoration: widget.activeRoute == 'dashboardpage'
                               ? BoxDecoration(
                                   color: Colors.white.withOpacity(0.2),
@@ -620,39 +620,40 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                               arguments: null);
                         },
                       )
-                    : GestureDetector(
-                        behavior: HitTestBehavior.translucent,
-                        child: Container(
-                          padding: EdgeInsets.all(12.0),
-                          margin: EdgeInsets.only(left: 13.0),
-                          decoration: BoxDecoration(),
-                          child: Stack(
-                            alignment: Alignment.centerLeft,
-                            children: [
-                              SvgPicture.asset("images/Group 251.svg"),
-                              Positioned(
-                                left: 32.0,
-                                child: Text(
-                                  "Upload Video",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16.0,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        onTap: () {
-                          Navigator.of(context).pushReplacementNamed(
-                            'storeselectionpage',
-                            arguments: null,
-                          );
-                        },
-                      ),
+                    : SizedBox.shrink(child: null),
+                // : GestureDetector(
+                //     behavior: HitTestBehavior.translucent,
+                //     child: Container(
+                //       padding: EdgeInsets.all(12.0),
+                //       margin: EdgeInsets.only(left: 13.0),
+                //       decoration: BoxDecoration(),
+                //       child: Stack(
+                //         alignment: Alignment.centerLeft,
+                //         children: [
+                //           SvgPicture.asset("images/Group 251.svg"),
+                //           Positioned(
+                //             left: 32.0,
+                //             child: Text(
+                //               "Upload Video",
+                //               style: TextStyle(
+                //                 color: Colors.white,
+                //                 fontSize: 16.0,
+                //                 fontWeight: FontWeight.w500,
+                //               ),
+                //             ),
+                //           ),
+                //         ],
+                //       ),
+                //     ),
+                //     onTap: () {
+                //       Navigator.of(context).pushReplacementNamed(
+                //         'storeselectionpage',
+                //         arguments: null,
+                //       );
+                //     },
+                //   ),
 
-                SizedBox(height: 10.0),
+                // SizedBox(height: 10.0),
                 GestureDetector(
                   behavior: HitTestBehavior.translucent,
                   child: Container(

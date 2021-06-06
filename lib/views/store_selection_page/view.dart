@@ -165,7 +165,7 @@ class _InnerPart extends StatefulWidget {
 }
 
 class __InnerPartState extends State<_InnerPart> {
-  List<StoreItem> filteredList = [];
+  List<StoreItem> filteredList;
   String searchValue = "";
 
   void _onSearch() {
