@@ -196,7 +196,9 @@ class __InnerPartState extends State<_InnerPart> {
 
   @override
   Widget build(BuildContext context) {
-    var relevantList = filteredList != null ? filteredList : widget.stores;
+    var relevantList = filteredList != null && filteredList.length > 0
+        ? filteredList
+        : widget.stores;
 
     return Container(
       child: Column(

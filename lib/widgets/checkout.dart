@@ -217,7 +217,7 @@ class _CheckoutState extends State<Checkout> {
 
                                 _setIsLoading(false);
 
-                                addDialog(context);
+                                // addDialog(context);
                               }
                             }
                           },

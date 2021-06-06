@@ -712,37 +712,37 @@ class __MainBodyState extends State<_MainBody> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 30.0),
-                      Container(
-                        width: double.infinity,
-                        height: 48.0,
-                        constraints: BoxConstraints(maxWidth: 343.0),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(31.0),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey[300],
-                              offset: Offset(0.0, 0.0), // (x,y)
-                              blurRadius: 10.0,
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Image.asset(
-                              "images/Group 270.png",
-                              width: 48.0,
-                            ),
-                            SizedBox(width: 12.0),
-                            Text(
-                              "Custom designs",
-                              style: TextStyle(fontSize: 16.0),
-                            ),
-                          ],
-                        ),
-                      ),
+                      // SizedBox(height: 30.0),
+                      // Container(
+                      //   width: double.infinity,
+                      //   height: 48.0,
+                      //   constraints: BoxConstraints(maxWidth: 343.0),
+                      //   decoration: BoxDecoration(
+                      //     color: Colors.white,
+                      //     borderRadius: BorderRadius.circular(31.0),
+                      //     boxShadow: [
+                      //       BoxShadow(
+                      //         color: Colors.grey[300],
+                      //         offset: Offset(0.0, 0.0), // (x,y)
+                      //         blurRadius: 10.0,
+                      //       ),
+                      //     ],
+                      //   ),
+                      //   child: Row(
+                      //     mainAxisSize: MainAxisSize.min,
+                      //     children: [
+                      //       Image.asset(
+                      //         "images/Group 270.png",
+                      //         width: 48.0,
+                      //       ),
+                      //       SizedBox(width: 12.0),
+                      //       Text(
+                      //         "Custom designs",
+                      //         style: TextStyle(fontSize: 16.0),
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
                       SizedBox(height: 12.0),
                       Container(
                         width: double.infinity,
@@ -774,74 +774,74 @@ class __MainBodyState extends State<_MainBody> {
                           ],
                         ),
                       ),
-                      SizedBox(height: 12.0),
-                      GestureDetector(
-                        behavior: HitTestBehavior.translucent,
-                        child: Container(
-                          width: double.infinity,
-                          height: 48.0,
-                          constraints: BoxConstraints(maxWidth: 343.0),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(31.0),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey[300],
-                                offset: Offset(0.0, 0.0), // (x,y)
-                                blurRadius: 10.0,
-                              ),
-                            ],
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Image.asset(
-                                "images/Group 268 (2).png",
-                                width: 48.0,
-                              ),
-                              SizedBox(width: 12.0),
-                              Stack(
-                                clipBehavior: Clip.none,
-                                children: [
-                                  Text(
-                                    "Confirm video",
-                                    style: TextStyle(fontSize: 16.0),
-                                  ),
-                                  Positioned(
-                                    top: -10,
-                                    right: -10,
-                                    child: Container(
-                                      width: 14.0,
-                                      height: 14.0,
-                                      decoration: BoxDecoration(
-                                        color: HexColor("#6092DC"),
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          "2",
-                                          style: TextStyle(
-                                            fontSize: 10.0,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w700,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ConfirmVideo()),
-                          );
-                        },
-                      ),
+                      // SizedBox(height: 12.0),
+                      // GestureDetector(
+                      //   behavior: HitTestBehavior.translucent,
+                      //   child: Container(
+                      //     width: double.infinity,
+                      //     height: 48.0,
+                      //     constraints: BoxConstraints(maxWidth: 343.0),
+                      //     decoration: BoxDecoration(
+                      //       color: Colors.white,
+                      //       borderRadius: BorderRadius.circular(31.0),
+                      //       boxShadow: [
+                      //         BoxShadow(
+                      //           color: Colors.grey[300],
+                      //           offset: Offset(0.0, 0.0), // (x,y)
+                      //           blurRadius: 10.0,
+                      //         ),
+                      //       ],
+                      //     ),
+                      //     child: Row(
+                      //       mainAxisSize: MainAxisSize.min,
+                      //       children: [
+                      //         Image.asset(
+                      //           "images/Group 268 (2).png",
+                      //           width: 48.0,
+                      //         ),
+                      //         SizedBox(width: 12.0),
+                      //         Stack(
+                      //           clipBehavior: Clip.none,
+                      //           children: [
+                      //             Text(
+                      //               "Confirm video",
+                      //               style: TextStyle(fontSize: 16.0),
+                      //             ),
+                      //             Positioned(
+                      //               top: -10,
+                      //               right: -10,
+                      //               child: Container(
+                      //                 width: 14.0,
+                      //                 height: 14.0,
+                      //                 decoration: BoxDecoration(
+                      //                   color: HexColor("#6092DC"),
+                      //                   shape: BoxShape.circle,
+                      //                 ),
+                      //                 child: Center(
+                      //                   child: Text(
+                      //                     "2",
+                      //                     style: TextStyle(
+                      //                       fontSize: 10.0,
+                      //                       color: Colors.white,
+                      //                       fontWeight: FontWeight.w700,
+                      //                     ),
+                      //                   ),
+                      //                 ),
+                      //               ),
+                      //             )
+                      //           ],
+                      //         ),
+                      //       ],
+                      //     ),
+                      //   ),
+                      //   onTap: () {
+                      //     Navigator.push(
+                      //       context,
+                      //       MaterialPageRoute(
+                      //           builder: (context) => ConfirmVideo()),
+                      //     );
+                      //   },
+                      // ),
                       SizedBox(height: 12.0),
                     ],
                   ),
