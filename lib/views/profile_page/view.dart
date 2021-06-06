@@ -325,7 +325,7 @@ class __MainBodyState extends State<_MainBody> {
           .then((result) {
         if (result.hasException) print(result.exception);
 
-        if (result.data != null) {
+        if (result.data != null && mounted) {
           setState(() {
             _switchValue = result.data['users'][0]['enableNotifications'];
           });
