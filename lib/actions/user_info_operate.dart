@@ -2,7 +2,6 @@ import 'package:com.floridainc.dosparkles/globalbasestate/action.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/models/model_factory.dart';
 import 'package:com.floridainc.dosparkles/models/models.dart';
-import 'package:com.floridainc.dosparkles/utils/general.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:com.floridainc.dosparkles/actions/api/graphql_client.dart';
 
@@ -11,9 +10,6 @@ class UserInfoOperate {
     BaseGraphQLClient.instance.setToken(token);
 
     final meRequest = await BaseGraphQLClient.instance.me();
-    if (meRequest.hasException) {
-      print("exception: ${meRequest.exception}");
-    }
 
     final user = ModelFactory.generate<AppUser>(meRequest.data['me']['user']);
 
@@ -37,10 +33,6 @@ class UserInfoOperate {
     SharedPreferences _preferences = await SharedPreferences.getInstance();
 
     final savedToken = _preferences.getString('jwt') ?? '';
-
-    // if (savedToken.isNotEmpty) {
-    //   whenLogin(savedToken);
-    // }
   }
 
   static Future savePushToken(id, token) async {

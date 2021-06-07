@@ -1,15 +1,11 @@
 import 'dart:ui';
 
-import 'package:com.floridainc.dosparkles/globalbasestate/action.dart';
 import 'package:com.floridainc.dosparkles/models/cart_item_model.dart';
 import 'package:com.floridainc.dosparkles/models/date_formatter.dart';
-import 'package:com.floridainc.dosparkles/utils/general.dart';
 import 'package:com.floridainc.dosparkles/widgets/bottom_nav_bar.dart';
 import 'package:com.floridainc.dosparkles/widgets/connection_lost.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
 import 'package:com.floridainc.dosparkles/widgets/sparkles_drawer.dart';
@@ -1009,8 +1005,6 @@ class _ChatPageWidgetState extends State<ChatPageWidget> {
   }
 
   Future processChat(dynamic chat) async {
-    print('processChat');
-
     if (chat != null) {
       final SharedPreferences prefs = await _prefs;
       String chatsRaw = prefs.getString('chatsMap') ?? '{}';
@@ -1051,7 +1045,6 @@ class _ChatPageWidgetState extends State<ChatPageWidget> {
 
   Future fetchData() async {
     final chatsRequest = await BaseGraphQLClient.instance.fetchChats();
-    if (chatsRequest.hasException) print(chatsRequest.exception);
     if (chatsRequest.data == null) return null;
 
     List chats = chatsRequest.data['chats'];
@@ -1172,8 +1165,6 @@ class _StorePageWidgetState extends State<StorePageWidget> {
   }
 
   Future processChat(dynamic chat) async {
-    print('processChat');
-
     if (chat != null) {
       final SharedPreferences prefs = await _prefs;
       String chatsRaw = prefs.getString('chatsMap') ?? '{}';

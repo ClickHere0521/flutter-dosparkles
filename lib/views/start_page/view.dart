@@ -1,6 +1,5 @@
 import 'dart:ui';
 
-import 'package:com.floridainc.dosparkles/widgets/connection_lost.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
@@ -65,35 +64,6 @@ Widget buildView(
               ),
             ),
           ),
-          // Container(
-          //   width: MediaQuery.of(context).size.width,
-          //   height: MediaQuery.of(context).size.height,
-          //   color: Colors.transparent,
-          //   child: Align(
-          //     alignment: Alignment.topCenter,
-          //     child: Column(
-          //       mainAxisAlignment: MainAxisAlignment.center,
-          //       mainAxisSize: MainAxisSize.min,
-          //       children: [
-          //         SizedBox(height: 67.0),
-          //         SvgPicture.asset(
-          //           "images/The Perfect Gift.svg",
-          //           fit: BoxFit.cover,
-          //         ),
-          //         SizedBox(height: 12.0),
-          //         Text(
-          //           "made for you".toUpperCase(),
-          //           style: TextStyle(
-          //             fontSize: 20.0,
-          //             fontWeight: FontWeight.w700,
-          //             color: Colors.white,
-          //             decoration: TextDecoration.none,
-          //           ),
-          //         ),
-          //       ],
-          //     ),
-          //   ),
-          // ),
           Scaffold(
             body: FutureBuilder(
               future: _checkContextInit(

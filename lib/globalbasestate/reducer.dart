@@ -1,6 +1,4 @@
 import 'dart:ui';
-
-import 'package:com.floridainc.dosparkles/utils/general.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart' hide Action;
 import 'package:com.floridainc.dosparkles/models/models.dart';
@@ -68,8 +66,6 @@ GlobalState _addProductToShoppingCart(GlobalState state, Action action) {
       optionalMaterialSelected: action.payload[4],
     ),
   );
-
-  // printWrapped('newState.shoppingCart ${newState.shoppingCart.toString()}');
 
   return newState;
 }

@@ -28,7 +28,6 @@ class ConnectionLost extends StatelessWidget {
                     color: Colors.white,
                     fontSize: 13.0,
                     decoration: TextDecoration.none,
-                    // wordSpacing: -4.0,
                   ),
                 ),
               ],

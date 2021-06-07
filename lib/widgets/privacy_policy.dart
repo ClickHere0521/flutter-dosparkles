@@ -10,7 +10,6 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 
 Future _fetchData() async {
   QueryResult result = await BaseGraphQLClient.instance.fetchAppContent();
-  if (result.hasException) print(result.exception);
 
   return result.data['appContent']['privacyPolicy'];
 }

@@ -1,7 +1,5 @@
 import 'package:fish_redux/fish_redux.dart';
 
-import 'package:com.floridainc.dosparkles/models/models.dart';
-
 import 'action.dart';
 import 'state.dart';
 
@@ -24,7 +22,6 @@ ProductPageState _onAction(ProductPageState state, Action action) {
 ProductPageState _onSetOptionMaterialSelected(
     ProductPageState state, Action action) {
   final ProductPageState newState = state.clone();
-  print('_onSetOptionMaterialSelected ${action.payload}');
   newState.optionalMaterialSelected = action.payload;
   return newState;
 }

@@ -3,7 +3,7 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:com.floridainc.dosparkles/actions/app_config.dart';
-import 'package:com.floridainc.dosparkles/actions/user_info_operate.dart';
+
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/widgets/connection_lost.dart';
 import 'package:email_validator/email_validator.dart';
@@ -132,22 +132,6 @@ class __InnerPartState extends State<_InnerPart> {
   );
 
   GoogleSignInAccount _currentUser;
-
-  @override
-  void initState() {
-    super.initState();
-    // _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount account) {
-    //   print("------3333------ $account");
-
-    //   setState(() {
-    //     _currentUser = account;
-    //   });
-    //   if (_currentUser != null) {
-    //     print("------1111------ $_currentUser");
-    //   }
-    // });
-    // _googleSignIn.signInSilently();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -424,13 +408,11 @@ class __InnerPartState extends State<_InnerPart> {
 
 void _goolgeSignIn(_googleSignIn, context) async {
   try {
-    print("_goolgeSignIn");
     GoogleSignInAccount user = await _googleSignIn.signIn();
-    print("123");
-    GoogleSignInAuthentication googleSignInAuthentication = await user.authentication;
-    print("accessToken: ${googleSignInAuthentication.accessToken}");
+    GoogleSignInAuthentication googleSignInAuthentication =
+        await user.authentication;
 
-    if (googleSignInAuthentication.accessToken != null){
+    if (googleSignInAuthentication.accessToken != null) {
       Response response = await http.get(
         '${AppConfig.instance.baseApiHost}/auth/google/callback?access_token=${googleSignInAuthentication.accessToken}',
       );
@@ -468,15 +450,6 @@ void _facebookSignIn(context) async {
         });
       }
 
-      // print('''
-      //    Logged in!
-
-      //    Token: ${accessToken.token}
-      //    User id: ${accessToken.userId}
-      //    Expires: ${accessToken.expires}
-      //    Permissions: ${accessToken.permissions}
-      //    Declined permissions: ${accessToken.declinedPermissions}
-      //    ''');
       break;
     case FacebookLoginStatus.cancelledByUser:
       print('Login cancelled by the user.');
@@ -503,8 +476,6 @@ void _appleSignIn() async {
     ),
   );
 
-  print("______credential:$credential");
-
   // This is the endpoint that will convert an authorization code obtained
   // via Sign in with Apple into a session in your system
   final signInWithAppleEndpoint = Uri(
@@ -520,11 +491,5 @@ void _appleSignIn() async {
     },
   );
 
-  final session = await http.Client().post(
-    signInWithAppleEndpoint,
-  );
-
-  // If we got this far, a session based on the Apple ID credential has been created in your system,
-  // and you can now set this as the app's session
-  print("______session:$session");
+  await http.Client().post(signInWithAppleEndpoint);
 }

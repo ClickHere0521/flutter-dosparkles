@@ -1,5 +1,3 @@
-import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
-import 'package:com.floridainc.dosparkles/utils/general.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:com.floridainc.dosparkles/actions/app_config.dart';
 import 'package:com.floridainc.dosparkles/actions/api/graphql_service.dart';
@@ -51,8 +49,6 @@ class BaseGraphQLClient {
         }
       }
     ''';
-
-    // printWrapped('Debug _mutation: $_mutation');
     return _service.mutate(_mutation);
   }
 
@@ -178,7 +174,6 @@ class BaseGraphQLClient {
       }
     ''';
 
-    // printWrapped('Debug _mutation: $_mutation');
     return _service.query(_query);
   }
 
@@ -212,7 +207,6 @@ class BaseGraphQLClient {
       }
     ''';
 
-    // printWrapped('Debug _mutation: $_mutation');
     return _service.query(_query);
   }
 
@@ -226,7 +220,6 @@ class BaseGraphQLClient {
       }
     ''';
 
-    // printWrapped('Debug _mutation: $_mutation');
     return _service.query(_query);
   }
 
@@ -243,7 +236,6 @@ class BaseGraphQLClient {
       }
     ''';
 
-    // printWrapped('Debug _mutation: $_mutation');
     return _service.query(_query);
   }
 
@@ -256,7 +248,6 @@ class BaseGraphQLClient {
       }
     ''';
 
-    // printWrapped('Debug _mutation: $_mutation');
     return _service.query(_query);
   }
 
@@ -375,7 +366,6 @@ class BaseGraphQLClient {
       }
     ''';
 
-    // printWrapped('Debug _mutation: $_mutation');
     return _service.mutate(_mutation);
   }
 
@@ -418,7 +408,6 @@ class BaseGraphQLClient {
       }
     ''';
 
-    // printWrapped('Debug _mutation: $_mutation');
     return _service.mutate(_mutation);
   }
 
@@ -462,7 +451,6 @@ class BaseGraphQLClient {
       }
     ''';
 
-    // printWrapped('Debug _mutation: $_mutation');
     return _service.mutate(_mutation);
   }
 
@@ -491,7 +479,6 @@ class BaseGraphQLClient {
       }
     ''';
 
-    // printWrapped('Debug _mutation: $_mutation');
     return _service.query(_mutation);
   }
 
@@ -808,7 +795,6 @@ class BaseGraphQLClient {
       }
     ''';
 
-    //  printWrapped('Debug _mutation: $_mutation');
     return _service.mutate(_mutation);
   }
 
@@ -918,7 +904,6 @@ class BaseGraphQLClient {
       }
     ''';
 
-    // printWrapped('Debug _mutation: $_mutation');
     return _service.mutate(_mutation);
   }
 
@@ -1004,7 +989,6 @@ class BaseGraphQLClient {
       }
     ''';
 
-    // printWrapped('Debug _mutation: $_mutation');
     return _service.query(_mutation);
   }
 
@@ -1072,7 +1056,6 @@ class BaseGraphQLClient {
       }
     ''';
 
-    // printWrapped('Debug _mutation: $_mutation');
     return _service.query(_query);
   }
 
@@ -1109,7 +1092,6 @@ class BaseGraphQLClient {
       }
     ''';
 
-    // printWrapped('Debug _mutation: $_mutation');
     return _service.query(_mutation);
   }
 
@@ -1139,7 +1121,6 @@ class BaseGraphQLClient {
       }
     ''';
 
-    // printWrapped('Debug _mutation: $_mutation');
     return _service.mutate(_mutation);
   }
 
@@ -1154,7 +1135,6 @@ class BaseGraphQLClient {
       }
     ''';
 
-    printWrapped('Debug _mutation: $_mutation');
     return _service.mutate(_mutation);
   }
 
@@ -1176,8 +1156,6 @@ class BaseGraphQLClient {
         }
       }
     ''';
-
-    // printWrapped('Debug _mutation: $_mutation');
     return _service.mutate(_mutation);
   }
 
@@ -1203,7 +1181,6 @@ class BaseGraphQLClient {
       }
     ''';
 
-    print("token :  $data");
     return _service.mutate(_mutation, variables: {
       "input": {
         "where": {"id": "$id"},
@@ -1341,7 +1318,6 @@ class BaseGraphQLClient {
       
     ''';
 
-    // print("DEBUG________$_query");
     return _service.query(_query);
   }
 
@@ -1390,7 +1366,6 @@ class BaseGraphQLClient {
       }
     ''';
 
-    // print("DEBUG________$_mutation");
     return _service.mutate(_mutation);
   }
 
@@ -1433,7 +1408,6 @@ class BaseGraphQLClient {
       }
     ''';
 
-    // print("DEBUG________$_mutation");
     return _service.mutate(_mutation);
   }
 
@@ -1470,7 +1444,6 @@ class BaseGraphQLClient {
       }
     ''';
 
-    // print("DEBUG________$_mutation");
     return _service.mutate(_mutation);
   }
 
@@ -1515,7 +1488,6 @@ class BaseGraphQLClient {
       }
     ''';
 
-    // print("DEBUG________$_mutation");
     return _service.mutate(_mutation);
   }
 
@@ -1582,7 +1554,6 @@ class BaseGraphQLClient {
       }
     ''';
 
-    //  printWrapped('Debug _mutation: $_mutation');
     return _service.mutate(_mutation);
   }
 
@@ -1653,7 +1624,6 @@ class BaseGraphQLClient {
 }
     ''';
 
-    //   printWrapped('Debug _mutation: $_mutation');
     return _service.mutate(
       _mutation,
       variables: {
@@ -1721,16 +1691,4 @@ class BaseGraphQLClient {
 
     return _service.query(_query);
   }
-
-  // Stream<FetchResult> tvShowCommentSubscription(int id) {
-  //   String _sub = '''
-  //   subscription tvComment{
-  //      comment: tvShowCommentList(id:$id){
-  //         id
-  //         comment
-  //       }
-  //   }''';
-
-  //   return _service.subscribe(_sub, operationName: 'tvComment');
-  // }
 }

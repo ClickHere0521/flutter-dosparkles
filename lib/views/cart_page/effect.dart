@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:com.floridainc.dosparkles/models/cart_item_model.dart';
 import 'package:com.floridainc.dosparkles/utils/general.dart';
 import 'package:fish_redux/fish_redux.dart';
@@ -55,8 +53,6 @@ void _onAction(Action action, Context<CartPageState> ctx) {}
 void _onSetProductCount(Action action, Context<CartPageState> ctx) {
   CartItem cartItem = action.payload[0];
   int count = action.payload[1];
-
-  print('cart: ${ctx.state.shoppingCart.toString()}');
 
   for (var i = 0; i < ctx.state.shoppingCart.length; i++) {
     if (ctx.state.shoppingCart[i] == cartItem) {
@@ -138,7 +134,6 @@ String processCartItemForOrder(CartItem item) {
 
   var result =
       '{ store_line_item_id: "${item.product.id}", sku: "$sku", quantity: ${item.count}, properties: $properties }';
-  // printWrapped('processCartItemForOrder: $result');
 
   return result;
 }
@@ -163,10 +158,6 @@ void _onProceedToCheckout(Action action, Context<CartPageState> ctx) async {
 
   productsIdsJson = "[${cart.map((item) => '"${item.product.id}"').join(',')}]";
 
-  // printWrapped('orderDetailsJson: $orderDetailsJson');
-  // printWrapped('productsIdsJson: $productsIdsJson');
-  // print("--------------- ${ctx.state.paymentToken}");
-
   GlobalStore.store.dispatch(GlobalActionCreator.setShoppingCart(
       List<CartItem>.empty(growable: true)));
 
@@ -176,15 +167,10 @@ void _onProceedToCheckout(Action action, Context<CartPageState> ctx) async {
     productsIdsJson,
     ctx.state.paymentToken,
   );
-  if (resultOrder.hasException) {
-    printWrapped('Exception: ${resultOrder.exception}');
-  }
 
   QueryResult storeResult = await BaseGraphQLClient.instance
       .fetchStoreById(ctx.state.selectedStore.id);
-  if (storeResult.hasException) {
-    printWrapped('Exception: ${storeResult.exception}');
-  }
+
   var foundStore = storeResult.data['stores'][0];
 
   List storeChats = foundStore['chats'];
@@ -216,32 +202,22 @@ void _onProceedToCheckout(Action action, Context<CartPageState> ctx) async {
     orderIds.add("\"${resultOrder.data['createOrder']['order']['id']}\"");
     QueryResult storeOrderResult = await BaseGraphQLClient.instance
         .updateStoreOrder(foundStore['id'], orderIds);
-    if (storeOrderResult.hasException) print(storeOrderResult.exception);
   } else {
     QueryResult storeOrderResult =
         await BaseGraphQLClient.instance.updateStoreOrder(
       foundStore['id'],
       ["\"${resultOrder.data['createOrder']['order']['id']}\""],
     );
-    if (storeOrderResult.hasException) print(storeOrderResult.exception);
   }
 
   if (isExistUser == false || storeChats == null || storeChats.length == 0) {
     QueryResult resultChat = await BaseGraphQLClient.instance
         .createOrderChat(["\"$myId\""], ctx.state.selectedStore.id);
 
-    if (resultChat.hasException) {
-      printWrapped('Exception: ${resultChat.exception}');
-    }
-
-    QueryResult resultMessage =
-        await BaseGraphQLClient.instance.createOrderMessage(
+    await BaseGraphQLClient.instance.createOrderMessage(
       resultChat.data['createChat']['chat']['id'],
       resultOrder.data['createOrder']['order']['id'],
     );
-    if (resultMessage.hasException) {
-      printWrapped('Exception: ${resultMessage.exception}');
-    }
 
     Navigator.of(ctx.context).pushReplacementNamed(
       'chatmessagespage',
@@ -260,9 +236,6 @@ void _onProceedToCheckout(Action action, Context<CartPageState> ctx) async {
       storeChats[0]['id'],
       resultOrder.data['createOrder']['order']['id'],
     );
-    if (resultMessage.hasException) {
-      printWrapped('Exception: ${resultMessage.exception}');
-    }
 
     Navigator.of(ctx.context).pushReplacementNamed(
       'chatmessagespage',

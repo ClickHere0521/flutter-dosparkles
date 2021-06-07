@@ -2,31 +2,21 @@ import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
-import 'package:com.floridainc.dosparkles/actions/api/graphql_client.dart';
-import 'package:com.floridainc.dosparkles/actions/app_config.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/models/models.dart';
 import 'package:com.floridainc.dosparkles/utils/colors.dart';
 import 'package:com.floridainc.dosparkles/views/cart_page/action.dart';
 import 'package:com.floridainc.dosparkles/views/cart_page/state.dart';
-import 'package:com.floridainc.dosparkles/views/profile_page/state.dart';
-import 'package:com.floridainc.dosparkles/views/store_page/action.dart';
-import 'package:com.floridainc.dosparkles/views/store_page/state.dart';
 import 'package:com.floridainc.dosparkles/widgets/checkout.dart';
-import 'package:com.floridainc.dosparkles/widgets/confirm_video.dart';
 import 'package:com.floridainc.dosparkles/widgets/connection_lost.dart';
-import 'package:com.floridainc.dosparkles/widgets/custom_switch.dart';
+
 import 'package:com.floridainc.dosparkles/widgets/sparkles_drawer.dart';
-import 'package:com.floridainc.dosparkles/widgets/touch_spin.dart';
+
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:intl/intl.dart';
-import 'package:stripe_payment/stripe_payment.dart';
-import 'package:video_player/video_player.dart';
 
 Widget buildView(
     CartPageState state, Dispatch dispatch, ViewService viewService) {

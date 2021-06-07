@@ -58,7 +58,6 @@ class _OrderWidgetState extends State<OrderWidget> {
   Future getInitialData() async {
     QueryResult result =
         await BaseGraphQLClient.instance.fetchOrder(widget.orderId);
-    if (result.hasException) print(result.exception);
     var order = result.data['orders'][0];
     return order;
   }
@@ -66,7 +65,6 @@ class _OrderWidgetState extends State<OrderWidget> {
   Future<void> getOrderTotalPrice() async {
     QueryResult result =
         await BaseGraphQLClient.instance.fetchOrder(widget.orderId);
-    if (result.hasException) print(result.exception);
     var order = result.data['orders'][0];
 
     if (order != null && order['totalPrice'] != null) {
@@ -924,7 +922,6 @@ Future _sendRequest(imagesList) async {
   }
 
   http.Response response = await http.Response.fromStream(await request.send());
-  print(response.statusCode);
   List imagesResponse = json.decode(response.body);
   List<String> listOfIds =
       imagesResponse.map((image) => "\"${image['id']}\"").toList();
@@ -1027,7 +1024,6 @@ Future<void> _onSaveClicked(
 
       QueryResult resultFetch =
           await BaseGraphQLClient.instance.fetchProductById(productId);
-      if (resultFetch.hasException) print(resultFetch.exception);
 
       var product = resultFetch.data['products'][0];
       List<String> listOfMediaIds = [];
@@ -1036,9 +1032,8 @@ Future<void> _onSaveClicked(
         listOfMediaIds.add("\"${product['media'][i]['id']}\"");
       }
 
-      QueryResult resultUpdate = await BaseGraphQLClient.instance
+      await BaseGraphQLClient.instance
           .updateProductMedia(productId, [...listOfMediaIds, ...listOfIds]);
-      if (resultUpdate.hasException) print(resultUpdate.exception);
 
       setOrderChanged(true);
 
@@ -1054,11 +1049,6 @@ Future<void> _onSaveClicked(
   if (engravingName != null && engravingName != '') {
     _setLoading(true);
     try {
-      // List orderDetails = [];
-
-      // for (int i = 0; i < order['orderDetails'].length; i++) {
-      //   orderDetails.add(order['orderDetails'][i]);
-      // }
       orderDetail['properties']['Custom_Engraving'] = engravingName;
 
       List mergedList = [orderDetail];
@@ -1067,7 +1057,6 @@ Future<void> _onSaveClicked(
 
       QueryResult result = await BaseGraphQLClient.instance
           .updateOrderEngravingName(order['id'], mergedList);
-      if (result.hasException) print(result.exception);
 
       setOrderChanged(true);
 
