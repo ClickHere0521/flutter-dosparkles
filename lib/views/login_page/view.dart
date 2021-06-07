@@ -391,7 +391,7 @@ class __InnerPartState extends State<_InnerPart> {
                             fit: BoxFit.contain,
                           ),
                           onTap: () {
-                            _appleSignIn();
+                            _appleSignIn(context);
                           },
                         ),
                     ],
@@ -461,7 +461,7 @@ void _facebookSignIn(context) async {
   }
 }
 
-void _appleSignIn() async {
+void _appleSignIn(context) async {
   final credential = await SignInWithApple.getAppleIDCredential(
     scopes: [
       AppleIDAuthorizationScopes.email,
@@ -469,27 +469,23 @@ void _appleSignIn() async {
     ],
     webAuthenticationOptions: WebAuthenticationOptions(
       // TODO: Set the `clientId` and `redirectUri` arguments to the values you entered in the Apple Developer portal during the setup
-      clientId: 'com.aboutyou.dart_packages.sign_in_with_apple.example',
+      clientId: 'com.floridainc.dosparkles',
       redirectUri: Uri.parse(
-        'https://flutter-sign-in-with-apple-example.glitch.me/callbacks/sign_in_with_apple',
+        'https://backend.dosparkles.com/auth/apple/callback',
       ),
     ),
   );
 
-  // This is the endpoint that will convert an authorization code obtained
-  // via Sign in with Apple into a session in your system
-  final signInWithAppleEndpoint = Uri(
-    scheme: 'https',
-    host: 'flutter-sign-in-with-apple-example.glitch.me',
-    path: '/sign_in_with_apple',
-    queryParameters: <String, String>{
-      'code': credential.authorizationCode,
-      if (credential.givenName != null) 'firstName': credential.givenName,
-      if (credential.familyName != null) 'lastName': credential.familyName,
-      'useBundleId': Platform.isIOS || Platform.isMacOS ? 'true' : 'false',
-      if (credential.state != null) 'state': credential.state,
-    },
-  );
 
-  await http.Client().post(signInWithAppleEndpoint);
+  Response response = await http.get(
+    '${AppConfig.instance.baseApiHost}/auth/apple/callback?access_token=${credential.authorizationCode}',
+  );
+  Map<String, dynamic> token = json.decode(response.body);
+
+  if (token['jwt'].isNotEmpty) {
+    SharedPreferences.getInstance().then((_p) async {
+      await _p.setString("jwt", token['jwt']);
+      Navigator.of(context).pushReplacementNamed('loginpage');
+    });
+  }
 }

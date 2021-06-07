@@ -37,7 +37,7 @@
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>fb300339161485825</string>
+				<string>fb380170912945369</string>
 			</array>
 		</dict>
 		<dict>
@@ -54,9 +54,9 @@
 	<key>FDAllFilesDownloadedMessage</key>
 	<string>All files have been downloaded</string>
 	<key>FacebookAppID</key>
-	<string>300339161485825</string>
+	<string>380170912945369</string>
 	<key>FacebookDisplayName</key>
-	<string>{your-app-name}</string>
+	<string>Sparkles</string>
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<false/>
 	<key>GADApplicationIdentifier</key>
