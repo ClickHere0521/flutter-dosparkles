@@ -407,7 +407,7 @@ class __InnerPartState extends State<_InnerPart> {
                             fit: BoxFit.contain,
                           ),
                           onTap: () {
-                            _appleSignIn();
+                            _appleSignIn(context);
                           },
                         ),
                     ],
@@ -427,10 +427,11 @@ void _goolgeSignIn(_googleSignIn, context) async {
     print("_goolgeSignIn");
     GoogleSignInAccount user = await _googleSignIn.signIn();
     print("123");
-    GoogleSignInAuthentication googleSignInAuthentication = await user.authentication;
+    GoogleSignInAuthentication googleSignInAuthentication =
+        await user.authentication;
     print("accessToken: ${googleSignInAuthentication.accessToken}");
 
-    if (googleSignInAuthentication.accessToken != null){
+    if (googleSignInAuthentication.accessToken != null) {
       Response response = await http.get(
         '${AppConfig.instance.baseApiHost}/auth/google/callback?access_token=${googleSignInAuthentication.accessToken}',
       );
@@ -488,7 +489,7 @@ void _facebookSignIn(context) async {
   }
 }
 
-void _appleSignIn() async {
+void _appleSignIn(context) async {
   final credential = await SignInWithApple.getAppleIDCredential(
     scopes: [
       AppleIDAuthorizationScopes.email,
@@ -505,26 +506,15 @@ void _appleSignIn() async {
 
   print("______credential:$credential");
 
-  // This is the endpoint that will convert an authorization code obtained
-  // via Sign in with Apple into a session in your system
-  final signInWithAppleEndpoint = Uri(
-    scheme: 'https',
-    host: 'flutter-sign-in-with-apple-example.glitch.me',
-    path: '/sign_in_with_apple',
-    queryParameters: <String, String>{
-      'code': credential.authorizationCode,
-      if (credential.givenName != null) 'firstName': credential.givenName,
-      if (credential.familyName != null) 'lastName': credential.familyName,
-      'useBundleId': Platform.isIOS || Platform.isMacOS ? 'true' : 'false',
-      if (credential.state != null) 'state': credential.state,
-    },
+  Response response = await http.get(
+    '${AppConfig.instance.baseApiHost}/auth/apple/callback?access_token=${credential.authorizationCode}',
   );
+  Map<String, dynamic> token = json.decode(response.body);
 
-  final session = await http.Client().post(
-    signInWithAppleEndpoint,
-  );
-
-  // If we got this far, a session based on the Apple ID credential has been created in your system,
-  // and you can now set this as the app's session
-  print("______session:$session");
+  if (token['jwt'].isNotEmpty) {
+    SharedPreferences.getInstance().then((_p) async {
+      await _p.setString("jwt", token['jwt']);
+      Navigator.of(context).pushReplacementNamed('loginpage');
+    });
+  }
 }
