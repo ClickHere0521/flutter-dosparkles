@@ -56,7 +56,7 @@
 	<key>FacebookAppID</key>
 	<string>380170912945369</string>
 	<key>FacebookDisplayName</key>
-	<string>{your-app-name}</string>
+	<string>Sparkles</string>
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<false/>
 	<key>GADApplicationIdentifier</key>
