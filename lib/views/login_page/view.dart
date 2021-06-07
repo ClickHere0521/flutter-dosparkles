@@ -13,6 +13,7 @@ import 'package:flutter/services.dart';
 import 'package:com.floridainc.dosparkles/utils/colors.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
@@ -450,43 +451,81 @@ void _goolgeSignIn(_googleSignIn, context) async {
 }
 
 void _facebookSignIn(context) async {
-  final FacebookLogin facebookSignIn = new FacebookLogin();
-  final FacebookLoginResult result = await facebookSignIn.logIn(['email']);
 
-  switch (result.status) {
-    case FacebookLoginStatus.loggedIn:
-      final FacebookAccessToken accessToken = result.accessToken;
+ final facebookLogin = FacebookLogin();
 
-      Response response = await http.get(
-        '${AppConfig.instance.baseApiHost}/auth/facebook/callback?access_token=${accessToken.token}',
+      // bool isLoggedIn = await facebookLogin.isLoggedIn;
+
+      final FacebookLoginResult result = await facebookLogin.logIn(
+        permissions: [
+          FacebookPermission.publicProfile,
+          FacebookPermission.email,
+        ],
       );
-      Map<String, dynamic> token = json.decode(response.body);
 
-      if (token['jwt'].isNotEmpty) {
-        SharedPreferences.getInstance().then((_p) async {
-          await _p.setString("jwt", token['jwt']);
-          Navigator.of(context).pushReplacementNamed('loginpage');
-        });
+      switch (result.status) {
+        case FacebookLoginStatus.Success:
+
+          String token = result.accessToken.token;
+
+          final AuthCredential credential =
+              FacebookAuthProvider.getCredential(accessToken: token);
+
+          await _auth.signInWithCredential(credential);
+
+          break;
+        case FacebookLoginStatus.Cancel:
+          break;
+        case FacebookLoginStatus.Error:
+          print(result.error);
+          break;
       }
+      
+  // Create a credential from the access token
+  // final facebookAuthCredential = FacebookAuthProvider.credential(result.token);
 
-      // print('''
-      //    Logged in!
+  // print(facebookAuthCredential.toString());
 
-      //    Token: ${accessToken.token}
-      //    User id: ${accessToken.userId}
-      //    Expires: ${accessToken.expires}
-      //    Permissions: ${accessToken.permissions}
-      //    Declined permissions: ${accessToken.declinedPermissions}
-      //    ''');
-      break;
-    case FacebookLoginStatus.cancelledByUser:
-      print('Login cancelled by the user.');
-      break;
-    case FacebookLoginStatus.error:
-      print('Something went wrong with the login process.\n'
-          'Here\'s the error Facebook gave us: ${result.errorMessage}');
-      break;
-  }
+
+  // final FacebookLogin facebookSignIn = new FacebookLogin();
+  // // facebookSignIn.loginBehavior = FacebookLoginBehavior.webViewOnly;
+
+  // final FacebookLoginResult result = await facebookSignIn.logIn(['email']);
+
+  // switch (result.status) {
+  //   case FacebookLoginStatus.loggedIn:
+  //     final FacebookAccessToken accessToken = result.accessToken;
+
+  //     Response response = await http.get(
+  //       '${AppConfig.instance.baseApiHost}/auth/facebook/callback?access_token=${accessToken.token}',
+  //     );
+  //     Map<String, dynamic> token = json.decode(response.body);
+
+  //     if (token['jwt'].isNotEmpty) {
+  //       SharedPreferences.getInstance().then((_p) async {
+  //         await _p.setString("jwt", token['jwt']);
+  //         Navigator.of(context).pushReplacementNamed('loginpage');
+  //       });
+  //     }
+
+  //     // print('''
+  //     //    Logged in!
+
+  //     //    Token: ${accessToken.token}
+  //     //    User id: ${accessToken.userId}
+  //     //    Expires: ${accessToken.expires}
+  //     //    Permissions: ${accessToken.permissions}
+  //     //    Declined permissions: ${accessToken.declinedPermissions}
+  //     //    ''');
+  //     break;
+  //   case FacebookLoginStatus.cancelledByUser:
+  //     print('Login cancelled by the user.');
+  //     break;
+  //   case FacebookLoginStatus.error:
+  //     print('Something went wrong with the login process.\n'
+  //         'Here\'s the error Facebook gave us: ${result.errorMessage}');
+  //     break;
+  // }
 }
 
 void _appleSignIn(context) async {
