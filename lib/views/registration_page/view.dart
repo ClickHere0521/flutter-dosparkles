@@ -6,6 +6,7 @@ import 'package:com.floridainc.dosparkles/actions/user_info_operate.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/action.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/models/models.dart';
+import 'package:com.floridainc.dosparkles/utils/general.dart';
 import 'package:com.floridainc.dosparkles/widgets/connection_lost.dart';
 import 'package:com.floridainc.dosparkles/widgets/terms_and_conditions.dart';
 import 'package:email_validator/email_validator.dart';
@@ -382,7 +383,7 @@ class __InnerPartState extends State<_InnerPart> {
                     ),
                   ),
                   child: Text(
-                    'Sign in',
+                    'Sign Up',
                     style: TextStyle(
                       fontSize: 17.0,
                       fontWeight: FontWeight.normal,
@@ -421,43 +422,39 @@ void _onSubmit(
 ) async {
   String fullName = "$firstNameValue $lastNameValue";
 
-  QueryResult fetchResult =
-      await BaseGraphQLClient.instance.fetchUserByEmail(emailValue.trim());
-  if (fetchResult.hasException) print(fetchResult.exception);
+  try {
+    await UserInfoOperate.whenLogout();
 
-  print("User with this Emails already exists ? : ${fetchResult.data}");
+    QueryResult resultRegister = await BaseGraphQLClient.instance
+        .signUp(emailValue.trim(), passwordValue.trim());
 
-  if (fetchResult.data['users'].isEmpty)
-    try {
-      QueryResult resultRegister =
-          await BaseGraphQLClient.instance.registerUser({
-        'emailValue': emailValue.trim(),
-        'passwordValue': passwordValue.trim(),
-      });
-      if (resultRegister.hasException) print(resultRegister.exception);
-
-      QueryResult resultUpdate = await BaseGraphQLClient.instance
-          .updateUserOnCreate(resultRegister.data['register']['user']['id'],
-              {'fullName': fullName});
-      if (resultUpdate.hasException) print(resultUpdate.exception);
-
-      final _result =
-          await _emailSignIn(context, emailValue.trim(), passwordValue.trim());
-      if (_result == null) return;
-
-      if (_result['jwt'].toString().isNotEmpty) {
-        SharedPreferences.getInstance().then((_p) async {
-          _p.setString("jwt", _result['jwt']);
-          _p.setString("userId", _result['user']['id'].toString());
-          print('jwt: ${_result['jwt'].toString()}');
-
-          await UserInfoOperate.whenLogin(_result['jwt'].toString());
-          _goToMain(context);
-        });
-      }
-    } catch (e) {
-      print(e);
+    if (resultRegister.hasException) {
+      print(resultRegister.exception.toString());
+      Toast.show("Error occurred", context, duration: 3, gravity: Toast.BOTTOM);
+      return;
     }
+
+    final jwt = resultRegister.data['register']['jwt'];
+
+    if (jwt != null) {
+      SharedPreferences.getInstance().then((_p) async {
+        _p.setString("jwt", jwt);
+        _p.setString(
+            "userId", resultRegister.data['register']['user']['id'].toString());
+
+        await UserInfoOperate.whenLogin(jwt.toString());
+
+        QueryResult resultUpdate = await BaseGraphQLClient.instance
+            .updateUserOnCreate(resultRegister.data['register']['user']['id'],
+                {'fullName': fullName});
+        if (resultUpdate.hasException) print(resultUpdate.exception);
+
+        _goToMain(context);
+      });
+    }
+  } catch (e) {
+    print(e);
+  }
 }
 
 Future<Map<String, dynamic>> _emailSignIn(
@@ -494,16 +491,16 @@ Future<Map<String, dynamic>> _emailSignIn(
 }
 
 void _goToMain(BuildContext context) async {
-  await FirebaseMessaging.instance.getToken().then((String token) async {
-    if (token != null) {
-      print("_goToMain Push Messaging token: $token");
+  // await FirebaseMessaging.instance.getToken().then((String token) async {
+  //   if (token != null) {
+  //     print("_goToMain Push Messaging token: $token");
 
-      await SharedPreferences.getInstance().then((_p) async {
-        var userId = _p.getString("userId");
-        await UserInfoOperate.savePushToken(userId, token);
-      });
-    }
-  });
+  //     await SharedPreferences.getInstance().then((_p) async {
+  //       var userId = _p.getString("userId");
+  //       await UserInfoOperate.savePushToken(userId, token);
+  //     });
+  //   }
+  // });
 
   var globalState = GlobalStore.store.getState();
   SharedPreferences _prefs = await SharedPreferences.getInstance();

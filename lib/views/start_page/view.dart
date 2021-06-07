@@ -43,7 +43,7 @@ Widget buildView(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
               child: Image.asset(
-                "images/Image 37.png",
+                "images/image 37.png",
                 width: double.infinity,
                 height: double.infinity,
                 fit: BoxFit.cover,
@@ -57,7 +57,7 @@ Widget buildView(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
               child: Image.asset(
-                "images/Image 38.png",
+                "images/image 38.png",
                 width: double.infinity,
                 height: double.infinity,
                 fit: BoxFit.cover,
