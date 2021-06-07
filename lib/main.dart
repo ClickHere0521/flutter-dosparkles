@@ -199,7 +199,7 @@ class _AppState extends State<App> {
         return locale;
       },
       localizationsDelegates: [
-        AppLocalizations.delegate,
+        // AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
