@@ -496,9 +496,9 @@ void _appleSignIn() async {
     ],
     webAuthenticationOptions: WebAuthenticationOptions(
       // TODO: Set the `clientId` and `redirectUri` arguments to the values you entered in the Apple Developer portal during the setup
-      clientId: 'com.aboutyou.dart_packages.sign_in_with_apple.example',
+      clientId: 'com.floridainc.dosparkles',
       redirectUri: Uri.parse(
-        'https://flutter-sign-in-with-apple-example.glitch.me/callbacks/sign_in_with_apple',
+        'https://backend.dosparkles.com/auth/apple/callback',
       ),
     ),
   );
