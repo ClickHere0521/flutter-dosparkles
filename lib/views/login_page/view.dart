@@ -4,20 +4,26 @@ import 'dart:ui';
 
 import 'package:com.floridainc.dosparkles/actions/app_config.dart';
 import 'package:com.floridainc.dosparkles/actions/user_info_operate.dart';
+import 'package:com.floridainc.dosparkles/globalbasestate/action.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
+import 'package:com.floridainc.dosparkles/utils/general.dart';
 import 'package:com.floridainc.dosparkles/widgets/connection_lost.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:com.floridainc.dosparkles/actions/api/graphql_client.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:flutter/services.dart';
 import 'package:com.floridainc.dosparkles/utils/colors.dart';
-import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:uuid/uuid.dart';
+import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:com.floridainc.dosparkles/models/models.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'action.dart';
+import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
 import 'state.dart';
 import 'package:http/http.dart' as http;
 
@@ -425,23 +431,25 @@ class __InnerPartState extends State<_InnerPart> {
 
 void _goolgeSignIn(_googleSignIn, context) async {
   try {
-    print("_goolgeSignIn");
+    await _googleSignIn.signOut();
     GoogleSignInAccount user = await _googleSignIn.signIn();
-    print("123");
     GoogleSignInAuthentication googleSignInAuthentication =
         await user.authentication;
-    print("accessToken: ${googleSignInAuthentication.accessToken}");
 
     if (googleSignInAuthentication.accessToken != null) {
       Response response = await http.get(
         '${AppConfig.instance.baseApiHost}/auth/google/callback?access_token=${googleSignInAuthentication.accessToken}',
       );
-      Map<String, dynamic> token = json.decode(response.body);
 
-      if (token['jwt'].isNotEmpty) {
+      Map<String, dynamic> responseBody = json.decode(response.body);
+
+      await UserInfoOperate.whenLogin(responseBody['jwt'].toString());
+      if (responseBody['jwt'] != null) {
         SharedPreferences.getInstance().then((_p) async {
-          await _p.setString("jwt", token['jwt']);
-          Navigator.of(context).pushReplacementNamed('loginpage');
+          await _p.setString("jwt", responseBody['jwt']);
+          _p.setString("userId", responseBody['user']['id'].toString());
+
+          _goToMain(context);
         });
       }
     }
@@ -451,81 +459,51 @@ void _goolgeSignIn(_googleSignIn, context) async {
 }
 
 void _facebookSignIn(context) async {
+  // Create an instance of FacebookLogin
+  final fb = FacebookLogin();
 
- final facebookLogin = FacebookLogin();
+// Log in
+  final res = await fb.logIn(permissions: [
+    FacebookPermission.publicProfile,
+    FacebookPermission.email,
+  ]);
 
-      // bool isLoggedIn = await facebookLogin.isLoggedIn;
+// Check result status
+  switch (res.status) {
+    case FacebookLoginStatus.success:
+      // Logged in
 
-      final FacebookLoginResult result = await facebookLogin.logIn(
-        permissions: [
-          FacebookPermission.publicProfile,
-          FacebookPermission.email,
-        ],
-      );
+      // Send access token to server for validation and auth
+      final FacebookAccessToken accessToken = res.accessToken;
+      print('Access token: ${accessToken.token}');
 
-      switch (result.status) {
-        case FacebookLoginStatus.Success:
+      if (accessToken.token != null) {
+        Response response = await http.get(
+          '${AppConfig.instance.baseApiHost}/auth/facebook/callback?access_token=${accessToken.token}',
+        );
 
-          String token = result.accessToken.token;
+        printWrapped(response.body);
+        Map<String, dynamic> responseBody = json.decode(response.body);
 
-          final AuthCredential credential =
-              FacebookAuthProvider.getCredential(accessToken: token);
+        await UserInfoOperate.whenLogin(responseBody['jwt'].toString());
+        if (responseBody['jwt'] != null) {
+          SharedPreferences.getInstance().then((_p) async {
+            await _p.setString("jwt", responseBody['jwt']);
+            _p.setString("userId", responseBody['user']['id'].toString());
 
-          await _auth.signInWithCredential(credential);
-
-          break;
-        case FacebookLoginStatus.Cancel:
-          break;
-        case FacebookLoginStatus.Error:
-          print(result.error);
-          break;
+            _goToMain(context);
+          });
+        }
       }
-      
-  // Create a credential from the access token
-  // final facebookAuthCredential = FacebookAuthProvider.credential(result.token);
-
-  // print(facebookAuthCredential.toString());
-
-
-  // final FacebookLogin facebookSignIn = new FacebookLogin();
-  // // facebookSignIn.loginBehavior = FacebookLoginBehavior.webViewOnly;
-
-  // final FacebookLoginResult result = await facebookSignIn.logIn(['email']);
-
-  // switch (result.status) {
-  //   case FacebookLoginStatus.loggedIn:
-  //     final FacebookAccessToken accessToken = result.accessToken;
-
-  //     Response response = await http.get(
-  //       '${AppConfig.instance.baseApiHost}/auth/facebook/callback?access_token=${accessToken.token}',
-  //     );
-  //     Map<String, dynamic> token = json.decode(response.body);
-
-  //     if (token['jwt'].isNotEmpty) {
-  //       SharedPreferences.getInstance().then((_p) async {
-  //         await _p.setString("jwt", token['jwt']);
-  //         Navigator.of(context).pushReplacementNamed('loginpage');
-  //       });
-  //     }
-
-  //     // print('''
-  //     //    Logged in!
-
-  //     //    Token: ${accessToken.token}
-  //     //    User id: ${accessToken.userId}
-  //     //    Expires: ${accessToken.expires}
-  //     //    Permissions: ${accessToken.permissions}
-  //     //    Declined permissions: ${accessToken.declinedPermissions}
-  //     //    ''');
-  //     break;
-  //   case FacebookLoginStatus.cancelledByUser:
-  //     print('Login cancelled by the user.');
-  //     break;
-  //   case FacebookLoginStatus.error:
-  //     print('Something went wrong with the login process.\n'
-  //         'Here\'s the error Facebook gave us: ${result.errorMessage}');
-  //     break;
-  // }
+      break;
+    case FacebookLoginStatus.cancel:
+      // User cancel log in
+      break;
+    case FacebookLoginStatus.error:
+      // Log in failed
+      print('Error while log in: ${res.error}');
+      break;
+  }
 }
 
 void _appleSignIn(context) async {
@@ -548,12 +526,165 @@ void _appleSignIn(context) async {
   Response response = await http.get(
     '${AppConfig.instance.baseApiHost}/auth/apple/callback?access_token=${credential.authorizationCode}',
   );
-  Map<String, dynamic> token = json.decode(response.body);
+  printWrapped(response.body);
 
-  if (token['jwt'].isNotEmpty) {
+  Map<String, dynamic> responseBody = json.decode(response.body);
+
+  await UserInfoOperate.whenLogin(responseBody['jwt'].toString());
+
+  if (responseBody['jwt'] != null) {
     SharedPreferences.getInstance().then((_p) async {
-      await _p.setString("jwt", token['jwt']);
-      Navigator.of(context).pushReplacementNamed('loginpage');
+      await _p.setString("jwt", responseBody['jwt']);
+      _p.setString("userId", responseBody['user']['id'].toString());
+
+      _goToMain(context);
     });
+  }
+}
+
+void _goToMain(BuildContext context) async {
+  // await FirebaseMessaging.instance.getToken().then((String token) async {
+  //   if (token != null) {
+  //     print("_goToMain Push Messaging token: $token");
+
+  //     await SharedPreferences.getInstance().then((_p) async {
+  //       var userId = _p.getString("userId");
+  //       await UserInfoOperate.savePushToken(userId, token);
+  //     });
+  //   }
+  // });
+
+  var globalState = GlobalStore.store.getState();
+  SharedPreferences _prefs = await SharedPreferences.getInstance();
+  String referralLink = _prefs.getString("referralLink");
+
+  if (referralLink != null && referralLink != '') {
+    await setUserFavoriteStore(globalState.user, referralLink);
+  }
+
+  await Navigator.of(context).pushNamed('addphonepage', arguments: null);
+
+  if (referralLink != null && referralLink != '') {
+    await _invitedRegisteredMethod(globalState.user);
+    await checkUserReferralLink(globalState.user);
+  }
+
+  for (int i = 0; i < globalState.storesList.length; i++) {
+    var store = globalState.storesList[i];
+    if (globalState.user.storeFavorite != null &&
+        globalState.user.storeFavorite['id'] == store.id) {
+      GlobalStore.store.dispatch(
+        GlobalActionCreator.setSelectedStore(store),
+      );
+      Navigator.of(context).pushReplacementNamed('storepage');
+      return null;
+    }
+  }
+
+  Navigator.of(context).pushReplacementNamed('storeselectionpage');
+}
+
+Future<void> _invitedRegisteredMethod(AppUser globalUser) async {
+  SharedPreferences.getInstance().then((_p) async {
+    String referralLink = _p.getString("referralLink");
+
+    print("----------------------------------------------------");
+    print("$referralLink");
+    print("----------------------------------------------------");
+
+    if (referralLink != null && referralLink != '') {
+      Response result = await http.post(
+        '${AppConfig.instance.baseApiHost}/friend-invites/inviteConfirm',
+        body: {
+          'referralLink': "$referralLink",
+          'phoneNumber':
+              "${globalUser != null && globalUser.phoneNumber != null ? globalUser.phoneNumber.replaceAll(new RegExp(r"\s+\b|\b\s"), "") : ''}",
+        },
+      );
+      _p.setString("referralLink", null);
+
+      // print("Registered : " + result.body);
+    }
+  });
+}
+
+Future checkUserReferralLink(AppUser globalUser) async {
+  if (globalUser.referralLink == null || globalUser.referralLink == '') {
+    BranchUniversalObject buo = BranchUniversalObject(
+      canonicalIdentifier: 'flutter/branch',
+      //canonicalUrl: '',
+      title: 'Example Branch Flutter Link',
+      imageUrl: 'https://miro.medium.com/max/1000/1*ilC2Aqp5sZd1wi0CopD1Hw.png',
+      contentDescription:
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+      keywords: ['Plugin', 'Branch', 'Flutter'],
+      publiclyIndex: true,
+      locallyIndex: true,
+      expirationDateInMilliSec:
+          DateTime.now().add(Duration(days: 365)).millisecondsSinceEpoch,
+    );
+    FlutterBranchSdk.registerView(buo: buo);
+
+    BranchLinkProperties lp = BranchLinkProperties(
+        channel: 'google',
+        feature: 'referral',
+        alias: 'referralToken=${Uuid().v4()}',
+        stage: 'new share',
+        campaign: 'xxxxx',
+        tags: ['one', 'two', 'three']);
+    lp.addControlParam('url', 'http://www.google.com');
+    lp.addControlParam('url2', 'http://flutter.dev');
+
+    BranchResponse response =
+        await FlutterBranchSdk.getShortUrl(buo: buo, linkProperties: lp);
+    if (response.success) {
+      print("referral link : ${response.result}");
+
+      try {
+        QueryResult result = await BaseGraphQLClient.instance
+            .setUserReferralLink(globalUser.id, response.result);
+        if (result.hasException) print(result.exception);
+
+        globalUser.referralLink = response.result;
+        GlobalStore.store.dispatch(GlobalActionCreator.setUser(globalUser));
+      } catch (e) {
+        print(e);
+      }
+    } else {
+      print('Error : ${response.errorCode} - ${response.errorMessage}');
+    }
+  }
+}
+
+Future setUserFavoriteStore(AppUser globalUser, String referralLink) async {
+  try {
+    QueryResult resultLink =
+        await BaseGraphQLClient.instance.fetchUserByReferralLink(referralLink);
+    if (resultLink.hasException) print(resultLink.exception);
+
+    if (resultLink.data != null &&
+        resultLink.data['users'] != null &&
+        resultLink.data['users'].length > 0 != null &&
+        resultLink.data['users'][0]['referralLink'] != null) {
+      if (resultLink.data['users'][0]['referralLink'] == referralLink) {
+        Map favoriteStore = resultLink.data['users'][0]['storeFavorite'];
+
+        QueryResult resultStore = await BaseGraphQLClient.instance
+            .setUserFavoriteStore(globalUser.id, favoriteStore['id']);
+        if (resultStore.hasException) print(resultStore.exception);
+
+        if (resultStore.data != null &&
+            resultStore.data['updateUser'] != null &&
+            resultStore.data['updateUser']['user'] != null &&
+            resultStore.data['updateUser']['user']['storeFavorite'] != null) {
+          globalUser.storeFavorite =
+              resultStore.data['updateUser']['user']['storeFavorite'];
+
+          GlobalStore.store.dispatch(GlobalActionCreator.setUser(globalUser));
+        }
+      }
+    }
+  } catch (e) {
+    print(e);
   }
 }

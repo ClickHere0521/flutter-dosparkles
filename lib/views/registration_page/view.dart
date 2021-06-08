@@ -514,9 +514,8 @@ void _goToMain(BuildContext context) async {
 
   if (referralLink != null && referralLink != '') {
     await _invitedRegisteredMethod(globalState.user);
+    await checkUserReferralLink(globalState.user);
   }
-
-  await checkUserReferralLink(globalState.user);
 
   for (int i = 0; i < globalState.storesList.length; i++) {
     var store = globalState.storesList[i];
