@@ -451,6 +451,7 @@ void _goolgeSignIn(_googleSignIn, context) async {
 }
 
 void _facebookSignIn(context, facebookSignIn) async {
+  await facebookSignIn.logOut();
   final FacebookLoginResult result =
       await facebookSignIn.logIn(['public_profile', 'email']);
 
