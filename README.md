@@ -1,4 +1,11 @@
 # dosparkles
+Flutter 2.2.1 • channel stable
+Dart 2.13.1
+
+flutter run --no-sound-null-safety
+
+flutter clean
+flutter packages pub upgrade
 
 # Update translations:
 
