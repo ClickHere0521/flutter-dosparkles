@@ -6,38 +6,27 @@ import 'package:com.floridainc.dosparkles/actions/adapt.dart';
 import 'package:com.floridainc.dosparkles/actions/api/graphql_client.dart';
 import 'package:com.floridainc.dosparkles/actions/app_config.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
-import 'package:com.floridainc.dosparkles/models/models.dart';
 import 'package:com.floridainc.dosparkles/utils/colors.dart';
 import 'package:com.floridainc.dosparkles/widgets/connection_lost.dart';
 import 'package:com.floridainc.dosparkles/widgets/details_of_order.dart';
-import 'package:com.floridainc.dosparkles/widgets/order_product_details.dart';
-import 'package:com.floridainc.dosparkles/widgets/sparkles_drawer.dart';
-import 'package:com.floridainc.dosparkles/widgets/swiper_widget.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
-import 'package:flui/flui.dart';
 
 import 'dart:async';
 import 'state.dart';
 
 Future<void> _sendPushNotification(String orderId, bool isApproved) async {
   if (orderId != null && orderId != '') {
-    Response result = await http.post(
+    await http.post(
       '${AppConfig.instance.baseApiHost}/notifications/sendPushNotification',
       body: {
         'orderId': "$orderId",
         'status': "$isApproved",
       },
     );
-
-    // print("---------------- " + result.body);
   }
 }
 
@@ -120,11 +109,8 @@ class __ChangeOrderButtonState extends State<_ChangeOrderButton> {
                             ),
                             onPressed: () async {
                               try {
-                                QueryResult result = await BaseGraphQLClient
-                                    .instance
+                                await BaseGraphQLClient.instance
                                     .changeOrder(widget.orderId, "on_hold", "");
-                                if (result.hasException)
-                                  print(result.exception);
 
                                 refresh();
                               } catch (e) {
@@ -481,7 +467,6 @@ class __ChatOrderBlockState extends State<_ChatOrderBlock> {
   Future getInitialData() async {
     QueryResult result =
         await BaseGraphQLClient.instance.fetchOrder(widget.orderId);
-    if (result.hasException) print(result.exception);
 
     return result.data['orders'][0];
   }
@@ -785,9 +770,6 @@ class __ChatOrderBlockState extends State<_ChatOrderBlock> {
                                                               widget.orderId,
                                                               "confirmed",
                                                               "");
-                                                  if (result.hasException) {
-                                                    print(result.exception);
-                                                  }
 
                                                   _sendPushNotification(
                                                       widget.orderId, true);
@@ -987,7 +969,6 @@ Future<void> _rejectDialog(
                             QueryResult result = await BaseGraphQLClient
                                 .instance
                                 .changeOrder(orderId, "cancelled", inputValue);
-                            if (result.hasException) print(result.exception);
 
                             _sendPushNotification(orderId, false);
                             notifyParent();

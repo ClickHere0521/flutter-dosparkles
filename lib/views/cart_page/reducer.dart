@@ -21,7 +21,6 @@ CartPageState _onAction(CartPageState state, Action action) {
 }
 
 CartPageState _onSetProductCountUpdate(CartPageState state, Action action) {
-  print('_onSetProductCountUpdate');
   List<CartItem> cart = action.payload;
 
   final CartPageState newState = state.clone();

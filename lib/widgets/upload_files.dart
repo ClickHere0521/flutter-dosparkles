@@ -82,10 +82,6 @@ class _UploadFilesState extends State<UploadFiles> {
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
               color: Colors.white,
-              // padding: EdgeInsets.only(
-              //   left: 16.0,
-              //   right: 16.0,
-              // ),
               child: _InnerPart(),
             ),
           ),

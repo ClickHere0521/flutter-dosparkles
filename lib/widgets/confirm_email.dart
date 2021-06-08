@@ -2,14 +2,8 @@ import 'dart:ui';
 
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/widgets/connection_lost.dart';
-import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
-import 'package:com.floridainc.dosparkles/actions/adapt.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
-import '../../actions/api/graphql_client.dart';
 import '../../utils/colors.dart';
-import '../../utils/general.dart';
 
 class ConfirmEmail extends StatefulWidget {
   @override

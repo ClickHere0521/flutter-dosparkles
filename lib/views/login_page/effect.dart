@@ -1,24 +1,15 @@
 import 'dart:async';
-import 'dart:convert' show json;
 import 'package:com.floridainc.dosparkles/actions/api/graphql_client.dart';
-import 'package:com.floridainc.dosparkles/actions/app_config.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/action.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/models/app_user.dart';
-import 'package:com.floridainc.dosparkles/models/model_factory.dart';
-import 'package:com.floridainc.dosparkles/routes/routes.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/widgets.dart' hide Action;
-import 'package:http/http.dart' as http;
 import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:http/http.dart';
-// import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../utils/general.dart';
 import 'action.dart';
 import 'state.dart';
 import 'package:toast/toast.dart';
@@ -28,9 +19,6 @@ Effect<LoginPageState> buildEffect() {
   return combineEffects(<Object, Effect<LoginPageState>>{
     LoginPageAction.action: _onAction,
     LoginPageAction.loginclicked: _onLoginClicked,
-    // LoginPageAction.signUp: _onSignUp,
-    // LoginPageAction.googleSignIn: _onGoogleSignIn,
-    // LoginPageAction.facebookSignIn: _onFacebookSignIn,
     Lifecycle.initState: _onInit,
     Lifecycle.build: _onBuild,
     Lifecycle.dispose: _onDispose
@@ -92,17 +80,6 @@ Future _onLoginClicked(Action action, Context<LoginPageState> ctx) async {
 }
 
 void _goToMain(Context<LoginPageState> ctx) async {
-  // FirebaseMessaging.instance.getToken().then((String token) async {
-  //   // if (token != null) {
-  //   //   print("_goToMain Push Messaging token: $token");
-
-  //   //   await SharedPreferences.getInstance().then((_p) async {
-  //   //     var userId = _p.getString("userId");
-  //   //     await UserInfoOperate.savePushToken(userId, token);
-  //   //   });
-  //   // }
-  // });
-
   var globalState = GlobalStore.store.getState();
 
   await checkUserReferralLink(globalState.user);
@@ -122,15 +99,12 @@ void _goToMain(Context<LoginPageState> ctx) async {
   }
 
   Navigator.of(ctx.context).pushReplacementNamed('storeselectionpage');
-
- 
 }
 
 Future checkUserReferralLink(AppUser globalUser) async {
   if (globalUser.referralLink == null || globalUser.referralLink == '') {
     BranchUniversalObject buo = BranchUniversalObject(
       canonicalIdentifier: 'flutter/branch',
-      //canonicalUrl: '',
       title: 'Example Branch Flutter Link',
       imageUrl: 'https://miro.medium.com/max/1000/1*ilC2Aqp5sZd1wi0CopD1Hw.png',
       contentDescription:
@@ -156,12 +130,9 @@ Future checkUserReferralLink(AppUser globalUser) async {
     BranchResponse response =
         await FlutterBranchSdk.getShortUrl(buo: buo, linkProperties: lp);
     if (response.success) {
-      print("referral link : ${response.result}");
-
       try {
-        QueryResult result = await BaseGraphQLClient.instance
+        await BaseGraphQLClient.instance
             .setUserReferralLink(globalUser.id, response.result);
-        if (result.hasException) print(result.exception);
 
         globalUser.referralLink = response.result;
         GlobalStore.store.dispatch(GlobalActionCreator.setUser(globalUser));

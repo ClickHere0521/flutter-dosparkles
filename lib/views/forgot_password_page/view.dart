@@ -10,10 +10,7 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:toast/toast.dart';
 import '../../actions/api/graphql_client.dart';
 import '../../utils/colors.dart';
-import '../../utils/general.dart';
 import 'state.dart';
-
-import 'package:http/http.dart' as http;
 
 Widget buildView(
   ForgotPasswordPageState state,

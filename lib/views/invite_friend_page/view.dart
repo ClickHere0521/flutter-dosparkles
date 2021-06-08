@@ -16,9 +16,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:http/http.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -314,7 +312,6 @@ class __MainBodyState extends State<_MainBody> {
   void _fetchInvitesSent() async {
     QueryResult result =
         await BaseGraphQLClient.instance.fetchUserById(globalUser.id);
-    if (result.hasException) print(result.exception);
 
     if (result.data != null &&
         result.data['users'] != null &&
@@ -1157,7 +1154,6 @@ class __ContactsPageState extends State<_ContactsPage> {
           String meId = GlobalStore.store.getState().user.id;
           QueryResult result =
               await BaseGraphQLClient.instance.fetchUserById(meId);
-          if (result.hasException) print(result.exception);
 
           List invitesSent = [];
           if (result.data != null &&
@@ -1643,7 +1639,6 @@ void _onSubmit(
 
   QueryResult result =
       await BaseGraphQLClient.instance.fetchUserById(globalUser.id);
-  if (result.hasException) print(result.exception);
 
   if (result.data != null &&
       result.data['users'] != null &&

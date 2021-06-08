@@ -1,5 +1,4 @@
 import 'dart:ui';
-import 'package:com.floridainc.dosparkles/utils/general.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/widgets.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/state.dart';
@@ -49,7 +48,6 @@ class StorePageState implements GlobalBaseState, Cloneable<StorePageState> {
 }
 
 StorePageState initState(Map<String, dynamic> args) {
-  print('StorePageState, initState, args: $args');
   StorePageState state = StorePageState();
   state.listView = true;
   if (args != null) {

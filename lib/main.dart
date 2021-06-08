@@ -30,7 +30,6 @@ import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:com.floridainc.dosparkles/routes/routes.dart';
-// import 'actions/app_config.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 /// Define a top-level named handler which background/terminated messages will
@@ -100,9 +99,6 @@ class _AppState extends State<App> {
 
   StreamSubscription<Map> streamSubscription;
 
-  // String _token;
-  // final i18n = AppLocalizations.delegate;
-
   /// Initalize the [FlutterLocalNotificationsPlugin] package.
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
@@ -123,11 +119,6 @@ class _AppState extends State<App> {
   final FirebaseAnalytics analytics = FirebaseAnalytics();
 
   Future _init() async {
-    // if (Platform.isAndroid)
-    //   await PermissionHandler().requestPermissions([PermissionGroup.storage]);
-
-    // await AppConfig.instance.init(context);
-
     _getCurrentGeoPosition();
 
     await listenDynamicLinks();
@@ -144,12 +135,7 @@ class _AppState extends State<App> {
 
     FirebaseMessaging.instance
         .getInitialMessage()
-        .then((RemoteMessage message) {
-      if (message != null) {
-        // Navigator.pushNamed(context, '/message',
-        //     arguments: MessageArguments(message, true));
-      }
-    });
+        .then((RemoteMessage message) {});
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       RemoteNotification notification = message.notification;
@@ -318,7 +304,6 @@ class _AppState extends State<App> {
 
   Future<void> listenDynamicLinks() async {
     streamSubscription = FlutterBranchSdk.initSession().listen((data) async {
-      //  print('listenDynamicLinks - DeepLink Data: $data');
       if (data.containsKey('+clicked_branch_link') &&
           data['+clicked_branch_link'] == true) {
         print(

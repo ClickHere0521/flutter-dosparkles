@@ -7,12 +7,12 @@ import 'package:com.floridainc.dosparkles/actions/api/graphql_client.dart';
 import 'package:com.floridainc.dosparkles/actions/app_config.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/action.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
-import 'package:com.floridainc.dosparkles/models/model_factory.dart';
+
 import 'package:com.floridainc.dosparkles/models/models.dart';
 import 'package:com.floridainc.dosparkles/utils/colors.dart';
 import 'package:com.floridainc.dosparkles/views/profile_page/state.dart';
 import 'package:com.floridainc.dosparkles/widgets/bottom_nav_bar.dart';
-import 'package:com.floridainc.dosparkles/widgets/confirm_video.dart';
+
 import 'package:com.floridainc.dosparkles/widgets/connection_lost.dart';
 import 'package:com.floridainc.dosparkles/widgets/custom_switch.dart';
 import 'package:com.floridainc.dosparkles/widgets/sparkles_drawer.dart';
@@ -41,7 +41,6 @@ void _switchNotifications(
   try {
     QueryResult result = await BaseGraphQLClient.instance
         .setUserNotifications(globalUser.id, value);
-    if (result.hasException) print(result.exception);
 
     if (result.data != null) {
       setSwitchValue(value);
@@ -62,7 +61,6 @@ void _changeProfileMainImage(
 
   QueryResult result = await BaseGraphQLClient.instance
       .setUserAvatar(globalUser.id, listOfIds[0]);
-  if (result.hasException) print(result.exception);
 
   globalUser.avatarUrl = AppConfig.instance.baseApiHost +
       result.data['updateUser']['user']['avatar']['url'];
@@ -93,7 +91,7 @@ Future _sendRequest(imagesList) async {
   }
 
   http.Response response = await http.Response.fromStream(await request.send());
-  print(response.statusCode);
+
   List imagesResponse = json.decode(response.body);
   List<String> listOfIds =
       imagesResponse.map((image) => "\"${image['id']}\"").toList();
@@ -323,8 +321,6 @@ class __MainBodyState extends State<_MainBody> {
       BaseGraphQLClient.instance
           .fetchUserNotification(widget.globalUser.id)
           .then((result) {
-        if (result.hasException) print(result.exception);
-
         if (result.data != null && mounted) {
           setState(() {
             _switchValue = result.data['users'][0]['enableNotifications'];
@@ -1091,7 +1087,6 @@ class __FriendsSignedUpState extends State<_FriendsSignedUp> {
     if (widget.globalUser != null) {
       QueryResult result =
           await BaseGraphQLClient.instance.fetchUserById(widget.globalUser.id);
-      if (result.hasException) print(result.exception);
       return result.data['users'][0];
     }
     return null;

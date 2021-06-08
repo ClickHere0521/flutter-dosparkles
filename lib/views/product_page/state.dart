@@ -49,7 +49,6 @@ class ProductPageState implements GlobalBaseState, Cloneable<ProductPageState> {
 }
 
 ProductPageState initState(Map<String, dynamic> args) {
-  print('initState');
   return ProductPageState()
     ..productQuantity = 1
     ..optionalMaterialSelected = false;

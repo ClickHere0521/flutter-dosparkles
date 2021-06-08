@@ -9,12 +9,9 @@ import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
 import 'package:flutter/services.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import 'package:social_share/social_share.dart';
 import '../../actions/api/graphql_client.dart';
 import '../../utils/colors.dart';
-import '../../utils/general.dart';
 import 'state.dart';
 
 import 'package:country_pickers/country.dart';
@@ -25,9 +22,8 @@ void _onSubmit(BuildContext context, String fullValue) async {
 
   String formattedValue = fullValue.replaceAll(new RegExp('[^0-9]'), "");
   try {
-    QueryResult result = await BaseGraphQLClient.instance
+    await BaseGraphQLClient.instance
         .setUserPhoneNumber(globalUser.id, formattedValue);
-    if (result.hasException) print(result.exception);
 
     globalUser.phoneNumber = fullValue;
     GlobalStore.store.dispatch(GlobalActionCreator.setUser(globalUser));
@@ -110,10 +106,6 @@ class __MainBodyState extends State<_MainBody> {
                 leadingWidth: 70.0,
                 automaticallyImplyLeading: false,
                 leading: null,
-                // leading: InkWell(
-                //   child: Image.asset("images/back_button.png"),
-                //   onTap: () => Navigator.of(context).pop(),
-                // ),
                 backgroundColor: Colors.transparent,
                 title: Text(
                   "Add Phone",

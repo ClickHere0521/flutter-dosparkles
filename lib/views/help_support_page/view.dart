@@ -2,7 +2,6 @@ import 'dart:ui';
 
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/models/models.dart';
-import 'package:com.floridainc.dosparkles/views/store_selection_page/action.dart';
 import 'package:com.floridainc.dosparkles/widgets/about_us.dart';
 import 'package:com.floridainc.dosparkles/widgets/connection_lost.dart';
 import 'package:com.floridainc.dosparkles/widgets/privacy_policy.dart';
@@ -16,11 +15,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import '../../actions/api/graphql_client.dart';
 import '../../utils/colors.dart';
-import '../../utils/general.dart';
 import 'state.dart';
-
-import 'package:country_pickers/country.dart';
-import 'package:country_pickers/country_pickers.dart';
 
 Widget buildView(
   HelpSupportPageState state,
@@ -326,10 +321,8 @@ class __InnerPartState extends State<_InnerPart> {
                 children: [
                   SizedBox(height: 20.0),
                   TextFormField(
-                    //  initialValue: globalUser.name,
                     textAlign: TextAlign.left,
                     keyboardType: TextInputType.text,
-
                     onChanged: (String value) {},
                     decoration: InputDecoration(
                       hintText: 'Enter your name',
@@ -363,7 +356,6 @@ class __InnerPartState extends State<_InnerPart> {
                   ),
                   SizedBox(height: 20.0),
                   TextFormField(
-                    // initialValue: globalUser.email,
                     textAlign: TextAlign.left,
                     keyboardType: TextInputType.emailAddress,
                     controller: emailController,
@@ -517,7 +509,6 @@ class __InnerPartState extends State<_InnerPart> {
                             emailController.text,
                             dropDownValue,
                             messageController.text,
-                            //  messageValue,
                           );
                           setState(() {
                             nameController.clear();
@@ -541,11 +532,10 @@ class __InnerPartState extends State<_InnerPart> {
 }
 
 void _onSubmit(nameValue, emailValue, dropDownValue, messageValue) async {
-  QueryResult result = await BaseGraphQLClient.instance.createSupportRequest(
+  await BaseGraphQLClient.instance.createSupportRequest(
     nameValue,
     emailValue,
     dropDownValue,
     messageValue,
   );
-  if (result.hasException) print(result.exception);
 }

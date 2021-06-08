@@ -120,11 +120,6 @@ class _SwiperWidgetState extends State<SwiperWidget> {
                         );
                       },
                     ),
-                    // color: HexColor("#6092DC").withOpacity(.4),
-                    //     activeColor: HexColor('#6092DC'),
-                    //      space: 10.0,
-                    //     size: Size(15.0, 15.0),
-                    //      activeSize: Size(40.0, 15.0),
                   ),
                 ),
               ),

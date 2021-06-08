@@ -11,18 +11,10 @@ import 'package:com.floridainc.dosparkles/widgets/sparkles_drawer.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:social_share/social_share.dart';
-import '../../actions/api/graphql_client.dart';
 import '../../utils/colors.dart';
-import '../../utils/general.dart';
 import 'state.dart';
-
-import 'package:country_pickers/country.dart';
-import 'package:country_pickers/country_pickers.dart';
 
 Widget buildView(
   StoreSelectionPageState state,

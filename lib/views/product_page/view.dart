@@ -3,12 +3,8 @@ import 'dart:ui';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/widgets/connection_lost.dart';
 import 'package:com.floridainc.dosparkles/widgets/product_customization.dart';
-import 'package:com.floridainc.dosparkles/widgets/product_details_image.dart';
 import 'package:com.floridainc.dosparkles/widgets/swiper_widget.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import 'package:http/http.dart' as http;
-
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
 
 import 'package:com.floridainc.dosparkles/models/models.dart';
@@ -16,13 +12,11 @@ import 'package:com.floridainc.dosparkles/utils/colors.dart';
 import 'package:com.floridainc.dosparkles/views/product_page/action.dart';
 import 'package:com.floridainc.dosparkles/views/product_page/state.dart';
 import 'package:com.floridainc.dosparkles/widgets/sparkles_drawer.dart';
-import 'package:com.floridainc.dosparkles/widgets/touch_spin.dart';
+
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_swiper/flutter_swiper.dart';
-import 'package:intl/intl.dart';
 
 Widget buildView(
     ProductPageState state, Dispatch dispatch, ViewService viewService) {
@@ -335,9 +329,6 @@ class __MainBodyState extends State<_MainBody> {
 
   @override
   Widget build(BuildContext context) {
-    // int _productQuantity =
-    //     widget.productQuantity == null ? 1 : widget.productQuantity;
-
     return SingleChildScrollView(
       child: Column(
         mainAxisSize: MainAxisSize.min,

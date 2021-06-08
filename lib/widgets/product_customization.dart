@@ -711,8 +711,6 @@ class ProductCustomizationState extends State<ProductCustomization> {
                                                     ],
                                                   ),
                                                   onTap: () {
-                                                    print(
-                                                        'optionalMaterialSelected: $optionalMaterialSelected !optionalMaterialSelected: ${!optionalMaterialSelected}');
                                                     dispatch(ProductPageActionCreator
                                                         .onSetOptionMaterialSelected(
                                                             !optionalMaterialSelected));

@@ -5,6 +5,7 @@ import 'dart:ui';
 import 'package:com.floridainc.dosparkles/actions/app_config.dart';
 import 'package:com.floridainc.dosparkles/actions/user_info_operate.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/action.dart';
+
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/utils/general.dart';
 import 'package:com.floridainc.dosparkles/widgets/connection_lost.dart';
@@ -500,7 +501,6 @@ void _appleSignIn(context) async {
     ),
   );
 
-  print("______credential:$credential");
 
   Response response = await http.get(
     '${AppConfig.instance.baseApiHost}/auth/apple/callback?access_token=${credential.authorizationCode}',

@@ -1,6 +1,5 @@
 import 'dart:convert' show json;
 import 'package:com.floridainc.dosparkles/actions/app_config.dart';
-import 'package:flutter/material.dart';
 import 'package:com.floridainc.dosparkles/utils/general.dart';
 
 class ProductItem {
