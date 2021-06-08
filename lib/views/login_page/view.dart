@@ -17,7 +17,7 @@ import 'package:flutter/services.dart';
 import 'package:com.floridainc.dosparkles/utils/colors.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:uuid/uuid.dart';
-import 'package:flutter_login_facebook/flutter_login_facebook.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:com.floridainc.dosparkles/models/models.dart';
@@ -138,22 +138,14 @@ class __InnerPartState extends State<_InnerPart> {
     ],
   );
 
+  static final FacebookLogin facebookSignIn = new FacebookLogin();
+
   GoogleSignInAccount _currentUser;
 
   @override
   void initState() {
     super.initState();
-    // _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount account) {
-    //   print("------3333------ $account");
-
-    //   setState(() {
-    //     _currentUser = account;
-    //   });
-    //   if (_currentUser != null) {
-    //     print("------1111------ $_currentUser");
-    //   }
-    // });
-    // _googleSignIn.signInSilently();
+    facebookSignIn.loginBehavior = FacebookLoginBehavior.webViewOnly;
   }
 
   @override
@@ -402,7 +394,7 @@ class __InnerPartState extends State<_InnerPart> {
                           fit: BoxFit.contain,
                         ),
                         onTap: () {
-                          _facebookSignIn(context);
+                          _facebookSignIn(context, facebookSignIn);
                         },
                       ),
                       SizedBox(width: 16),
@@ -458,50 +450,36 @@ void _goolgeSignIn(_googleSignIn, context) async {
   }
 }
 
-void _facebookSignIn(context) async {
-  // Create an instance of FacebookLogin
-  final fb = FacebookLogin();
+void _facebookSignIn(context, facebookSignIn) async {
+  final FacebookLoginResult result =
+      await facebookSignIn.logIn(['public_profile', 'email']);
 
-// Log in
-  final res = await fb.logIn(permissions: [
-    FacebookPermission.publicProfile,
-    FacebookPermission.email,
-  ]);
+  switch (result.status) {
+    case FacebookLoginStatus.loggedIn:
+      final FacebookAccessToken accessToken = result.accessToken;
 
-// Check result status
-  switch (res.status) {
-    case FacebookLoginStatus.success:
-      // Logged in
+      Response response = await http.get(
+        '${AppConfig.instance.baseApiHost}/auth/facebook/callback?access_token=${accessToken.token}',
+      );
+      Map<String, dynamic> responseBody = json.decode(response.body);
 
-      // Send access token to server for validation and auth
-      final FacebookAccessToken accessToken = res.accessToken;
-      print('Access token: ${accessToken.token}');
+      await UserInfoOperate.whenLogin(responseBody['jwt'].toString());
+      if (responseBody['jwt'] != null) {
+        SharedPreferences.getInstance().then((_p) async {
+          await _p.setString("jwt", responseBody['jwt']);
+          _p.setString("userId", responseBody['user']['id'].toString());
 
-      if (accessToken.token != null) {
-        Response response = await http.get(
-          '${AppConfig.instance.baseApiHost}/auth/facebook/callback?access_token=${accessToken.token}',
-        );
-
-        printWrapped(response.body);
-        Map<String, dynamic> responseBody = json.decode(response.body);
-
-        await UserInfoOperate.whenLogin(responseBody['jwt'].toString());
-        if (responseBody['jwt'] != null) {
-          SharedPreferences.getInstance().then((_p) async {
-            await _p.setString("jwt", responseBody['jwt']);
-            _p.setString("userId", responseBody['user']['id'].toString());
-
-            _goToMain(context);
-          });
-        }
+          _goToMain(context);
+        });
       }
+
       break;
-    case FacebookLoginStatus.cancel:
-      // User cancel log in
+    case FacebookLoginStatus.cancelledByUser:
+      print('Login cancelled by the user.');
       break;
     case FacebookLoginStatus.error:
-      // Log in failed
-      print('Error while log in: ${res.error}');
+      print('Something went wrong with the login process.\n'
+          'Here\'s the error Facebook gave us: ${result.errorMessage}');
       break;
   }
 }

@@ -405,6 +405,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.6.0"
+  flutter_facebook_login:
+    dependency: "direct main"
+    description:
+      name: flutter_facebook_login
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.0.0"
   flutter_local_notifications:
     dependency: "direct main"
     description:
@@ -424,13 +431,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_login_facebook:
-    dependency: "direct main"
-    description:
-      name: flutter_login_facebook
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.5.0"
   flutter_page_indicator:
     dependency: transitive
     description:
@@ -616,13 +616,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.5.1"
-  list_ext:
-    dependency: transitive
-    description:
-      name: list_ext
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.2.0"
   list_tile_more_customizable:
     dependency: "direct main"
     description:
