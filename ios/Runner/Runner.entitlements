@@ -16,7 +16,5 @@
 		<string>ku5t1-alternate.app.link</string>
 		<string>backend.dosparkles.com</string>
 	</array>
-	<key>com.apple.security.application-groups</key>
-	<array/>
 </dict>
 </plist>
