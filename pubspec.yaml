@@ -79,6 +79,11 @@ dependencies:
   custom_refresh_indicator: ^0.9.0
   better_player:
   uuid:
+  video_player:
+    git:
+      url: https://github.com/sanekyy/plugins.git
+      ref: caching
+      path: packages/video_player/video_player
 
 dev_dependencies:
   flutter_test:
