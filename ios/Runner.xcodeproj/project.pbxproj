@@ -16,7 +16,6 @@
 		FFE805CE266F15B800FDBE52 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FFE805CD266F15B800FDBE52 /* GoogleService-Info.plist */; };
 		FFE805D1266F17D600FDBE52 /* better_player.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FFE805D0266F17D600FDBE52 /* better_player.framework */; };
 		FFE805D3266F17DA00FDBE52 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3458694415B9988F5404F64D /* Pods_Runner.framework */; };
-		FFE805D4266F17DA00FDBE52 /* Pods_Runner.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3458694415B9988F5404F64D /* Pods_Runner.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -26,7 +25,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				FFE805D4266F17DA00FDBE52 /* Pods_Runner.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
