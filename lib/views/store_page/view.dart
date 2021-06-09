@@ -435,6 +435,7 @@ class _ProductViewState extends State<_ProductView>
       length: widget.store.products.length,
       vsync: this,
     );
+
     _tabController.addListener(() {
       setState(() {
         _tabSelectedIndex = _tabController.index;
@@ -482,6 +483,49 @@ class _ProductViewState extends State<_ProductView>
 
               if (_tabController.index == 0 && _tabController.offset == 0.0) {
                 widget.dispatch(StorePageActionCreator.onBackToAllProducts());
+              }
+            }
+          },
+          onTap: () {
+            List<int> idsArray = List.empty(growable: true);
+            int currentIndex = _tabSelectedIndex;
+            ProductItem currentProduct = widget.store.products[currentIndex];
+
+            for (int i = 0; i < widget.store.products.length; i++) {
+              if (widget.store.products[i].id == currentProduct.id) {
+                currentIndex = i;
+              }
+            }
+
+            List<ProductItem> sameProducts = widget.store.products
+                .where((ProductItem product) =>
+                    product.shineonImportId == currentProduct.shineonImportId)
+                .toList()
+                .where((el) => el.id != currentProduct.id)
+                .toList();
+
+            for (int i = 0; i < widget.store.products.length; i++) {
+              for (int j = 0; j < sameProducts.length; j++) {
+                if (widget.store.products[i].id == sameProducts[j].id) {
+                  idsArray.add(i);
+                }
+              }
+            }
+
+            List<int> moreThanCurrentIdx =
+                idsArray.where((el) => el > currentIndex).toList();
+
+            if (idsArray.isNotEmpty) {
+              if (moreThanCurrentIdx.isNotEmpty) {
+                setState(() {
+                  _tabController.index = moreThanCurrentIdx[0];
+                  _tabSelectedIndex = moreThanCurrentIdx[0];
+                });
+              } else {
+                setState(() {
+                  _tabController.index = idsArray[0];
+                  _tabSelectedIndex = idsArray[0];
+                });
               }
             }
           },
@@ -616,66 +660,65 @@ class _VideoPlayerItemState extends State<VideoPlayerItem> {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        // setState(() {
-        //   _videoController.value.isPlaying
-        //       ? _videoController.pause()
-        //       : _videoController.play();
-        // });
-      },
-      child: RotatedBox(
-        quarterTurns: 0,
+    // onTap: () {
+    // setState(() {
+    //   _videoController.value.isPlaying
+    //       ? _videoController.pause()
+    //       : _videoController.play();
+    // });
+    //},
+
+    return RotatedBox(
+      quarterTurns: 0,
+      child: Container(
+        height: widget.size.height,
+        width: widget.size.width,
         child: Container(
           height: widget.size.height,
           width: widget.size.width,
-          child: Container(
-            height: widget.size.height,
-            width: widget.size.width,
-            child: Stack(
-              children: [
-                SizedBox.expand(
-                  child: FittedBox(
-                    fit: BoxFit.cover,
-                    child: SizedBox(
-                      height: widget.size.height,
-                      width: widget.size.width,
-                      child: BetterPlayer(
-                        controller: _betterPlayerController,
-                      ),
+          child: Stack(
+            children: [
+              SizedBox.expand(
+                child: FittedBox(
+                  fit: BoxFit.cover,
+                  child: SizedBox(
+                    height: widget.size.height,
+                    width: widget.size.width,
+                    child: BetterPlayer(
+                      controller: _betterPlayerController,
                     ),
                   ),
                 ),
+              ),
 
-                //                   SizedBox.expand(
-                //                     child: FittedBox(
-                //                       fit: BoxFit.cover,
-                //                        child:  AspectRatio(
-                //                        child:   BetterPlayer(
-                //   controller: _betterPlayerController,
-                // ),
-                //   aspectRatio: 16 / 9,
+              //                   SizedBox.expand(
+              //                     child: FittedBox(
+              //                       fit: BoxFit.cover,
+              //                        child:  AspectRatio(
+              //                        child:   BetterPlayer(
+              //   controller: _betterPlayerController,
+              // ),
+              //   aspectRatio: 16 / 9,
 
-                // ),
-                //                       // child: SizedBox(
-                //                       //   // width: _videoController.value.size?.width ?? 0,
-                //                       //   // height: _videoController.value.size?.height ?? 0,
-                //                       //   width: 500, widget.size.width,
-                //                       //   height: 300, widget.size.height,
-                //                       //   child:
+              // ),
+              //                       // child: SizedBox(
+              //                       //   // width: _videoController.value.size?.width ?? 0,
+              //                       //   // height: _videoController.value.size?.height ?? 0,
+              //                       //   width: 500, widget.size.width,
+              //                       //   height: 300, widget.size.height,
+              //                       //   child:
 
-                //                       //   // VideoPlayer(_videoController),
-                //                       // ),
-                //                     ),
-                //                   ),
-                // Center(
-                //   child: Container(
-                //     decoration: BoxDecoration(),
-                //     child: isPlaying(),
-                //   ),
-                // )
-              ],
-            ),
+              //                       //   // VideoPlayer(_videoController),
+              //                       // ),
+              //                     ),
+              //                   ),
+              // Center(
+              //   child: Container(
+              //     decoration: BoxDecoration(),
+              //     child: isPlaying(),
+              //   ),
+              // )
+            ],
           ),
         ),
       ),
