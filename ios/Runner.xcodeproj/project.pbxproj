@@ -13,7 +13,10 @@
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
-		BD69A580D42240A7987834CA /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3458694415B9988F5404F64D /* Pods_Runner.framework */; };
+		FFE805CE266F15B800FDBE52 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FFE805CD266F15B800FDBE52 /* GoogleService-Info.plist */; };
+		FFE805D1266F17D600FDBE52 /* better_player.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FFE805D0266F17D600FDBE52 /* better_player.framework */; };
+		FFE805D3266F17DA00FDBE52 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3458694415B9988F5404F64D /* Pods_Runner.framework */; };
+		FFE805D4266F17DA00FDBE52 /* Pods_Runner.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3458694415B9988F5404F64D /* Pods_Runner.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -23,6 +26,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				FFE805D4266F17DA00FDBE52 /* Pods_Runner.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -47,6 +51,9 @@
 		97C147001CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B70F1A3491B428C8CF66B6D4 /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
+		FFE805CD266F15B800FDBE52 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		FFE805CF266F17A700FDBE52 /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
+		FFE805D0266F17D600FDBE52 /* better_player.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = better_player.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,7 +61,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BD69A580D42240A7987834CA /* Pods_Runner.framework in Frameworks */,
+				FFE805D3266F17DA00FDBE52 /* Pods_Runner.framework in Frameworks */,
+				FFE805D1266F17D600FDBE52 /* better_player.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -64,6 +72,7 @@
 		4F14B1CD49A041C8D8B76E80 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				FFE805D0266F17D600FDBE52 /* better_player.framework */,
 				3458694415B9988F5404F64D /* Pods_Runner.framework */,
 			);
 			name = Frameworks;
@@ -102,6 +111,8 @@
 		97C146F01CF9000F007C117D /* Runner */ = {
 			isa = PBXGroup;
 			children = (
+				FFE805CF266F17A700FDBE52 /* Runner.entitlements */,
+				FFE805CD266F15B800FDBE52 /* GoogleService-Info.plist */,
 				97C146FA1CF9000F007C117D /* Main.storyboard */,
 				97C146FD1CF9000F007C117D /* Assets.xcassets */,
 				97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */,
@@ -190,6 +201,7 @@
 			files = (
 				97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */,
 				3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */,
+				FFE805CE266F15B800FDBE52 /* GoogleService-Info.plist in Resources */,
 				97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */,
 				97C146FC1CF9000F007C117D /* Main.storyboard in Resources */,
 			);
@@ -371,7 +383,9 @@
 			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = 30;
 				DEVELOPMENT_TEAM = 25NGZCVJD4;
 				ENABLE_BITCODE = NO;
@@ -499,7 +513,9 @@
 			baseConfigurationReference = 9740EEB21CF90195004384FC /* Debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = 30;
 				DEVELOPMENT_TEAM = 25NGZCVJD4;
 				ENABLE_BITCODE = NO;
@@ -522,7 +538,9 @@
 			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = 30;
 				DEVELOPMENT_TEAM = 25NGZCVJD4;
 				ENABLE_BITCODE = NO;
