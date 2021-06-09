@@ -145,22 +145,6 @@ Future checkUserReferralLink(AppUser globalUser) async {
   }
 }
 
-// Future<void> _invitedRegisteredMethod(AppUser globalUser) async {
-//   SharedPreferences.getInstance().then((_p) async {
-//     String referralLink = _p.getString("referralLink");
-//     if (referralLink != null && referralLink != '') {
-//       Response result = await http.post(
-//         '${AppConfig.instance.baseApiHost}/friend-invites/inviteConfirm',
-//         body: {
-//           'referralLink': "$referralLink",
-//           'phoneNumber': "${globalUser.phoneNumber}",
-//         },
-//       );
-
-//       print("RESULT : " + result.body);
-//     }
-//   });
-// }
 
 Future<Map<String, dynamic>> _emailSignIn(
     Action action, Context<LoginPageState> ctx) async {
@@ -196,55 +180,3 @@ Future<Map<String, dynamic>> _emailSignIn(
   }
   return null;
 }
-
-// Future _onSignUp(Action action, Context<LoginPageState> ctx) async {
-//   Navigator.of(ctx.context)
-//       .push(PageRouteBuilder(pageBuilder: (context, an, _) {
-//     return FadeTransition(
-//       opacity: an,
-//       child: RegisterPage().buildPage(null),
-//     );
-//   })).then((results) {
-//     if (results is PopWithResults) {
-//       PopWithResults popResult = results;
-//       if (popResult.toPage == 'mainpage')
-//         Navigator.of(ctx.context).pop(results.results);
-//     }
-//   });
-// }
-
-// void _onGoogleSignIn(Action action, Context<LoginPageState> ctx) async {
-//   ctx.state.submitAnimationController.forward();
-//   try {
-//     GoogleSignIn _googleSignIn = GoogleSignIn();
-//     final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
-//     if (googleUser == null)
-//       return ctx.state.submitAnimationController.reverse();
-//     final GoogleSignInAuthentication googleAuth =
-//         await googleUser.authentication;
-//     final AuthCredential credential = GoogleAuthProvider.getCredential(
-//       accessToken: googleAuth.accessToken,
-//       idToken: googleAuth.idToken,
-//     );
-//     final FirebaseUser user =
-//         (await _auth.signInWithCredential(credential)).user;
-//     assert(user.email != null);
-//     assert(user.displayName != null);
-//     assert(!user.isAnonymous);
-//     assert(await user.getIdToken() != null);
-
-//     final FirebaseUser currentUser = await _auth.currentUser();
-//     assert(user.uid == currentUser.uid);
-//     if (user != null) {
-//       UserInfoOperate.whenLogin(user, user.displayName);
-//       Navigator.of(ctx.context).pop({'s': true, 'name': user.displayName});
-//     } else {
-//       ctx.state.submitAnimationController.reverse();
-//       Toast.show("Google signIn fail", ctx.context,
-//           duration: 3, gravity: Toast.BOTTOM);
-//     }
-//   } on Exception catch (e) {
-//     ctx.state.submitAnimationController.reverse();
-//     Toast.show(e.toString(), ctx.context, duration: 5, gravity: Toast.BOTTOM);
-//   }
-// }

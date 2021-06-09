@@ -459,9 +459,11 @@ class BaseGraphQLClient {
       mutation {
         register (
           input: { 
-            email: "${data['emailValue']}"
-            username: "${data['emailValue']}"
-            password: "${data['passwordValue']}"
+            data: {
+              email: "${data['emailValue']}"
+              username: "${data['emailValue']}"
+              password: "${data['passwordValue']}"
+            }
           }
         ) 
         {

@@ -1,4 +1,9 @@
 # dosparkles
+Flutter 2.2.0-10.3.pre • channel beta
+
+
+flutter clean
+flutter packages pub upgrade
 
 # Update translations:
 
