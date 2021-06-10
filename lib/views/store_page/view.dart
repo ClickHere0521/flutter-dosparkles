@@ -430,7 +430,7 @@ class _ProductViewState extends State<_ProductView>
   @override
   void initState() {
     super.initState();
-    _tabSelectedIndex = widget.productIndex;
+    _tabSelectedIndex = 0;
     _tabController = TabController(
       length: widget.store.products.length,
       vsync: this,
@@ -439,11 +439,6 @@ class _ProductViewState extends State<_ProductView>
     _tabController.addListener(() {
       setState(() {
         _tabSelectedIndex = _tabController.index;
-
-        if (_tabController.index == 0)
-          _shouldAbsorb = true;
-        else
-          _shouldAbsorb = false;
       });
     });
   }
@@ -451,10 +446,10 @@ class _ProductViewState extends State<_ProductView>
   @override
   Widget build(BuildContext context) {
     List<ProductItem> items = List.empty(growable: true);
-    for (var i = widget.productIndex; i < widget.store.products.length; i++) {
+    for (int i = widget.productIndex; i < widget.store.products.length; i++) {
       items.add(widget.store.products[i]);
     }
-    for (var i = 0; i < widget.productIndex; i++) {
+    for (int i = 0; i < widget.productIndex; i++) {
       items.add(widget.store.products[i]);
     }
 
@@ -477,36 +472,46 @@ class _ProductViewState extends State<_ProductView>
             if (dragEndDetails.primaryVelocity < 0) {
               // Page forwards
 
-              _tabController.index++;
+              if (_tabController.index < items.length &&
+                  _tabSelectedIndex < items.length) {
+                _tabController.index++;
+                _tabSelectedIndex++;
+              }
             } else if (dragEndDetails.primaryVelocity > 0) {
               // Page backwards
 
               if (_tabController.index == 0 && _tabController.offset == 0.0) {
                 widget.dispatch(StorePageActionCreator.onBackToAllProducts());
+                return;
+              }
+
+              if (_tabController.index >= 0 && _tabSelectedIndex >= 0) {
+                _tabController.index--;
+                _tabSelectedIndex--;
               }
             }
           },
           onTap: () {
             List<int> idsArray = List.empty(growable: true);
             int currentIndex = _tabSelectedIndex;
-            ProductItem currentProduct = widget.store.products[currentIndex];
+            ProductItem currentProduct = items[currentIndex];
 
-            for (int i = 0; i < widget.store.products.length; i++) {
-              if (widget.store.products[i].id == currentProduct.id) {
+            for (int i = 0; i < items.length; i++) {
+              if (items[i].id == currentProduct.id) {
                 currentIndex = i;
               }
             }
 
-            List<ProductItem> sameProducts = widget.store.products
+            List<ProductItem> sameProducts = items
                 .where((ProductItem product) =>
                     product.shineonImportId == currentProduct.shineonImportId)
                 .toList()
                 .where((el) => el.id != currentProduct.id)
                 .toList();
 
-            for (int i = 0; i < widget.store.products.length; i++) {
+            for (int i = 0; i < items.length; i++) {
               for (int j = 0; j < sameProducts.length; j++) {
-                if (widget.store.products[i].id == sameProducts[j].id) {
+                if (items[i].id == sameProducts[j].id) {
                   idsArray.add(i);
                 }
               }
