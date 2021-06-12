@@ -97,9 +97,9 @@ class __MainBodyState extends State<_MainBody> {
                 leadingWidth: 70.0,
                 automaticallyImplyLeading: false,
                 leading: InkWell(
-                  child: Image.asset("images/back_button.png"),
-                  onTap: () => Navigator.of(context).pop(),
-                ),
+                    child: Image.asset("images/back_button.png"),
+                    onTap: () => Navigator.of(context)
+                        .pushReplacementNamed('loginpage')),
                 backgroundColor: Colors.transparent,
                 title: Text(
                   "Create Account",

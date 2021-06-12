@@ -445,6 +445,14 @@ class _ProductViewState extends State<_ProductView>
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    SharedPreferences.getInstance().then((_p) {
+      _p.setInt("currentProductVideo", null);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     List<ProductItem> items = List.empty(growable: true);
     for (int i = widget.productIndex; i < widget.store.products.length; i++) {
@@ -493,13 +501,36 @@ class _ProductViewState extends State<_ProductView>
             }
           },
           onTap: () {
-            setState(() {
-              _tabController.index += 1;
-              _currentProductVideo++;
-              _tabController.index -= 1;
-            });
+            if (_currentProductVideo <
+                items[_tabSelectedIndex].videoUrls.length - 1) {
+              _currentProductVideo += 1;
+              SharedPreferences.getInstance().then((_p) {
+                _p.setInt("currentProductVideo", _currentProductVideo);
+              });
+              if (mounted) setState(() {});
+            } else {
+              _currentProductVideo = 0;
+              SharedPreferences.getInstance().then((_p) {
+                _p.setInt("currentProductVideo", _currentProductVideo);
+              });
+              if (mounted) setState(() {});
+            }
 
-            print("------------------ $_currentProductVideo");
+            if (items[_tabSelectedIndex].videoUrls.length > 1) {
+              Future.delayed(Duration(milliseconds: 400)).then((v) {
+                _tabController.index += 1;
+                _currentProductVideo = 0;
+                if (mounted) setState(() {});
+              });
+
+              Future.delayed(Duration(milliseconds: 800)).then((v) {
+                _tabController.index -= 1;
+                SharedPreferences.getInstance().then((_p) {
+                  _currentProductVideo = _p.getInt("currentProductVideo");
+                });
+                if (mounted) setState(() {});
+              });
+            }
 
             // List<int> idsArray = List.empty(growable: true);
             // int currentIndex = _tabSelectedIndex;
@@ -548,14 +579,17 @@ class _ProductViewState extends State<_ProductView>
             absorbing: _shouldAbsorb,
             child: TabBarView(
               controller: _tabController,
+              physics: BouncingScrollPhysics(),
               children: List.generate(items.length, (index) {
                 return items[index] != null &&
                         items[index].videoUrls != null &&
                         items[index].videoUrls.length > 0
                     ? Center(
                         child: VideoPlayerItem(
-                            videoUrl:
-                                items[index].videoUrls[_currentProductVideo],
+                            videoUrl: items[index].videoUrls[
+                                index == _tabSelectedIndex
+                                    ? _currentProductVideo
+                                    : 0],
                             size: size,
                             tabSelectedIndex: _tabSelectedIndex,
                             dispatch: widget.dispatch,

@@ -266,7 +266,7 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                         .pushReplacementNamed('chatpage', arguments: null);
                   },
                 ),
-                SizedBox(height: 10.0),
+                // SizedBox(height: 10.0),
                 // GestureDetector(
                 //   behavior: HitTestBehavior.translucent,
                 //   child: Container(
