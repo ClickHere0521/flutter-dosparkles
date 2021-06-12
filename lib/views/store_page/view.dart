@@ -425,6 +425,7 @@ class _ProductViewState extends State<_ProductView>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
   int _tabSelectedIndex;
+  int _currentProductVideo = 0;
   bool _shouldAbsorb = true;
 
   @override
@@ -492,47 +493,55 @@ class _ProductViewState extends State<_ProductView>
             }
           },
           onTap: () {
-            List<int> idsArray = List.empty(growable: true);
-            int currentIndex = _tabSelectedIndex;
-            ProductItem currentProduct = items[currentIndex];
+            setState(() {
+              _tabController.index += 1;
+              _currentProductVideo++;
+              _tabController.index -= 1;
+            });
 
-            for (int i = 0; i < items.length; i++) {
-              if (items[i].id == currentProduct.id) {
-                currentIndex = i;
-              }
-            }
+            print("------------------ $_currentProductVideo");
 
-            List<ProductItem> sameProducts = items
-                .where((ProductItem product) =>
-                    product.shineonImportId == currentProduct.shineonImportId)
-                .toList()
-                .where((el) => el.id != currentProduct.id)
-                .toList();
+            // List<int> idsArray = List.empty(growable: true);
+            // int currentIndex = _tabSelectedIndex;
+            // ProductItem currentProduct = items[currentIndex];
 
-            for (int i = 0; i < items.length; i++) {
-              for (int j = 0; j < sameProducts.length; j++) {
-                if (items[i].id == sameProducts[j].id) {
-                  idsArray.add(i);
-                }
-              }
-            }
+            // for (int i = 0; i < items.length; i++) {
+            //   if (items[i].id == currentProduct.id) {
+            //     currentIndex = i;
+            //   }
+            // }
 
-            List<int> moreThanCurrentIdx =
-                idsArray.where((el) => el > currentIndex).toList();
+            // List<ProductItem> sameProducts = items
+            //     .where((ProductItem product) =>
+            //         product.shineonImportId == currentProduct.shineonImportId)
+            //     .toList()
+            //     .where((el) => el.id != currentProduct.id)
+            //     .toList();
 
-            if (idsArray.isNotEmpty) {
-              if (moreThanCurrentIdx.isNotEmpty) {
-                setState(() {
-                  _tabController.index = moreThanCurrentIdx[0];
-                  _tabSelectedIndex = moreThanCurrentIdx[0];
-                });
-              } else {
-                setState(() {
-                  _tabController.index = idsArray[0];
-                  _tabSelectedIndex = idsArray[0];
-                });
-              }
-            }
+            // for (int i = 0; i < items.length; i++) {
+            //   for (int j = 0; j < sameProducts.length; j++) {
+            //     if (items[i].id == sameProducts[j].id) {
+            //       idsArray.add(i);
+            //     }
+            //   }
+            // }
+
+            // List<int> moreThanCurrentIdx =
+            //     idsArray.where((el) => el > currentIndex).toList();
+
+            // if (idsArray.isNotEmpty) {
+            //   if (moreThanCurrentIdx.isNotEmpty) {
+            //     setState(() {
+            //       _tabController.index = moreThanCurrentIdx[0];
+            //       _tabSelectedIndex = moreThanCurrentIdx[0];
+            //     });
+            //   } else {
+            //     setState(() {
+            //       _tabController.index = idsArray[0];
+            //       _tabSelectedIndex = idsArray[0];
+            //     });
+            //   }
+            // }
           },
 
           child: AbsorbPointer(
@@ -540,10 +549,13 @@ class _ProductViewState extends State<_ProductView>
             child: TabBarView(
               controller: _tabController,
               children: List.generate(items.length, (index) {
-                return items[index] != null && items[index].videoUrl != null
+                return items[index] != null &&
+                        items[index].videoUrls != null &&
+                        items[index].videoUrls.length > 0
                     ? Center(
                         child: VideoPlayerItem(
-                            videoUrl: items[index].videoUrl,
+                            videoUrl:
+                                items[index].videoUrls[_currentProductVideo],
                             size: size,
                             tabSelectedIndex: _tabSelectedIndex,
                             dispatch: widget.dispatch,

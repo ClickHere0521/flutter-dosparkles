@@ -267,35 +267,35 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                   },
                 ),
                 SizedBox(height: 10.0),
-                GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  child: Container(
-                    padding: EdgeInsets.all(12.0),
-                    margin: EdgeInsets.only(left: 13.0),
-                    decoration: BoxDecoration(),
-                    child: Stack(
-                      alignment: Alignment.centerLeft,
-                      children: [
-                        SvgPicture.asset("images/Group 139.svg"),
-                        Positioned(
-                          left: 32.0,
-                          child: Text(
-                            "Share",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  onTap: () {
-                    SocialShare.shareOptions("Hello world").then((data) {});
-                  },
-                ),
-                SizedBox(height: 10.0),
+                // GestureDetector(
+                //   behavior: HitTestBehavior.translucent,
+                //   child: Container(
+                //     padding: EdgeInsets.all(12.0),
+                //     margin: EdgeInsets.only(left: 13.0),
+                //     decoration: BoxDecoration(),
+                //     child: Stack(
+                //       alignment: Alignment.centerLeft,
+                //       children: [
+                //         SvgPicture.asset("images/Group 139.svg"),
+                //         Positioned(
+                //           left: 32.0,
+                //           child: Text(
+                //             "Share",
+                //             style: TextStyle(
+                //               color: Colors.white,
+                //               fontSize: 16.0,
+                //               fontWeight: FontWeight.w500,
+                //             ),
+                //           ),
+                //         ),
+                //       ],
+                //     ),
+                //   ),
+                //   onTap: () {
+                //     SocialShare.shareOptions("Hello world").then((data) {});
+                //   },
+                // ),
+                // SizedBox(height: 10.0),
                 widget.globalUser != null &&
                         (widget.globalUser.role == "Store Manager" ||
                             widget.globalUser.role == "Authenticated")

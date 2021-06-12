@@ -4,6 +4,7 @@ import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/widgets/connection_lost.dart';
 import 'package:com.floridainc.dosparkles/widgets/product_customization.dart';
 import 'package:com.floridainc.dosparkles/widgets/swiper_widget.dart';
+import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
 
@@ -329,343 +330,388 @@ class __MainBodyState extends State<_MainBody> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SizedBox(height: 20.0),
-          SwiperWidget(productMedia: widget.selectedProduct.mediaUrls),
-          SizedBox(height: 21.0),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    return CustomRefreshIndicator(
+      offsetToArmed: 0,
+      onRefresh: () {
+        Navigator.of(context).pushNamed(
+          'storepage',
+          arguments: {'listView': false},
+        );
+        Future<void> delayed = Future.delayed(const Duration(milliseconds: 1));
+        return delayed;
+      },
+      builder: (
+        BuildContext context,
+        Widget child,
+        IndicatorController controller,
+      ) {
+        return AnimatedBuilder(
+          builder: (context, _) {
+            return Transform.translate(
+              offset: Offset(0.0, 0.0),
+              child: child,
+            );
+          },
+          animation: controller,
+        );
+      },
+      child: GestureDetector(
+        onVerticalDragEnd: (dragEndDetails) {
+          if (dragEndDetails.primaryVelocity > 0) {
+            // Page down
+
+            Navigator.of(context).pushNamed(
+              'storepage',
+              arguments: {'listView': false},
+            );
+            Future<void> delayed =
+                Future.delayed(const Duration(milliseconds: 1));
+            return delayed;
+          }
+        },
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                width: 80.0,
-                height: 64.0,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.0),
-                  gradient: LinearGradient(
-                    colors: [HexColor('#E3D3FF'), HexColor('#C2A2FA')],
-                    begin: const FractionalOffset(0.0, 0.0),
-                    end: const FractionalOffset(1.0, 0.0),
-                    stops: [0.0, 1.0],
-                    tileMode: TileMode.clamp,
-                  ),
-                ),
-                child: Center(
-                  child: SvgPicture.asset(
-                    "images/Group 12231221.svg",
-                    width: 70.0,
-                    height: 52.0,
-                    fit: BoxFit.contain,
-                  ),
-                ),
-              ),
-              Container(
-                width: 80.0,
-                height: 64.0,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.0),
-                  gradient: LinearGradient(
-                    colors: [HexColor('#E3D3FF'), HexColor('#C2A2FA')],
-                    begin: const FractionalOffset(0.0, 0.0),
-                    end: const FractionalOffset(1.0, 0.0),
-                    stops: [0.0, 1.0],
-                    tileMode: TileMode.clamp,
-                  ),
-                ),
-                child: Center(
-                  child: SvgPicture.asset(
-                    "images/Group 123.svg",
-                    width: 70.0,
-                    height: 52.0,
-                    fit: BoxFit.contain,
-                  ),
-                ),
-              ),
-              Container(
-                width: 80.0,
-                height: 64.0,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.0),
-                  gradient: LinearGradient(
-                    colors: [HexColor('#E3D3FF'), HexColor('#C2A2FA')],
-                    begin: const FractionalOffset(0.0, 0.0),
-                    end: const FractionalOffset(1.0, 0.0),
-                    stops: [0.0, 1.0],
-                    tileMode: TileMode.clamp,
-                  ),
-                ),
-                child: Center(
-                  child: SvgPicture.asset(
-                    "images/Group 126.svg",
-                    width: 70.0,
-                    height: 52.0,
-                    fit: BoxFit.contain,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 19.0),
-          Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: HexColor("#FAFCFF"),
-              borderRadius: BorderRadius.only(
-                topRight: Radius.circular(32.0),
-                topLeft: Radius.circular(32.0),
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey[300],
-                  offset: Offset(0.0, -0.2), // (x, y)
-                  blurRadius: 10.0,
-                ),
-              ],
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(height: 19.0),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 37.0),
-                  child: Text(
-                    "${widget.selectedProduct.name}",
-                    style: TextStyle(
-                      color: HexColor("#53586F"),
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.w600,
+              SizedBox(height: 20.0),
+              SwiperWidget(productMedia: widget.selectedProduct.mediaUrls),
+              SizedBox(height: 21.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Container(
+                    width: 80.0,
+                    height: 64.0,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      gradient: LinearGradient(
+                        colors: [HexColor('#E3D3FF'), HexColor('#C2A2FA')],
+                        begin: const FractionalOffset(0.0, 0.0),
+                        end: const FractionalOffset(1.0, 0.0),
+                        stops: [0.0, 1.0],
+                        tileMode: TileMode.clamp,
+                      ),
+                    ),
+                    child: Center(
+                      child: SvgPicture.asset(
+                        "images/Group 12231221.svg",
+                        width: 70.0,
+                        height: 52.0,
+                        fit: BoxFit.contain,
+                      ),
                     ),
                   ),
+                  Container(
+                    width: 80.0,
+                    height: 64.0,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      gradient: LinearGradient(
+                        colors: [HexColor('#E3D3FF'), HexColor('#C2A2FA')],
+                        begin: const FractionalOffset(0.0, 0.0),
+                        end: const FractionalOffset(1.0, 0.0),
+                        stops: [0.0, 1.0],
+                        tileMode: TileMode.clamp,
+                      ),
+                    ),
+                    child: Center(
+                      child: SvgPicture.asset(
+                        "images/Group 123.svg",
+                        width: 70.0,
+                        height: 52.0,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: 80.0,
+                    height: 64.0,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      gradient: LinearGradient(
+                        colors: [HexColor('#E3D3FF'), HexColor('#C2A2FA')],
+                        begin: const FractionalOffset(0.0, 0.0),
+                        end: const FractionalOffset(1.0, 0.0),
+                        stops: [0.0, 1.0],
+                        tileMode: TileMode.clamp,
+                      ),
+                    ),
+                    child: Center(
+                      child: SvgPicture.asset(
+                        "images/Group 126.svg",
+                        width: 70.0,
+                        height: 52.0,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 19.0),
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: HexColor("#FAFCFF"),
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(32.0),
+                    topLeft: Radius.circular(32.0),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey[300],
+                      offset: Offset(0.0, -0.2), // (x, y)
+                      blurRadius: 10.0,
+                    ),
+                  ],
                 ),
-                SizedBox(height: 21.0),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 37.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.start,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(height: 19.0),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 37.0),
+                      child: Text(
+                        "${widget.selectedProduct.name}",
+                        style: TextStyle(
+                          color: HexColor("#53586F"),
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 21.0),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 37.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          RichText(
-                            text: TextSpan(
-                              style: DefaultTextStyle.of(context).style,
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              RichText(
+                                text: TextSpan(
+                                  style: DefaultTextStyle.of(context).style,
+                                  children: [
+                                    TextSpan(
+                                      text:
+                                          "\$${widget.selectedProduct.oldPrice} ",
+                                      style: TextStyle(
+                                        color:
+                                            HexColor("#53586F").withOpacity(.5),
+                                        fontSize: 18.0,
+                                        decoration: TextDecoration.lineThrough,
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: "\$${widget.selectedProduct.price}",
+                                      style: TextStyle(
+                                        color: HexColor("#53586F"),
+                                        fontSize: 24.0,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(height: 3.0),
+                              Text(
+                                "You Save: \$40 (50%)",
+                                style: TextStyle(
+                                  fontSize: 12.0,
+                                  color: HexColor("#27AE60"),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Container(
+                            width: 104.0,
+                            height: 34.0,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16.0),
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
-                                TextSpan(
-                                  text: "\$${widget.selectedProduct.oldPrice} ",
+                                InkWell(
+                                  child: Icon(
+                                    Icons.remove,
+                                    size: 22.0,
+                                    color: HexColor("#53586F"),
+                                  ),
+                                  onTap: () {
+                                    if (_touchSpinValue > 1) {
+                                      setState(() => _touchSpinValue--);
+
+                                      widget.dispatch(
+                                        ProductPageActionCreator
+                                            .onSetProductCount(
+                                          _touchSpinValue.toInt(),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                ),
+                                Text(
+                                  "$_touchSpinValue",
                                   style: TextStyle(
-                                    color: HexColor("#53586F").withOpacity(.5),
-                                    fontSize: 18.0,
-                                    decoration: TextDecoration.lineThrough,
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                TextSpan(
-                                  text: "\$${widget.selectedProduct.price}",
-                                  style: TextStyle(
+                                InkWell(
+                                  child: Icon(
+                                    Icons.add,
+                                    size: 22.0,
                                     color: HexColor("#53586F"),
-                                    fontSize: 24.0,
-                                    fontWeight: FontWeight.w700,
                                   ),
+                                  onTap: () {
+                                    if (_touchSpinValue < 100) {
+                                      setState(() => _touchSpinValue++);
+
+                                      widget.dispatch(
+                                        ProductPageActionCreator
+                                            .onSetProductCount(
+                                          _touchSpinValue.toInt(),
+                                        ),
+                                      );
+                                    }
+                                  },
                                 ),
                               ],
                             ),
                           ),
-                          SizedBox(height: 3.0),
-                          Text(
-                            "You Save: \$40 (50%)",
-                            style: TextStyle(
-                              fontSize: 12.0,
-                              color: HexColor("#27AE60"),
-                            ),
-                          ),
                         ],
                       ),
-                      Container(
-                        width: 104.0,
-                        height: 34.0,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(16.0),
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            InkWell(
-                              child: Icon(
-                                Icons.remove,
-                                size: 22.0,
-                                color: HexColor("#53586F"),
-                              ),
-                              onTap: () {
-                                if (_touchSpinValue > 1) {
-                                  setState(() => _touchSpinValue--);
-
-                                  widget.dispatch(
-                                    ProductPageActionCreator.onSetProductCount(
-                                      _touchSpinValue.toInt(),
-                                    ),
-                                  );
-                                }
-                              },
-                            ),
-                            Text(
-                              "$_touchSpinValue",
-                              style: TextStyle(
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            InkWell(
-                              child: Icon(
-                                Icons.add,
-                                size: 22.0,
-                                color: HexColor("#53586F"),
-                              ),
-                              onTap: () {
-                                if (_touchSpinValue < 100) {
-                                  setState(() => _touchSpinValue++);
-
-                                  widget.dispatch(
-                                    ProductPageActionCreator.onSetProductCount(
-                                      _touchSpinValue.toInt(),
-                                    ),
-                                  );
-                                }
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 10.0),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                        behavior: HitTestBehavior.translucent,
-                        child: Container(
-                          width: double.infinity,
-                          height: 36.0,
-                          constraints: BoxConstraints(
-                            maxWidth: 188.0,
-                          ),
-                          decoration: currentTab == 0
-                              ? BoxDecoration(
-                                  color: HexColor("#FAFCFF"),
-                                  borderRadius: BorderRadius.only(
-                                    topRight: Radius.circular(16.0),
-                                    bottomRight: Radius.circular(16.0),
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey[300],
-                                      offset: Offset(0.0, 5.0), // (x, y)
-                                      blurRadius: 5.0,
-                                    ),
-                                  ],
-                                )
-                              : null,
-                          child: Center(
-                            child: Text(
-                              "Product Details",
-                              style: TextStyle(
-                                fontSize: 14.0,
-                                fontWeight: FontWeight.w700,
-                                color: currentTab == 0
-                                    ? HexColor("#53586F")
-                                    : HexColor("#C4C6D2"),
-                              ),
-                            ),
-                          ),
-                        ),
-                        onTap: () {
-                          setState(() {
-                            currentTab = 0;
-                          });
-                        },
-                      ),
                     ),
-                    SizedBox(width: 20.0),
-                    Expanded(
-                      child: GestureDetector(
-                        behavior: HitTestBehavior.translucent,
-                        child: Container(
-                          width: double.infinity,
-                          height: 36.0,
-                          constraints: BoxConstraints(
-                            maxWidth: 188.0,
-                          ),
-                          decoration: currentTab == 1
-                              ? BoxDecoration(
-                                  color: HexColor("#FAFCFF"),
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(16.0),
-                                    bottomLeft: Radius.circular(16.0),
+                    SizedBox(height: 10.0),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            behavior: HitTestBehavior.translucent,
+                            child: Container(
+                              width: double.infinity,
+                              height: 36.0,
+                              constraints: BoxConstraints(
+                                maxWidth: 188.0,
+                              ),
+                              decoration: currentTab == 0
+                                  ? BoxDecoration(
+                                      color: HexColor("#FAFCFF"),
+                                      borderRadius: BorderRadius.only(
+                                        topRight: Radius.circular(16.0),
+                                        bottomRight: Radius.circular(16.0),
+                                      ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.grey[300],
+                                          offset: Offset(0.0, 5.0), // (x, y)
+                                          blurRadius: 5.0,
+                                        ),
+                                      ],
+                                    )
+                                  : null,
+                              child: Center(
+                                child: Text(
+                                  "Product Details",
+                                  style: TextStyle(
+                                    fontSize: 14.0,
+                                    fontWeight: FontWeight.w700,
+                                    color: currentTab == 0
+                                        ? HexColor("#53586F")
+                                        : HexColor("#C4C6D2"),
                                   ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey[300],
-                                      offset: Offset(0.0, 5.0), // (x, y)
-                                      blurRadius: 5.0,
-                                    ),
-                                  ],
-                                )
-                              : null,
-                          child: Center(
-                            child: Text(
-                              "Delivery Time",
-                              style: TextStyle(
-                                fontSize: 14.0,
-                                fontWeight: FontWeight.w700,
-                                color: currentTab == 1
-                                    ? HexColor("#53586F")
-                                    : HexColor("#C4C6D2"),
+                                ),
                               ),
                             ),
+                            onTap: () {
+                              setState(() {
+                                currentTab = 0;
+                              });
+                            },
                           ),
                         ),
-                        onTap: () {
-                          setState(() {
-                            currentTab = 1;
-                          });
-                        },
-                      ),
+                        SizedBox(width: 20.0),
+                        Expanded(
+                          child: GestureDetector(
+                            behavior: HitTestBehavior.translucent,
+                            child: Container(
+                              width: double.infinity,
+                              height: 36.0,
+                              constraints: BoxConstraints(
+                                maxWidth: 188.0,
+                              ),
+                              decoration: currentTab == 1
+                                  ? BoxDecoration(
+                                      color: HexColor("#FAFCFF"),
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(16.0),
+                                        bottomLeft: Radius.circular(16.0),
+                                      ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.grey[300],
+                                          offset: Offset(0.0, 5.0), // (x, y)
+                                          blurRadius: 5.0,
+                                        ),
+                                      ],
+                                    )
+                                  : null,
+                              child: Center(
+                                child: Text(
+                                  "Delivery Time",
+                                  style: TextStyle(
+                                    fontSize: 14.0,
+                                    fontWeight: FontWeight.w700,
+                                    color: currentTab == 1
+                                        ? HexColor("#53586F")
+                                        : HexColor("#C4C6D2"),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            onTap: () {
+                              setState(() {
+                                currentTab = 1;
+                              });
+                            },
+                          ),
+                        ),
+                      ],
                     ),
+                    SizedBox(height: 16.0),
+                    currentTab == 1
+                        ? Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16.0),
+                            child: HtmlWidget(
+                              widget.selectedProduct.productDetails != null
+                                  ? widget.selectedProduct.productDetails
+                                  : "",
+                            ),
+                          )
+                        : Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16.0),
+                            child: HtmlWidget(
+                              widget.selectedProduct.deliveryTime != null
+                                  ? widget.selectedProduct.deliveryTime
+                                  : "",
+                            ),
+                          ),
+                    SizedBox(height: 35.0),
                   ],
                 ),
-                SizedBox(height: 16.0),
-                currentTab == 1
-                    ? Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16.0),
-                        child: HtmlWidget(
-                          widget.selectedProduct.productDetails != null
-                              ? widget.selectedProduct.productDetails
-                              : "",
-                        ),
-                      )
-                    : Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16.0),
-                        child: HtmlWidget(
-                          widget.selectedProduct.deliveryTime != null
-                              ? widget.selectedProduct.deliveryTime
-                              : "",
-                        ),
-                      ),
-                SizedBox(height: 35.0),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

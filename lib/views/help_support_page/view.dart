@@ -424,7 +424,7 @@ class __InnerPartState extends State<_InnerPart> {
                           "My Order",
                           "App Feedback",
                           "I want to sell",
-                          "Other"
+                          "Other",
                         ].map<DropdownMenuItem<String>>((dynamic value) {
                           return DropdownMenuItem<String>(
                             value: value,
@@ -513,7 +513,7 @@ class __InnerPartState extends State<_InnerPart> {
                           setState(() {
                             nameController.clear();
                             emailController.clear();
-                            dropDownValue = 'One';
+                            dropDownValue = 'My Order';
                             messageController.clear();
                           });
                         }
@@ -531,7 +531,14 @@ class __InnerPartState extends State<_InnerPart> {
   }
 }
 
-void _onSubmit(nameValue, emailValue, dropDownValue, messageValue) async {
+void _onSubmit(
+  String nameValue,
+  String emailValue,
+  String dropDownValue,
+  String messageValue,
+) async {
+  dropDownValue = dropDownValue.trim().replaceAll(" ", "_");
+
   await BaseGraphQLClient.instance.createSupportRequest(
     nameValue,
     emailValue,

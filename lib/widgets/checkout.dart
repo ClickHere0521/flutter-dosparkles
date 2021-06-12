@@ -213,7 +213,7 @@ class _CheckoutState extends State<Checkout> {
                                   CartPageActionCreator.onProceedToCheckout(),
                                 );
 
-                                _setIsLoading(false);
+                                //  _setIsLoading(false);
 
                                 // addDialog(context);
                               }
@@ -329,12 +329,7 @@ class _CheckoutState extends State<Checkout> {
                               SizedBox(height: 28.0),
                               Container(
                                 width: double.infinity,
-                                constraints: BoxConstraints(
-                                  minHeight: MediaQuery.of(context)
-                                          .size
-                                          .height -
-                                      Scaffold.of(context).appBarMaxHeight * 3,
-                                ),
+                                padding: EdgeInsets.only(bottom: 20.0),
                                 decoration: BoxDecoration(
                                   color: HexColor("#FAFCFF"),
                                   borderRadius: BorderRadius.only(
@@ -735,44 +730,44 @@ class __InnerPartState extends State<_InnerPart> {
                         return null;
                       },
                     ),
-                    SizedBox(height: 10.0),
-                    Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.all(14.0),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(4.0),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey[300],
-                            offset: Offset(0.0, 2.0), // (x, y)
-                            blurRadius: 5.0,
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "4913, Sugar Pine, Boca Raton",
-                            style: TextStyle(
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.w600,
-                              color: HexColor("#0F142B"),
-                            ),
-                          ),
-                          SizedBox(height: 6.0),
-                          Text(
-                            "Florida, United Stated",
-                            style: TextStyle(
-                              fontSize: 14.0,
-                              color: HexColor("#0F142B"),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    // SizedBox(height: 10.0),
+                    // Container(
+                    //   width: double.infinity,
+                    //   padding: EdgeInsets.all(14.0),
+                    //   decoration: BoxDecoration(
+                    //     color: Colors.white,
+                    //     borderRadius: BorderRadius.circular(4.0),
+                    //     boxShadow: [
+                    //       BoxShadow(
+                    //         color: Colors.grey[300],
+                    //         offset: Offset(0.0, 2.0), // (x, y)
+                    //         blurRadius: 5.0,
+                    //       ),
+                    //     ],
+                    //   ),
+                    //   child: Column(
+                    //     mainAxisSize: MainAxisSize.min,
+                    //     crossAxisAlignment: CrossAxisAlignment.start,
+                    //     children: [
+                    //       Text(
+                    //         "4913, Sugar Pine, Boca Raton",
+                    //         style: TextStyle(
+                    //           fontSize: 16.0,
+                    //           fontWeight: FontWeight.w600,
+                    //           color: HexColor("#0F142B"),
+                    //         ),
+                    //       ),
+                    //       SizedBox(height: 6.0),
+                    //       Text(
+                    //         "Florida, United Stated",
+                    //         style: TextStyle(
+                    //           fontSize: 14.0,
+                    //           color: HexColor("#0F142B"),
+                    //         ),
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
                     SizedBox(height: 20.0),
                     TextFormField(
                       textAlign: TextAlign.left,

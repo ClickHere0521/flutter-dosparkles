@@ -316,7 +316,8 @@ class __MainBodyState extends State<_MainBody> {
     if (result.data != null &&
         result.data['users'] != null &&
         result.data['users'][0] != null &&
-        result.data['users'][0]['invitesSent'] != null) {
+        result.data['users'][0]['invitesSent'] != null &&
+        mounted) {
       setState(() {
         invitesSent = result.data['users'][0]['invitesSent']
             .where((el) => el['smsSent'] == true)
@@ -447,37 +448,42 @@ class __MainBodyState extends State<_MainBody> {
               ),
               SizedBox(width: 81.0),
               GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Image.asset(
-                      "images/Page 1.png",
-                      fit: BoxFit.contain,
-                      width: 60.0,
-                      height: 60.0,
-                    ),
-                    Text("SMS"),
-                    SizedBox(height: 5.0),
-                    Container(
-                      child: Text(
-                        "${invitesSent.length}/100",
-                        style: TextStyle(
-                          fontSize: 15.0,
-                          fontWeight: FontWeight.normal,
-                          color: invitesSent.length >= 100 ? Colors.red : null,
+                  behavior: HitTestBehavior.translucent,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Image.asset(
+                        "images/Page 1.png",
+                        fit: BoxFit.contain,
+                        width: 60.0,
+                        height: 60.0,
+                      ),
+                      Text("SMS"),
+                      SizedBox(height: 5.0),
+                      Container(
+                        child: Text(
+                          "${invitesSent.length}/100",
+                          style: TextStyle(
+                            fontSize: 15.0,
+                            fontWeight: FontWeight.normal,
+                            color:
+                                invitesSent.length >= 100 ? Colors.red : null,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                onTap: () async {
-                  if (globalUser != null && globalUser.referralLink != null) {
-                    await SocialShare.shareSms("",
-                        url: globalUser.referralLink, trailingText: "");
-                  }
-                },
-              ),
+                    ],
+                  ),
+                  onTap: invitesSent.length >= 100
+                      ? null
+                      : () async {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => _ContactsPage(
+                                  fetchInvitesSent: _fetchInvitesSent),
+                            ),
+                          );
+                        }),
             ],
           ),
           SizedBox(height: 21.0),
@@ -570,7 +576,13 @@ class __MainBodyState extends State<_MainBody> {
             child: ElevatedButton(
               style: ButtonStyle(
                 elevation: MaterialStateProperty.all(0),
-                backgroundColor: MaterialStateProperty.all(HexColor("#6092DC")),
+                backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                  (Set<MaterialState> states) {
+                    if (states.contains(MaterialState.disabled))
+                      return HexColor("#C4C6D2");
+                    return HexColor("#6092DC");
+                  },
+                ),
                 shape: MaterialStateProperty.all(
                   RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(31.0),
@@ -585,14 +597,17 @@ class __MainBodyState extends State<_MainBody> {
                   color: Colors.white,
                 ),
               ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          _ContactsPage(fetchInvitesSent: _fetchInvitesSent)),
-                );
-              },
+              onPressed: invitesSent.length >= 100
+                  ? null
+                  : () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => _ContactsPage(
+                              fetchInvitesSent: _fetchInvitesSent),
+                        ),
+                      );
+                    },
             ),
           ),
           SizedBox(height: 21.0),
@@ -682,6 +697,31 @@ class _NextBody extends StatefulWidget {
 
 class __NextBodyState extends State<_NextBody> {
   AppUser globalUser = GlobalStore.store.getState().user;
+  List invitesSent = [];
+
+  void _fetchInvitesSent() async {
+    QueryResult result =
+        await BaseGraphQLClient.instance.fetchUserById(globalUser.id);
+
+    if (result.data != null &&
+        result.data['users'] != null &&
+        result.data['users'][0] != null &&
+        result.data['users'][0]['invitesSent'] != null &&
+        mounted) {
+      setState(() {
+        invitesSent = result.data['users'][0]['invitesSent']
+            .where((el) => el['smsSent'] == true)
+            .toList();
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _fetchInvitesSent();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -868,12 +908,17 @@ class __NextBodyState extends State<_NextBody> {
                     Text("SMS"),
                   ],
                 ),
-                onTap: () async {
-                  if (globalUser != null && globalUser.referralLink != null) {
-                    await SocialShare.shareSms("",
-                        url: globalUser.referralLink, trailingText: "");
-                  }
-                },
+                onTap: invitesSent.length >= 100
+                    ? null
+                    : () async {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => _ContactsPage(
+                                fetchInvitesSent: _fetchInvitesSent),
+                          ),
+                        );
+                      },
               ),
             ],
           ),
@@ -1184,7 +1229,7 @@ class __ContactsPageState extends State<_ContactsPage> {
               "checked": false,
               "invited": invitesPresent,
             });
-            setState(() {});
+            if (mounted) setState(() {});
           }
         });
       }

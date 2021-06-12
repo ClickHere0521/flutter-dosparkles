@@ -501,7 +501,6 @@ void _appleSignIn(context) async {
     ),
   );
 
-
   Response response = await http.get(
     '${AppConfig.instance.baseApiHost}/auth/apple/callback?access_token=${credential.authorizationCode}',
   );

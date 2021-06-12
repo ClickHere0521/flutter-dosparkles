@@ -11,7 +11,7 @@ class ProductItem {
 
   String thumbnailUrl;
 
-  String videoUrl;
+  List<dynamic> videoUrls;
 
   double oldPrice;
 
@@ -70,7 +70,7 @@ class ProductItem {
     this.name,
     this.shineonImportId,
     this.thumbnailUrl,
-    this.videoUrl,
+    this.videoUrls,
     this.oldPrice,
     this.price,
     this.showOldPrice,
@@ -112,10 +112,6 @@ class ProductItem {
         ? AppConfig.instance.baseApiHost + jsonRes['thumbnail']['url']
         : null;
 
-    videoUrl = jsonRes['video'] != null
-        ? AppConfig.instance.baseApiHost + jsonRes['video']['url']
-        : null;
-
     engraveExampleUrl = jsonRes['engraveExample'] != null
         ? AppConfig.instance.baseApiHost + jsonRes['engraveExample']['url']
         : null;
@@ -153,6 +149,15 @@ class ProductItem {
           .toList();
     } else {
       mediaUrls = List.empty();
+    }
+
+    if (jsonRes['video'] != null) {
+      videoUrls = jsonRes['video']
+          .map(
+              (item) => AppConfig.instance.baseApiHost + item['url'].toString())
+          .toList();
+    } else {
+      videoUrls = List.empty();
     }
 
     uploadsAvailable = jsonRes['uploadsAvailable'];

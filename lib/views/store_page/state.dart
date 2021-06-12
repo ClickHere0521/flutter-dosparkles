@@ -50,6 +50,7 @@ class StorePageState implements GlobalBaseState, Cloneable<StorePageState> {
 StorePageState initState(Map<String, dynamic> args) {
   StorePageState state = StorePageState();
   state.listView = true;
+
   if (args != null) {
     if (args['listView'] != null) {
       state.listView = args['listView'];

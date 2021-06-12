@@ -40,6 +40,11 @@ class Routes {
           final GlobalBaseState p = pagestate;
           if (p.locale != appState.locale ||
               p.user != appState.user ||
+              p.connectionStatus != appState.connectionStatus ||
+              p.storesList != appState.storesList ||
+              p.selectedStore != appState.selectedStore ||
+              p.selectedProduct != appState.selectedProduct ||
+              p.shoppingCart != appState.shoppingCart ||
               p.connectionStatus != appState.connectionStatus) {
             if (pagestate is Cloneable) {
               final Object copy = pagestate.clone();
