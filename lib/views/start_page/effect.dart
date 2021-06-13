@@ -74,7 +74,7 @@ void _onStart(Action action, Context<StartPageState> ctx) async {
 Future _pushToSignInPage(BuildContext context) async {
   SharedPreferences.getInstance().then((_p) async {
     String referralLink = _p.getString("referralLink") ?? '';
-    String resetPasswordCode = _p.getString("resetPasswordCode");
+    String resetPasswordCode = _p.getString("resetPasswordCode") ?? '';
 
     if (referralLink != null && referralLink.isNotEmpty) {
       Navigator.of(context).pushNamed('registrationpage');

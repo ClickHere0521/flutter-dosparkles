@@ -452,6 +452,14 @@ class _ProductViewState extends State<_ProductView>
     });
   }
 
+  void resetInformation() {
+    _currentProductVideo = 0;
+    SharedPreferences.getInstance().then((_p) {
+      _p.setInt("currentProductVideo", null);
+    });
+    if (mounted) setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     List<ProductItem> items = List.empty(growable: true);
@@ -480,14 +488,15 @@ class _ProductViewState extends State<_ProductView>
           onHorizontalDragEnd: (dragEndDetails) {
             if (dragEndDetails.primaryVelocity < 0) {
               // Page forwards
+              resetInformation();
 
               if (_tabController.index < items.length &&
                   _tabSelectedIndex < items.length) {
-                _tabController.index++;
-                _tabSelectedIndex++;
+                _tabController.index += 1;
               }
             } else if (dragEndDetails.primaryVelocity > 0) {
               // Page backwards
+              resetInformation();
 
               if (_tabController.index == 0 && _tabController.offset == 0.0) {
                 widget.dispatch(StorePageActionCreator.onBackToAllProducts());
@@ -495,8 +504,7 @@ class _ProductViewState extends State<_ProductView>
               }
 
               if (_tabController.index >= 0 && _tabSelectedIndex >= 0) {
-                _tabController.index--;
-                _tabSelectedIndex--;
+                _tabController.index -= 1;
               }
             }
           },
@@ -517,14 +525,26 @@ class _ProductViewState extends State<_ProductView>
             }
 
             if (items[_tabSelectedIndex].videoUrls.length > 1) {
+              bool isForward = false;
+
               Future.delayed(Duration(milliseconds: 400)).then((v) {
-                _tabController.index += 1;
+                if (_tabController.index == _tabController.length - 1) {
+                  _tabController.index -= 1;
+                  isForward = false;
+                } else {
+                  _tabController.index += 1;
+                  isForward = true;
+                }
                 _currentProductVideo = 0;
                 if (mounted) setState(() {});
               });
 
               Future.delayed(Duration(milliseconds: 800)).then((v) {
-                _tabController.index -= 1;
+                if (!isForward) {
+                  _tabController.index += 1;
+                } else {
+                  _tabController.index -= 1;
+                }
                 SharedPreferences.getInstance().then((_p) {
                   _currentProductVideo = _p.getInt("currentProductVideo");
                 });
