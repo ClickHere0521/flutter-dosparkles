@@ -15,7 +15,6 @@ import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:video_player/video_player.dart';
 import 'package:better_player/better_player.dart';
 
 Widget buildView(
@@ -423,15 +422,45 @@ class _ProductView extends StatefulWidget {
 
 class _ProductViewState extends State<_ProductView>
     with SingleTickerProviderStateMixin {
+  GlobalKey<BetterPlayerPlaylistState> _betterPlayerPlaylistStateKey =
+      GlobalKey();
   TabController _tabController;
-  int _tabSelectedIndex;
+  int _tabSelectedIndex = 0;
   int _currentProductVideo = 0;
   bool _shouldAbsorb = true;
+
+  List<BetterPlayerDataSource> _dataSourceList = [];
+  BetterPlayerConfiguration _betterPlayerConfiguration;
+  BetterPlayerPlaylistConfiguration _betterPlayerPlaylistConfiguration;
+
+  bool isShowPlaying = false;
+
+  BetterPlayerCacheConfiguration cacheConfiguration =
+      BetterPlayerCacheConfiguration(
+    useCache: true,
+    maxCacheSize: 512 * 1024 * 1024,
+    maxCacheFileSize: 512 * 1024 * 1024,
+  );
+
+  Future<List<BetterPlayerDataSource>> setupData() async {
+    for (int i = 0;
+        i < widget.store.products[_tabSelectedIndex].videoUrls.length;
+        i++) {
+      _dataSourceList.add(
+        BetterPlayerDataSource(
+          BetterPlayerDataSourceType.network,
+          widget.store.products[_tabSelectedIndex].videoUrls[i],
+          cacheConfiguration: cacheConfiguration,
+        ),
+      );
+    }
+
+    return _dataSourceList;
+  }
 
   @override
   void initState() {
     super.initState();
-    _tabSelectedIndex = 0;
     _tabController = TabController(
       length: widget.store.products.length,
       vsync: this,
@@ -442,6 +471,18 @@ class _ProductViewState extends State<_ProductView>
         _tabSelectedIndex = _tabController.index;
       });
     });
+
+    _betterPlayerConfiguration = BetterPlayerConfiguration(
+      showPlaceholderUntilPlay: true,
+      autoPlay: true,
+      aspectRatio: 9 / 16,
+      controlsConfiguration:
+          BetterPlayerControlsConfiguration(showControls: false),
+    );
+    _betterPlayerPlaylistConfiguration = BetterPlayerPlaylistConfiguration(
+      loopVideos: true,
+      nextVideoDelay: Duration(seconds: 1),
+    );
   }
 
   @override
@@ -512,44 +553,13 @@ class _ProductViewState extends State<_ProductView>
             if (_currentProductVideo <
                 items[_tabSelectedIndex].videoUrls.length - 1) {
               _currentProductVideo += 1;
-              SharedPreferences.getInstance().then((_p) {
-                _p.setInt("currentProductVideo", _currentProductVideo);
-              });
-              if (mounted) setState(() {});
             } else {
               _currentProductVideo = 0;
-              SharedPreferences.getInstance().then((_p) {
-                _p.setInt("currentProductVideo", _currentProductVideo);
-              });
-              if (mounted) setState(() {});
             }
 
             if (items[_tabSelectedIndex].videoUrls.length > 1) {
-              bool isForward = false;
-
-              Future.delayed(Duration(milliseconds: 400)).then((v) {
-                if (_tabController.index == _tabController.length - 1) {
-                  _tabController.index -= 1;
-                  isForward = false;
-                } else {
-                  _tabController.index += 1;
-                  isForward = true;
-                }
-                _currentProductVideo = 0;
-                if (mounted) setState(() {});
-              });
-
-              Future.delayed(Duration(milliseconds: 800)).then((v) {
-                if (!isForward) {
-                  _tabController.index += 1;
-                } else {
-                  _tabController.index -= 1;
-                }
-                SharedPreferences.getInstance().then((_p) {
-                  _currentProductVideo = _p.getInt("currentProductVideo");
-                });
-                if (mounted) setState(() {});
-              });
+              _betterPlayerPlaylistController
+                  .setupDataSource(_currentProductVideo);
             }
 
             // List<int> idsArray = List.empty(growable: true);
@@ -605,18 +615,49 @@ class _ProductViewState extends State<_ProductView>
                         items[index].videoUrls != null &&
                         items[index].videoUrls.length > 0
                     ? Center(
-                        child: VideoPlayerItem(
-                            videoUrl: items[index].videoUrls[
-                                index == _tabSelectedIndex
-                                    ? _currentProductVideo
-                                    : 0],
-                            size: size,
-                            tabSelectedIndex: _tabSelectedIndex,
-                            dispatch: widget.dispatch,
-                            store: widget.store
-                            // name: items[index].name,
-                            // price: '\$${items[index].price}',
-                            ),
+                        child: FutureBuilder<List<BetterPlayerDataSource>>(
+                          future: setupData(),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData) {
+                              return Text("Building!");
+                            } else {
+                              return RotatedBox(
+                                quarterTurns: 0,
+                                child: Container(
+                                  height: size.height,
+                                  width: size.width,
+                                  child: Container(
+                                    height: size.height,
+                                    width: size.width,
+                                    child: Stack(
+                                      children: [
+                                        SizedBox.expand(
+                                          child: FittedBox(
+                                            fit: BoxFit.cover,
+                                            child: SizedBox(
+                                              height: size.height,
+                                              width: size.width,
+                                              child: BetterPlayerPlaylist(
+                                                key:
+                                                    _betterPlayerPlaylistStateKey,
+                                                betterPlayerConfiguration:
+                                                    _betterPlayerConfiguration,
+                                                betterPlayerPlaylistConfiguration:
+                                                    _betterPlayerPlaylistConfiguration,
+                                                betterPlayerDataSourceList:
+                                                    snapshot.data,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+                        ),
                       )
                     : Container();
               }),
@@ -659,6 +700,9 @@ class _ProductViewState extends State<_ProductView>
       ],
     );
   }
+
+  BetterPlayerPlaylistController get _betterPlayerPlaylistController =>
+      _betterPlayerPlaylistStateKey.currentState.betterPlayerPlaylistController;
 }
 
 class VideoPlayerItem extends StatefulWidget {
@@ -686,7 +730,6 @@ class VideoPlayerItem extends StatefulWidget {
 }
 
 class _VideoPlayerItemState extends State<VideoPlayerItem> {
-  VideoPlayerController _videoController;
   BetterPlayerController _betterPlayerController;
 
   bool isShowPlaying = false;
