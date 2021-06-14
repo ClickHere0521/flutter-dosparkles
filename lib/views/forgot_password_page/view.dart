@@ -6,6 +6,7 @@ import 'package:email_validator/email_validator.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:toast/toast.dart';
 import '../../actions/api/graphql_client.dart';
@@ -258,7 +259,10 @@ void _onSubmit(context, emailValue) async {
 
     if (result.data != null) {
       Toast.show("Please check your email address", context,
-          duration: 3, gravity: Toast.TOP);
+          duration: 10, gravity: Toast.TOP);
+
+      SharedPreferences _prefs = await SharedPreferences.getInstance();
+      _prefs.remove("resetPasswordCode");
 
       Navigator.of(context).pushNamed('reset_passwordpage', arguments: null);
     }

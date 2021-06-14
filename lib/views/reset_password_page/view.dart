@@ -87,8 +87,7 @@ class __MainBodyState extends State<_MainBody> {
                 automaticallyImplyLeading: false,
                 leading: InkWell(
                     child: Image.asset("images/back_button.png"),
-                    onTap: () => Navigator.of(context)
-                        .pushReplacementNamed('loginpage')),
+                    onTap: () => goBack(context)),
                 backgroundColor: Colors.transparent,
                 title: Text(
                   "Change Password",
@@ -130,13 +129,25 @@ class __InnerPartState extends State<_InnerPart> {
   String newValue = '';
   bool newHide = true;
   String repeatValue = '';
+  String codeFromEmail = '';
   bool repeatHide = true;
   FocusNode _passwordNode1 = FocusNode();
   FocusNode _passwordNode2 = FocusNode();
   FocusNode _passwordNode3 = FocusNode();
 
+  TextEditingController _codeFromEmailController;
+
   @override
   Widget build(BuildContext context) {
+    _codeFromEmailController = new TextEditingController(text: '');
+
+    SharedPreferences.getInstance().then((_p) {
+      String code = _p.getString("resetPasswordCode");
+      print('code ${code}');
+      if (code != null && code != '')
+        _codeFromEmailController.value = new TextEditingValue(text: code);
+    });
+
     return Container(
       height: MediaQuery.of(context).size.height -
           Scaffold.of(context).appBarMaxHeight,
@@ -151,6 +162,42 @@ class __InnerPartState extends State<_InnerPart> {
               SizedBox(height: MediaQuery.of(context).size.height * 0.05),
               Column(
                 children: [
+                  TextFormField(
+                    textAlign: TextAlign.left,
+                    focusNode: _passwordNode1,
+                    controller: _codeFromEmailController,
+                    onChanged: (value) {
+                      setState(() {
+                        codeFromEmail = value;
+                      });
+                    },
+                    decoration: InputDecoration(
+                      hintText: 'Enter here',
+                      hintStyle: TextStyle(fontSize: 16, color: Colors.black26),
+                      contentPadding: EdgeInsets.symmetric(vertical: 5),
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: HexColor("#C4C6D2")),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: HexColor("#C4C6D2")),
+                      ),
+                      labelText: 'Code From Email',
+                      labelStyle: TextStyle(
+                        color: Colors.black,
+                        height: 0.7,
+                        fontSize: 22,
+                      ),
+                    ),
+                    onFieldSubmitted: (value) {},
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Field must not be empty';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.04),
                   TextFormField(
                     textAlign: TextAlign.left,
                     obscureText: oldHide,
@@ -382,6 +429,13 @@ class __InnerPartState extends State<_InnerPart> {
       ),
     );
   }
+}
+
+void goBack(context) async {
+  SharedPreferences _prefs = await SharedPreferences.getInstance();
+  _prefs.remove("resetPasswordCode");
+
+   Navigator.of(context).pushReplacementNamed('loginpage');
 }
 
 void _onSubmit(context, oldValue, newValue, repeatValue) async {
