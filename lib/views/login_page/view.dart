@@ -146,7 +146,7 @@ class __InnerPartState extends State<_InnerPart> {
   @override
   void initState() {
     super.initState();
-    facebookSignIn.loginBehavior = FacebookLoginBehavior.webViewOnly;
+    // facebookSignIn.loginBehavior = FacebookLoginBehavior.webViewOnly;
   }
 
   @override
