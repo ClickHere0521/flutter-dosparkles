@@ -295,10 +295,9 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                 //     SocialShare.shareOptions("Hello world").then((data) {});
                 //   },
                 // ),
-                // SizedBox(height: 10.0),
+                SizedBox(height: 10.0),
                 widget.globalUser != null &&
-                        (widget.globalUser.role == "Store Manager" ||
-                            widget.globalUser.role == "Authenticated")
+                        (widget.globalUser.role == "Store Manager")
                     ? GestureDetector(
                         behavior: HitTestBehavior.translucent,
                         child: Container(
