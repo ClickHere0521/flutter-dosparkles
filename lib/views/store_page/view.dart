@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:ui';
 
@@ -467,8 +468,14 @@ class _ProductViewState extends State<_ProductView>
     );
     _betterPlayerPlaylistConfiguration = BetterPlayerPlaylistConfiguration(
       loopVideos: true,
-      nextVideoDelay: Duration(seconds: 0),
+      nextVideoDelay: Duration(seconds: 1),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _betterPlayerPlaylistController.dispose();
   }
 
   void resetInformation() {
@@ -476,19 +483,41 @@ class _ProductViewState extends State<_ProductView>
     if (mounted) setState(() {});
   }
 
-  void setMediaList(List<ProductItem> items) {
+  void setMediaList(List<ProductItem> items) async {
     _dataSourceList.clear();
+
+    List<BetterPlayerDataSource> arrayList = [];
 
     for (int i = 0; i < items[_tabSelectedIndex].videoUrls.length; i++) {
       String asset = items[_tabSelectedIndex].videoUrls[i];
 
-      _dataSourceList.add(
+      arrayList.add(
         BetterPlayerDataSource(
           BetterPlayerDataSourceType.network,
           asset,
           cacheConfiguration: cacheConfiguration,
+          placeholder: Container(),
         ),
       );
+    }
+
+    for (int i = 0; i < arrayList.length; i++) {
+      BetterPlayerDataSource item = arrayList[i];
+
+      if (!item.url.contains('.mp4')) {
+        _dataSourceList.add(item.copyWith(
+          placeholder: CachedNetworkImage(
+            imageUrl: item.url,
+            width: double.infinity,
+            height: double.infinity,
+            fit: BoxFit.cover,
+          ),
+        ));
+
+        continue;
+      }
+
+      _dataSourceList.add(item);
     }
 
     if (mounted) setState(() {});
@@ -558,6 +587,8 @@ class _ProductViewState extends State<_ProductView>
               _betterPlayerPlaylistController
                   .setupDataSource(_currentProductVideo);
             }
+
+            if (mounted) setState(() {});
 
             // List<int> idsArray = List.empty(growable: true);
             // int currentIndex = _tabSelectedIndex;
