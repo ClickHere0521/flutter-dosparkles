@@ -1322,31 +1322,31 @@ class __ContactsPageState extends State<_ContactsPage> {
                 ),
               ),
               actions: [
-                // TextButton(
-                //   child: Text(
-                //     "Invites",
-                //     style: TextStyle(
-                //       color: Colors.white,
-                //       fontSize: 14.0,
-                //       fontWeight: FontWeight.w500,
-                //     ),
-                //   ),
-                //   onPressed: () {
-                //     List foundList = [];
+                TextButton(
+                  child: Text(
+                    "Invites",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14.0,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  onPressed: () {
+                    List foundList = [];
 
-                //     for (int i = 0; i < filteredList.length; i++) {
-                //       var item = filteredList[i];
+                    for (int i = 0; i < filteredList.length; i++) {
+                      var item = filteredList[i];
 
-                //       if (foundList.length == 15) break;
-                //       if (item['checked'] == true) continue;
+                      if (foundList.length == 15) break;
+                      if (item['checked'] == true) continue;
 
-                //       item['checked'] = true;
-                //       foundList.add(item);
-                //     }
+                      item['checked'] = true;
+                      foundList.add(item);
+                    }
 
-                //     setState(() {});
-                //   },
-                // ),
+                    setState(() {});
+                  },
+                ),
               ],
             ),
             backgroundColor: Colors.transparent,

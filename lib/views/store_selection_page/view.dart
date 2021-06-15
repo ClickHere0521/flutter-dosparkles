@@ -175,14 +175,19 @@ class __InnerPartState extends State<_InnerPart> {
   @override
   void initState() {
     super.initState();
-
+    print("widget.stores");
+    print(widget.stores);
+    try {
     if (widget.stores != null && widget.stores.length > 0) {
       widget.stores.sort((StoreItem a, StoreItem b) {
-        if (a.storeDistance != null && b.storeDistance != null) {
+        if (a.storeDistance != null && b.storeDistance != null && a.storeDistance != "null" && b.storeDistance != "null") {
           return a.storeDistance.compareTo(b.storeDistance);
         }
         return null;
       });
+    }
+    }catch(e) {
+         print(e);
     }
   }
 
