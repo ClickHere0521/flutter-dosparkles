@@ -468,7 +468,7 @@ class _ProductViewState extends State<_ProductView>
     );
     _betterPlayerPlaylistConfiguration = BetterPlayerPlaylistConfiguration(
       loopVideos: true,
-      nextVideoDelay: Duration(seconds: 0),
+      nextVideoDelay: Duration(seconds: 1),
     );
   }
 
@@ -599,9 +599,8 @@ class _ProductViewState extends State<_ProductView>
               if (_tabController.index < items.length - 1 &&
                   _tabSelectedIndex < items.length - 1) {
                 _tabController.index += 1;
+                resetInformation(items);
               }
-
-              resetInformation(items);
             } else if (dragEndDetails.primaryVelocity > 0) {
               // Page backwards
 
@@ -612,9 +611,8 @@ class _ProductViewState extends State<_ProductView>
 
               if (_tabController.index >= 0 && _tabSelectedIndex >= 0) {
                 _tabController.index -= 1;
+                resetInformation(items);
               }
-
-              resetInformation(items);
             }
           },
           onTap: () {
