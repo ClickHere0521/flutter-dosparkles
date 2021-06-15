@@ -84,6 +84,8 @@ void _goToMain(Context<LoginPageState> ctx) async {
 
   await checkUserReferralLink(globalState.user);
 
+  await checkUserPhoneNumber(globalState.user, ctx.context);
+
   if (globalState.storesList != null && globalState.storesList.length > 0) {
     for (var i = 0; i < globalState.storesList.length; i++) {
       var store = globalState.storesList[i];
@@ -145,7 +147,6 @@ Future checkUserReferralLink(AppUser globalUser) async {
   }
 }
 
-
 Future<Map<String, dynamic>> _emailSignIn(
     Action action, Context<LoginPageState> ctx) async {
   if (ctx.state.accountTextController.text != '' &&
@@ -179,4 +180,14 @@ Future<Map<String, dynamic>> _emailSignIn(
     }
   }
   return null;
+}
+
+Future checkUserPhoneNumber(AppUser globalUser, context) async {
+  final result =
+      await BaseGraphQLClient.instance.checkUserFields(globalUser.id);
+  if (result.hasException) print(result.exception);
+
+  if (result.data['users'][0]['phoneNumber'] == null) {
+    await Navigator.of(context).pushNamed('addphonepage', arguments: null);
+  }
 }

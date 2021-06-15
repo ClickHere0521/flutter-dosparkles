@@ -223,6 +223,22 @@ class BaseGraphQLClient {
     return _service.query(_query);
   }
 
+  Future<QueryResult> checkUserFields(String id) {
+    String _query = '''
+      query {
+        users(where: { id: "$id" }) {
+          id
+          phoneNumber
+          storeFavorite {
+            id
+            name
+          }
+        }
+      }
+    ''';
+    return _service.query(_query);
+  }
+
   Future<QueryResult> fetchUserByReferralLink(String referralLink) {
     String _query = '''
       query {

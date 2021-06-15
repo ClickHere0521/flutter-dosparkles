@@ -5,6 +5,7 @@ import 'package:com.floridainc.dosparkles/actions/api/graphql_client.dart';
 
 import 'package:com.floridainc.dosparkles/actions/user_info_operate.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
+import 'package:com.floridainc.dosparkles/models/app_user.dart';
 import 'package:com.floridainc.dosparkles/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -179,15 +180,30 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                       ],
                     ),
                   ),
-                  onTap: () {
-                    if (GlobalStore.store.getState().user != null &&
-                        GlobalStore.store.getState().user.storeFavorite != null)
+                  onTap: () async {
+                    AppUser globalUser = GlobalStore.store.getState().user;
+
+                    bool isExistFavoriteStore =
+                        globalUser.storeFavorite != null;
+
+                    if (isExistFavoriteStore) {
                       Navigator.of(context)
                           .pushReplacementNamed('storepage', arguments: null);
-                    else
+                      return;
+                    }
+
+                    final result = await BaseGraphQLClient.instance
+                        .checkUserFields(globalUser.id);
+                    if (result.hasException) print(result.exception);
+
+                    if (result.data['users'][0]['storeFavorite'] != null) {
+                      Navigator.of(context)
+                          .pushReplacementNamed('storepage', arguments: null);
+                    } else {
                       Navigator.of(context).pushReplacementNamed(
                           'storeselectionpage',
                           arguments: null);
+                    }
                   },
                 ),
                 SizedBox(height: 10.0),

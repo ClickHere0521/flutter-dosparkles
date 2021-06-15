@@ -375,24 +375,30 @@ class __InnerPartState extends State<_InnerPart> {
                       GestureDetector(
                         behavior: HitTestBehavior.translucent,
                         child: Image.asset(
-                          "images/Google_icon.png",
-                          fit: BoxFit.contain,
+                          "images/high-quality-images/output-onlinepngtools.png",
+                          fit: BoxFit.fitWidth,
+                          width: 50.0,
                         ),
                         onTap: () {
                           _goolgeSignIn(_googleSignIn, context);
                         },
                       ),
                       SizedBox(width: 16),
-                      Image.asset(
-                        "images/Snapchat_icon.png",
-                        fit: BoxFit.contain,
+                      GestureDetector(
+                        behavior: HitTestBehavior.translucent,
+                        child: Image.asset(
+                          "images/high-quality-images/output-onlinepngtools (3).png",
+                          fit: BoxFit.fitWidth,
+                          width: 50.0,
+                        ),
                       ),
                       SizedBox(width: 16),
                       GestureDetector(
                         behavior: HitTestBehavior.translucent,
                         child: Image.asset(
-                          "images/Group 84.png",
-                          fit: BoxFit.contain,
+                          "images/high-quality-images/output-onlinepngtools (1).png",
+                          fit: BoxFit.fitWidth,
+                          width: 50.0,
                         ),
                         onTap: () {
                           _facebookSignIn(context, facebookSignIn);
@@ -403,8 +409,9 @@ class __InnerPartState extends State<_InnerPart> {
                         GestureDetector(
                           behavior: HitTestBehavior.translucent,
                           child: Image.asset(
-                            "images/Group 85.png",
-                            fit: BoxFit.contain,
+                            "images/high-quality-images/output-onlinepngtools (2).png",
+                            fit: BoxFit.fitWidth,
+                            width: 50.0,
                           ),
                           onTap: () {
                             _appleSignIn(context);

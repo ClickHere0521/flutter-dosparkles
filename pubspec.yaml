@@ -61,7 +61,7 @@ dependencies:
   share: ^0.6.5+4
   geolocator: ^6.2.1
   contacts_service: ^0.4.6
-  google_sign_in: 
+  google_sign_in:
   stripe_payment: ^1.1.0
   sign_in_with_apple: ^2.5.4
   flutter_branch_sdk: ^1.4.0
@@ -115,6 +115,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - images/
+    - images/high-quality-images/
     - appconfig.json
 
   # An image asset can refer to one or more resolution-specific "variants", see

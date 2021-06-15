@@ -430,7 +430,8 @@ void _onSubmit(
 
     if (resultRegister.hasException) {
       print(resultRegister.exception.toString());
-      Toast.show("Error occurred", context, duration: 3, gravity: Toast.BOTTOM);
+      Toast.show("Email address already exist", context,
+          duration: 3, gravity: Toast.BOTTOM);
       return;
     }
 
@@ -510,11 +511,12 @@ void _goToMain(BuildContext context) async {
     await setUserFavoriteStore(globalState.user, referralLink);
   }
 
+  await checkUserReferralLink(globalState.user);
+
   await Navigator.of(context).pushNamed('addphonepage', arguments: null);
 
   if (referralLink != null && referralLink != '') {
     await _invitedRegisteredMethod(globalState.user);
-    await checkUserReferralLink(globalState.user);
   }
 
   for (int i = 0; i < globalState.storesList.length; i++) {

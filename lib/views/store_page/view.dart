@@ -21,6 +21,20 @@ Widget buildView(
     StorePageState state, Dispatch dispatch, ViewService viewService) {
   Adapt.initContext(viewService.context);
 
+  if (state.selectedStore != null &&
+      state.selectedStore.products != null &&
+      state.selectedStore.products.length > 0) {
+    state.selectedStore.products.sort((ProductItem a, ProductItem b) {
+      if (a.orderInList == null || b.orderInList == null) {
+        return -1;
+      }
+      if (a.orderInList != null && b.orderInList != null) {
+        return a.orderInList.compareTo(b.orderInList);
+      }
+      return null;
+    });
+  }
+
   return state.listView
       ? _FirstListPage(
           dispatch: dispatch,
@@ -266,18 +280,6 @@ class _MainBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (store != null && store.products != null && store.products.length > 0) {
-      store.products.sort((ProductItem a, ProductItem b) {
-        if (a.orderInList == null || b.orderInList == null) {
-          return -1;
-        }
-        if (a.orderInList != null && b.orderInList != null) {
-          return a.orderInList.compareTo(b.orderInList);
-        }
-        return null;
-      });
-    }
-
     return Container(
       child: CustomScrollView(
         slivers: [
@@ -428,8 +430,8 @@ class _ProductViewState extends State<_ProductView>
   int _tabSelectedIndex = 0;
   int _currentProductVideo = 0;
   bool _shouldAbsorb = true;
-
   List<BetterPlayerDataSource> _dataSourceList = [];
+
   BetterPlayerConfiguration _betterPlayerConfiguration;
   BetterPlayerPlaylistConfiguration _betterPlayerPlaylistConfiguration;
 
@@ -441,22 +443,6 @@ class _ProductViewState extends State<_ProductView>
     maxCacheSize: 512 * 1024 * 1024,
     maxCacheFileSize: 512 * 1024 * 1024,
   );
-
-  Future<List<BetterPlayerDataSource>> setupData() async {
-    for (int i = 0;
-        i < widget.store.products[_tabSelectedIndex].videoUrls.length;
-        i++) {
-      _dataSourceList.add(
-        BetterPlayerDataSource(
-          BetterPlayerDataSourceType.network,
-          widget.store.products[_tabSelectedIndex].videoUrls[i],
-          cacheConfiguration: cacheConfiguration,
-        ),
-      );
-    }
-
-    return _dataSourceList;
-  }
 
   @override
   void initState() {
@@ -481,35 +467,45 @@ class _ProductViewState extends State<_ProductView>
     );
     _betterPlayerPlaylistConfiguration = BetterPlayerPlaylistConfiguration(
       loopVideos: true,
-      nextVideoDelay: Duration(seconds: 1),
+      nextVideoDelay: Duration(seconds: 0),
     );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    SharedPreferences.getInstance().then((_p) {
-      _p.setInt("currentProductVideo", null);
-    });
   }
 
   void resetInformation() {
     _currentProductVideo = 0;
-    SharedPreferences.getInstance().then((_p) {
-      _p.setInt("currentProductVideo", null);
-    });
+    if (mounted) setState(() {});
+  }
+
+  void setMediaList(List<ProductItem> items) {
+    _dataSourceList.clear();
+
+    for (int i = 0; i < items[_tabSelectedIndex].videoUrls.length; i++) {
+      String asset = items[_tabSelectedIndex].videoUrls[i];
+
+      _dataSourceList.add(
+        BetterPlayerDataSource(
+          BetterPlayerDataSourceType.network,
+          asset,
+          cacheConfiguration: cacheConfiguration,
+        ),
+      );
+    }
+
     if (mounted) setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     List<ProductItem> items = List.empty(growable: true);
+
     for (int i = widget.productIndex; i < widget.store.products.length; i++) {
       items.add(widget.store.products[i]);
     }
     for (int i = 0; i < widget.productIndex; i++) {
       items.add(widget.store.products[i]);
     }
+
+    setMediaList(items);
 
     var size = MediaQuery.of(context).size;
     return Stack(
@@ -519,8 +515,9 @@ class _ProductViewState extends State<_ProductView>
           onVerticalDragEnd: (dragEndDetails) {
             if (dragEndDetails.primaryVelocity < 0) {
               // Page up
+
               widget.dispatch(StorePageActionCreator.onGoToProductPage(
-                  widget.store.products[_tabSelectedIndex]));
+                  items[_tabSelectedIndex]));
             } else if (dragEndDetails.primaryVelocity > 0) {
               // Page down
               widget.dispatch(StorePageActionCreator.onBackToAllProducts());
@@ -531,8 +528,8 @@ class _ProductViewState extends State<_ProductView>
               // Page forwards
               resetInformation();
 
-              if (_tabController.index < items.length &&
-                  _tabSelectedIndex < items.length) {
+              if (_tabController.index < items.length - 1 &&
+                  _tabSelectedIndex < items.length - 1) {
                 _tabController.index += 1;
               }
             } else if (dragEndDetails.primaryVelocity > 0) {
@@ -609,54 +606,44 @@ class _ProductViewState extends State<_ProductView>
             absorbing: _shouldAbsorb,
             child: TabBarView(
               controller: _tabController,
-              physics: BouncingScrollPhysics(),
+              physics: NeverScrollableScrollPhysics(),
               children: List.generate(items.length, (index) {
                 return items[index] != null &&
                         items[index].videoUrls != null &&
                         items[index].videoUrls.length > 0
                     ? Center(
-                        child: FutureBuilder<List<BetterPlayerDataSource>>(
-                          future: setupData(),
-                          builder: (context, snapshot) {
-                            if (!snapshot.hasData) {
-                              return Text("Building!");
-                            } else {
-                              return RotatedBox(
-                                quarterTurns: 0,
-                                child: Container(
-                                  height: size.height,
-                                  width: size.width,
-                                  child: Container(
-                                    height: size.height,
-                                    width: size.width,
-                                    child: Stack(
-                                      children: [
-                                        SizedBox.expand(
-                                          child: FittedBox(
-                                            fit: BoxFit.cover,
-                                            child: SizedBox(
-                                              height: size.height,
-                                              width: size.width,
-                                              child: BetterPlayerPlaylist(
-                                                key:
-                                                    _betterPlayerPlaylistStateKey,
-                                                betterPlayerConfiguration:
-                                                    _betterPlayerConfiguration,
-                                                betterPlayerPlaylistConfiguration:
-                                                    _betterPlayerPlaylistConfiguration,
-                                                betterPlayerDataSourceList:
-                                                    snapshot.data,
-                                              ),
-                                            ),
-                                          ),
+                        child: RotatedBox(
+                          quarterTurns: 0,
+                          child: Container(
+                            height: size.height,
+                            width: size.width,
+                            child: Container(
+                              height: size.height,
+                              width: size.width,
+                              child: Stack(
+                                children: [
+                                  SizedBox.expand(
+                                    child: FittedBox(
+                                      fit: BoxFit.cover,
+                                      child: SizedBox(
+                                        height: size.height,
+                                        width: size.width,
+                                        child: BetterPlayerPlaylist(
+                                          key: _betterPlayerPlaylistStateKey,
+                                          betterPlayerConfiguration:
+                                              _betterPlayerConfiguration,
+                                          betterPlayerPlaylistConfiguration:
+                                              _betterPlayerPlaylistConfiguration,
+                                          betterPlayerDataSourceList:
+                                              _dataSourceList,
                                         ),
-                                      ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                              );
-                            }
-                          },
+                                ],
+                              ),
+                            ),
+                          ),
                         ),
                       )
                     : Container();
@@ -683,13 +670,14 @@ class _ProductViewState extends State<_ProductView>
                     child: RotatedBox(
                       quarterTurns: 0,
                       child: LeftPanel(
-                          size: size,
-                          tabSelectedIndex: _tabSelectedIndex,
-                          dispatch: widget.dispatch,
-                          store: widget.store
-                          // name: "${widget.name}",
-                          // price: "${widget.price}",
-                          ),
+                        size: size,
+                        tabSelectedIndex: _tabSelectedIndex,
+                        dispatch: widget.dispatch,
+                        store: widget.store,
+                        items: items,
+                        // name: "${widget.name}",
+                        // price: "${widget.price}",
+                      ),
                     ),
                   ),
                 ],
@@ -847,6 +835,7 @@ class LeftPanel extends StatelessWidget {
   final int tabSelectedIndex;
   final Dispatch dispatch;
   final StoreItem store;
+  final List<ProductItem> items;
 
   final globalUser = GlobalStore.store.getState().user;
 
@@ -856,6 +845,7 @@ class LeftPanel extends StatelessWidget {
     this.tabSelectedIndex,
     this.dispatch,
     this.store,
+    this.items,
     // this.name,
     // this.price,
   }) : super(key: key);
@@ -923,7 +913,7 @@ class LeftPanel extends StatelessWidget {
             behavior: HitTestBehavior.translucent,
             onTap: () {
               dispatch(StorePageActionCreator.onGoToProductPage(
-                  store.products[tabSelectedIndex]));
+                  items[tabSelectedIndex]));
             },
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
