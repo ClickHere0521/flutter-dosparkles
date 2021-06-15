@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:ui';
 
+import 'package:better_player/better_player.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
@@ -16,7 +17,6 @@ import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:better_player/better_player.dart';
 
 Widget buildView(
     StorePageState state, Dispatch dispatch, ViewService viewService) {
@@ -468,7 +468,7 @@ class _ProductViewState extends State<_ProductView>
     );
     _betterPlayerPlaylistConfiguration = BetterPlayerPlaylistConfiguration(
       loopVideos: true,
-      nextVideoDelay: Duration(seconds: 1),
+      nextVideoDelay: Duration(seconds: 0),
     );
   }
 
@@ -478,9 +478,49 @@ class _ProductViewState extends State<_ProductView>
     _betterPlayerPlaylistController.dispose();
   }
 
-  void resetInformation() {
+  void resetInformation(List<ProductItem> items) {
     _currentProductVideo = 0;
     if (mounted) setState(() {});
+
+    List<BetterPlayerDataSource> arrayList = [];
+    List<BetterPlayerDataSource> listArray = [];
+
+    for (int i = 0; i < items[_tabSelectedIndex].videoUrls.length; i++) {
+      String asset = items[_tabSelectedIndex].videoUrls[i];
+
+      arrayList.add(
+        BetterPlayerDataSource(
+          BetterPlayerDataSourceType.network,
+          asset,
+          cacheConfiguration: cacheConfiguration,
+          placeholder: Container(),
+        ),
+      );
+    }
+
+    for (int i = 0; i < arrayList.length; i++) {
+      BetterPlayerDataSource item = arrayList[i];
+
+      if (!item.url.contains('.mp4')) {
+        listArray.add(item.copyWith(
+          placeholder: CachedNetworkImage(
+            imageUrl: item.url,
+            width: double.infinity,
+            height: double.infinity,
+            fit: BoxFit.cover,
+          ),
+        ));
+
+        continue;
+      }
+
+      listArray.add(item);
+    }
+
+    _betterPlayerPlaylistController.betterPlayerController.pause();
+    _dataSourceList.clear();
+    _dataSourceList.addAll(listArray);
+    _betterPlayerPlaylistController.setupDataSource(_currentProductVideo);
   }
 
   void setMediaList(List<ProductItem> items) async {
@@ -555,15 +595,15 @@ class _ProductViewState extends State<_ProductView>
           onHorizontalDragEnd: (dragEndDetails) {
             if (dragEndDetails.primaryVelocity < 0) {
               // Page forwards
-              resetInformation();
 
               if (_tabController.index < items.length - 1 &&
                   _tabSelectedIndex < items.length - 1) {
                 _tabController.index += 1;
               }
+
+              resetInformation(items);
             } else if (dragEndDetails.primaryVelocity > 0) {
               // Page backwards
-              resetInformation();
 
               if (_tabController.index == 0 && _tabController.offset == 0.0) {
                 widget.dispatch(StorePageActionCreator.onBackToAllProducts());
@@ -573,6 +613,8 @@ class _ProductViewState extends State<_ProductView>
               if (_tabController.index >= 0 && _tabSelectedIndex >= 0) {
                 _tabController.index -= 1;
               }
+
+              resetInformation(items);
             }
           },
           onTap: () {
@@ -722,141 +764,6 @@ class _ProductViewState extends State<_ProductView>
 
   BetterPlayerPlaylistController get _betterPlayerPlaylistController =>
       _betterPlayerPlaylistStateKey.currentState.betterPlayerPlaylistController;
-}
-
-class VideoPlayerItem extends StatefulWidget {
-  final String videoUrl;
-  // final String name;
-  // final String price;
-  final Size size;
-
-  final int tabSelectedIndex;
-  final Dispatch dispatch;
-  final StoreItem store;
-
-  VideoPlayerItem({
-    Key key,
-    @required this.size,
-    this.tabSelectedIndex,
-    this.dispatch,
-    this.store,
-    // this.name, this.price,
-    this.videoUrl,
-  }) : super(key: key);
-
-  @override
-  _VideoPlayerItemState createState() => _VideoPlayerItemState();
-}
-
-class _VideoPlayerItemState extends State<VideoPlayerItem> {
-  BetterPlayerController _betterPlayerController;
-
-  bool isShowPlaying = false;
-
-  @override
-  void initState() {
-    super.initState();
-
-    BetterPlayerCacheConfiguration cacheConfiguration =
-        BetterPlayerCacheConfiguration(
-            useCache: true,
-            maxCacheSize: 512 * 1024 * 1024,
-            maxCacheFileSize: 512 * 1024 * 1024);
-
-    BetterPlayerDataSource betterPlayerDataSource = BetterPlayerDataSource(
-        BetterPlayerDataSourceType.network, widget.videoUrl,
-        cacheConfiguration: cacheConfiguration);
-
-    _betterPlayerController = BetterPlayerController(
-        BetterPlayerConfiguration(
-            autoPlay: true, looping: true, aspectRatio: 9 / 16),
-        betterPlayerDataSource: betterPlayerDataSource);
-
-    _betterPlayerController.setControlsEnabled(false);
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _betterPlayerController.dispose();
-  }
-
-  // Widget isPlaying() {
-  //   return _videoController.value.isPlaying && !isShowPlaying
-  //       ? Container()
-  //       : Icon(
-  //           Icons.play_arrow,
-  //           size: 80,
-  //           color: Colors.white.withOpacity(0.5),
-  //         );
-  // }
-
-  @override
-  Widget build(BuildContext context) {
-    // onTap: () {
-    // setState(() {
-    //   _videoController.value.isPlaying
-    //       ? _videoController.pause()
-    //       : _videoController.play();
-    // });
-    //},
-
-    return RotatedBox(
-      quarterTurns: 0,
-      child: Container(
-        height: widget.size.height,
-        width: widget.size.width,
-        child: Container(
-          height: widget.size.height,
-          width: widget.size.width,
-          child: Stack(
-            children: [
-              SizedBox.expand(
-                child: FittedBox(
-                  fit: BoxFit.cover,
-                  child: SizedBox(
-                    height: widget.size.height,
-                    width: widget.size.width,
-                    child: BetterPlayer(
-                      controller: _betterPlayerController,
-                    ),
-                  ),
-                ),
-              ),
-
-              //                   SizedBox.expand(
-              //                     child: FittedBox(
-              //                       fit: BoxFit.cover,
-              //                        child:  AspectRatio(
-              //                        child:   BetterPlayer(
-              //   controller: _betterPlayerController,
-              // ),
-              //   aspectRatio: 16 / 9,
-
-              // ),
-              //                       // child: SizedBox(
-              //                       //   // width: _videoController.value.size?.width ?? 0,
-              //                       //   // height: _videoController.value.size?.height ?? 0,
-              //                       //   width: 500, widget.size.width,
-              //                       //   height: 300, widget.size.height,
-              //                       //   child:
-
-              //                       //   // VideoPlayer(_videoController),
-              //                       // ),
-              //                     ),
-              //                   ),
-              // Center(
-              //   child: Container(
-              //     decoration: BoxDecoration(),
-              //     child: isPlaying(),
-              //   ),
-              // )
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 }
 
 class LeftPanel extends StatelessWidget {
