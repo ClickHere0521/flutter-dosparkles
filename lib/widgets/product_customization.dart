@@ -3,6 +3,7 @@ import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/models/models.dart';
 import 'package:com.floridainc.dosparkles/utils/colors.dart';
 import 'package:com.floridainc.dosparkles/views/product_page/action.dart';
+import 'package:com.floridainc.dosparkles/views/store_page/action.dart';
 import 'package:com.floridainc.dosparkles/widgets/connection_lost.dart';
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:fish_redux/fish_redux.dart';
@@ -194,12 +195,12 @@ class ProductCustomizationState extends State<ProductCustomization> {
                       ),
                       onPressed: () async {
                         await dispatch(
-                          ProductPageActionCreator.onAddToCart(
+                          StorePageActionCreator.onAddToCart(
                             selectedProduct,
                             productQuantity,
                           ),
                         );
-                        dispatch(ProductPageActionCreator.onGoToCart());
+                        dispatch(StorePageActionCreator.onGoToCart());
                       },
                     ),
                   ),
@@ -250,12 +251,12 @@ class ProductCustomizationState extends State<ProductCustomization> {
                   if (dragEndDetails.primaryVelocity < 0) {
                     // Page forwards
                     await dispatch(
-                      ProductPageActionCreator.onAddToCart(
+                      StorePageActionCreator.onAddToCart(
                         selectedProduct,
                         productQuantity,
                       ),
                     );
-                    dispatch(ProductPageActionCreator.onGoToCart());
+                    dispatch(StorePageActionCreator.onGoToCart());
                   } else if (dragEndDetails.primaryVelocity > 0) {
                     // Page backwards
                     Navigator.of(context).pop();
@@ -542,7 +543,7 @@ class ProductCustomizationState extends State<ProductCustomization> {
                                                                           i]
                                                                       .text);
                                                             }
-                                                            dispatch(ProductPageActionCreator
+                                                            dispatch(StorePageActionCreator
                                                                 .onSetEngravingInputs(
                                                                     engravingListActual));
                                                           },
@@ -755,7 +756,7 @@ class ProductCustomizationState extends State<ProductCustomization> {
                                                       ],
                                                     ),
                                                     onTap: () {
-                                                      dispatch(ProductPageActionCreator
+                                                      dispatch(StorePageActionCreator
                                                           .onSetOptionMaterialSelected(
                                                               !optionalMaterialSelected));
 

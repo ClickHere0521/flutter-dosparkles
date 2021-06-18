@@ -12,9 +12,12 @@ Effect<StorePageState> buildEffect() {
   return combineEffects(<Object, Effect<StorePageState>>{
     StorePageAction.action: _onAction,
     StorePageAction.goToProductPage: onGoToProductPage,
+    StorePageAction.goToCart: _onGoToCart,
+    StorePageAction.addToCart: _onAddToCart,
+    StorePageAction.backToProduct: _onBackToProduct,
     Lifecycle.initState: _onInit,
     Lifecycle.build: _onBuild,
-    Lifecycle.dispose: _onDispose
+    Lifecycle.dispose: _onDispose,
   });
 }
 
@@ -65,4 +68,54 @@ void onGoToProductPage(Action action, Context<StorePageState> ctx) async {
   GlobalStore.store.dispatch(GlobalActionCreator.setSelectedProduct(product));
 
   await Navigator.of(ctx.context).pushReplacementNamed('productpage');
+}
+
+void _onGoToCart(Action action, Context<StorePageState> ctx) async {
+  if (ctx.state.shoppingCart.length > 0)
+    Navigator.of(ctx.context).pushReplacementNamed('cartpage');
+}
+
+void _onAddToCart(Action action, Context<StorePageState> ctx) async {
+  ProductItem product = action.payload[0];
+  int count = action.payload[1];
+
+  double amount = product.price;
+  if (ctx.state.optionalMaterialSelected) {
+    amount += ctx.state.selectedProduct.optionalFinishMaterialPrice;
+  }
+
+  if (ctx.state.selectedProduct.engraveAvailable) {
+    var empty = true;
+
+    if (ctx.state.engraveInputs != null) {
+      for (var i = 0; i < ctx.state.engraveInputs.length; i++) {
+        if (ctx.state.engraveInputs[i].trim().length > 0) {
+          empty = false;
+          break;
+        }
+      }
+    }
+
+    if (!empty) {
+      amount += ctx.state.selectedProduct.engravePrice;
+    }
+  }
+  amount *= count;
+
+  GlobalStore.store.dispatch(
+    GlobalActionCreator.addProductToShoppingCart(
+      product,
+      count,
+      amount,
+      ctx.state.engraveInputs,
+      ctx.state.optionalMaterialSelected,
+    ),
+  );
+
+  Navigator.of(ctx.context).pushReplacementNamed('cartpage');
+}
+
+void _onBackToProduct(Action action, Context<StorePageState> ctx) async {
+  Navigator.of(ctx.context)
+      .pushReplacementNamed('storepage', arguments: {'listView': false});
 }

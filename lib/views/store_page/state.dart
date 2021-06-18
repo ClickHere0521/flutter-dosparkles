@@ -10,12 +10,19 @@ class StorePageState implements GlobalBaseState, Cloneable<StorePageState> {
   bool listView;
   int productIndex;
 
+  List<String> engraveInputs;
+  bool optionalMaterialSelected;
+  int productQuantity;
+
   @override
   StorePageState clone() {
     return StorePageState()
       ..animationController = animationController
       ..listView = listView
       ..productIndex = productIndex
+      ..engraveInputs = engraveInputs
+      ..optionalMaterialSelected = optionalMaterialSelected
+      ..productQuantity = productQuantity
       //
       ..locale = locale
       ..user = user
@@ -49,6 +56,8 @@ class StorePageState implements GlobalBaseState, Cloneable<StorePageState> {
 
 StorePageState initState(Map<String, dynamic> args) {
   StorePageState state = StorePageState();
+  state.productQuantity = 1;
+  state.optionalMaterialSelected = false;
   state.listView = true;
 
   if (args != null) {
