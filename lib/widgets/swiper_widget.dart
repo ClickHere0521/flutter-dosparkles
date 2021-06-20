@@ -84,36 +84,38 @@ class _SwiperWidgetState extends State<SwiperWidget> {
                           child: Center(
                             child: SizedBox(
                               width: 100.0,
-                              child: ListView.separated(
-                                itemCount: config.itemCount,
-                                shrinkWrap: true,
-                                scrollDirection: Axis.horizontal,
-                                separatorBuilder: (context, index) =>
-                                    SizedBox(width: 7.0),
-                                itemBuilder: (context, index) {
-                                  if (index == config.activeIndex) {
+                              child: Center(
+                                child: ListView.separated(
+                                  itemCount: config.itemCount,
+                                  shrinkWrap: true,
+                                  scrollDirection: Axis.horizontal,
+                                  separatorBuilder: (context, index) =>
+                                      SizedBox(width: 7.0),
+                                  itemBuilder: (context, index) {
+                                    if (index == config.activeIndex) {
+                                      return Container(
+                                        width: 33.0,
+                                        height: 5.0,
+                                        padding: EdgeInsets.zero,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(4.0),
+                                          color: HexColor('#6092DC'),
+                                        ),
+                                      );
+                                    }
                                     return Container(
-                                      width: 33.0,
+                                      width: 5.0,
                                       height: 5.0,
                                       padding: EdgeInsets.zero,
                                       decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(4.0),
-                                        color: HexColor('#6092DC'),
+                                        shape: BoxShape.circle,
+                                        color:
+                                            HexColor("#6092DC").withOpacity(.4),
                                       ),
                                     );
-                                  }
-                                  return Container(
-                                    width: 5.0,
-                                    height: 5.0,
-                                    padding: EdgeInsets.zero,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color:
-                                          HexColor("#6092DC").withOpacity(.4),
-                                    ),
-                                  );
-                                },
+                                  },
+                                ),
                               ),
                             ),
                           ),
