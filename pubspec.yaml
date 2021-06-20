@@ -35,6 +35,7 @@ dependencies:
   firebase_core:
   firebase_messaging:
   firebase_analytics:
+  firebase_crashlytics:
 
   flutter_local_notifications: ^3.0.0
   graphql_flutter:
