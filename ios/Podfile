@@ -45,4 +45,5 @@ end
 
 pod 'Firebase/Analytics', '>= 0'
 pod 'Firebase/Messaging', '>= 0'
+# pod 'Firebase/Crashlytics', '>= 0'
 pod 'Firebase/DynamicLinks', '>= 0'

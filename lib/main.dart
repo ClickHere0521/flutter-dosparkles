@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:com.floridainc.dosparkles/globalbasestate/action.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/views/reset_password_page/page.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+// import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -62,15 +62,15 @@ void main() async {
   await Firebase.initializeApp();
 
   // Pass all uncaught errors from the framework to Crashlytics.
-  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
-  if (kDebugMode) {
-    // Force disable Crashlytics collection while doing every day development.
-    // Temporarily toggle this to true if you want to test crash reporting in your app.
-    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(false);
-  } else {
-    // Handle Crashlytics enabled status when not in Debug,
-    // e.g. allow your users to opt-in to crash reporting.
-  }
+  // FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+  // if (kDebugMode) {
+  //   // Force disable Crashlytics collection while doing every day development.
+  //   // Temporarily toggle this to true if you want to test crash reporting in your app.
+  //   await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(false);
+  // } else {
+  //   // Handle Crashlytics enabled status when not in Debug,
+  //   // e.g. allow your users to opt-in to crash reporting.
+  // }
 
   await SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
