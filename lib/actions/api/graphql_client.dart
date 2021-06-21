@@ -39,6 +39,7 @@ class BaseGraphQLClient {
             id
             username
             email
+            provider
             role {
               name
               type
@@ -66,6 +67,7 @@ class BaseGraphQLClient {
             invitesSent
             phoneNumber
             referralLink
+            provider
             storeFavorite {
               id
               name

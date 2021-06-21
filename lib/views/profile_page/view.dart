@@ -255,7 +255,7 @@ class __FirstPageState extends State<_FirstPage> {
 }
 
 class _MainBody extends StatefulWidget {
-  final globalUser = GlobalStore.store.getState().user;
+  final AppUser globalUser = GlobalStore.store.getState().user;
 
   @override
   __MainBodyState createState() => __MainBodyState();
@@ -539,54 +539,60 @@ class __MainBodyState extends State<_MainBody> {
             ),
           ),
           SizedBox(height: 32.0),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.0),
-            child: GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SvgPicture.asset("images/lock_icon.svg"),
-                  SizedBox(width: 11.33),
-                  Text(
-                    "Change Password",
-                    style: TextStyle(
-                      fontSize: 18.0,
-                    ),
-                  ),
-                  Spacer(),
-                  Container(
-                    width: 34.0,
-                    height: 34.0,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10.0),
-                      boxShadow: [
-                        BoxShadow(
-                          spreadRadius: 3,
-                          color: Colors.grey[100],
-                          offset: Offset(0.0, 3.0),
-                          blurRadius: 3,
-                        )
+          if (widget.globalUser.provider == 'local')
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.0),
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SvgPicture.asset("images/lock_icon.svg"),
+                        SizedBox(width: 11.33),
+                        Text(
+                          "Change Password",
+                          style: TextStyle(
+                            fontSize: 18.0,
+                          ),
+                        ),
+                        Spacer(),
+                        Container(
+                          width: 34.0,
+                          height: 34.0,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10.0),
+                            boxShadow: [
+                              BoxShadow(
+                                spreadRadius: 3,
+                                color: Colors.grey[100],
+                                offset: Offset(0.0, 3.0),
+                                blurRadius: 3,
+                              )
+                            ],
+                          ),
+                          child: Center(
+                            child: SvgPicture.asset(
+                              "images/chevron_right.svg",
+                              width: 10.0,
+                              height: 18.0,
+                            ),
+                          ),
+                        ),
                       ],
                     ),
-                    child: Center(
-                      child: SvgPicture.asset(
-                        "images/chevron_right.svg",
-                        width: 10.0,
-                        height: 18.0,
-                      ),
-                    ),
+                    onTap: () {
+                      Navigator.of(context)
+                          .pushNamed('forgot_passwordpage', arguments: null);
+                    },
                   ),
-                ],
-              ),
-              onTap: () {
-                Navigator.of(context)
-                    .pushNamed('forgot_passwordpage', arguments: null);
-              },
+                ),
+                SizedBox(height: 32.0),
+              ],
             ),
-          ),
-          SizedBox(height: 32.0),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.0),
             child: GestureDetector(
