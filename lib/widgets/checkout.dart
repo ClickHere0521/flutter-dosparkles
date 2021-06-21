@@ -366,7 +366,7 @@ class _CheckoutState extends State<Checkout> {
                                         EdgeInsets.symmetric(vertical: 5),
                                     floatingLabelBehavior:
                                         FloatingLabelBehavior.always,
-                                    labelText: 'Cardholder name',
+                                    labelText: 'Cardholder Name',
                                     labelStyle: TextStyle(
                                       color: Colors.black,
                                       height: 0.7,
@@ -375,6 +375,18 @@ class _CheckoutState extends State<Checkout> {
                                   ),
                                   cardNumberDecoration: InputDecoration(
                                     hintText: 'Enter ',
+                                    prefix: Container(
+                                      padding: EdgeInsetsDirectional.only(
+                                          end: 8.0, top: 0),
+                                      child: Image.asset(
+                                        "images/high-quality-images/Group 208.png",
+                                        width: 20.0,
+                                        height: 20.0,
+                                        alignment: Alignment.bottomCenter,
+                                      ),
+                                    ),
+                                    contentPadding:
+                                        EdgeInsets.only(bottom: 5.0),
                                     enabledBorder: UnderlineInputBorder(
                                       borderSide: BorderSide(
                                           color: HexColor("#C4C6D2")),
@@ -387,11 +399,9 @@ class _CheckoutState extends State<Checkout> {
                                       fontSize: 16,
                                       color: Colors.black26,
                                     ),
-                                    contentPadding:
-                                        EdgeInsets.symmetric(vertical: 5),
                                     floatingLabelBehavior:
                                         FloatingLabelBehavior.always,
-                                    labelText: 'Card number',
+                                    labelText: 'Card Number',
                                     labelStyle: TextStyle(
                                       color: Colors.black,
                                       height: 0.7,
