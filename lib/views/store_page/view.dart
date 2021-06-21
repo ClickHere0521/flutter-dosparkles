@@ -632,7 +632,9 @@ class _ProductViewState extends State<_ProductView>
             child: CustomRefreshIndicator(
               offsetToArmed: 0,
               onRefresh: () {
+                _betterPlayerPlaylistController.betterPlayerController.play();
                 _panelController.close();
+
                 Future<void> delayed =
                     Future.delayed(const Duration(milliseconds: 1));
                 return delayed;
@@ -684,6 +686,7 @@ class _ProductViewState extends State<_ProductView>
                 // Page up
 
                 _panelController.open();
+                _betterPlayerPlaylistController.betterPlayerController.pause();
               } else if (dragEndDetails.primaryVelocity > 0) {
                 // Page down
                 widget.dispatch(StorePageActionCreator.onBackToAllProducts());
