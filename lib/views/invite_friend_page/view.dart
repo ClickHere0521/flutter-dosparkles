@@ -1174,12 +1174,19 @@ class __ContactsPageState extends State<_ContactsPage> {
   List invitesSentList = [];
   String searchValue = '';
   bool _isLoading = false;
+  bool _isContactsLoading = true;
   bool _isResendLoading = false;
   bool _isLostConnection = false;
 
   void _setLoading(bool value) {
     setState(() {
       _isLoading = value;
+    });
+  }
+
+  void _setContactsLoading(bool value) {
+    setState(() {
+      _isContactsLoading = value;
     });
   }
 
@@ -1195,7 +1202,10 @@ class __ContactsPageState extends State<_ContactsPage> {
 
     _askPermissions().then((value) {
       if (value) {
-        ContactsService.getContacts().then((Iterable<Contact> contacts) async {
+        ContactsService.getContacts(
+          withThumbnails: false,
+          photoHighResolution: false,
+        ).then((Iterable<Contact> contacts) async {
           String meId = GlobalStore.store.getState().user.id;
           QueryResult result =
               await BaseGraphQLClient.instance.fetchUserById(meId);
@@ -1208,8 +1218,9 @@ class __ContactsPageState extends State<_ContactsPage> {
             invitesSentList = invitesSent;
           }
 
-          for (var contact in contacts) {
+          for (Contact contact in contacts) {
             if (contact.phones.isEmpty && contact.displayName == null) continue;
+
             String phoneValue = contact.phones.isNotEmpty
                 ? contact.phones
                     .elementAt(0)
@@ -1231,6 +1242,8 @@ class __ContactsPageState extends State<_ContactsPage> {
             });
             if (mounted) setState(() {});
           }
+
+          _setContactsLoading(false);
         });
       }
     });
@@ -1419,155 +1432,170 @@ class __ContactsPageState extends State<_ContactsPage> {
                               ),
                             ),
                             SizedBox(height: 20),
-                            ListView.separated(
-                              itemCount: filteredList.length,
-                              shrinkWrap: true,
-                              physics: BouncingScrollPhysics(),
-                              separatorBuilder: (_, index) => Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 4.0),
-                                child: Divider(
-                                  color: Colors.white,
-                                  thickness: 2.0,
-                                  height: 0.0,
+                            if (_isContactsLoading)
+                              Container(
+                                width: double.infinity,
+                                child: Center(
+                                  child: CircularProgressIndicator(),
                                 ),
-                              ),
-                              itemBuilder: (BuildContext context, int index) {
-                                Map contact = filteredList[index];
+                              )
+                            else
+                              ListView.separated(
+                                itemCount: filteredList.length,
+                                shrinkWrap: true,
+                                physics: BouncingScrollPhysics(),
+                                separatorBuilder: (_, index) => Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 4.0),
+                                  child: Divider(
+                                    color: Colors.white,
+                                    thickness: 2.0,
+                                    height: 0.0,
+                                  ),
+                                ),
+                                itemBuilder: (BuildContext context, int index) {
+                                  Map contact = filteredList[index];
 
-                                List invitesPresent = invitesSentList.length > 0
-                                    ? invitesSentList
-                                        .where((invite) =>
-                                            contact['invited'] &&
-                                            invite['phone'] == contact['phone'])
-                                        .toList()
-                                    : [];
+                                  List invitesPresent =
+                                      invitesSentList.length > 0
+                                          ? invitesSentList
+                                              .where((invite) =>
+                                                  contact['invited'] &&
+                                                  invite['phone'] ==
+                                                      contact['phone'])
+                                              .toList()
+                                          : [];
 
-                                bool shouldDisabledBtn = false;
+                                  bool shouldDisabledBtn = false;
 
-                                if (invitesPresent.length > 0) {
-                                  DateTime currentDate = DateTime.now();
-                                  DateTime inviteDate =
-                                      DateTime.fromMillisecondsSinceEpoch(
-                                          invitesPresent[0]['date']);
+                                  if (invitesPresent.length > 0) {
+                                    DateTime currentDate = DateTime.now();
+                                    DateTime inviteDate =
+                                        DateTime.fromMillisecondsSinceEpoch(
+                                            invitesPresent[0]['date']);
 
-                                  int inviteDifference =
-                                      inviteDate.difference(currentDate).inDays;
+                                    int inviteDifference = inviteDate
+                                        .difference(currentDate)
+                                        .inDays;
 
-                                  if (inviteDifference < 3) {
-                                    shouldDisabledBtn = true;
+                                    if (inviteDifference < 3) {
+                                      shouldDisabledBtn = true;
+                                    }
                                   }
-                                }
 
-                                return GestureDetector(
-                                  behavior: HitTestBehavior.translucent,
-                                  child: Container(
-                                    width: MediaQuery.of(context).size.width,
-                                    height: 50.0,
-                                    color: HexColor("#FAFCFF"),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        FLAvatar(
-                                          image: Image.asset(
-                                            'images/user-male-circle.png',
-                                            fit: BoxFit.cover,
-                                            width: double.infinity,
+                                  return GestureDetector(
+                                    behavior: HitTestBehavior.translucent,
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width,
+                                      height: 50.0,
+                                      color: HexColor("#FAFCFF"),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          FLAvatar(
+                                            image: Image.asset(
+                                              'images/user-male-circle.png',
+                                              fit: BoxFit.cover,
+                                              width: double.infinity,
+                                              height: double.infinity,
+                                            ),
+                                            width: 50.0,
                                             height: double.infinity,
                                           ),
-                                          width: 50.0,
-                                          height: double.infinity,
-                                        ),
-                                        SizedBox(width: 13.0),
-                                        Expanded(
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                "${contact['name']}",
-                                                style: TextStyle(
-                                                  fontSize: 16.0,
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                              contact['invited'] == true
-                                                  ? Text(
-                                                      "You can resend in 3 days.",
-                                                      style: TextStyle(
-                                                          fontSize: 12.0),
-                                                    )
-                                                  : SizedBox.shrink(
-                                                      child: null),
-                                            ],
-                                          ),
-                                        ),
-                                        SizedBox(width: 13.0),
-                                        contact['invited'] == true
-                                            ? ElevatedButton(
-                                                child: _isResendLoading
-                                                    ? Container(
-                                                        width: 15.0,
-                                                        height: 15.0,
-                                                        child:
-                                                            CircularProgressIndicator(
-                                                          color: Colors.white,
-                                                        ),
-                                                      )
-                                                    : Text(
-                                                        'Resend',
-                                                        style: TextStyle(
-                                                          fontSize: 14.0,
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                        ),
-                                                      ),
-                                                style: ButtonStyle(
-                                                  backgroundColor:
-                                                      MaterialStateProperty
-                                                          .resolveWith<Color>(
-                                                    (Set<MaterialState>
-                                                        states) {
-                                                      if (states.contains(
-                                                        MaterialState.disabled,
-                                                      )) return Colors.white;
-                                                      return null;
-                                                    },
+                                          SizedBox(width: 13.0),
+                                          Expanded(
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  "${contact['name']}",
+                                                  style: TextStyle(
+                                                    fontSize: 16.0,
+                                                    fontWeight: FontWeight.w600,
                                                   ),
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
                                                 ),
-                                                onPressed: shouldDisabledBtn
-                                                    ? null
-                                                    : () {
-                                                        _resendHandler(contact,
-                                                            _setResendLoading);
+                                                contact['invited'] == true
+                                                    ? Text(
+                                                        "You can resend in 3 days.",
+                                                        style: TextStyle(
+                                                            fontSize: 12.0),
+                                                      )
+                                                    : SizedBox.shrink(
+                                                        child: null),
+                                              ],
+                                            ),
+                                          ),
+                                          SizedBox(width: 13.0),
+                                          contact['invited'] == true
+                                              ? ElevatedButton(
+                                                  child: _isResendLoading
+                                                      ? Container(
+                                                          width: 15.0,
+                                                          height: 15.0,
+                                                          child:
+                                                              CircularProgressIndicator(
+                                                            color: Colors.white,
+                                                          ),
+                                                        )
+                                                      : Text(
+                                                          'Resend',
+                                                          style: TextStyle(
+                                                            fontSize: 14.0,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                          ),
+                                                        ),
+                                                  style: ButtonStyle(
+                                                    backgroundColor:
+                                                        MaterialStateProperty
+                                                            .resolveWith<Color>(
+                                                      (Set<MaterialState>
+                                                          states) {
+                                                        if (states.contains(
+                                                          MaterialState
+                                                              .disabled,
+                                                        )) return Colors.white;
+                                                        return null;
                                                       },
-                                              )
-                                            : Image.asset(
-                                                contact['checked']
-                                                    ? 'images/Group 231.png'
-                                                    : 'images/Group 230.png',
-                                                fit: BoxFit.contain,
-                                                width: 32.0,
-                                                height: 32.0,
-                                              ),
-                                      ],
+                                                    ),
+                                                  ),
+                                                  onPressed: shouldDisabledBtn
+                                                      ? null
+                                                      : () {
+                                                          _resendHandler(
+                                                              contact,
+                                                              _setResendLoading);
+                                                        },
+                                                )
+                                              : Image.asset(
+                                                  contact['checked']
+                                                      ? 'images/Group 231.png'
+                                                      : 'images/Group 230.png',
+                                                  fit: BoxFit.contain,
+                                                  width: 32.0,
+                                                  height: 32.0,
+                                                ),
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                  onTap: () {
-                                    setState(() {
-                                      contact['checked'] = !contact['checked'];
-                                    });
-                                  },
-                                );
-                              },
-                            ),
+                                    onTap: () {
+                                      setState(() {
+                                        contact['checked'] =
+                                            !contact['checked'];
+                                      });
+                                    },
+                                  );
+                                },
+                              ),
                           ],
                         ),
                       ),
