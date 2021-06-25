@@ -7,6 +7,7 @@ import 'package:com.floridainc.dosparkles/models/models.dart';
 class LoginPageState implements GlobalBaseState, Cloneable<LoginPageState> {
   String account = '';
   String pwd = '';
+  bool isLoading = false;
   TextEditingController accountTextController;
   TextEditingController passWordTextController;
   AnimationController animationController;
@@ -19,6 +20,7 @@ class LoginPageState implements GlobalBaseState, Cloneable<LoginPageState> {
     return LoginPageState()
       ..account = account
       ..pwd = pwd
+      ..isLoading = isLoading
       ..accountFocusNode = accountFocusNode
       ..pwdFocusNode = pwdFocusNode
       ..animationController = animationController

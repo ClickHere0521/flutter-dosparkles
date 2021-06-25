@@ -69,6 +69,7 @@ class _FirstProductPage extends StatefulWidget {
 
 class __FirstProductPageState extends State<_FirstProductPage> {
   bool _isLostConnection = false;
+  bool _isAppBarEnabled = true;
 
   Future fetchData() async {
     Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
@@ -97,6 +98,12 @@ class __FirstProductPageState extends State<_FirstProductPage> {
     }
   }
 
+  void _setIsAppBarEnabled(bool value) {
+    setState(() {
+      _isAppBarEnabled = value;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     checkInternetConnectivity();
@@ -112,30 +119,33 @@ class __FirstProductPageState extends State<_FirstProductPage> {
             optionalMaterialSelected: widget.state.optionalMaterialSelected,
             engraveInputs: widget.state.engraveInputs,
             productQuantity: widget.state.productQuantity,
+            setIsAppBarEnabled: _setIsAppBarEnabled,
           ),
           backgroundColor: Colors.transparent,
           extendBodyBehindAppBar: true,
           extendBody: true,
-          appBar: AppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0.0,
-            automaticallyImplyLeading: false,
-            // actions: [
-            //   Padding(
-            //     padding: const EdgeInsets.only(right: 16.0),
-            //     child: SvgPicture.asset("images/Share.svg"),
-            //   ),
-            // ],
-            leadingWidth: 70.0,
-            leading: Builder(
-              builder: (context) => IconButton(
-                highlightColor: Colors.transparent,
-                splashColor: Colors.transparent,
-                icon: Image.asset("images/offcanvas_icon.png"),
-                onPressed: () => Scaffold.of(context).openDrawer(),
-              ),
-            ),
-          ),
+          appBar: !_isAppBarEnabled
+              ? null
+              : AppBar(
+                  backgroundColor: Colors.transparent,
+                  elevation: 0.0,
+                  automaticallyImplyLeading: false,
+                  // actions: [
+                  //   Padding(
+                  //     padding: const EdgeInsets.only(right: 16.0),
+                  //     child: SvgPicture.asset("images/Share.svg"),
+                  //   ),
+                  // ],
+                  leadingWidth: 70.0,
+                  leading: Builder(
+                    builder: (context) => IconButton(
+                      highlightColor: Colors.transparent,
+                      splashColor: Colors.transparent,
+                      icon: Image.asset("images/offcanvas_icon.png"),
+                      onPressed: () => Scaffold.of(context).openDrawer(),
+                    ),
+                  ),
+                ),
           drawer: SparklesDrawer(),
           // bottomNavigationBar: StreamBuilder(
           //   stream: fetchDataProcess(),
@@ -429,6 +439,8 @@ class _ProductView extends StatefulWidget {
   final bool optionalMaterialSelected;
   final List<String> engraveInputs;
   final int productQuantity;
+  final Function setIsAppBarEnabled;
+
   final globalUser = GlobalStore.store.getState().user;
 
   _ProductView({
@@ -441,6 +453,7 @@ class _ProductView extends StatefulWidget {
     this.optionalMaterialSelected,
     this.engraveInputs,
     this.productQuantity,
+    this.setIsAppBarEnabled,
   }) : super(key: key);
 
   @override
@@ -456,6 +469,7 @@ class _ProductViewState extends State<_ProductView>
   int _tabSelectedIndex = 0;
   int _currentProductVideo = 0;
   bool _shouldAbsorb = true;
+  bool _isDraggable = false;
   List<BetterPlayerDataSource> _dataSourceList = [];
 
   final double _initFabHeight = 50.0;
@@ -625,14 +639,21 @@ class _ProductViewState extends State<_ProductView>
           maxHeight: _panelHeightOpen,
           minHeight: _panelHeightClosed,
           controller: _panelController,
-          isDraggable: false,
+          isDraggable: _isDraggable,
+          onPanelOpened: () {
+            _betterPlayerPlaylistController.betterPlayerController.pause();
+            widget.setIsAppBarEnabled(false);
+          },
+          onPanelClosed: () {
+            _betterPlayerPlaylistController.betterPlayerController.play();
+            widget.setIsAppBarEnabled(true);
+          },
           panelBuilder: (sc) => MediaQuery.removePadding(
             context: context,
             removeTop: true,
             child: CustomRefreshIndicator(
               offsetToArmed: 0,
               onRefresh: () {
-                _betterPlayerPlaylistController.betterPlayerController.play();
                 _panelController.close();
 
                 Future<void> delayed =
@@ -686,7 +707,6 @@ class _ProductViewState extends State<_ProductView>
                 // Page up
 
                 _panelController.open();
-                _betterPlayerPlaylistController.betterPlayerController.pause();
               } else if (dragEndDetails.primaryVelocity > 0) {
                 // Page down
                 widget.dispatch(StorePageActionCreator.onBackToAllProducts());

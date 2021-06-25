@@ -5,7 +5,8 @@ enum LoginPageAction {
   loginclicked,
   signUp,
   googleSignIn,
-  facebookSignIn
+  facebookSignIn,
+  setIsLoading
 }
 
 class LoginPageActionCreator {
@@ -25,7 +26,11 @@ class LoginPageActionCreator {
     return const Action(LoginPageAction.googleSignIn);
   }
 
-   static Action onFacebookSignIn() {
+  static Action onFacebookSignIn() {
     return const Action(LoginPageAction.facebookSignIn);
+  }
+
+  static Action onSetIsLoading(bool payload) {
+    return Action(LoginPageAction.setIsLoading, payload: payload);
   }
 }

@@ -6,7 +6,6 @@ import 'package:com.floridainc.dosparkles/models/app_user.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/widgets.dart' hide Action;
 import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
@@ -80,6 +79,8 @@ Future _onLoginClicked(Action action, Context<LoginPageState> ctx) async {
 }
 
 void _goToMain(Context<LoginPageState> ctx) async {
+  ctx.dispatch(LoginPageActionCreator.onSetIsLoading(true));
+
   var globalState = GlobalStore.store.getState();
 
   await checkUserReferralLink(globalState.user);
@@ -101,6 +102,8 @@ void _goToMain(Context<LoginPageState> ctx) async {
   }
 
   Navigator.of(ctx.context).pushReplacementNamed('storeselectionpage');
+
+  ctx.dispatch(LoginPageActionCreator.onSetIsLoading(false));
 }
 
 Future checkUserReferralLink(AppUser globalUser) async {

@@ -17,6 +17,7 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:flutter/services.dart';
 import 'package:com.floridainc.dosparkles/utils/colors.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:toast/toast.dart';
 import 'package:uuid/uuid.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:http/http.dart';
@@ -109,6 +110,13 @@ class __MainBodyState extends State<_MainBody> {
                 ),
               ),
             ),
+            if (widget.state.isLoading)
+              Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                color: Colors.white.withOpacity(.4),
+                child: Center(child: CircularProgressIndicator()),
+              ),
             if (_isLostConnection) ConnectionLost(),
           ],
         ),
@@ -452,6 +460,9 @@ void _goolgeSignIn(_googleSignIn, context) async {
           _goToMain(context);
         });
       }
+    } else {
+      Toast.show("Account with this email already exist", context,
+          duration: 3, gravity: Toast.BOTTOM);
     }
   } catch (error) {
     print(error);
@@ -466,6 +477,12 @@ void _facebookSignIn(context, facebookSignIn) async {
   switch (result.status) {
     case FacebookLoginStatus.loggedIn:
       final FacebookAccessToken accessToken = result.accessToken;
+
+      if (accessToken == null) {
+        Toast.show("Account with this email already exist", context,
+            duration: 3, gravity: Toast.BOTTOM);
+        return;
+      }
 
       Response response = await http.get(
         '${AppConfig.instance.baseApiHost}/auth/facebook/callback?access_token=${accessToken.token}',
@@ -507,6 +524,12 @@ void _appleSignIn(context) async {
       ),
     ),
   );
+
+  if (credential.authorizationCode == null) {
+    Toast.show("Account with this email already exist", context,
+        duration: 3, gravity: Toast.BOTTOM);
+    return;
+  }
 
   Response response = await http.get(
     '${AppConfig.instance.baseApiHost}/auth/apple/callback?access_token=${credential.authorizationCode}',

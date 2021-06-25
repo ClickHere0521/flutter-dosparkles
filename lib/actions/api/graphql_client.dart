@@ -39,7 +39,6 @@ class BaseGraphQLClient {
             id
             username
             email
-            provider
             role {
               name
               type
