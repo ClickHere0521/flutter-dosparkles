@@ -462,8 +462,8 @@ class _ProductView extends StatefulWidget {
 
 class _ProductViewState extends State<_ProductView>
     with SingleTickerProviderStateMixin {
-  GlobalKey<BetterPlayerPlaylistState> _betterPlayerPlaylistStateKey =
-      GlobalKey();
+  List<GlobalKey<BetterPlayerPlaylistState>> _betterPlayerPlaylistStateKeys =
+      List.empty(growable: true);
   TabController _tabController;
   PanelController _panelController;
   int _tabSelectedIndex = 0;
@@ -479,6 +479,10 @@ class _ProductViewState extends State<_ProductView>
 
   BetterPlayerConfiguration _betterPlayerConfiguration;
   BetterPlayerPlaylistConfiguration _betterPlayerPlaylistConfiguration;
+  BetterPlayerPlaylistController get _betterPlayerPlaylistController =>
+      _betterPlayerPlaylistStateKeys[_tabSelectedIndex]
+          .currentState
+          .betterPlayerPlaylistController;
 
   bool isShowPlaying = false;
 
@@ -493,6 +497,11 @@ class _ProductViewState extends State<_ProductView>
   void initState() {
     super.initState();
     _fabHeight = _initFabHeight;
+
+    for (int i = 0; i < widget.store.products.length; i++) {
+      _betterPlayerPlaylistStateKeys
+          .add(GlobalKey<BetterPlayerPlaylistState>());
+    }
 
     GlobalStore.store.dispatch(GlobalActionCreator.setSelectedProduct(
         widget.store.products[widget.productIndex]));
@@ -527,6 +536,7 @@ class _ProductViewState extends State<_ProductView>
   void dispose() {
     super.dispose();
     _betterPlayerPlaylistController.dispose();
+    _tabController.dispose();
   }
 
   void resetInformation(List<ProductItem> items) {
@@ -613,9 +623,6 @@ class _ProductViewState extends State<_ProductView>
 
     if (mounted) setState(() {});
   }
-
-  BetterPlayerPlaylistController get _betterPlayerPlaylistController =>
-      _betterPlayerPlaylistStateKey.currentState.betterPlayerPlaylistController;
 
   @override
   Widget build(BuildContext context) {
@@ -719,9 +726,19 @@ class _ProductViewState extends State<_ProductView>
                 if (_tabController.index < items.length - 1 &&
                     _tabSelectedIndex < items.length - 1) {
                   _tabController.index += 1;
+
                   GlobalStore.store.dispatch(
                       GlobalActionCreator.setSelectedProduct(
                           items[_tabController.index]));
+
+                  resetInformation(items);
+                } else {
+                  _tabController.index = 0;
+
+                  GlobalStore.store.dispatch(
+                      GlobalActionCreator.setSelectedProduct(
+                          items[_tabController.index]));
+
                   resetInformation(items);
                 }
               } else if (dragEndDetails.primaryVelocity > 0) {
@@ -826,7 +843,8 @@ class _ProductViewState extends State<_ProductView>
                                           height: size.height,
                                           width: size.width,
                                           child: BetterPlayerPlaylist(
-                                            key: _betterPlayerPlaylistStateKey,
+                                            key: _betterPlayerPlaylistStateKeys[
+                                                index],
                                             betterPlayerConfiguration:
                                                 _betterPlayerConfiguration,
                                             betterPlayerPlaylistConfiguration:
