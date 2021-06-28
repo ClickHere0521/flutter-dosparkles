@@ -147,6 +147,7 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                     ),
                   ),
                 ),
+
                 SizedBox(height: 45.0),
                 GestureDetector(
                   behavior: HitTestBehavior.translucent,

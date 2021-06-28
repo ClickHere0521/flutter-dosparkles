@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -17,6 +18,7 @@ import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 
 Widget buildView(
     CartPageState state, Dispatch dispatch, ViewService viewService) {
@@ -202,6 +204,9 @@ class _MainBody extends StatefulWidget {
 }
 
 class __MainBodyState extends State<_MainBody> {
+  final GlobalKey<LiquidPullToRefreshState> _refreshIndicatorKey =
+      GlobalKey<LiquidPullToRefreshState>();
+
   @override
   Widget build(BuildContext context) {
     double totalAmount = 0;
@@ -209,29 +214,21 @@ class __MainBodyState extends State<_MainBody> {
       totalAmount += widget.shoppingCart[i].amount;
     }
 
-    return CustomRefreshIndicator(
-      offsetToArmed: 0,
+    return LiquidPullToRefresh(
+      key: _refreshIndicatorKey,
       onRefresh: () {
-        Navigator.of(context)
-            .pushReplacementNamed('storepage', arguments: null);
-        Future<void> delayed = Future.delayed(const Duration(milliseconds: 1));
-        return delayed;
+        final Completer<void> completer = Completer<void>();
+        Timer(Duration(milliseconds: 1), () {
+          completer.complete();
+        });
+        return completer.future.then<void>((_) {
+          Navigator.of(context)
+              .pushReplacementNamed('storepage', arguments: null);
+        });
       },
-      builder: (
-        BuildContext context,
-        Widget child,
-        IndicatorController controller,
-      ) {
-        return AnimatedBuilder(
-          builder: (context, _) {
-            return Transform.translate(
-              offset: Offset(0.0, 0.0),
-              child: child,
-            );
-          },
-          animation: controller,
-        );
-      },
+      height: 0.0,
+      springAnimationDurationInMilliseconds: 1,
+      showChildOpacityTransition: false,
       child: GestureDetector(
         onVerticalDragEnd: (dragEndDetails) {
           if (dragEndDetails.primaryVelocity > 0) {
