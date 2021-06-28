@@ -1236,7 +1236,7 @@ class __ContactsPageState extends State<_ContactsPage> {
 
             contactsList.add({
               "phone": phoneValue,
-              "name": contact.displayName != null ? contact.displayName : '',
+              "name": contact.displayName ?? contact.givenName,
               "checked": false,
               "invited": invitesPresent,
             });
