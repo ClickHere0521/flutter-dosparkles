@@ -22,6 +22,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
@@ -464,6 +465,8 @@ class _ProductViewState extends State<_ProductView>
     with SingleTickerProviderStateMixin {
   List<GlobalKey<BetterPlayerPlaylistState>> _betterPlayerPlaylistStateKeys =
       List.empty(growable: true);
+  final GlobalKey<LiquidPullToRefreshState> _refreshIndicatorKey =
+      GlobalKey<LiquidPullToRefreshState>();
   TabController _tabController;
   PanelController _panelController;
   int _tabSelectedIndex = 0;
@@ -658,30 +661,20 @@ class _ProductViewState extends State<_ProductView>
           panelBuilder: (sc) => MediaQuery.removePadding(
             context: context,
             removeTop: true,
-            child: CustomRefreshIndicator(
-              offsetToArmed: 0,
+            child: LiquidPullToRefresh(
+              key: _refreshIndicatorKey,
               onRefresh: () {
-                _panelController.close();
-
-                Future<void> delayed =
-                    Future.delayed(const Duration(milliseconds: 1));
-                return delayed;
+                final Completer<void> completer = Completer<void>();
+                Timer(Duration(milliseconds: 1), () {
+                  completer.complete();
+                });
+                return completer.future.then<void>((_) {
+                  _panelController.close();
+                });
               },
-              builder: (
-                BuildContext context,
-                Widget child,
-                IndicatorController controller,
-              ) {
-                return AnimatedBuilder(
-                  builder: (context, _) {
-                    return Transform.translate(
-                      offset: Offset(0.0, 0.0),
-                      child: child,
-                    );
-                  },
-                  animation: controller,
-                );
-              },
+              height: 0.0,
+              springAnimationDurationInMilliseconds: 1,
+              showChildOpacityTransition: false,
               child: ListView(
                 controller: sc,
                 shrinkWrap: true,
