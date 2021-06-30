@@ -4,11 +4,14 @@ import 'package:flutter/material.dart';
 class StartPageState implements Cloneable<StartPageState> {
   PageController pageController;
   bool isFirstTime;
+  bool isLoading = false;
+
   @override
   StartPageState clone() {
     return StartPageState()
       ..pageController = pageController
-      ..isFirstTime = isFirstTime;
+      ..isFirstTime = isFirstTime
+      ..isLoading = isLoading;
   }
 }
 

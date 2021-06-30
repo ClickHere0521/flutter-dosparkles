@@ -118,14 +118,20 @@ Widget buildView(
                     child: Stack(
                       children: [
                         Center(
-                          child: Text(
-                            'Start',
-                            style: TextStyle(
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.w700,
-                              color: HexColor("#6092DC"),
-                            ),
-                          ),
+                          child: state.isLoading
+                              ? SizedBox(
+                                  width: 28.0,
+                                  height: 28.0,
+                                  child: CircularProgressIndicator(),
+                                )
+                              : Text(
+                                  'Start',
+                                  style: TextStyle(
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.w700,
+                                    color: HexColor("#6092DC"),
+                                  ),
+                                ),
                         ),
                         Positioned.fill(
                           child: Align(
@@ -135,9 +141,11 @@ Widget buildView(
                         ),
                       ],
                     ),
-                    onPressed: () {
-                      dispatch(StartPageActionCreator.onStart());
-                    },
+                    onPressed: state.isLoading
+                        ? null
+                        : () {
+                            dispatch(StartPageActionCreator.onStart());
+                          },
                   ),
                 ),
               ),

@@ -451,7 +451,7 @@ void _goolgeSignIn(_googleSignIn, context) async {
 
       Map<String, dynamic> responseBody = json.decode(response.body);
 
-      await UserInfoOperate.whenLogin(responseBody['jwt'].toString());
+      await UserInfoOperate.whenLogin(responseBody['jwt'].toString(), context);
       if (responseBody['jwt'] != null) {
         SharedPreferences.getInstance().then((_p) async {
           await _p.setString("jwt", responseBody['jwt']);
@@ -489,7 +489,7 @@ void _facebookSignIn(context, facebookSignIn) async {
       );
       Map<String, dynamic> responseBody = json.decode(response.body);
 
-      await UserInfoOperate.whenLogin(responseBody['jwt'].toString());
+      await UserInfoOperate.whenLogin(responseBody['jwt'].toString(), context);
       if (responseBody['jwt'] != null) {
         SharedPreferences.getInstance().then((_p) async {
           await _p.setString("jwt", responseBody['jwt']);
@@ -538,7 +538,7 @@ void _appleSignIn(context) async {
 
   Map<String, dynamic> responseBody = json.decode(response.body);
 
-  await UserInfoOperate.whenLogin(responseBody['jwt'].toString());
+  await UserInfoOperate.whenLogin(responseBody['jwt'].toString(), context);
 
   if (responseBody['jwt'] != null) {
     SharedPreferences.getInstance().then((_p) async {

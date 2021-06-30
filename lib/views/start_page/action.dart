@@ -1,6 +1,11 @@
 import 'package:fish_redux/fish_redux.dart';
 
-enum StartPageAction { action, setIsFirst, onStart }
+enum StartPageAction {
+  action,
+  setIsFirst,
+  onStart,
+  setIsLoading,
+}
 
 class StartPageActionCreator {
   static Action onAction() {
@@ -13,5 +18,9 @@ class StartPageActionCreator {
 
   static Action setIsFirst(bool isFirst) {
     return Action(StartPageAction.setIsFirst, payload: isFirst);
+  }
+
+  static Action onSetIsLoading(bool payload) {
+    return Action(StartPageAction.setIsLoading, payload: payload);
   }
 }

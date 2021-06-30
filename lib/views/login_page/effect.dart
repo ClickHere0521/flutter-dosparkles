@@ -34,15 +34,6 @@ void _onInit(Action action, Context<LoginPageState> ctx) async {
       vsync: ticker, duration: Duration(milliseconds: 1000));
   ctx.state.accountTextController = TextEditingController();
   ctx.state.passWordTextController = TextEditingController();
-
-  SharedPreferences.getInstance().then((_p) async {
-    final savedToken = _p.getString('jwt') ?? '';
-    if (savedToken.isNotEmpty) {
-      await UserInfoOperate.whenLogin(savedToken.toString());
-      await BaseGraphQLClient.instance.me();
-      _goToMain(ctx);
-    }
-  });
 }
 
 void _onBuild(Action action, Context<LoginPageState> ctx) {
@@ -72,7 +63,7 @@ Future _onLoginClicked(Action action, Context<LoginPageState> ctx) async {
       _p.setString("userId", _result['user']['id'].toString());
       print('jwt: ${_result['jwt'].toString()}');
 
-      await UserInfoOperate.whenLogin(_result['jwt'].toString());
+      await UserInfoOperate.whenLogin(_result['jwt'].toString(), ctx.context);
       _goToMain(ctx);
     });
   }

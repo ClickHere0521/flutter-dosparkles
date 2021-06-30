@@ -2,14 +2,18 @@ import 'package:com.floridainc.dosparkles/globalbasestate/action.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/models/model_factory.dart';
 import 'package:com.floridainc.dosparkles/models/models.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:com.floridainc.dosparkles/actions/api/graphql_client.dart';
 
 class UserInfoOperate {
-  static Future whenLogin(String token) async {
+  static Future whenLogin(String token, BuildContext context) async {
     BaseGraphQLClient.instance.setToken(token);
 
     final meRequest = await BaseGraphQLClient.instance.me();
+    if (meRequest.hasException) {
+      return Navigator.of(context).pushReplacementNamed('loginpage');
+    }
 
     final user = ModelFactory.generate<AppUser>(meRequest.data['me']['user']);
 

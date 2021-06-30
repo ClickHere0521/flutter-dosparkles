@@ -443,7 +443,7 @@ void _onSubmit(
         _p.setString(
             "userId", resultRegister.data['register']['user']['id'].toString());
 
-        await UserInfoOperate.whenLogin(jwt.toString());
+        await UserInfoOperate.whenLogin(jwt.toString(), context);
 
         QueryResult resultUpdate = await BaseGraphQLClient.instance
             .updateUserOnCreate(resultRegister.data['register']['user']['id'],
