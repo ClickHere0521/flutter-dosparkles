@@ -5,6 +5,7 @@ import 'package:com.floridainc.dosparkles/actions/api/graphql_client.dart';
 import 'package:com.floridainc.dosparkles/actions/app_config.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/models/models.dart';
+import 'package:com.floridainc.dosparkles/utils/general.dart';
 import 'package:com.floridainc.dosparkles/widgets/bottom_nav_bar.dart';
 import 'package:com.floridainc.dosparkles/widgets/connection_lost.dart';
 import 'package:com.floridainc.dosparkles/widgets/sparkles_drawer.dart';
@@ -1240,8 +1241,8 @@ class __ContactsPageState extends State<_ContactsPage> {
               "checked": false,
               "invited": invitesPresent,
             });
-            if (mounted) setState(() {});
           }
+          setState(() {});
 
           _setContactsLoading(false);
         });
@@ -1264,6 +1265,7 @@ class __ContactsPageState extends State<_ContactsPage> {
 
   @override
   Widget build(BuildContext context) {
+    print('build');
     checkInternetConnectivity();
 
     setState(() {

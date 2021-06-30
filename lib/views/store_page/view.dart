@@ -650,6 +650,7 @@ class _ProductViewState extends State<_ProductView>
           minHeight: _panelHeightClosed,
           controller: _panelController,
           isDraggable: _isDraggable,
+          panelSnapping: true,
           onPanelOpened: () {
             _betterPlayerPlaylistController.betterPlayerController.pause();
             widget.setIsAppBarEnabled(false);
@@ -663,7 +664,7 @@ class _ProductViewState extends State<_ProductView>
             removeTop: true,
             child: LiquidPullToRefresh(
               key: _refreshIndicatorKey,
-              onRefresh: () {
+              onRefresh: () async {
                 final Completer<void> completer = Completer<void>();
                 Timer(Duration(milliseconds: 1), () {
                   completer.complete();
@@ -677,6 +678,7 @@ class _ProductViewState extends State<_ProductView>
               showChildOpacityTransition: false,
               child: ListView(
                 controller: sc,
+                physics: AlwaysScrollableScrollPhysics(),
                 shrinkWrap: true,
                 children: [
                   _BottomPanelWidget(
@@ -738,11 +740,15 @@ class _ProductViewState extends State<_ProductView>
                 // Page backwards
 
                 if (_tabController.index == 0 && _tabController.offset == 0.0) {
-                  widget.dispatch(StorePageActionCreator.onBackToAllProducts());
+                  _tabController.index = items.length - 1;
+                  // widget.dispatch(StorePageActionCreator.onBackToAllProducts());
+                  GlobalStore.store.dispatch(
+                      GlobalActionCreator.setSelectedProduct(
+                          items[_tabController.index]));
+                  resetInformation(items);
                   return;
-                }
-
-                if (_tabController.index >= 0 && _tabSelectedIndex >= 0) {
+                } else if (_tabController.index >= 0 &&
+                    _tabSelectedIndex >= 0) {
                   _tabController.index -= 1;
                   GlobalStore.store.dispatch(
                       GlobalActionCreator.setSelectedProduct(
