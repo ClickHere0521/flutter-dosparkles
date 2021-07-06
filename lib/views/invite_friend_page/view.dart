@@ -4,6 +4,9 @@ import 'dart:ui';
 import 'package:com.floridainc.dosparkles/actions/api/graphql_client.dart';
 import 'package:com.floridainc.dosparkles/actions/app_config.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
+import 'package:com.floridainc.dosparkles/globalbasestate/action.dart';
+import 'package:com.floridainc.dosparkles/models/models.dart';
+import 'package:com.floridainc.dosparkles/models/model_factory.dart';
 import 'package:com.floridainc.dosparkles/models/models.dart';
 import 'package:com.floridainc.dosparkles/utils/general.dart';
 import 'package:com.floridainc.dosparkles/widgets/bottom_nav_bar.dart';
@@ -186,7 +189,7 @@ class __FirstPageState extends State<_FirstPage> {
 
   @override
   Widget build(BuildContext context) {
-    checkInternetConnectivity();
+    // checkInternetConnectivity();
 
     return Stack(
       children: [
@@ -1266,14 +1269,14 @@ class __ContactsPageState extends State<_ContactsPage> {
   @override
   Widget build(BuildContext context) {
     print('build');
-    checkInternetConnectivity();
+    // checkInternetConnectivity();
 
     setState(() {
       filteredList = contactsList.where((contact) {
         String name = contact['name'].toLowerCase();
         String phone = contact['phone'].toLowerCase();
         String value = searchValue.toLowerCase();
-        return "$name $phone".indexOf(value) != -1;
+        return "$name".indexOf(value) != -1 || "$phone".indexOf(value) != -1;
       }).toList();
 
       filteredList.sort((a, b) {
@@ -1339,7 +1342,9 @@ class __ContactsPageState extends State<_ContactsPage> {
               actions: [
                 TextButton(
                   child: Text(
-                    "Invites",
+                      checkedList.length == 0
+                                ? 'Invites'
+                                : 'Invites (${checkedList.length})',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 14.0,
@@ -1757,6 +1762,15 @@ void _onSubmit(
     fetchInvitesSent();
 
     _setLoading(false);
+    Toast.show("Invites sent", context,
+          duration: 3, gravity: Toast.BOTTOM);
+
+    final meRequest = await BaseGraphQLClient.instance.me();
+    final user = ModelFactory.generate<AppUser>(meRequest.data['me']['user']);
+    GlobalStore.store.dispatch(GlobalActionCreator.setUser(user));
+    
+    Future.delayed(Duration(seconds: 3),
+      () => Navigator.of(context).pop());
   } catch (e) {
     print(e);
   }

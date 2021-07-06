@@ -16,6 +16,7 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import '../../actions/api/graphql_client.dart';
 import '../../utils/colors.dart';
 import 'state.dart';
+import 'package:toast/toast.dart';
 
 Widget buildView(
   HelpSupportPageState state,
@@ -509,6 +510,7 @@ class __InnerPartState extends State<_InnerPart> {
                             emailController.text,
                             dropDownValue,
                             messageController.text,
+                            context,
                           );
                           setState(() {
                             nameController.clear();
@@ -536,6 +538,7 @@ void _onSubmit(
   String emailValue,
   String dropDownValue,
   String messageValue,
+  BuildContext context,
 ) async {
   dropDownValue = dropDownValue.trim().replaceAll(" ", "_");
 
@@ -545,4 +548,7 @@ void _onSubmit(
     dropDownValue,
     messageValue,
   );
+
+   Toast.show("Request sent", context,
+     duration: 3, gravity: Toast.BOTTOM);
 }

@@ -97,38 +97,42 @@ class __MainBodyState extends State<_MainBody> {
                 fit: BoxFit.contain,
               ),
             ),
-            Scaffold(
-              backgroundColor: Colors.transparent,
-              resizeToAvoidBottomInset: true,
-              appBar: AppBar(
-                centerTitle: true,
-                elevation: 0.0,
-                leadingWidth: 70.0,
-                automaticallyImplyLeading: false,
-                leading: null,
+            new WillPopScope(
+              onWillPop: () async => false,
+              child: 
+              Scaffold(
                 backgroundColor: Colors.transparent,
-                title: Text(
-                  "Add Phone",
-                  style: TextStyle(
-                    fontSize: 22,
-                    color: HexColor("#53586F"),
-                    fontWeight: FontWeight.w600,
-                    fontFeatures: [FontFeature.enable('smcp')],
+                resizeToAvoidBottomInset: true,
+                appBar: AppBar(
+                  centerTitle: true,
+                  elevation: 0.0,
+                  leadingWidth: 70.0,
+                  automaticallyImplyLeading: false,
+                  leading: null,
+                  backgroundColor: Colors.transparent,
+                  title: Text(
+                    "Add Phone",
+                    style: TextStyle(
+                      fontSize: 22,
+                      color: HexColor("#53586F"),
+                      fontWeight: FontWeight.w600,
+                      fontFeatures: [FontFeature.enable('smcp')],
+                    ),
                   ),
                 ),
-              ),
-              body: Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height,
-                padding: EdgeInsets.only(
-                  left: 16.0,
-                  right: 16.0,
+                body: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
+                  padding: EdgeInsets.only(
+                    left: 16.0,
+                    right: 16.0,
+                  ),
+                  child: _InnerPart(),
                 ),
-                child: _InnerPart(),
               ),
             ),
-            if (_isLostConnection) ConnectionLost(),
-          ],
+              if (_isLostConnection) ConnectionLost(),
+            ],
         ),
       ),
     );
