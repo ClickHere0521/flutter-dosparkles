@@ -651,7 +651,7 @@ class __ChatOrderBlockState extends State<_ChatOrderBlock> {
                                                     top: 0,
                                                     left: 70.0,
                                                     child: Text(
-                                                      "\$${order['totalPrice']}",
+                                                      "\$${order['totalPrice'].toStringAsFixed(2)}",
                                                       style: TextStyle(
                                                         fontSize: 12.0,
                                                         color: Colors.black,

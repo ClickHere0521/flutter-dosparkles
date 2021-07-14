@@ -215,7 +215,8 @@ class __MainBodyState extends State<_MainBody> {
                         style: DefaultTextStyle.of(context).style,
                         children: [
                           TextSpan(
-                            text: "\$${widget.product['price']} ",
+                            text:
+                                "\$${widget.product['price'].toStringAsFixed(2)} ",
                             style: TextStyle(
                               color: HexColor("#53586F"),
                               fontSize: 24.0,
@@ -223,7 +224,8 @@ class __MainBodyState extends State<_MainBody> {
                             ),
                           ),
                           TextSpan(
-                            text: "\$${widget.product['oldPrice']}",
+                            text:
+                                "\$${widget.product['oldPrice'].toStringAsFixed(2)}",
                             style: TextStyle(
                               color: HexColor("#53586F").withOpacity(.5),
                               fontSize: 18.0,
@@ -679,7 +681,8 @@ class __CustomBodyState extends State<_CustomBody> {
                         style: DefaultTextStyle.of(context).style,
                         children: [
                           TextSpan(
-                            text: "\$${widget.product['price']} ",
+                            text:
+                                "\$${widget.product['price'].toStringAsFixed(2)} ",
                             style: TextStyle(
                               color: HexColor("#53586F"),
                               fontSize: 24.0,
@@ -687,7 +690,8 @@ class __CustomBodyState extends State<_CustomBody> {
                             ),
                           ),
                           TextSpan(
-                            text: "\$${widget.product['oldPrice']} ",
+                            text:
+                                "\$${widget.product['oldPrice'].toStringAsFixed(2)} ",
                             style: TextStyle(
                               color: HexColor("#53586F").withOpacity(.5),
                               fontSize: 18.0,

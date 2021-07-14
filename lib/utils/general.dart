@@ -38,10 +38,10 @@ extension BoolParsing on String {
 }
 
 double checkDouble(dynamic value) {
-  if (value == null) return 0.0;
+  if (value == null) return 0.00;
   if (value is String) {
-    return double.parse(value);
+    return double.parse(value) + 0.00;
   } else {
-    return value + 0.0;
+    return value + 0.00;
   }
 }

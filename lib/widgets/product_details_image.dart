@@ -681,7 +681,8 @@ class __MainBodyState extends State<_MainBody> {
                       text: TextSpan(
                         children: [
                           TextSpan(
-                            text: "${widget.selectedProduct.oldPrice} ",
+                            text:
+                                "${widget.selectedProduct.oldPrice.toStringAsFixed(2)} ",
                             style: TextStyle(
                               color: HexColor("#53586F").withOpacity(.5),
                               fontSize: 18.0,
@@ -689,7 +690,8 @@ class __MainBodyState extends State<_MainBody> {
                             ),
                           ),
                           TextSpan(
-                            text: "${widget.selectedProduct.price}",
+                            text:
+                                "${widget.selectedProduct.price.toStringAsFixed(2)}",
                             style: TextStyle(
                               color: HexColor("#53586F"),
                               fontSize: 24.0,

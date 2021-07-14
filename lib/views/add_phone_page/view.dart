@@ -9,6 +9,7 @@ import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/material.dart';
 import 'package:com.floridainc.dosparkles/actions/adapt.dart';
 import 'package:flutter/services.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import '../../actions/api/graphql_client.dart';
 import '../../utils/colors.dart';
@@ -22,8 +23,12 @@ void _onSubmit(BuildContext context, String fullValue) async {
 
   String formattedValue = fullValue.replaceAll(new RegExp('[^0-9]'), "");
   try {
-    await BaseGraphQLClient.instance
+    QueryResult result = await BaseGraphQLClient.instance
         .setUserPhoneNumber(globalUser.id, formattedValue);
+
+    if (result.hasException) {
+      await Navigator.of(context).pushReplacementNamed('loginpage');
+    }
 
     globalUser.phoneNumber = fullValue;
     GlobalStore.store.dispatch(GlobalActionCreator.setUser(globalUser));
@@ -31,6 +36,7 @@ void _onSubmit(BuildContext context, String fullValue) async {
     Navigator.of(context).pop();
   } catch (e) {
     print(e);
+    await Navigator.of(context).pushReplacementNamed('loginpage');
   }
 }
 
@@ -99,8 +105,7 @@ class __MainBodyState extends State<_MainBody> {
             ),
             new WillPopScope(
               onWillPop: () async => false,
-              child: 
-              Scaffold(
+              child: Scaffold(
                 backgroundColor: Colors.transparent,
                 resizeToAvoidBottomInset: true,
                 appBar: AppBar(
@@ -131,8 +136,8 @@ class __MainBodyState extends State<_MainBody> {
                 ),
               ),
             ),
-              if (_isLostConnection) ConnectionLost(),
-            ],
+            if (_isLostConnection) ConnectionLost(),
+          ],
         ),
       ),
     );

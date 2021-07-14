@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/models/models.dart';
 import 'package:com.floridainc.dosparkles/utils/colors.dart';
-import 'package:com.floridainc.dosparkles/views/product_page/action.dart';
 import 'package:com.floridainc.dosparkles/views/store_page/action.dart';
 import 'package:com.floridainc.dosparkles/widgets/connection_lost.dart';
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
@@ -296,7 +295,8 @@ class ProductCustomizationState extends State<ProductCustomization> {
                                   text: TextSpan(
                                     children: [
                                       TextSpan(
-                                        text: "\$$wholeOldSum",
+                                        text:
+                                            "\$${wholeOldSum.toStringAsFixed(2)} ",
                                         style: TextStyle(
                                           color: Colors.white.withOpacity(.5),
                                           fontSize: 18.0,
@@ -305,7 +305,8 @@ class ProductCustomizationState extends State<ProductCustomization> {
                                         ),
                                       ),
                                       TextSpan(
-                                        text: "\$$wholeSum",
+                                        text:
+                                            "\$${wholeSum.toStringAsFixed(2)}",
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 24.0,
@@ -468,7 +469,7 @@ class ProductCustomizationState extends State<ProductCustomization> {
                                                     children: [
                                                       TextSpan(
                                                         text:
-                                                            "\$${widget.selectedProduct.engraveOldPrice} ",
+                                                            "\$${widget.selectedProduct.engraveOldPrice.toStringAsFixed(2)} ",
                                                         style: TextStyle(
                                                           fontSize: 18.0,
                                                           color: HexColor(
@@ -481,7 +482,7 @@ class ProductCustomizationState extends State<ProductCustomization> {
                                                       ),
                                                       TextSpan(
                                                         text:
-                                                            "\$${widget.selectedProduct.engravePrice}",
+                                                            "\$${widget.selectedProduct.engravePrice.toStringAsFixed(2)}",
                                                         style: TextStyle(
                                                           fontSize: 22.0,
                                                           fontWeight:
@@ -683,7 +684,7 @@ class ProductCustomizationState extends State<ProductCustomization> {
                                                     children: [
                                                       TextSpan(
                                                         text:
-                                                            "\$${widget.selectedProduct.optionalFinishMaterialOldPrice} ",
+                                                            "\$${widget.selectedProduct.optionalFinishMaterialOldPrice.toStringAsFixed(2)} ",
                                                         style: TextStyle(
                                                           fontSize: 18.0,
                                                           color: HexColor(
@@ -696,7 +697,7 @@ class ProductCustomizationState extends State<ProductCustomization> {
                                                       ),
                                                       TextSpan(
                                                         text:
-                                                            "\$${widget.selectedProduct.optionalFinishMaterialPrice}",
+                                                            "\$${widget.selectedProduct.optionalFinishMaterialPrice.toStringAsFixed(2)}",
                                                         style: TextStyle(
                                                           fontSize: 22.0,
                                                           fontWeight:

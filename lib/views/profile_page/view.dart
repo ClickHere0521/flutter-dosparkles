@@ -10,6 +10,7 @@ import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 
 import 'package:com.floridainc.dosparkles/models/models.dart';
 import 'package:com.floridainc.dosparkles/utils/colors.dart';
+import 'package:com.floridainc.dosparkles/utils/general.dart';
 import 'package:com.floridainc.dosparkles/views/profile_page/state.dart';
 import 'package:com.floridainc.dosparkles/widgets/bottom_nav_bar.dart';
 
@@ -996,7 +997,7 @@ class __OrderHistoryState extends State<_OrderHistory> {
                                                                       TextSpan(
                                                                         text: order['products'][i]['price'] !=
                                                                                 null
-                                                                            ? "\$${order['products'][i]['price']} "
+                                                                            ? "\$${order['products'][i]['price'].toStringAsFixed(2)} "
                                                                             : '',
                                                                         style:
                                                                             TextStyle(
@@ -1051,7 +1052,7 @@ class __OrderHistoryState extends State<_OrderHistory> {
                                           ),
                                         ),
                                         Text(
-                                          "\$${order['totalPrice']}",
+                                          "\$${checkDouble(order['totalPrice']).toStringAsFixed(2)}",
                                           style: TextStyle(
                                             fontSize: 22.0,
                                             fontWeight: FontWeight.w600,

@@ -230,7 +230,12 @@ class BaseGraphQLClient {
         users(where: { id: "$id" }) {
           id
           phoneNumber
+          name
           storeFavorite {
+            id
+            name
+          }
+          store {
             id
             name
           }

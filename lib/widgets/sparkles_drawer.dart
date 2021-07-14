@@ -13,6 +13,42 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:social_share/social_share.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+Future<String> _checkNames() async {
+  AppUser globalUser = GlobalStore.store.getState().user;
+
+  if (globalUser != null && globalUser.role == "Store Manager") {
+    bool isExistName =
+        globalUser.store != null && globalUser.store['name'] != null;
+
+    if (isExistName) return globalUser.store['name'];
+
+    final result =
+        await BaseGraphQLClient.instance.checkUserFields(globalUser.id);
+    if (result.hasException) print(result.exception);
+
+    if (result.data['users'][0]['store'] != null &&
+        result.data['users'][0]['store']['name'] != null) {
+      return result.data['users'][0]['store']['name'];
+    } else {
+      return "Store";
+    }
+  }
+
+  bool isExistName = globalUser.name != null;
+
+  if (isExistName) return globalUser.name;
+
+  final result =
+      await BaseGraphQLClient.instance.checkUserFields(globalUser.id);
+  if (result.hasException) print(result.exception);
+
+  if (result.data['users'][0]['name'] != null) {
+    return result.data['users'][0]['name'];
+  } else {
+    return "User";
+  }
+}
+
 class SparklesDrawer extends StatefulWidget {
   final globalUser = GlobalStore.store.getState().user;
   final String activeRoute;
@@ -101,31 +137,48 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                               SizedBox(height: 12.0),
                               if (widget.globalUser != null &&
                                   widget.globalUser.role == "Store Manager")
-                                Text(
-                                  widget.globalUser.store != null
-                                      ? widget.globalUser.store['name']
-                                      : "Store",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 18.0,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.white,
-                                    fontFeatures: [FontFeature.enable('smcp')],
-                                  ),
+                                FutureBuilder(
+                                  future: _checkNames(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.hasData &&
+                                        !snapshot.hasError) {
+                                      return Text(
+                                        snapshot.data,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 18.0,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.white,
+                                          fontFeatures: [
+                                            FontFeature.enable('smcp')
+                                          ],
+                                        ),
+                                      );
+                                    }
+                                    return SizedBox.shrink(child: null);
+                                  },
                                 )
                               else
-                                Text(
-                                  widget.globalUser != null &&
-                                          widget.globalUser.name != null
-                                      ? widget.globalUser.name
-                                      : "User",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 18.0,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.white,
-                                    fontFeatures: [FontFeature.enable('smcp')],
-                                  ),
+                                FutureBuilder(
+                                  future: _checkNames(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.hasData &&
+                                        !snapshot.hasError) {
+                                      return Text(
+                                        snapshot.data,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 18.0,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.white,
+                                          fontFeatures: [
+                                            FontFeature.enable('smcp')
+                                          ],
+                                        ),
+                                      );
+                                    }
+                                    return SizedBox.shrink(child: null);
+                                  },
                                 ),
                             ],
                           ),

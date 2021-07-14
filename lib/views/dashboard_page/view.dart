@@ -564,7 +564,7 @@ class __MainBodyState extends State<_MainBody> {
                               ),
                               SizedBox(height: 11.0),
                               Text(
-                                "${bottomStatistics != null && bottomStatistics['utitsSold'] != null ? bottomStatistics['utitsSold'] : 0}",
+                                "${bottomStatistics != null && bottomStatistics['utitsSold'] != null ? bottomStatistics['utitsSold'].toStringAsFixed(2) : 0.00}",
                                 style: TextStyle(
                                   fontSize: 14.0,
                                   fontWeight: FontWeight.w600,
@@ -606,7 +606,7 @@ class __MainBodyState extends State<_MainBody> {
                               ),
                               SizedBox(height: 11.0),
                               Text(
-                                "\$${bottomStatistics != null && bottomStatistics['revenue'] != null ? bottomStatistics['revenue'] : 0}",
+                                "\$${bottomStatistics != null && bottomStatistics['revenue'] != null ? bottomStatistics['revenue'].toStringAsFixed(2) : 0.00}",
                                 style: TextStyle(
                                   fontSize: 14.0,
                                   fontWeight: FontWeight.w600,
@@ -648,7 +648,7 @@ class __MainBodyState extends State<_MainBody> {
                               ),
                               SizedBox(height: 11.0),
                               Text(
-                                "\$${bottomStatistics != null && bottomStatistics['totalCost'] != null ? bottomStatistics['totalCost'] : 0}",
+                                "\$${bottomStatistics != null && bottomStatistics['totalCost'] != null ? bottomStatistics['totalCost'].toStringAsFixed(2) : 0.00}",
                                 style: TextStyle(
                                   fontSize: 14.0,
                                   fontWeight: FontWeight.w600,
@@ -690,7 +690,7 @@ class __MainBodyState extends State<_MainBody> {
                               ),
                               SizedBox(height: 11.0),
                               Text(
-                                "\$${bottomStatistics != null && bottomStatistics['profit'] != null ? bottomStatistics['profit'] : 0}",
+                                "\$${bottomStatistics != null && bottomStatistics['profit'] != null ? bottomStatistics['profit'].toStringAsFixed(2) : 0.00}",
                                 style: TextStyle(
                                   fontSize: 14.0,
                                   fontWeight: FontWeight.w600,

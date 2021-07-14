@@ -148,16 +148,16 @@ class __FirstProductPageState extends State<_FirstProductPage> {
                   ),
                 ),
           drawer: SparklesDrawer(),
-          // bottomNavigationBar: StreamBuilder(
-          //   stream: fetchDataProcess(),
-          //   builder: (_, snapshot) {
-          //     return BottomNavBarWidget(
-          //       prefsData: snapshot.data,
-          //       initialIndex: 0,
-          //       isTransparentBackground: true,
-          //     );
-          //   },
-          // ),
+          bottomNavigationBar: StreamBuilder(
+            stream: fetchDataProcess(),
+            builder: (_, snapshot) {
+              return BottomNavBarWidget(
+                prefsData: snapshot.data,
+                initialIndex: 0,
+                isTransparentBackground: true,
+              );
+            },
+          ),
         ),
         if (_isLostConnection) ConnectionLost(),
       ],
@@ -894,40 +894,40 @@ class _ProductViewState extends State<_ProductView>
                   ),
                 ),
                 SizedBox(height: 30.0),
-                // Column(
-                //   crossAxisAlignment: CrossAxisAlignment.center,
-                //   mainAxisSize: MainAxisSize.min,
-                //   children: [
-                //     Image.asset("images/Vector 23423432.png"),
-                //     SizedBox(height: 6.5),
-                //     Text(
-                //       "4020",
-                //       style: TextStyle(
-                //         fontSize: 10.0,
-                //         fontWeight: FontWeight.w600,
-                //         color: Colors.white,
-                //       ),
-                //     ),
-                //   ],
-                // ),
-                // SizedBox(height: 25.0),
-                // Column(
-                //   crossAxisAlignment: CrossAxisAlignment.center,
-                //   mainAxisSize: MainAxisSize.min,
-                //   children: [
-                //     Image.asset("images/Group 2342342.png"),
-                //     SizedBox(height: 6.5),
-                //     Text(
-                //       "234",
-                //       style: TextStyle(
-                //         fontSize: 10.0,
-                //         fontWeight: FontWeight.w600,
-                //         color: Colors.white,
-                //       ),
-                //     ),
-                //   ],
-                // ),
-                //  SizedBox(height: 15.0),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image.asset("images/Vector 23423432.png"),
+                    SizedBox(height: 6.5),
+                    Text(
+                      "4020",
+                      style: TextStyle(
+                        fontSize: 10.0,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 25.0),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image.asset("images/Group 2342342.png"),
+                    SizedBox(height: 6.5),
+                    Text(
+                      "234",
+                      style: TextStyle(
+                        fontSize: 10.0,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 15.0),
                 GestureDetector(
                   behavior: HitTestBehavior.translucent,
                   onTap: () {
@@ -1136,7 +1136,8 @@ class __BottomPanelWidgetState extends State<_BottomPanelWidget> {
                             style: DefaultTextStyle.of(context).style,
                             children: [
                               TextSpan(
-                                text: "\$${widget.selectedProduct.oldPrice} ",
+                                text:
+                                    "\$${widget.selectedProduct.oldPrice.toStringAsFixed(2)} ",
                                 style: TextStyle(
                                   color: HexColor("#53586F").withOpacity(.5),
                                   fontSize: 18.0,
@@ -1144,7 +1145,8 @@ class __BottomPanelWidgetState extends State<_BottomPanelWidget> {
                                 ),
                               ),
                               TextSpan(
-                                text: "\$${widget.selectedProduct.price}",
+                                text:
+                                    "\$${widget.selectedProduct.price.toStringAsFixed(2)}",
                                 style: TextStyle(
                                   color: HexColor("#53586F"),
                                   fontSize: 24.0,
@@ -1372,7 +1374,7 @@ class __BottomPanelWidgetState extends State<_BottomPanelWidget> {
                 height: 42.0,
                 child: Center(
                   child: Text(
-                    "\$${widget.productQuantity * widget.selectedProduct.price}",
+                    "\$${(widget.productQuantity * widget.selectedProduct.price).toStringAsFixed(2)}",
                     style: TextStyle(
                       color: HexColor("#53586F"),
                       fontSize: 22.0,

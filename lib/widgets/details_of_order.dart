@@ -245,7 +245,7 @@ class _OrderWidgetState extends State<OrderWidget> {
                                                             text: product[
                                                                         'price'] !=
                                                                     null
-                                                                ? "\$${product['price']} "
+                                                                ? "\$${product['price'].toStringAsFixed(2)} "
                                                                 : ' ',
                                                             style: TextStyle(
                                                               fontSize: 22.0,
@@ -371,7 +371,7 @@ class _OrderWidgetState extends State<OrderWidget> {
                         ),
                       ),
                       Text(
-                        "\$$allProductsTotalPrice",
+                        "\$${allProductsTotalPrice.toStringAsFixed(2)}",
                         style: TextStyle(
                           fontSize: 26.0,
                           fontWeight: FontWeight.w600,
@@ -746,7 +746,8 @@ class __ChangeOrderState extends State<_ChangeOrder> {
                           text: TextSpan(
                             children: [
                               TextSpan(
-                                text: "\$${widget.product['price']} ",
+                                text:
+                                    "\$${widget.product['price'].toStringAsFixed(2)} ",
                                 style: TextStyle(
                                   color: HexColor("#53586F"),
                                   fontSize: 24.0,
@@ -754,7 +755,8 @@ class __ChangeOrderState extends State<_ChangeOrder> {
                                 ),
                               ),
                               TextSpan(
-                                text: "\$${widget.product['oldPrice']}",
+                                text:
+                                    "\$${widget.product['oldPrice'].toStringAsFixed(2)}",
                                 style: TextStyle(
                                   color: HexColor("#53586F").withOpacity(.5),
                                   fontSize: 18.0,

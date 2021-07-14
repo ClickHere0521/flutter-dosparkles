@@ -372,7 +372,7 @@ class __MainBodyState extends State<_MainBody> {
                                                     CrossAxisAlignment.center,
                                                 children: [
                                                   Text(
-                                                    '\$${widget.shoppingCart[index].amount}',
+                                                    '\$${widget.shoppingCart[index].amount.toStringAsFixed(2)}',
                                                     style: TextStyle(
                                                       fontSize: 22.0,
                                                       fontWeight:
@@ -556,7 +556,7 @@ class __MainBodyState extends State<_MainBody> {
                             ),
                           ),
                           Text(
-                            "\$$totalAmount",
+                            "\$${totalAmount.toStringAsFixed(2)}",
                             style: TextStyle(
                               fontSize: 26.0,
                               fontWeight: FontWeight.w900,

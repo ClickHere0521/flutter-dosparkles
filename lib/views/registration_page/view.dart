@@ -142,7 +142,12 @@ class __InnerPartState extends State<_InnerPart> {
   String lastNameValue = '';
   bool _hidePassword = true;
   bool checkboxValue = false;
+  bool _isLoading = false;
   FocusNode _passwordNode = FocusNode();
+
+  void _setIsLoading(bool value) {
+    if (mounted) _isLoading = value;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -353,7 +358,8 @@ class __InnerPartState extends State<_InnerPart> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => TermsContitions()),
+                          builder: (context) => TermsContitions(),
+                        ),
                       );
                     },
                   ),
@@ -382,27 +388,37 @@ class __InnerPartState extends State<_InnerPart> {
                       ),
                     ),
                   ),
-                  child: Text(
-                    'Sign Up',
-                    style: TextStyle(
-                      fontSize: 17.0,
-                      fontWeight: FontWeight.normal,
-                      color: Colors.white,
-                    ),
-                  ),
+                  child: _isLoading
+                      ? Center(
+                          child: SizedBox(
+                          width: 25.0,
+                          height: 25.0,
+                          child: CircularProgressIndicator(),
+                        ))
+                      : Text(
+                          'Sign Up',
+                          style: TextStyle(
+                            fontSize: 17.0,
+                            fontWeight: FontWeight.normal,
+                            color: Colors.white,
+                          ),
+                        ),
                   onPressed: !checkboxValue
                       ? null
-                      : () {
-                          if (_formKey.currentState.validate()) {
-                            _onSubmit(
-                              context,
-                              emailValue,
-                              passwordValue,
-                              firstNameValue,
-                              lastNameValue,
-                            );
-                          }
-                        },
+                      : _isLoading
+                          ? null
+                          : () {
+                              if (_formKey.currentState.validate()) {
+                                _onSubmit(
+                                  context,
+                                  emailValue,
+                                  passwordValue,
+                                  firstNameValue,
+                                  lastNameValue,
+                                  _setIsLoading,
+                                );
+                              }
+                            },
                 ),
               ),
             ],
@@ -419,8 +435,11 @@ void _onSubmit(
   passwordValue,
   firstNameValue,
   lastNameValue,
+  Function _setIsLoading,
 ) async {
   String fullName = "$firstNameValue $lastNameValue";
+
+  _setIsLoading(true);
 
   try {
     await UserInfoOperate.whenLogout();
@@ -432,6 +451,7 @@ void _onSubmit(
       print(resultRegister.exception.toString());
       Toast.show("Email address already exist", context,
           duration: 3, gravity: Toast.BOTTOM);
+      await Navigator.of(context).pushReplacementNamed('loginpage');
       return;
     }
 
@@ -454,41 +474,9 @@ void _onSubmit(
       });
     }
   } catch (e) {
+    await Navigator.of(context).pushReplacementNamed('loginpage');
     print(e);
   }
-}
-
-Future<Map<String, dynamic>> _emailSignIn(
-  BuildContext context,
-  String emailValue,
-  String passwordValue,
-) async {
-  if (emailValue != null && passwordValue != null) {
-    try {
-      final result = await BaseGraphQLClient.instance
-          .loginWithEmail(emailValue, passwordValue);
-      print('resultException: ${result.hasException}, ${result.exception}');
-
-      if (result.hasException) {
-        Toast.show("Error occurred", context,
-            duration: 3, gravity: Toast.BOTTOM);
-        return null;
-      }
-      return result.data['login'];
-    } on Exception catch (e) {
-      print(e);
-      if (e.toString() ==
-              'DioError [DioErrorType.RESPONSE]: Http status error [400]' ||
-          e.toString() ==
-              'DioError [DioErrorType.RESPONSE]: Http status error [403]') {
-        Toast.show("Wrong username or password", context,
-            duration: 3, gravity: Toast.BOTTOM);
-      } else {
-        Toast.show(e.toString(), context, duration: 3, gravity: Toast.BOTTOM);
-      }
-    }
-  }
-  return null;
 }
 
 void _goToMain(BuildContext context) async {
@@ -511,9 +499,9 @@ void _goToMain(BuildContext context) async {
     await setUserFavoriteStore(globalState.user, referralLink);
   }
 
-  await checkUserReferralLink(globalState.user);
-
   await Navigator.of(context).pushNamed('addphonepage', arguments: null);
+
+  await checkUserReferralLink(globalState.user);
 
   if (referralLink != null && referralLink != '') {
     await _invitedRegisteredMethod(globalState.user);
