@@ -41,6 +41,8 @@ Future _loadData(BuildContext context) async {
 }
 
 void _onInit(Action action, Context<StartPageState> ctx) async {
+  ctx.dispatch(StartPageActionCreator.onSetIsLoading(true));
+
   FirebaseMessaging.instance.requestPermission();
   FirebaseMessaging.instance.setAutoInitEnabled(true);
 
@@ -52,6 +54,7 @@ void _onInit(Action action, Context<StartPageState> ctx) async {
     final savedToken = _p.getString('jwt') ?? '';
     if (savedToken.isEmpty) {
       ctx.dispatch(StartPageActionCreator.setIsFirst(true));
+      ctx.dispatch(StartPageActionCreator.onSetIsLoading(false));
       return null;
     }
 

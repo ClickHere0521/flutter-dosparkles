@@ -71,6 +71,7 @@ class _FirstProductPage extends StatefulWidget {
 class __FirstProductPageState extends State<_FirstProductPage> {
   bool _isLostConnection = false;
   bool _isAppBarEnabled = true;
+  bool _bottomNavBarActive = true;
 
   Future fetchData() async {
     Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
@@ -105,6 +106,12 @@ class __FirstProductPageState extends State<_FirstProductPage> {
     });
   }
 
+  void _setBottomNavBarActive(bool value) {
+    setState(() {
+      _bottomNavBarActive = value;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     checkInternetConnectivity();
@@ -121,6 +128,7 @@ class __FirstProductPageState extends State<_FirstProductPage> {
             engraveInputs: widget.state.engraveInputs,
             productQuantity: widget.state.productQuantity,
             setIsAppBarEnabled: _setIsAppBarEnabled,
+            setBottomNavBarActive: _setBottomNavBarActive,
           ),
           backgroundColor: Colors.transparent,
           extendBodyBehindAppBar: true,
@@ -148,16 +156,18 @@ class __FirstProductPageState extends State<_FirstProductPage> {
                   ),
                 ),
           drawer: SparklesDrawer(),
-          bottomNavigationBar: StreamBuilder(
-            stream: fetchDataProcess(),
-            builder: (_, snapshot) {
-              return BottomNavBarWidget(
-                prefsData: snapshot.data,
-                initialIndex: 0,
-                isTransparentBackground: true,
-              );
-            },
-          ),
+          bottomNavigationBar: !_bottomNavBarActive
+              ? null
+              : StreamBuilder(
+                  stream: fetchDataProcess(),
+                  builder: (_, snapshot) {
+                    return BottomNavBarWidget(
+                      prefsData: snapshot.data,
+                      initialIndex: 0,
+                      isTransparentBackground: true,
+                    );
+                  },
+                ),
         ),
         if (_isLostConnection) ConnectionLost(),
       ],
@@ -441,6 +451,7 @@ class _ProductView extends StatefulWidget {
   final List<String> engraveInputs;
   final int productQuantity;
   final Function setIsAppBarEnabled;
+  final Function setBottomNavBarActive;
 
   final globalUser = GlobalStore.store.getState().user;
 
@@ -455,6 +466,7 @@ class _ProductView extends StatefulWidget {
     this.engraveInputs,
     this.productQuantity,
     this.setIsAppBarEnabled,
+    this.setBottomNavBarActive,
   }) : super(key: key);
 
   @override
@@ -475,7 +487,7 @@ class _ProductViewState extends State<_ProductView>
   bool _isDraggable = false;
   List<BetterPlayerDataSource> _dataSourceList = [];
 
-  final double _initFabHeight = 50.0;
+  final double _initFabHeight = 100.0;
   double _fabHeight;
   double _panelHeightOpen;
   double _panelHeightClosed = 0;
@@ -654,10 +666,12 @@ class _ProductViewState extends State<_ProductView>
           onPanelOpened: () {
             _betterPlayerPlaylistController.betterPlayerController.pause();
             widget.setIsAppBarEnabled(false);
+            widget.setBottomNavBarActive(false);
           },
           onPanelClosed: () {
             _betterPlayerPlaylistController.betterPlayerController.play();
             widget.setIsAppBarEnabled(true);
+            widget.setBottomNavBarActive(true);
           },
           panelBuilder: (sc) => MediaQuery.removePadding(
             context: context,
