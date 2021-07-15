@@ -32,13 +32,13 @@ dependencies:
   permission_handler: ^5.0.1+1
 
   # firebase
-  firebase_core:
-  firebase_messaging:
-  firebase_analytics:
+  firebase_analytics: ^6.2.0
+  firebase_core: "^0.5.2"
+  firebase_messaging: "^8.0.0-dev.8"
   # firebase_crashlytics:
 
   flutter_local_notifications: ^3.0.0
-  graphql_flutter:
+  graphql_flutter: ^3.0.1
   toast: ^0.1.5
   dio: ^3.0.9
   dio_http_cache: ^0.2.5
@@ -81,7 +81,8 @@ dependencies:
   liquid_pull_to_refresh: ^2.0.0
   sliding_up_panel: ^2.0.0+1
   better_player:
-  uuid:
+  uuid: 
+  uuid_enhanced: ^3.0.0
   video_player:
     git:
       url: https://github.com/sanekyy/plugins.git
