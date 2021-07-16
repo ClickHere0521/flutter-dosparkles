@@ -570,7 +570,10 @@ void _goToMain(BuildContext context) async {
     await setUserFavoriteStore(globalState.user, referralLink);
   }
 
-  await Navigator.of(context).pushNamed('addphonepage', arguments: null);
+  if (globalState.user.phoneNumber == null ||
+      globalState.user.phoneNumber == '') {
+    await Navigator.of(context).pushNamed('addphonepage', arguments: null);
+  }
 
   if (referralLink != null && referralLink != '') {
     await _invitedRegisteredMethod(globalState.user);
