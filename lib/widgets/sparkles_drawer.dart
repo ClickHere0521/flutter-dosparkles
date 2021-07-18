@@ -10,42 +10,65 @@ import 'package:com.floridainc.dosparkles/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:social_share/social_share.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 Future<String> _checkNames() async {
   AppUser globalUser = GlobalStore.store.getState().user;
+  SharedPreferences _prefs = await SharedPreferences.getInstance();
+  String drawerStoreName = _prefs.getString("drawerStoreName");
+  String drawerUserName = _prefs.getString("drawerUserName");
 
   if (globalUser != null && globalUser.role == "Store Manager") {
     bool isExistName =
         globalUser.store != null && globalUser.store['name'] != null;
 
-    if (isExistName) return globalUser.store['name'];
+    if (isExistName) {
+      _prefs.remove("drawerStoreName");
+      return globalUser.store['name'];
+    }
 
-    final result =
-        await BaseGraphQLClient.instance.checkUserFields(globalUser.id);
-    if (result.hasException) print(result.exception);
-
-    if (result.data['users'][0]['store'] != null &&
-        result.data['users'][0]['store']['name'] != null) {
-      return result.data['users'][0]['store']['name'];
+    if (drawerStoreName != null) {
+      return drawerStoreName;
     } else {
-      return "Store";
+      final result =
+          await BaseGraphQLClient.instance.checkUserFields(globalUser.id);
+      if (result.hasException) print(result.exception);
+      var resultStore = result.data['users'][0]['store'];
+
+      if (resultStore != null && resultStore['name'] != null) {
+        _prefs.setString("drawerStoreName", resultStore['name']);
+        return resultStore['name'];
+      } else {
+        _prefs.setString("drawerUserName", "Store");
+        return "Store";
+      }
     }
   }
 
   bool isExistName = globalUser.name != null;
 
-  if (isExistName) return globalUser.name;
+  if (isExistName) {
+    _prefs.remove("drawerUserName");
+    return globalUser.name;
+  }
 
-  final result =
-      await BaseGraphQLClient.instance.checkUserFields(globalUser.id);
-  if (result.hasException) print(result.exception);
-
-  if (result.data['users'][0]['name'] != null) {
-    return result.data['users'][0]['name'];
+  if (drawerUserName != null) {
+    return drawerUserName;
   } else {
-    return "User";
+    final result =
+        await BaseGraphQLClient.instance.checkUserFields(globalUser.id);
+    if (result.hasException) print(result.exception);
+    String resultUser = result.data['users'][0]['name'];
+
+    if (resultUser != null) {
+      _prefs.setString("drawerUserName", resultUser);
+      return resultUser;
+    } else {
+      _prefs.setString("drawerUserName", "User");
+      return "User";
+    }
   }
 }
 
@@ -250,7 +273,8 @@ class _SparklesDrawerState extends State<SparklesDrawer> {
                         .checkUserFields(globalUser.id);
                     if (result.hasException) print(result.exception);
 
-                    if (result.data['users'][0]['storeFavorite'] != null) {
+                    if (result.data != null &&
+                        result.data['users'][0]['storeFavorite'] != null) {
                       Navigator.of(context)
                           .pushReplacementNamed('storepage', arguments: null);
                     } else {

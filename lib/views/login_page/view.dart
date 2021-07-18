@@ -477,7 +477,6 @@ void _facebookSignIn(context, facebookSignIn) async {
   switch (result.status) {
     case FacebookLoginStatus.loggedIn:
       final FacebookAccessToken accessToken = result.accessToken;
-
       if (accessToken == null) {
         Toast.show("Account with this email already exist", context,
             duration: 3, gravity: Toast.BOTTOM);
@@ -570,14 +569,15 @@ void _goToMain(BuildContext context) async {
     await setUserFavoriteStore(globalState.user, referralLink);
   }
 
-  if (globalState.user.phoneNumber == null ||
-      globalState.user.phoneNumber == '') {
-    await Navigator.of(context).pushNamed('addphonepage', arguments: null);
-  }
+  // if (globalState.user.phoneNumber == null ||
+  //     globalState.user.phoneNumber == '') {
+  //   await Navigator.of(context).pushNamed('addphonepage', arguments: null);
+  // }
+
+  await checkUserReferralLink(globalState.user);
 
   if (referralLink != null && referralLink != '') {
     await _invitedRegisteredMethod(globalState.user);
-    await checkUserReferralLink(globalState.user);
   }
 
   for (int i = 0; i < globalState.storesList.length; i++) {

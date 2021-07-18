@@ -284,6 +284,10 @@ class __MainBodyState extends State<_MainBody> {
     setState(() {
       _switchValue = value;
     });
+
+    SharedPreferences.getInstance().then((_p) {
+      _p.setBool("switchValue", value);
+    });
   }
 
   Future<void> loadAssets() async {
@@ -318,16 +322,24 @@ class __MainBodyState extends State<_MainBody> {
   void initState() {
     super.initState();
 
-    if (widget.globalUser != null)
-      BaseGraphQLClient.instance
-          .fetchUserNotification(widget.globalUser.id)
-          .then((result) {
-        if (result.data != null && mounted) {
-          setState(() {
-            _switchValue = result.data['users'][0]['enableNotifications'];
+    SharedPreferences.getInstance().then((_p) {
+      bool switchValue = _p.getBool("switchValue");
+
+      if (switchValue != null) {
+        _setSwitchValue(switchValue);
+      } else {
+        if (widget.globalUser != null)
+          BaseGraphQLClient.instance
+              .fetchUserNotification(widget.globalUser.id)
+              .then((result) {
+            if (result.data != null && mounted) {
+              setState(() {
+                _setSwitchValue(result.data['users'][0]['enableNotifications']);
+              });
+            }
           });
-        }
-      });
+      }
+    });
   }
 
   @override
