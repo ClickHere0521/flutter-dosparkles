@@ -72,7 +72,8 @@ void onGoToProductPage(Action action, Context<StorePageState> ctx) async {
 
 void _onGoToCart(Action action, Context<StorePageState> ctx) async {
   if (ctx.state.shoppingCart.length > 0)
-    Navigator.of(ctx.context).pushReplacementNamed('cartpage');
+    Navigator.of(ctx.context)
+        .pushNamedAndRemoveUntil('cartpage', (Route<dynamic> route) => false);
 }
 
 void _onAddToCart(Action action, Context<StorePageState> ctx) async {

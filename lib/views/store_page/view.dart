@@ -8,6 +8,7 @@ import 'package:com.floridainc.dosparkles/actions/adapt.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/action.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/models/models.dart';
+import 'package:com.floridainc.dosparkles/routes/routes.dart';
 import 'package:com.floridainc.dosparkles/utils/colors.dart';
 import 'package:com.floridainc.dosparkles/views/store_page/action.dart';
 import 'package:com.floridainc.dosparkles/views/store_page/state.dart';
@@ -549,6 +550,8 @@ class _ProductViewState extends State<_ProductView>
 
   @override
   void dispose() {
+    print("11111111111111111111111111111111111111111111111111");
+
     _betterPlayerPlaylistController.dispose();
     _betterPlayerPlaylistController.betterPlayerController.dispose();
     _tabController.dispose();
