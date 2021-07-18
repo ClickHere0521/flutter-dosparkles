@@ -631,7 +631,7 @@ class __ChatOrderBlockState extends State<_ChatOrderBlock> {
                                           : SizedBox.shrink(child: null),
                                       SizedBox(height: 4),
                                       SizedBox(
-                                        width: 100.0,
+                                        width: 150.0,
                                         height: 15.0,
                                         child: Stack(
                                           children: [
