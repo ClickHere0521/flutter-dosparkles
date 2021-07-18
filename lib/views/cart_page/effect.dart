@@ -170,23 +170,25 @@ void _onProceedToCheckout(Action action, Context<CartPageState> ctx) async {
 
   QueryResult storeResult = await BaseGraphQLClient.instance
       .fetchStoreById(ctx.state.selectedStore.id);
+  if (storeResult.hasException) print(storeResult.exception);
 
   var foundStore = storeResult.data['stores'][0];
 
   List storeChats = foundStore['chats'];
 
   String myId = GlobalStore.store.getState().user.id;
-  bool isExistUser;
+  bool isExistUser = false;
+  int storeChatIndex = 0;
 
   for (int i = 0; i < storeChats.length; i++) {
     var chatUsers = storeChats[i]['users'];
     for (int j = 0; j < chatUsers.length; j++) {
-      var chatId = chatUsers[j]['id'];
+      String chatUserId = chatUsers[j]['id'];
 
-      if (chatId == myId) {
+      if (chatUserId == myId) {
         isExistUser = true;
-      } else {
-        isExistUser = false;
+        storeChatIndex = i;
+        break;
       }
     }
   }
@@ -203,14 +205,13 @@ void _onProceedToCheckout(Action action, Context<CartPageState> ctx) async {
     QueryResult storeOrderResult = await BaseGraphQLClient.instance
         .updateStoreOrder(foundStore['id'], orderIds);
   } else {
-    QueryResult storeOrderResult =
-        await BaseGraphQLClient.instance.updateStoreOrder(
+    await BaseGraphQLClient.instance.updateStoreOrder(
       foundStore['id'],
       ["\"${resultOrder.data['createOrder']['order']['id']}\""],
     );
   }
 
-  if (isExistUser == false || storeChats == null || storeChats.length == 0) {
+  if (isExistUser == false || storeChats == null || storeChats.length <= 0) {
     QueryResult resultChat = await BaseGraphQLClient.instance
         .createOrderChat(["\"$myId\""], ctx.state.selectedStore.id);
 
@@ -228,19 +229,20 @@ void _onProceedToCheckout(Action action, Context<CartPageState> ctx) async {
             ['name']
       },
     );
+
+    return;
   }
 
   if (isExistUser == true) {
-    QueryResult resultMessage =
-        await BaseGraphQLClient.instance.createOrderMessage(
-      storeChats[0]['id'],
+    await BaseGraphQLClient.instance.createOrderMessage(
+      storeChats[storeChatIndex]['id'],
       resultOrder.data['createOrder']['order']['id'],
     );
 
     Navigator.of(ctx.context).pushReplacementNamed(
       'chatmessagespage',
       arguments: {
-        'chatId': storeChats[0]['id'],
+        'chatId': storeChats[storeChatIndex]['id'],
         'userId': myId,
         'conversationName': storeChats[0]['store']['name'],
       },

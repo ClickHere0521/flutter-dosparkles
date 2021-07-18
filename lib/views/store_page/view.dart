@@ -549,9 +549,10 @@ class _ProductViewState extends State<_ProductView>
 
   @override
   void dispose() {
-    super.dispose();
     _betterPlayerPlaylistController.dispose();
+    _betterPlayerPlaylistController.betterPlayerController.dispose();
     _tabController.dispose();
+    super.dispose();
   }
 
   void resetInformation(List<ProductItem> items) {
