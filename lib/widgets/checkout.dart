@@ -78,7 +78,7 @@ class _CheckoutState extends State<Checkout> {
     StripePayment.setOptions(
       StripeOptions(
         publishableKey:
-            "pk_test_RZ5vq09GA2ZJdUZMjIykRGIQ", // "pk_test_aSaULNS8cJU6Tvo20VAXy6rp",
+            "pk_live_kHzRNCoKGndFL9zExEtZD2S5",
         merchantId: "Test",
         androidPayMode: 'test',
       ),
