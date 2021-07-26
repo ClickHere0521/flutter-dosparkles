@@ -5,6 +5,14 @@ Flutter 2.2.0-10.3.pre • channel beta
 flutter clean
 flutter packages pub upgrade
 
+keytool -keystore android/app/key.jks -list -v
+B0:5D:BA:3B:25:57:AE:0D:EA:37:B5:30:0E:71:A1:83:66:85:23:9A
+keytool -genkey -v -keystore android/app/key.jks -storetype JKS -keyalg RSA -keysize 2048 -validity 10000 -alias key
+
+
+keytool -list -v \
+-alias key -keystore android/app/key.jks
+
 # Update translations:
 
 flutter pub run intl*translation:generate_from_arb --output-dir=lib/l10n --no-use-deferred-loading lib/main.dart lib/l10n/intl*\*.arb

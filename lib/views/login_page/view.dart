@@ -145,6 +145,7 @@ class __InnerPartState extends State<_InnerPart> {
       'email',
       'https://www.googleapis.com/auth/contacts.readonly',
     ],
+    clientId: '291190415379-atpi9c32ek4ggm6lm6dttam8nqbhutrn.apps.googleusercontent.com'
   );
 
   static final FacebookLogin facebookSignIn = new FacebookLogin();

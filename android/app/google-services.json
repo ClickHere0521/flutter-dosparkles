@@ -7,22 +7,14 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:291190415379:android:e7bf2e75ce57ced3861fe6",
+        "mobilesdk_app_id": "1:291190415379:android:29543c115354ed6a861fe6",
         "android_client_info": {
           "package_name": "com.floridainc.dosparkles"
         }
       },
       "oauth_client": [
         {
-          "client_id": "291190415379-24bdfbf2g1ir5h1skrtlb80nftmcsghj.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.floridainc.dosparkles",
-            "certificate_hash": "a405f767379780e16df8075151af3d683f91b9a3"
-          }
-        },
-        {
-          "client_id": "291190415379-bbd4d9bj5cs1rlk7t7hpoal70a5ee9n2.apps.googleusercontent.com",
+          "client_id": "291190415379-8ul7c1fnteh6p7eb80n89fr3opm7t78j.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.floridainc.dosparkles",
@@ -30,7 +22,15 @@
           }
         },
         {
-          "client_id": "291190415379-sln0ide7cuqrlm5qr04043i8jq8ie1jp.apps.googleusercontent.com",
+          "client_id": "291190415379-bbd4d9bj5cs1rlk7t7hpoal70a5ee9n2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.floridainc.dosparkles",
+            "certificate_hash": "b05dba3b2557ae0dea37b5300e71a1836685239a"
+          }
+        },
+        {
+          "client_id": "291190415379-atpi9c32ek4ggm6lm6dttam8nqbhutrn.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -43,7 +43,7 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "291190415379-sln0ide7cuqrlm5qr04043i8jq8ie1jp.apps.googleusercontent.com",
+              "client_id": "291190415379-atpi9c32ek4ggm6lm6dttam8nqbhutrn.apps.googleusercontent.com",
               "client_type": 3
             },
             {

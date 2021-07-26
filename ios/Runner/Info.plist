@@ -35,7 +35,7 @@
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>fb1103273433496519</string>
+				<string>fb380170912945369</string>
 			</array>
 		</dict>
 		<dict>
@@ -52,7 +52,7 @@
 	<key>FDAllFilesDownloadedMessage</key>
 	<string>All files have been downloaded</string>
 	<key>FacebookAppID</key>
-	<string>1103273433496519</string>
+	<string>380170912945369</string>
 	<key>FacebookDisplayName</key>
 	<string>Sparkles</string>
 	<key>FirebaseAppDelegateProxyEnabled</key>
