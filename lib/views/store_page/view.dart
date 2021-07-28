@@ -531,9 +531,10 @@ class _ProductViewState extends State<_ProductView>
     );
 
     _tabController.addListener(() {
-      setState(() {
-        _tabSelectedIndex = _tabController.index;
-      });
+      if (mounted)
+        setState(() {
+          _tabSelectedIndex = _tabController.index;
+        });
     });
 
     _betterPlayerConfiguration = BetterPlayerConfiguration(
@@ -560,8 +561,10 @@ class _ProductViewState extends State<_ProductView>
   }
 
   void resetInformation(List<ProductItem> items) {
-    _currentProductVideo = 0;
-    if (mounted) setState(() {});
+    if (mounted)
+      setState(() {
+        _currentProductVideo = 0;
+      });
 
     List<BetterPlayerDataSource> arrayList = [];
     List<BetterPlayerDataSource> listArray = [];
@@ -718,10 +721,11 @@ class _ProductViewState extends State<_ProductView>
             topRight: Radius.circular(18.0),
           ),
           onPanelSlide: (double pos) {
-            setState(() {
-              _fabHeight = pos * (_panelHeightOpen - _panelHeightClosed) +
-                  _initFabHeight;
-            });
+            if (mounted)
+              setState(() {
+                _fabHeight = pos * (_panelHeightOpen - _panelHeightClosed) +
+                    _initFabHeight;
+              });
           },
           body: GestureDetector(
             // Using the DragEndDetails allows us to only fire once per swipe.
@@ -1289,9 +1293,10 @@ class __BottomPanelWidgetState extends State<_BottomPanelWidget> {
                         ),
                       ),
                       onTap: () {
-                        setState(() {
-                          currentTab = 0;
-                        });
+                        if (mounted)
+                          setState(() {
+                            currentTab = 0;
+                          });
                       },
                     ),
                   ),
@@ -1335,9 +1340,10 @@ class __BottomPanelWidgetState extends State<_BottomPanelWidget> {
                         ),
                       ),
                       onTap: () {
-                        setState(() {
-                          currentTab = 1;
-                        });
+                        if (mounted)
+                          setState(() {
+                            currentTab = 1;
+                          });
                       },
                     ),
                   ),
