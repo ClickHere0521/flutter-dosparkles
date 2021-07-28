@@ -7,12 +7,14 @@ class BottomNavBarWidget extends StatefulWidget {
   final prefsData;
   final initialIndex;
   final isTransparentBackground;
+  final bool isVideoScreen;
 
   BottomNavBarWidget({
     Key key,
     this.prefsData,
     this.initialIndex = 0,
     this.isTransparentBackground = false,
+    this.isVideoScreen = false,
   }) : super(key: key);
 
   @override
@@ -26,7 +28,7 @@ class _BottomNavBarWidgetState extends State<BottomNavBarWidget> {
   int _updatedChatsCount = 0;
 
   void _onItemTapped(int index) {
-    if (index == _selectedIndex) return;
+    if (index == _selectedIndex && !widget.isVideoScreen) return;
 
     if (index == 0) {
       var globalState = GlobalStore.store.getState();

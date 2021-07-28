@@ -166,6 +166,7 @@ class __FirstProductPageState extends State<_FirstProductPage> {
                       prefsData: snapshot.data,
                       initialIndex: 0,
                       isTransparentBackground: true,
+                      isVideoScreen: widget.state.listView ? false : true,
                     );
                   },
                 ),
@@ -539,6 +540,7 @@ class _ProductViewState extends State<_ProductView>
       showPlaceholderUntilPlay: true,
       autoPlay: true,
       aspectRatio: 9 / 16,
+      fit: BoxFit.cover,
       controlsConfiguration:
           BetterPlayerControlsConfiguration(showControls: false),
     );
@@ -550,8 +552,7 @@ class _ProductViewState extends State<_ProductView>
 
   @override
   void dispose() {
-    print("11111111111111111111111111111111111111111111111111");
-
+    _betterPlayerPlaylistStateKeys.clear();
     _betterPlayerPlaylistController.dispose();
     _betterPlayerPlaylistController.betterPlayerController.dispose();
     _tabController.dispose();
@@ -597,7 +598,7 @@ class _ProductViewState extends State<_ProductView>
       listArray.add(item);
     }
 
-    _betterPlayerPlaylistController.betterPlayerController.pause();
+    _betterPlayerPlaylistController.betterPlayerController.dispose();
     _dataSourceList.clear();
     _dataSourceList.addAll(listArray);
     _betterPlayerPlaylistController.setupDataSource(_currentProductVideo);
@@ -668,12 +669,14 @@ class _ProductViewState extends State<_ProductView>
           isDraggable: _isDraggable,
           panelSnapping: true,
           onPanelOpened: () {
-            _betterPlayerPlaylistController.betterPlayerController.pause();
+            if (mounted)
+              _betterPlayerPlaylistController.betterPlayerController.pause();
             widget.setIsAppBarEnabled(false);
             widget.setBottomNavBarActive(false);
           },
           onPanelClosed: () {
-            _betterPlayerPlaylistController.betterPlayerController.play();
+            if (mounted)
+              _betterPlayerPlaylistController.betterPlayerController.play();
             widget.setIsAppBarEnabled(true);
             widget.setBottomNavBarActive(true);
           },
@@ -787,8 +790,6 @@ class _ProductViewState extends State<_ProductView>
                 _betterPlayerPlaylistController
                     .setupDataSource(_currentProductVideo);
               }
-
-              if (mounted) setState(() {});
 
               // List<int> idsArray = List.empty(growable: true);
               // int currentIndex = _tabSelectedIndex;

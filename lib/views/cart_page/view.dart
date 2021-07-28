@@ -128,7 +128,7 @@ class __FirstPageState extends State<_FirstPage> {
                 child: GestureDetector(
                   behavior: HitTestBehavior.translucent,
                   onTap: () {
-                    Navigator.of(context).pushReplacementNamed('cartpage');
+                    //  Navigator.of(context).pushReplacementNamed('cartpage');
                   },
                   child: Container(
                     width: 32.0,
