@@ -117,6 +117,7 @@ class __FirstProductPageState extends State<_FirstProductPage> {
   Widget build(BuildContext context) {
     checkInternetConnectivity();
 
+    var size = MediaQuery.of(context).size;
     return Stack(
       children: [
         Scaffold(
@@ -130,6 +131,7 @@ class __FirstProductPageState extends State<_FirstProductPage> {
             productQuantity: widget.state.productQuantity,
             setIsAppBarEnabled: _setIsAppBarEnabled,
             setBottomNavBarActive: _setBottomNavBarActive,
+            size: size,
           ),
           backgroundColor: Colors.transparent,
           extendBodyBehindAppBar: true,
@@ -447,6 +449,7 @@ class _ProductView extends StatefulWidget {
   final AnimationController animationController;
   final StoreItem store;
   final int productIndex;
+  final Size size;
 
   final ProductItem selectedProduct;
   final bool optionalMaterialSelected;
@@ -469,6 +472,7 @@ class _ProductView extends StatefulWidget {
     this.productQuantity,
     this.setIsAppBarEnabled,
     this.setBottomNavBarActive,
+    this.size,
   }) : super(key: key);
 
   @override
@@ -540,7 +544,7 @@ class _ProductViewState extends State<_ProductView>
     _betterPlayerConfiguration = BetterPlayerConfiguration(
       showPlaceholderUntilPlay: true,
       autoPlay: true,
-      aspectRatio: 9 / 20,
+      aspectRatio: widget.size.width / widget.size.height,
       fit: BoxFit.cover,
       controlsConfiguration:
           BetterPlayerControlsConfiguration(showControls: false),
@@ -662,7 +666,6 @@ class _ProductViewState extends State<_ProductView>
 
     setMediaList(items);
 
-    var size = MediaQuery.of(context).size;
     return Stack(
       children: [
         SlidingUpPanel(
@@ -851,19 +854,19 @@ class _ProductViewState extends State<_ProductView>
                           child: RotatedBox(
                             quarterTurns: 0,
                             child: Container(
-                              height: size.height,
-                              width: size.width,
+                              height: widget.size.height,
+                              width: widget.size.width,
                               child: Container(
-                                height: size.height,
-                                width: size.width,
+                                height: widget.size.height,
+                                width: widget.size.width,
                                 child: Stack(
                                   children: [
                                     SizedBox.expand(
                                       child: FittedBox(
                                         fit: BoxFit.cover,
                                         child: SizedBox(
-                                          height: size.height,
-                                          width: size.width,
+                                          height: widget.size.height,
+                                          width: widget.size.width,
                                           child: BetterPlayerPlaylist(
                                             key: _betterPlayerPlaylistStateKeys[
                                                 index],
