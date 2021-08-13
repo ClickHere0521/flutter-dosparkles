@@ -9,6 +9,10 @@ keytool -keystore android/app/key.jks -list -v
 B0:5D:BA:3B:25:57:AE:0D:EA:37:B5:30:0E:71:A1:83:66:85:23:9A
 keytool -genkey -v -keystore android/app/key.jks -storetype JKS -keyalg RSA -keysize 2048 -validity 10000 -alias key
 
+      
+keytool -exportcert -alias key -keystore android/app/key.jks | openssl sha1 -binary | openssl base64
+sF26OyVXrg3qN7UwDnGhg2aFI5o=
+
 
 keytool -list -v \
 -alias key -keystore android/app/key.jks
