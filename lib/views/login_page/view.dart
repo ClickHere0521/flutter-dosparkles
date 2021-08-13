@@ -141,12 +141,12 @@ class __InnerPartState extends State<_InnerPart> {
   FocusNode _passwordNode = FocusNode();
 
   GoogleSignIn _googleSignIn = GoogleSignIn(
-    scopes: [
-      'email',
-      'https://www.googleapis.com/auth/contacts.readonly',
-    ],
-    clientId: '291190415379-atpi9c32ek4ggm6lm6dttam8nqbhutrn.apps.googleusercontent.com'
-  );
+      scopes: [
+        'email',
+        'https://www.googleapis.com/auth/contacts.readonly',
+      ],
+      clientId:
+          '291190415379-atpi9c32ek4ggm6lm6dttam8nqbhutrn.apps.googleusercontent.com');
 
   static final FacebookLogin facebookSignIn = new FacebookLogin();
 
@@ -173,7 +173,11 @@ class __InnerPartState extends State<_InnerPart> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               SizedBox(height: MediaQuery.of(context).size.height * 0.07),
-              Image.asset("images/Group 319.png"),
+              Image.asset(
+                "images/high-quality-images/logo.png",
+                width: 75.0,
+                height: 75.0,
+              ),
               SizedBox(height: MediaQuery.of(context).size.height * 0.002),
               Text(
                 "Welcome to Sparkles!",
@@ -570,10 +574,10 @@ void _goToMain(BuildContext context) async {
     await setUserFavoriteStore(globalState.user, referralLink);
   }
 
-  // if (globalState.user.phoneNumber == null ||
-  //     globalState.user.phoneNumber == '') {
-  //   await Navigator.of(context).pushNamed('addphonepage', arguments: null);
-  // }
+  if (globalState.user.phoneNumber == null ||
+      globalState.user.phoneNumber == '') {
+    await Navigator.of(context).pushNamed('addphonepage', arguments: null);
+  }
 
   await checkUserReferralLink(globalState.user);
 

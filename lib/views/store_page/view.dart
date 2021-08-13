@@ -615,6 +615,8 @@ class _ProductViewState extends State<_ProductView>
     for (int i = 0; i < items[_tabSelectedIndex].videoUrls.length; i++) {
       String asset = items[_tabSelectedIndex].videoUrls[i];
 
+      print("-----$i---- $asset");
+
       arrayList.add(
         BetterPlayerDataSource(
           BetterPlayerDataSourceType.network,
