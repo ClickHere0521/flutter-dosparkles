@@ -1,3 +1,4 @@
+import 'package:com.floridainc.dosparkles/actions/api/graphql_client.dart';
 import 'package:com.floridainc.dosparkles/globalbasestate/store.dart';
 import 'package:com.floridainc.dosparkles/utils/colors.dart';
 import 'package:flutter/material.dart';
@@ -27,17 +28,31 @@ class _BottomNavBarWidgetState extends State<BottomNavBarWidget> {
   bool _isUpdated = false;
   int _updatedChatsCount = 0;
 
-  void _onItemTapped(int index) {
+  Future<void> _onItemTapped(int index) async {
     if (index == _selectedIndex && !widget.isVideoScreen) return;
 
     if (index == 0) {
       var globalState = GlobalStore.store.getState();
       var storeFavorite = globalState.user.storeFavorite;
 
-      if (storeFavorite != null)
+      if (storeFavorite != null) {
         Navigator.of(context).pushReplacementNamed('storepage');
-      else
-        Navigator.of(context).pushReplacementNamed('storeselectionpage');
+        return;
+      }
+
+      final result =
+          await BaseGraphQLClient.instance.checkUserFields(globalState.user.id);
+      if (result.hasException) print(result.exception);
+
+      if (result.data != null &&
+          result.data['users'].length > 0 &&
+          result.data['users'][0]['storeFavorite'] != null) {
+        Navigator.of(context)
+            .pushReplacementNamed('storepage', arguments: null);
+      } else {
+        Navigator.of(context)
+            .pushReplacementNamed('storeselectionpage', arguments: null);
+      }
     } else if (index == 1) {
       Navigator.of(context).pushReplacementNamed('chatpage');
     } else if (index == 2) {
