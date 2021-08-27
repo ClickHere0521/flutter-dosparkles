@@ -1496,7 +1496,7 @@ class BaseGraphQLClient {
             data: {
               name: "$name"
               email: "$email"
-              subjectChoice: $subjectChoice
+              subjectChoice: "$subjectChoice"
               message: "$message"
             }
           }
