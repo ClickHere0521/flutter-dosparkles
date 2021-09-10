@@ -20,9 +20,9 @@ keytool -list -v \
 # Screenshots
 
 <div style="float: right">
-      <img src='https://github.com/sysintellects/cmx-mobile/blob/master/assets/img/Preview.png' width='250'>
-      <img src='https://github.com/sysintellects/cmx-mobile/blob/master/assets/img/Preview.png' width='250'>
-      <img src='https://github.com/sysintellects/cmx-mobile/blob/master/assets/img/Preview.png' width='250'>
+      <img src='https://github.com/ClickHere0521/flutter-dosparkles/blob/main/perfect%20gift.png' width='250'>
+      <img src='https://github.com/ClickHere0521/flutter-dosparkles/blob/main/perfect%20gift2.png' width='250'>
+      <img src='https://github.com/ClickHere0521/flutter-dosparkles/blob/main/perfect%20gift3.png' width='250'>
 </div>
 
 # Update translations:
