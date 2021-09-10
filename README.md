@@ -17,6 +17,14 @@ sF26OyVXrg3qN7UwDnGhg2aFI5o=
 keytool -list -v \
 -alias key -keystore android/app/key.jks
 
+# Screenshots
+
+<div style="float: right">
+      <img src='https://github.com/sysintellects/cmx-mobile/blob/master/assets/img/Preview.png' width='250'>
+      <img src='https://github.com/sysintellects/cmx-mobile/blob/master/assets/img/Preview.png' width='250'>
+      <img src='https://github.com/sysintellects/cmx-mobile/blob/master/assets/img/Preview.png' width='250'>
+</div>
+
 # Update translations:
 
 flutter pub run intl*translation:generate_from_arb --output-dir=lib/l10n --no-use-deferred-loading lib/main.dart lib/l10n/intl*\*.arb
